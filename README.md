@@ -9,4 +9,3 @@ Relay:
 
 ## Products
 [Lightning Gates Notes](./apps/nip108/README.md)
-# Nostr-Playground

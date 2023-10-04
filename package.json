@@ -1,0 +1,23 @@
+{
+  "name": "nostrplayground",
+  "private": true,
+  "scripts": {
+    "nip108-server": "bun run apps/nip108/server/index.ts",
+    "nip108-client": "cd apps/nip108/client && bun run dev",
+    "nip108-script": "bun run apps/nip108/script/index.ts"
+  },
+  "workspaces": [
+    "packages/utils",
+    "packages/nip108",
+    "apps/nip108/script",
+    "apps/nip108/client",
+    "apps/nip108/server"
+  ],
+  "dependencies": {
+    "@types/crypto-js": "^4.1.2",
+    "browserify-cipher": "^1.0.1",
+    "crypto-js": "^4.1.1",
+    "react-icons": "^4.11.0",
+    "webln": "^0.3.2"
+  }
+}

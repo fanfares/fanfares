@@ -1,0 +1,19 @@
+{
+  "stories": [
+    {
+      "preview": "In the heart of Elmdale Forest, elves aren't just tiny beings with pointy ears; they are guardians of ancient secrets. When young elf Liora discovers a mysterious map, she unknowingly begins a journey that will test her courage, challenge old beliefs, and potentially save or doom Elmdale itself.",
+      "story": "Liora was always the curious one. In a community where elves lived harmoniously with nature and practiced age-old traditions, she was the one climbing the tallest trees, swimming against the strongest currents, and sneaking into the elder's council meetings. However, nothing prepared her for the discovery she made on her 100th birthday...",
+      "cost": 1000
+    },
+    {
+      "preview": "Deep in the shadows of Elmdale, a mischievous elf named Caelum challenges the status quo with every prank and jest. But when his antics unveil a looming threat, will he step up to become the hero Elmdale needs?",
+      "story": "Caelum, with twinkling eyes and a penchant for mischief, was known to every elf in Elmdale. His pranks were legendary. From dyeing the river water blue to making the oldest tree in the forest dance to a tune, he had done it all. But one day, while plotting his next grand jest, he stumbled upon a dark secret: a looming menace that threatened the very essence of Elmdale...",
+      "cost": 2000
+    },
+    {
+      "preview": "Amara, an elf with a voice that could calm the fiercest storms, holds a secret. Her melodies carry the power of ancient spells, and with darkness encroaching, her voice might be Elmdale's last hope.",
+      "story": "With every note she sang, Amara could feel the pulse of the forest. Birds would perch beside her, and the winds would carry her melodies across Elmdale. Unbeknownst to many, embedded within her songs were ancient spells of protection and healing. As a shadowy threat began to envelope the land, her voice became a beacon, a call to arms, rallying every creature and elf to stand together against the gathering darkness...",
+      "cost": 3000
+    }
+  ]
+}
