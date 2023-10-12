@@ -289,11 +289,6 @@ The following is for the `gpt-3.5-turbo` output schema:
     }
   }
 ```
-### Safety
-
-It is not mandatory, but to raise the barrier to entry, clients should screen service provider's NIP-05 identifier. The domain used in their NIP-05, should be the same domain used for their endpoint.
-
-Clients may wish to create a whitelist of trusted service providers once tested.
 
 ### Problems
 
