@@ -1,0 +1,22 @@
+{
+  "name": "algorithm",
+  "version": "1.0.0",
+  "description": "We need a background service that constantly reads, writes and calculates the compost score.",
+  "main": "js/index.js",
+  "scripts": {
+    "start": "tsc && node dist/index.js",
+    "build": "tsc",
+    "dev": "tsc-watch --onSuccess \"node dist/index.js\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "firebase": "^10.4.0"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/firebase": "^3.2.1",
+    "typescript": "^5.2.2"
+  }
+}
