@@ -25,3 +25,30 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: black;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #2b2b2b;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+#trendingPosts::-webkit-scrollbar {
+  display: none;
+}
+#trendingPosts::-webkit-scrollbar {
+  display: none;
+}

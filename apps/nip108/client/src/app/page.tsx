@@ -361,7 +361,7 @@ export default function Home() {
   // ------------------- RENDERERS -------------------------
   const renderHeader = () => {
     return (
-      <h3 className="top-0 text-2xl font-bold fixed h-20 max-w-5xl border-white/20 flex items-center w-full justify-center backdrop-blur-md">
+      <h3 className="bg-black text-2xl font-bold fixed h-20 max-w-3xl flex items-center w-full justify-center">
         RELAY: {RELAY}
       </h3>
     )
@@ -418,12 +418,12 @@ export default function Home() {
 
   const renderEvents = () => {
     return (
-      <div className="w-full mt-4 border-b border-white/20">
+      <div className="w-full mt-20 space-y-4">
         {announcementNotes.map((event, index) => {
           return (
             <div
               key={index}
-              className="flex flex-col border-t border-white/20 px-12 py-4">
+              className="flex flex-col px-12 py-4 border border-white/20 rounded-md">
               {/* This container ensures content wrapping */}
               <div className="flex-grow overflow-hidden">
                 <p className="text-xs mb-1">ID: {event.note.id}</p>
@@ -517,7 +517,7 @@ export default function Home() {
     return (
       <button
         onClick={() => setPostFormOpen(true)}
-        className="fixed bottom-8 right-8 px-6 py-3 rounded-full border-2 border-white font-bold text-white shadow-lg bg-black hover:bg-white hover:text-black"
+        className="fixed bottom-8 right-8 px-6 py-3 rounded-full border border-white/20 font-bold text-white shadow-lg bg-black hover:bg-white hover:text-black"
         style={{ zIndex: 1000 }}>
         Post
       </button>
@@ -526,7 +526,7 @@ export default function Home() {
 
   const renderSocials = () => {
     return (
-      <div className="fixed top-5 left-5 flex space-x-5 z-50">
+      <div className="fixed top-5 right-5 flex space-x-5 z-50">
         <a
           href="https://github.com/project-excalibur/NIP-108"
           target="_blank"
@@ -546,16 +546,183 @@ export default function Home() {
     )
   }
 
+  const renderUserMenu = () => {
+    return (
+      <div className=" flex-col gap-4 text-xl font-bold w-40  mt-20 p-4 hidden md:block fixed left-0">
+        <p>Zapz Life</p>
+        <p className="mt-10">Home</p>
+        <p>Explore</p>
+        <p>Settings</p>
+      </div>
+    )
+  }
+
+  const renderSearchBar = () => {
+    return (
+      <input
+        type="text"
+        placeholder="search"
+        className=" h-4 p-4 rounded-full bg-transparent border-white/20 border outline-none"
+      />
+    )
+  }
+
+  const mockTrendingPosts = () => {
+    let i = 0
+    const elements = []
+
+    while (i < 30) {
+      elements.push(
+        <div key={i} className="flex mt-4 gap-2 h-12">
+          <img
+            src="https://placebeard.it/640x360"
+            className="w-8 rounded-full h-8 object-cover"
+            alt=""
+          />
+          <div className="flex flex-col ">
+            <p className="font-bold text-sm">
+              User<span className="font-thin"> | 1h ago</span>
+            </p>
+            <p className="font-thin line-clamp-2 text-xs">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            </p>
+          </div>
+        </div>
+      )
+
+      i++
+    }
+
+    return <div>{elements}</div>
+  }
+
+  const renderTrending = () => {
+    return (
+      <div className="flex flex-col h-screen">
+        <p>TRENDING</p>
+        <div id="trendingPosts" className="overflow-scroll h-[50vh] pb-10 mt-4">
+          {mockTrendingPosts()}
+        </div>
+      </div>
+    )
+  }
+
   // ------------------- MAIN -------------------------
 
   return (
-    <main className="flex min-h-screen flex-col items-center max-w-3xl mx-auto border-l border-white/20 border-r">
-      {renderHeader()}
-      <div className="flex flex-col max-w-3xl mt-16">
-        {renderEvents()}
+    <main className="flex w-full justify-center ">
+      {renderUserMenu()}
+      <div className="flex min-h-screen flex-col items-center max-w-xl xl:max-w-2xl overflow-y-scroll">
+        {/* {renderHeader()} */}
+        {/* {renderEvents()} */}
+        {/* MOCK POSTs */}
+        <div className="flex flex-col gap-4 mt-20">
+          <div className="flex flex-col px-12 py-4 border border-white/20 rounded-md">
+            {/* This container ensures content wrapping */}
+            <div className="flex-grow overflow-hidden">
+              <p className="text-xs mb-1">ID: 123123123</p>
+              <p className="text-xs mb-5">Author: 123123123 </p>
+
+              <h3 className="break-words">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
+                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
+                Cum sint maiores fugit aliquid cumque.
+              </h3>
+            </div>
+            {/* Button with a thin white outline */}
+          </div>
+          <div className="flex flex-col px-12 py-4 border border-white/20 rounded-md">
+            {/* This container ensures content wrapping */}
+            <div className="flex-grow overflow-hidden">
+              <p className="text-xs mb-1">ID: 123123123</p>
+              <p className="text-xs mb-5">Author: 123123123 </p>
+
+              <h3 className="break-words">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
+                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
+                Cum sint maiores fugit aliquid cumque.Lorem ipsum dolor sit amet
+                consectetur adipisicing elit. Corrupti, aperiam rem. Molestias,
+                hic recusandae repudiandae nisi quisquam ad quod voluptates,
+                fugiat sed, id consequuntur. Cum sint maiores fugit aliquid
+                cumque.Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
+                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
+                Cum sint maiores fugit aliquid cumque.Lorem ipsum dolor sit amet
+                consectetur adipisicing elit. Corrupti, aperiam rem. Molestias,
+                hic recusandae repudiandae nisi quisquam ad quod voluptates,
+                fugiat sed, id consequuntur. Cum sint maiores fugit aliquid
+                cumque.
+              </h3>
+            </div>
+            {/* Button with a thin white outline */}
+          </div>
+          <div className="flex flex-col px-12 py-4 border border-white/20 rounded-md">
+            {/* This container ensures content wrapping */}
+            <div className="flex-grow overflow-hidden">
+              <p className="text-xs mb-1">ID: 123123123</p>
+              <p className="text-xs mb-5">Author: 123123123 </p>
+
+              <h3 className="break-words">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
+                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
+                Cum sint maiores fugit aliquid cumque. Lorem ipsum dolor sit
+                amet consectetur adipisicing elit. Corrupti, aperiam rem.
+                Molestias, hic recusandae repudiandae nisi quisquam ad quod
+                voluptates, fugiat sed, id consequuntur. Cum sint maiores fugit
+                aliquid cumque.Lorem ipsum dolor sit amet consectetur
+                adipisicing elit. Corrupti, aperiam rem. Molestias, hic
+                recusandae repudiandae nisi quisquam ad quod voluptates, fugiat
+                sed, id consequuntur. Cum sint maiores fugit aliquid
+                cumque.Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
+                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
+                Cum sint maiores fugit aliquid cumque.
+              </h3>
+            </div>
+            {/* Button with a thin white outline */}
+          </div>
+          <div className="flex flex-col px-12 py-4 border border-white/20 rounded-md">
+            {/* This container ensures content wrapping */}
+            <div className="flex-grow overflow-hidden">
+              <p className="text-xs mb-1">ID: 123123123</p>
+              <p className="text-xs mb-5">Author: 123123123 </p>
+
+              <h3 className="break-words">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
+                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
+                Cum sint maiores fugit aliquid cumque.
+              </h3>
+            </div>
+            {/* Button with a thin white outline */}
+          </div>
+          <div className="flex flex-col px-12 py-4 border border-white/20 rounded-md">
+            {/* This container ensures content wrapping */}
+            <div className="flex-grow overflow-hidden">
+              <p className="text-xs mb-1">ID: 123123123</p>
+              <p className="text-xs mb-5">Author: 123123123 </p>
+
+              <h3 className="break-words">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
+                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
+                Cum sint maiores fugit aliquid cumque.
+              </h3>
+            </div>
+            {/* Button with a thin white outline */}
+          </div>
+        </div>
+        {/* MOCK POSTs */}
         {renderPostButton()}
         {renderForm()}
         {renderSocials()}
+      </div>
+      <div className="flex-col mt-20 ml-10 gap-8 space-y-8  w-60 hidden lg:block fixed right-0">
+        {renderSearchBar()}
+        {renderTrending()}
       </div>
     </main>
   )
