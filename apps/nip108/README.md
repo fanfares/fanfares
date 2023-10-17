@@ -21,17 +21,17 @@ bun install
 
 Run the server:
 ```bash
-bun server
+bun nip108-server
 ```
 
 Run the client:
 ```bash
-bun client
+bun nip108-client
 ```
 
 Create a gated note:
 ```bash
-bun createNote
+bun nip108-script
 ```
 
 # NIP
@@ -46,21 +46,23 @@ Lightning Gated Notes
 This NIP defines three events for gating Notes behind lightning paywalls: 
 
 - Lightning-Gated Note ( `kind:55` ): This note allows you wrap any type of note behind a lightning gated paywall by encrypting the payload with a purchasable decrypt key.
-- Key Note ( `kind:56` ): This note encrypts the key for a given note, per user, using `NIP-04` between the corresponding gate creator's public key and the purchasers. It is linked to the gated note with the `g` tag.
+- Key Note ( `kind:56` ): This note encrypts the key for a given note, per user, using [NIP-04](https://github.com/nostr-protocol/nips/blob/master/04.md) between the corresponding gate creator's public key and the purchasers. It is linked to the gated note with the `g` tag.
 - Announcement Note ( `kind:54` ): This note acts as the announcement of the gated note, giving a short preview of the content. It is linked to the gated note with the `g` tag.
+
+A complete open-source implantation of [NIP-108 is available](https://github.com/project-excalibur/Nostr-Playground/tree/main/apps/nip108).
 
 ## Protocol flow
 ### Creating Gated Notes
 1. Poster creates a note of any kind
 2. Poster `JSON.stringify`'s the whole note.
-3. Poster encrypts the note string with a `secret` (new nostr private key), and `iv` using `aes-256-cbc`.
-4. Poster creates the gated note `kind:55` with the encrypted note json string for the content while putting `iv`, `cost` (mSats), and `endpoint` as tags. The `endpoint` tag is the server endpoint you use to hold your `secret`s and issue lightning invoices from your `lud16`.
+3. Poster encrypts the note string with a new nsec `secret`, and `iv` using `aes-256-cbc`.
+4. Poster creates the gated note `kind:55` with the encrypted note json string in the `content` field, while putting `iv`, `cost` (mSats), and `endpoint` as tags. The `endpoint` tag is the server endpoint you use to hold your `secret`'s and issue lightning invoices from your `lud16`.
 5. Poster then creates an announcement note `kind:54` with the `g` tag (gated note's id) to preview the gated content.
 
 ### Consuming Gated Notes
 1. Client finds gated content they want to purchase by browsing `kind:54` announcement notes. 
 2. Client loads the associated gated note of `kind:55` found in the `g` tag
-3. Client then GETs the `endpoint` tag
+3. Client then GETs the `[endpoint]/[id]`
 4. Gate server will respond with a 402 PR requesting a payment for the `cost` tag's amount in mSats
 5. Client pays the amount
 6. Client uses the `successAction` url returned in the PR to fetch the `secret` which will unlock the gated content.
@@ -70,7 +72,21 @@ This NIP defines three events for gating Notes behind lightning paywalls:
 
 ## Server Functions
 NIP-108 requires an outside server to store `secret`s and issue lighting invoices to those wishing to purchase the digital content.
+
+The server should have two endpoints:
+`[endpoint]/create` - POST to create new notes
+`[endpoint]/[id]` - GET to fetch the PR to purchase the gated note's `secret`, where `id` is the gated note's `id`.
+
+
 ### Create a Gated Note
+The server first needs to be able to store a gated note's `secret`. Minimally, the server needs to store four items: the gated note's `id`, the owner's `lud16`, the decrypt `secret`, and the `cost` in msats.
+
+It is advised to also check, server-side, that the gated note can be unlocked. To accomplish this the following should be done:
+
+1. Accept a POST to the server's `create` endpoint, with the following: `gateEvent`, `lud16`, `secret`, and `cost`;
+2. The server should then decrypt the `gateEvent` using the `secret` and the `iv` tag provided in the event. Since a gated event is just an encrypted JSON stringified event, you should be able to check any of the decrypted note's field to know it's been decrypted successfully.
+3. One should also check that the `endpoint` matches the server's domain
+4. Store in the server's database the gated note's `id`, owner's `lud16`, decrypt `secret` and `cost`. 
 
 ```typescript
 APP.post("/create")
@@ -86,20 +102,63 @@ export interface CreateNotePostBody {
 ```
 
 ### Handling Purchases
+Once the server has stored a gated note's `secret`, it can then be purchased via lightning. 
+
+1. A user will GET `[endpoint]/[id]` and the server will...
+   1. If `id` exists, return a 402 with a PR fetched from the stored `lud16` for the amount of the stored `cost`
+   2. If `id` does not exist, return a 404.
+2. The PR will contain a `successAction` url which should be formatted as such: `[endpoint]/[id]/[payment_hash]`. It is up to the user to poll this `successAction`.
+3. When the `[endpoint]/[id]/[payment_hash]` endpoint is hit, the server should check the payment status...
+   1. If paid, return a JSON string `{secret: [secret]}`
+   2. If not paid, return a 402 with the same PR
+
 
 ```typescript
-APP.post("/:noteId")
+APP.get("/:noteId")
 ```
-
-
-### Get Results
 
 ```typescript
-APP.post("/:noteId/:paymentHash")
+APP.get("/:noteId/:paymentHash")
 ```
 
-## Encryption/Decryption
-### Gated Note Content
+## Event Reference and Examples
+### Gated Note ( Kind:55 )
+
+`kind:55`
+
+`.content` should be a JSON stringified event of any kind.
+
+`.tag` MUST include the following:
+
+- `iv`, the **i**nitialization **v**ector used to encrypt the `content`
+- `cost`, the cost to unlock in msats
+- `endpoint`, the domain of the server used to store your decrypt `secret`. The user can then call GET on `[endpoint]/[id]` to fetch the unlock PR.
+
+### Announcement Note ( Kind:54 )
+
+`kind:54`
+
+`.content` some preview or announcement of the content you have locked away.
+
+`.tag` MUST include the following:
+
+- `g`, the id of the gated event.
+
+### Key Note ( Kind:56 )
+
+`kind:54`
+
+`.content` the `secret` encrypted via [NIP-04](https://github.com/nostr-protocol/nips/blob/master/04.md)'s encrypt function between the gated note's creator's pubkey and your pubkey.
+
+`.tag` MUST include the following:
+
+- `g`, the id of the gated event.
+
+### Encryption/Decryption
+
+To encrypt/decrypt `kind:56` key notes, we use [NIP-04](https://github.com/nostr-protocol/nips/blob/master/04.md)'s encrypt/decrypt functions between the gated note's creator's pubkey and your pubkey.
+
+To encrypt/decrypt the gated note, we use `aes-256-cbc`. Below is a simple implementation in ts:
 
 ```typescript
 import * as cryptoBrowser from 'crypto-browserify';
@@ -109,6 +168,10 @@ const algorithm: string = 'aes-256-cbc';
 export interface EncryptedOutput {
     iv: string;
     content: string;
+}
+
+export function hashToKey(inputString: string): Buffer {
+    return cryptoBrowser.createHash('sha256').update(inputString).digest();
 }
 
 export function encrypt(text: string, key: Buffer): EncryptedOutput {
@@ -128,183 +191,15 @@ export function decrypt(iv: string, content: string, key: Buffer): string {
 
     return decrypted.toString('utf8');
 }
+
 ```
-
-## Event Reference and Examples
-
-Uses `nip-04`
-
-### GatedNote
-
-`kind:55`
-
-`.content` should be a JSON stringified version of the following JSON:
-```typescript
-  enum OfferingStatus {
-    up = 'UP',
-    down = 'DOWN',
-    closed = 'CLOSED'
-  }
-
-  interface OfferingContent = {
-    endpoint: string,          // The POST endpoint you call to pay/fetch
-    status: OfferingStatus,    // UP/DOWN/CLOSED
-    cost: number,              // The cost per call in mSats
-    schema?: Object,           // Recommended - JSON schema for the POST body of the endpoint
-    outputSchema?: Object,     // Recommended - JSON schema for the response of the call
-    description?: string       // Optional - Description for the end user
-  }
-```
-
-`.tag` MUST include the following:
-
-- `s`, the service tag should simply be the underlying API endpoint of the service provided. For example if you are offering a ChatGPT service, you would set `s` = `https://api.openai.com/v1/chat/completions`. This way the service they are buying is implicit.
-- `d`, following **parameterized replaceable events** in [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md), this tag allows this event to be replaceable. Since there should only be one service per pubkey, the `d` tag should match the `s` tag.
-
-### Example Service Event
-
-```typescript
-
-const content = {
-  endpoint: "https://example.api/chat/",
-  status: "UP",
-  cost: 5000,
-  schema: {...},
-  outputSchema: {...},
-  description: "This will call the ChatGPT endpoint"
-}
-
-const event = {
-  "kind": 31402,
-  "created_at": 1675642635,
-  "content": JSON.stringify(content),
-  "tags": [
-    ["s", "https://api.openai.com/v1/chat/completions"]
-    ["d", "https://api.openai.com/v1/chat/completions"],
-  ],
-  "pubkey": "<pubkey>",
-  "id": "<id>"
-}
-```
-
-### Example Schema
-
-The following is for the `gpt-3.5-turbo` input schema:
-
-```json
-{
-    "type": "object",
-    "properties": {
-        "model": {
-            "type": "string",
-            "enum": ["gpt-3.5-turbo"]
-        },
-        "messages": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "role": {
-                        "type": "string",
-                        "enum": ["system", "user"]
-                    },
-                    "content": {
-                        "type": "string"
-                    }
-                },
-                "required": ["role", "content"]
-            },
-            "minItems": 1
-        }
-    },
-    "required": ["model", "messages"]
-}
-```
-
-The following is for the `gpt-3.5-turbo` output schema:
-
-```json
-{
-    "type": "object",
-    "required": ["id", "object", "created", "model", "choices", "usage"],
-    "properties": {
-      "id": {
-        "type": "string",
-        "pattern": "^chatcmpl-[a-zA-Z0-9-]+$"
-      },
-      "object": {
-        "type": "string",
-        "enum": ["chat.completion"]
-      },
-      "created": {
-        "type": "integer"
-      },
-      "model": {
-        "type": "string"
-      },
-      "choices": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "required": ["index", "message"],
-          "properties": {
-            "index": {
-              "type": "integer"
-            },
-            "message": {
-              "type": "object",
-              "required": ["role", "content"],
-              "properties": {
-                "role": {
-                  "type": "string",
-                  "enum": ["assistant"]
-                },
-                "content": {
-                  "type": "string"
-                }
-              }
-            },
-            "finish_reason": {
-              "type": "string",
-              "enum": ["stop"]
-            }
-          }
-        }
-      },
-      "usage": {
-        "type": "object",
-        "required": ["prompt_tokens", "completion_tokens", "total_tokens"],
-        "properties": {
-          "prompt_tokens": {
-            "type": "integer"
-          },
-          "completion_tokens": {
-            "type": "integer"
-          },
-          "total_tokens": {
-            "type": "integer"
-          }
-        }
-      }
-    }
-  }
-```
-### Safety
-
-It is not mandatory, but to raise the barrier to entry, clients should screen service provider's NIP-05 identifier. The domain used in their NIP-05, should be the same domain used for their endpoint.
-
-Clients may wish to create a whitelist of trusted service providers once tested.
 
 ### Problems
 
-- No data integrity - service providers can store/redistribute any data passed to them
-- Service providers could take payment and never return the product
-- Service providers are not guaranteed to call the endpoint specified in the `s` tag
-- No recourse for errored API fetches
-- The `cost` field may not match the actual final price
-- No proof of purchase
+- Servers need to be trusted
+- Nothing is stopping people from freely giving their decrypt key
 
 ### Example Implementations
 
-- [Server](https://github.com/Team-Pleb-TabConf-2023/nip-105-server)
-- [Client](https://github.com/Team-Pleb-TabConf-2023/nip-105-client)
+- [Client](https://nip-108.nostrplayground.com/)
+- [Server](https://github.com/project-excalibur/Nostr-Playground/tree/main/apps/nip108)
