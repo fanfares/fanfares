@@ -1,0 +1,22 @@
+{
+  "name": "utils",
+  "module": "updateTeams.ts",
+  "type": "module",
+  "scripts": {
+    "update": "tsc index.ts && mv index.js index.cjs && node index.cjs"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "patch-package": "^8.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@firebase/firestore-types": "^3.0.0",
+    "csv-parser": "^3.0.0",
+    "firebase-admin": "^11.11.0",
+    "nostr-tools": "^1.16.0",
+    "ws": "^8.14.2"
+  }
+}
