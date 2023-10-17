@@ -21,17 +21,17 @@ bun install
 
 Run the server:
 ```bash
-bun server
+bun nip108-server
 ```
 
 Run the client:
 ```bash
-bun client
+bun nip108-client
 ```
 
 Create a gated note:
 ```bash
-bun createNote
+bun nip108-script
 ```
 
 # NIP
