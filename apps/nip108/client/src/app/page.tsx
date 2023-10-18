@@ -23,6 +23,7 @@ import {
   unlockGatedNote,
   PREntry,
 } from "nip108"
+import AnimatedButton from "@/components/AnimatedButton"
 
 const RELAY = process.env.NEXT_PUBLIC_NOSTR_RELAY as string
 const GATE_SERVER = process.env.NEXT_PUBLIC_GATE_SERVER as string
@@ -361,9 +362,9 @@ export default function Home() {
   // ------------------- RENDERERS -------------------------
   const renderHeader = () => {
     return (
-      <h3 className="bg-black text-2xl font-bold fixed h-20 max-w-3xl flex items-center w-full justify-center">
-        RELAY: {RELAY}
-      </h3>
+      <header className="bg-black text-2xl font-bold sticky top-0 h-40 w-full text-center items-center justify-center">
+        ZAPZ Life
+      </header>
     )
   }
 
@@ -423,7 +424,7 @@ export default function Home() {
           return (
             <div
               key={index}
-              className="flex flex-col px-12 py-4 border border-white/20 rounded-md">
+              className="flex flex-col px-8 py-4 border border-white/20 rounded-md">
               {/* This container ensures content wrapping */}
               <div className="flex-grow overflow-hidden">
                 <p className="text-xs mb-1">ID: {event.note.id}</p>
@@ -443,9 +444,11 @@ export default function Home() {
   const renderForm = () => {
     if (!isPostFormOpen) return null
 
+    // const [contentHeight, setContentHeight] = useState("auto")
+
     return (
       <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-opacity-60 bg-black z-50">
-        <div className="bg-black border-2 border-white p-5 rounded-lg shadow-lg w-1/2 text-white">
+        <div className="bg-black border border-white/20 p-5 rounded-lg shadow-lg w-1/2 text-white">
           <h2 className="mb-4 text-lg">Create Gated Post</h2>
           <div className="mt-1 mb-2">
             <label className="block mb-2">Lud16</label>
@@ -456,7 +459,7 @@ export default function Home() {
               onChange={e =>
                 setFormData({ ...formData, lud16: e.target.value })
               }
-              className="p-2 w-full border border-white bg-black text-white rounded"
+              className="p-2 w-full border border-white/20 bg-black text-white rounded"
             />
           </div>
           <div className="mt-1 mb-2">
@@ -469,7 +472,7 @@ export default function Home() {
               onChange={e =>
                 setFormData({ ...formData, cost: +e.target.value })
               }
-              className="p-2 w-full border border-white bg-black text-white rounded"
+              className="p-2 w-full border border-white/20 bg-black text-white rounded"
             />
           </div>
           <div className="mt-1 mb-2">
@@ -482,10 +485,10 @@ export default function Home() {
               onChange={e =>
                 setFormData({ ...formData, preview: e.target.value })
               }
-              className="p-2 w-full border border-white bg-black text-white rounded"
+              className="p-2 w-full border border-white/20 bg-black text-white rounded"
             />
           </div>
-          <div className="mt-1 mb-2">
+          <div className="mt-1 mb-2 h-80">
             <label className="block mb-2">Content</label>
             <textarea
               maxLength={MAX_CONTENT_LENGTH}
@@ -494,19 +497,20 @@ export default function Home() {
               onChange={e =>
                 setFormData({ ...formData, content: e.target.value })
               }
-              className="p-2 w-full border border-white bg-black text-white rounded"></textarea>
+              className="p-2 w-full resize-none h-full border border-white/20 bg-black text-white rounded"></textarea>
           </div>
-          <div className="mt-4 flex justify-between">
-            <button
+          <div className="mt-12 flex justify-between">
+            <AnimatedButton
+              className="border border-white/20 font-bold"
               onClick={() => setPostFormOpen(false)}
-              className="px-4 py-2 bg-black border border-white text-white rounded hover:bg-white hover:text-black">
-              Close
-            </button>
-            <button
+              label="Close"
+            />
+
+            <AnimatedButton
+              className="border border-white/20 font-bold"
               onClick={submitForm}
-              className="px-4 py-2 bg-black border border-white text-white rounded hover:bg-white hover:text-black">
-              Submit
-            </button>
+              label="Submit"
+            />
           </div>
         </div>
       </div>
@@ -515,12 +519,11 @@ export default function Home() {
 
   const renderPostButton = () => {
     return (
-      <button
-        onClick={() => setPostFormOpen(true)}
-        className="fixed bottom-8 right-8 px-6 py-3 rounded-full border border-white/20 font-bold text-white shadow-lg bg-black hover:bg-white hover:text-black"
+      <div
+        className="fixed bottom-8 right-8 border border-white/20 rounded-full font-bold text-white shadow-lg "
         style={{ zIndex: 1000 }}>
-        Post
-      </button>
+        <AnimatedButton onClick={() => setPostFormOpen(true)} label="POST" />
+      </div>
     )
   }
 
@@ -548,12 +551,17 @@ export default function Home() {
 
   const renderUserMenu = () => {
     return (
-      <div className=" flex-col gap-4 text-xl font-bold w-40  mt-20 p-4 hidden md:block fixed left-0">
-        <p>Zapz Life</p>
-        <p className="mt-10">Home</p>
-        <p>Explore</p>
-        <p>Settings</p>
-      </div>
+      <nav className=" flex-col h-screen gap-8 items-start text-xl sticky top-0 font-bold p-4 hidden md:flex">
+        <AnimatedButton label="HOME" />
+        <AnimatedButton label="PROFILE" />
+        <AnimatedButton label="EXPLORE" />
+        <AnimatedButton label="SETTINGS" />
+        <AnimatedButton
+          className="border border-blue-400"
+          onClick={() => setPostFormOpen(true)}
+          label="POST"
+        />
+      </nav>
     )
   }
 
@@ -562,7 +570,7 @@ export default function Home() {
       <input
         type="text"
         placeholder="search"
-        className=" h-4 p-4 rounded-full bg-transparent border-white/20 border outline-none"
+        className="mt-4 h-4 p-4 rounded-full bg-transparent border-white/20 border outline-none w-full"
       />
     )
   }
@@ -607,17 +615,12 @@ export default function Home() {
     )
   }
 
-  // ------------------- MAIN -------------------------
-
-  return (
-    <main className="flex w-full justify-center ">
-      {renderUserMenu()}
-      <div className="flex min-h-screen flex-col items-center max-w-xl xl:max-w-2xl overflow-y-scroll">
-        {/* {renderHeader()} */}
-        {/* {renderEvents()} */}
+  const renderMockPosts = () => {
+    return (
+      <>
         {/* MOCK POSTs */}
-        <div className="flex flex-col gap-4 mt-20">
-          <div className="flex flex-col px-12 py-4 border border-white/20 rounded-md">
+        <div className="space-y-4">
+          <article className="flex flex-col px-8 py-4 border border-white/20 rounded-md">
             {/* This container ensures content wrapping */}
             <div className="flex-grow overflow-hidden">
               <p className="text-xs mb-1">ID: 123123123</p>
@@ -631,8 +634,8 @@ export default function Home() {
               </h3>
             </div>
             {/* Button with a thin white outline */}
-          </div>
-          <div className="flex flex-col px-12 py-4 border border-white/20 rounded-md">
+          </article>
+          <div className="flex flex-col px-8 py-4 border border-white/20 rounded-md">
             {/* This container ensures content wrapping */}
             <div className="flex-grow overflow-hidden">
               <p className="text-xs mb-1">ID: 123123123</p>
@@ -658,7 +661,7 @@ export default function Home() {
             </div>
             {/* Button with a thin white outline */}
           </div>
-          <div className="flex flex-col px-12 py-4 border border-white/20 rounded-md">
+          <div className="flex flex-col px-8 py-4 border border-white/20 rounded-md">
             {/* This container ensures content wrapping */}
             <div className="flex-grow overflow-hidden">
               <p className="text-xs mb-1">ID: 123123123</p>
@@ -684,7 +687,7 @@ export default function Home() {
             </div>
             {/* Button with a thin white outline */}
           </div>
-          <div className="flex flex-col px-12 py-4 border border-white/20 rounded-md">
+          <div className="flex flex-col px-8 py-4 border border-white/20 rounded-md">
             {/* This container ensures content wrapping */}
             <div className="flex-grow overflow-hidden">
               <p className="text-xs mb-1">ID: 123123123</p>
@@ -699,7 +702,7 @@ export default function Home() {
             </div>
             {/* Button with a thin white outline */}
           </div>
-          <div className="flex flex-col px-12 py-4 border border-white/20 rounded-md">
+          <div className="flex flex-col px-8 py-4 border border-white/20 rounded-md">
             {/* This container ensures content wrapping */}
             <div className="flex-grow overflow-hidden">
               <p className="text-xs mb-1">ID: 123123123</p>
@@ -716,14 +719,29 @@ export default function Home() {
           </div>
         </div>
         {/* MOCK POSTs */}
-        {renderPostButton()}
-        {renderForm()}
-        {renderSocials()}
-      </div>
-      <div className="flex-col mt-20 ml-10 gap-8 space-y-8  w-60 hidden lg:block fixed right-0">
-        {renderSearchBar()}
-        {renderTrending()}
-      </div>
-    </main>
+      </>
+    )
+  }
+
+  // ------------------- MAIN -------------------------
+
+  return (
+    <>
+      <main className="flex flex-row w-full justify-center ">
+        {renderUserMenu()}
+        <section className="min-h-screen items-center max-w-md md:max-w-xl">
+          {/* {renderEvents()} */}
+          {renderHeader()}
+          {renderMockPosts()}
+          {renderForm()}
+          {/* {renderSocials()} */}
+        </section>
+        <aside className="space-y-8 ml-8 w-80 hidden lg:block h-screen sticky top-0 bg-black ">
+          {renderSearchBar()}
+          {renderTrending()}
+        </aside>
+        {/* {renderPostButton()} */}
+      </main>
+    </>
   )
 }
