@@ -24,6 +24,7 @@ import {
   PREntry,
 } from "nip108"
 import AnimatedButton from "@/components/AnimatedButton"
+import NavigationMenu from "@/components/NavigationMenu"
 
 const RELAY = process.env.NEXT_PUBLIC_NOSTR_RELAY as string
 const GATE_SERVER = process.env.NEXT_PUBLIC_GATE_SERVER as string
@@ -362,7 +363,7 @@ export default function Home() {
   // ------------------- RENDERERS -------------------------
   const renderHeader = () => {
     return (
-      <header className="bg-black text-2xl font-bold sticky top-0 h-40 w-full text-center items-center justify-center">
+      <header className="sticky top-0 items-center justify-center w-full h-40 text-2xl font-bold text-center bg-black">
         ZAPZ Life
       </header>
     )
@@ -384,19 +385,20 @@ export default function Home() {
   const renderLockedContent = (gatedNote: GatedNote) => {
     return (
       <div className="mt-5">
-        <p className="blur-sm break-words select-none">
+        <p className="break-words select-none blur-sm">
           {formatGatedContent(gatedNote.note.content)}
         </p>
-        <div className="mt-4 flex justify-center">
-          <button
+        <div className="flex justify-center mt-4">
+          <AnimatedButton
             onClick={() => {
               handleBuy(gatedNote)
             }}
-            className={`px-3 py-2 border border-r-4 border-white rounded-full text-white hover:bg-white hover:text-black hover:border-black`}>
-            {gateLoading && gatedNote.note.id === gateLoading
-              ? "Unlocking..."
-              : `${(gatedNote.cost / 1000).toFixed(0)} ⚡🔓`}
-          </button>
+            label={
+              gateLoading && gatedNote.note.id === gateLoading
+                ? "Unlocking..."
+                : `${(gatedNote.cost / 1000).toFixed(0)} ⚡🔓`
+            }
+            className={`border border-white/20`}></AnimatedButton>
         </div>
       </div>
     )
@@ -419,16 +421,33 @@ export default function Home() {
 
   const renderEvents = () => {
     return (
-      <div className="w-full mt-20 space-y-4">
+      <div className="w-full space-y-4 md:min-w-[32rem]">
         {announcementNotes.map((event, index) => {
           return (
             <div
               key={index}
-              className="flex flex-col px-8 py-4 border border-white/20 rounded-md">
+              className="flex flex-col px-8 py-4 border rounded-md border-white/20">
               {/* This container ensures content wrapping */}
               <div className="flex-grow overflow-hidden">
-                <p className="text-xs mb-1">ID: {event.note.id}</p>
-                <p className="text-xs mb-5">Author: {event.note.pubkey} </p>
+                <p className="mb-1 text-xs">ID: {event.note.id}</p>
+                <p className="mb-5 text-xs">Author: {event.note.pubkey} </p>
+
+                <h3 className="break-words">{event.note.content}</h3>
+              </div>
+              {/* Button with a thin white outline */}
+              {renderGatedContent(event)}
+            </div>
+          )
+        })}
+        {announcementNotes.map((event, index) => {
+          return (
+            <div
+              key={index}
+              className="flex flex-col px-8 py-4 border rounded-md border-white/20">
+              {/* This container ensures content wrapping */}
+              <div className="flex-grow overflow-hidden">
+                <p className="mb-1 text-xs">ID: {event.note.id}</p>
+                <p className="mb-5 text-xs">Author: {event.note.pubkey} </p>
 
                 <h3 className="break-words">{event.note.content}</h3>
               </div>
@@ -447,8 +466,8 @@ export default function Home() {
     // const [contentHeight, setContentHeight] = useState("auto")
 
     return (
-      <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-opacity-60 bg-black z-50">
-        <div className="bg-black border border-white/20 p-5 rounded-lg shadow-lg w-1/2 text-white">
+      <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-60">
+        <div className="w-1/2 p-5 text-white bg-black border rounded-lg shadow-lg border-white/20">
           <h2 className="mb-4 text-lg">Create Gated Post</h2>
           <div className="mt-1 mb-2">
             <label className="block mb-2">Lud16</label>
@@ -459,7 +478,7 @@ export default function Home() {
               onChange={e =>
                 setFormData({ ...formData, lud16: e.target.value })
               }
-              className="p-2 w-full border border-white/20 bg-black text-white rounded"
+              className="w-full p-2 text-white bg-black border rounded border-white/20"
             />
           </div>
           <div className="mt-1 mb-2">
@@ -472,7 +491,7 @@ export default function Home() {
               onChange={e =>
                 setFormData({ ...formData, cost: +e.target.value })
               }
-              className="p-2 w-full border border-white/20 bg-black text-white rounded"
+              className="w-full p-2 text-white bg-black border rounded border-white/20"
             />
           </div>
           <div className="mt-1 mb-2">
@@ -485,7 +504,7 @@ export default function Home() {
               onChange={e =>
                 setFormData({ ...formData, preview: e.target.value })
               }
-              className="p-2 w-full border border-white/20 bg-black text-white rounded"
+              className="w-full p-2 text-white bg-black border rounded border-white/20"
             />
           </div>
           <div className="mt-1 mb-2 h-80">
@@ -497,17 +516,17 @@ export default function Home() {
               onChange={e =>
                 setFormData({ ...formData, content: e.target.value })
               }
-              className="p-2 w-full resize-none h-full border border-white/20 bg-black text-white rounded"></textarea>
+              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
           </div>
-          <div className="mt-12 flex justify-between">
+          <div className="flex justify-between mt-12">
             <AnimatedButton
-              className="border border-white/20 font-bold"
+              className="font-bold border border-white/20"
               onClick={() => setPostFormOpen(false)}
               label="Close"
             />
 
             <AnimatedButton
-              className="border border-white/20 font-bold"
+              className="font-bold border border-white/20"
               onClick={submitForm}
               label="Submit"
             />
@@ -520,7 +539,7 @@ export default function Home() {
   const renderPostButton = () => {
     return (
       <div
-        className="fixed bottom-8 right-8 border border-white/20 rounded-full font-bold text-white shadow-lg "
+        className="fixed font-bold text-white border rounded-full shadow-lg bottom-8 right-8 border-white/20 "
         style={{ zIndex: 1000 }}>
         <AnimatedButton onClick={() => setPostFormOpen(true)} label="POST" />
       </div>
@@ -529,7 +548,7 @@ export default function Home() {
 
   const renderSocials = () => {
     return (
-      <div className="fixed top-5 right-5 flex space-x-5 z-50">
+      <div className="fixed z-50 flex space-x-5 top-5 right-5">
         <a
           href="https://github.com/project-excalibur/NIP-108"
           target="_blank"
@@ -551,7 +570,7 @@ export default function Home() {
 
   const renderUserMenu = () => {
     return (
-      <nav className=" flex-col h-screen gap-8 items-start text-xl sticky top-0 font-bold p-4 hidden md:flex">
+      <nav className="sticky top-0 flex-col items-start hidden gap-8 p-4 text-xl font-bold md:flex">
         <AnimatedButton label="HOME" />
         <AnimatedButton label="PROFILE" />
         <AnimatedButton label="EXPLORE" />
@@ -570,7 +589,7 @@ export default function Home() {
       <input
         type="text"
         placeholder="search"
-        className="mt-4 h-4 p-4 rounded-full bg-transparent border-white/20 border outline-none w-full"
+        className="w-full h-4 p-4 mt-4 bg-transparent border rounded-full outline-none border-white/20"
       />
     )
   }
@@ -581,17 +600,17 @@ export default function Home() {
 
     while (i < 30) {
       elements.push(
-        <div key={i} className="flex mt-4 gap-2 h-12">
+        <div key={i} className="flex h-12 gap-2 mt-4">
           <img
             src="https://placebeard.it/640x360"
-            className="w-8 rounded-full h-8 object-cover"
+            className="object-cover w-8 h-8 rounded-full"
             alt=""
           />
           <div className="flex flex-col ">
-            <p className="font-bold text-sm">
+            <p className="text-sm font-bold">
               User<span className="font-thin"> | 1h ago</span>
             </p>
-            <p className="font-thin line-clamp-2 text-xs">
+            <p className="text-xs font-thin line-clamp-2">
               Lorem ipsum dolor sit amet consectetur adipisicing elit.
             </p>
           </div>
@@ -620,11 +639,11 @@ export default function Home() {
       <>
         {/* MOCK POSTs */}
         <div className="space-y-4">
-          <article className="flex flex-col px-8 py-4 border border-white/20 rounded-md">
+          <article className="flex flex-col px-8 py-4 border rounded-md border-white/20">
             {/* This container ensures content wrapping */}
             <div className="flex-grow overflow-hidden">
-              <p className="text-xs mb-1">ID: 123123123</p>
-              <p className="text-xs mb-5">Author: 123123123 </p>
+              <p className="mb-1 text-xs">ID: 123123123</p>
+              <p className="mb-5 text-xs">Author: 123123123 </p>
 
               <h3 className="break-words">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -635,11 +654,11 @@ export default function Home() {
             </div>
             {/* Button with a thin white outline */}
           </article>
-          <div className="flex flex-col px-8 py-4 border border-white/20 rounded-md">
+          <div className="flex flex-col px-8 py-4 border rounded-md border-white/20">
             {/* This container ensures content wrapping */}
             <div className="flex-grow overflow-hidden">
-              <p className="text-xs mb-1">ID: 123123123</p>
-              <p className="text-xs mb-5">Author: 123123123 </p>
+              <p className="mb-1 text-xs">ID: 123123123</p>
+              <p className="mb-5 text-xs">Author: 123123123 </p>
 
               <h3 className="break-words">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -661,11 +680,11 @@ export default function Home() {
             </div>
             {/* Button with a thin white outline */}
           </div>
-          <div className="flex flex-col px-8 py-4 border border-white/20 rounded-md">
+          <div className="flex flex-col px-8 py-4 border rounded-md border-white/20">
             {/* This container ensures content wrapping */}
             <div className="flex-grow overflow-hidden">
-              <p className="text-xs mb-1">ID: 123123123</p>
-              <p className="text-xs mb-5">Author: 123123123 </p>
+              <p className="mb-1 text-xs">ID: 123123123</p>
+              <p className="mb-5 text-xs">Author: 123123123 </p>
 
               <h3 className="break-words">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -687,11 +706,11 @@ export default function Home() {
             </div>
             {/* Button with a thin white outline */}
           </div>
-          <div className="flex flex-col px-8 py-4 border border-white/20 rounded-md">
+          <div className="flex flex-col px-8 py-4 border rounded-md border-white/20">
             {/* This container ensures content wrapping */}
             <div className="flex-grow overflow-hidden">
-              <p className="text-xs mb-1">ID: 123123123</p>
-              <p className="text-xs mb-5">Author: 123123123 </p>
+              <p className="mb-1 text-xs">ID: 123123123</p>
+              <p className="mb-5 text-xs">Author: 123123123 </p>
 
               <h3 className="break-words">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -702,11 +721,11 @@ export default function Home() {
             </div>
             {/* Button with a thin white outline */}
           </div>
-          <div className="flex flex-col px-8 py-4 border border-white/20 rounded-md">
+          <div className="flex flex-col px-8 py-4 border rounded-md border-white/20">
             {/* This container ensures content wrapping */}
             <div className="flex-grow overflow-hidden">
-              <p className="text-xs mb-1">ID: 123123123</p>
-              <p className="text-xs mb-5">Author: 123123123 </p>
+              <p className="mb-1 text-xs">ID: 123123123</p>
+              <p className="mb-5 text-xs">Author: 123123123 </p>
 
               <h3 className="break-words">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -727,16 +746,16 @@ export default function Home() {
 
   return (
     <>
-      <main className="flex flex-row w-full justify-center ">
-        {renderUserMenu()}
-        <section className="min-h-screen items-center max-w-md md:max-w-xl">
-          {/* {renderEvents()} */}
+      <main className="static flex flex-row justify-center w-full ">
+        <NavigationMenu onClick={() => setPostFormOpen(true)} />
+        <section className="items-center max-w-md min-h-screen mb-10 md:max-w-xl">
           {renderHeader()}
+          {renderEvents()}
           {renderMockPosts()}
           {renderForm()}
           {/* {renderSocials()} */}
         </section>
-        <aside className="space-y-8 ml-8 w-80 hidden lg:block h-screen sticky top-0 bg-black ">
+        <aside className="sticky top-0 hidden h-screen ml-8 space-y-8 bg-black w-80 lg:block ">
           {renderSearchBar()}
           {renderTrending()}
         </aside>
