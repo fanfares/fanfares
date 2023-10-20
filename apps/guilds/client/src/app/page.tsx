@@ -24,6 +24,8 @@ import {
   PREntry,
 } from "nip108"
 import AnimatedMenuButton from "@/components/AnimatedButton"
+import NavigationMenu from "@/components/NavigationMenu"
+import Button from "@/components/Button"
 
 const RELAY = process.env.NEXT_PUBLIC_NOSTR_RELAY as string
 const GATE_SERVER = process.env.NEXT_PUBLIC_GATE_SERVER as string
