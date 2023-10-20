@@ -5,7 +5,7 @@
     "nip108-server": "bun run apps/nip108/server/index.ts",
     "nip108-client": "cd apps/nip108/client && bun run dev",
     "nip108-script": "bun run apps/nip108/script/index.ts",
-
+    "guilds-client": "cd apps/guilds/client && bun run dev",
     "server-update-landing": "cd server-scripts && ./update-landing.sh"
   },
   "workspaces": [
@@ -13,7 +13,8 @@
     "packages/nip108",
     "apps/nip108/script",
     "apps/nip108/client",
-    "apps/nip108/server"
+    "apps/nip108/server",
+    "apps/guilds/client"
   ],
   "dependencies": {
     "@types/crypto-js": "^4.1.2",

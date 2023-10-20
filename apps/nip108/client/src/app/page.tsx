@@ -23,8 +23,9 @@ import {
   unlockGatedNote,
   PREntry,
 } from "nip108"
-import AnimatedButton from "@/components/AnimatedButton"
+import AnimatedMenuButton from "@/components/AnimatedButton"
 import NavigationMenu from "@/components/NavigationMenu"
+import Button from "@/components/Button"
 
 const RELAY = process.env.NEXT_PUBLIC_NOSTR_RELAY as string
 const GATE_SERVER = process.env.NEXT_PUBLIC_GATE_SERVER as string
@@ -46,6 +47,7 @@ interface FormData {
   preview: string
   content: string
 }
+
 const DEFAULT_FORM_DATA: FormData = {
   lud16: "coachchuckff@getalby.com",
   cost: 1,
@@ -363,7 +365,7 @@ export default function Home() {
   // ------------------- RENDERERS -------------------------
   const renderHeader = () => {
     return (
-      <header className="sticky top-0 items-center justify-center w-full h-40 text-2xl font-bold text-center bg-black">
+      <header className="sticky top-0 z-40 items-center justify-center w-full h-40 text-2xl font-bold text-center backdrop-blur-sm">
         ZAPZ Life
       </header>
     )
@@ -389,7 +391,7 @@ export default function Home() {
           {formatGatedContent(gatedNote.note.content)}
         </p>
         <div className="flex justify-center mt-4">
-          <AnimatedButton
+          <AnimatedMenuButton
             onClick={() => {
               handleBuy(gatedNote)
             }}
@@ -398,7 +400,7 @@ export default function Home() {
                 ? "Unlocking..."
                 : `${(gatedNote.cost / 1000).toFixed(0)} ⚡🔓`
             }
-            className={`border border-white/20`}></AnimatedButton>
+            className={`border border-white/20`}></AnimatedMenuButton>
         </div>
       </div>
     )
@@ -426,24 +428,7 @@ export default function Home() {
           return (
             <div
               key={index}
-              className="flex flex-col px-8 py-4 border rounded-md border-white/20">
-              {/* This container ensures content wrapping */}
-              <div className="flex-grow overflow-hidden">
-                <p className="mb-1 text-xs">ID: {event.note.id}</p>
-                <p className="mb-5 text-xs">Author: {event.note.pubkey} </p>
-
-                <h3 className="break-words">{event.note.content}</h3>
-              </div>
-              {/* Button with a thin white outline */}
-              {renderGatedContent(event)}
-            </div>
-          )
-        })}
-        {announcementNotes.map((event, index) => {
-          return (
-            <div
-              key={index}
-              className="flex flex-col px-8 py-4 border rounded-md border-white/20">
+              className="flex flex-col px-8 py-4 border rounded-md border-white/20 hover:bg-neutral-900">
               {/* This container ensures content wrapping */}
               <div className="flex-grow overflow-hidden">
                 <p className="mb-1 text-xs">ID: {event.note.id}</p>
@@ -519,13 +504,13 @@ export default function Home() {
               className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
           </div>
           <div className="flex justify-between mt-12">
-            <AnimatedButton
+            <AnimatedMenuButton
               className="font-bold border border-white/20"
               onClick={() => setPostFormOpen(false)}
               label="Close"
             />
 
-            <AnimatedButton
+            <AnimatedMenuButton
               className="font-bold border border-white/20"
               onClick={submitForm}
               label="Submit"
@@ -541,14 +526,17 @@ export default function Home() {
       <div
         className="fixed font-bold text-white border rounded-full shadow-lg bottom-8 right-8 border-white/20 "
         style={{ zIndex: 1000 }}>
-        <AnimatedButton onClick={() => setPostFormOpen(true)} label="POST" />
+        <AnimatedMenuButton
+          onClick={() => setPostFormOpen(true)}
+          label="POST"
+        />
       </div>
     )
   }
 
   const renderSocials = () => {
     return (
-      <div className="fixed z-50 flex space-x-5 top-5 right-5">
+      <div className="fixed z-50 flex flex-col items-center justify-center gap-2 text-center bottom-5 left-5">
         <a
           href="https://github.com/project-excalibur/NIP-108"
           target="_blank"
@@ -571,11 +559,11 @@ export default function Home() {
   const renderUserMenu = () => {
     return (
       <nav className="sticky top-0 flex-col items-start hidden gap-8 p-4 text-xl font-bold md:flex">
-        <AnimatedButton label="HOME" />
-        <AnimatedButton label="PROFILE" />
-        <AnimatedButton label="EXPLORE" />
-        <AnimatedButton label="SETTINGS" />
-        <AnimatedButton
+        <AnimatedMenuButton label="HOME" />
+        <AnimatedMenuButton label="PROFILE" />
+        <AnimatedMenuButton label="EXPLORE" />
+        <AnimatedMenuButton label="SETTINGS" />
+        <AnimatedMenuButton
           className="border border-blue-400"
           onClick={() => setPostFormOpen(true)}
           label="POST"
@@ -589,7 +577,7 @@ export default function Home() {
       <input
         type="text"
         placeholder="search"
-        className="w-full h-4 p-4 mt-4 bg-transparent border rounded-full outline-none border-white/20"
+        className="sticky top-0 w-full h-4 p-4 bg-transparent border rounded-full outline-none border-white/20"
       />
     )
   }
@@ -600,7 +588,9 @@ export default function Home() {
 
     while (i < 30) {
       elements.push(
-        <div key={i} className="flex h-12 gap-2 mt-4">
+        <div
+          key={i}
+          className="flex h-16 gap-2 mt-4 p-1 hover:bg-neutral-900 duration-300 rounded">
           <img
             src="https://placebeard.it/640x360"
             className="object-cover w-8 h-8 rounded-full"
@@ -625,9 +615,11 @@ export default function Home() {
 
   const renderTrending = () => {
     return (
-      <div className="flex flex-col h-screen">
-        <p>TRENDING</p>
-        <div id="trendingPosts" className="overflow-scroll h-[50vh] pb-10 mt-4">
+      <div className="flex flex-col sticky top-0">
+        <p className="mt-10 sticky-top-0">TRENDING</p>
+        <div
+          id="trendingPosts"
+          className="overflow-scroll h-[400px] mt-4 cursor-pointer">
           {mockTrendingPosts()}
         </div>
       </div>
@@ -742,25 +734,70 @@ export default function Home() {
     )
   }
 
+  const renderProfile = () => {
+    const profileHeader = () => {
+      return (
+        <div className="p-2">
+          <img
+            className="absolute z-40 object-cover w-40 h-40 border rounded-full border-white/20 -top-1/2"
+            src="https://placebeard.it/640x360"
+            alt=""
+          />
+          <div className="flex justify-end w-full gap-2 mt-2">
+            <AnimatedMenuButton className="" label="edit profile" />
+            <AnimatedMenuButton label="follow" />
+          </div>
+          <div className="flex flex-col mt-10">
+            <div className="flex items-center">
+              <p className="font-bold">
+                Nostr ✅
+                <span className="ml-4 text-xs font-thin text-neutral-500 py-1 px-2 bg-neutral-900 rounded-full">
+                  follows you
+                </span>
+              </p>
+              <p className="ml-auto text-xs text-neutral-500">
+                Joined Nostr on Jan 1, 2023
+              </p>
+            </div>
+            <p className="font-extralight mt-2 text-xs text-neutral-500">
+              nostr@nostrsomething.com
+            </p>
+            <p className="font-extralight mt-2 text-sm text-neutral-500">
+              npub12m2hhug6a4..05wqku5wx6
+            </p>
+          </div>
+        </div>
+      )
+    }
+    return (
+      <div className="relative flex flex-col w-full h-40 mt-40 mb-8">
+        {profileHeader()}
+      </div>
+    )
+  }
+
   // ------------------- MAIN -------------------------
 
   return (
     <>
-      <main className="static flex flex-row justify-center w-full ">
-        <NavigationMenu onClick={() => setPostFormOpen(true)} />
-        <section className="items-center max-w-md min-h-screen mb-10 md:max-w-xl">
-          {renderHeader()}
+      {renderForm()}
+
+      <div className="flex justify-center w-full relative">
+        <div className="sticky top">{renderUserMenu()}</div>
+        <main className="items-center w-full md:min-w-[32rem] max-w-md min-h-screen mb-10 md:max-w-xl">
+          {/* {renderHeader()} */}
+          {renderProfile()}
           {renderEvents()}
-          {renderMockPosts()}
-          {renderForm()}
-          {/* {renderSocials()} */}
-        </section>
-        <aside className="sticky top-0 hidden h-screen ml-8 space-y-8 bg-black w-80 lg:block ">
-          {renderSearchBar()}
-          {renderTrending()}
-        </aside>
-        {/* {renderPostButton()} */}
-      </main>
+          {/* {renderMockPosts()} */}
+        </main>
+
+        <div>
+          <aside className="sticky py-4 top-0 hidden ml-8 w-80 lg:flex lg:flex-col ">
+            {renderSearchBar()}
+            {renderTrending()}
+          </aside>
+        </div>
+      </div>
     </>
   )
 }
