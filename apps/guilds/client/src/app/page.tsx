@@ -6,7 +6,23 @@ import {
   VerifiedEvent,
   generatePrivateKey,
 } from "nostr-tools"
-import { FaGithub, FaExternalLinkAlt } from "react-icons/fa"
+import {
+  FaGithub,
+  FaExternalLinkAlt,
+  FaCopy,
+  FaCheck,
+  FaLock,
+  FaLockOpen,
+  FaHome,
+  FaUserAlt,
+  FaCompass,
+  FaCog,
+  FaAt,
+  FaSearch,
+  FaEnvelope,
+} from "react-icons/fa"
+import { HiPencilAlt } from "react-icons/hi"
+import { AiFillThunderbolt } from "react-icons/ai"
 import { useEffect, useState } from "react"
 import { WebLNProvider, requestProvider } from "webln"
 import {
@@ -71,6 +87,8 @@ export default function Home() {
 
   const [submittingForm, setSubmittingForm] = useState<boolean>(false)
   const [isPostFormOpen, setPostFormOpen] = useState<boolean>(false)
+  const [editProfileOn, setEditProfileOn] = useState<boolean>(false)
+
   const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA)
 
   // ------------------- EFFECTS -------------------------
@@ -364,6 +382,7 @@ export default function Home() {
 
   // ------------------- RENDERERS -------------------------
   const renderHeader = () => {
+    // todo put this branding to the left
     return (
       <header className="sticky top-0 z-40 items-center justify-center w-full h-40 text-2xl font-bold text-center backdrop-blur-sm">
         ZAPZ Life
@@ -379,7 +398,9 @@ export default function Home() {
 
     return (
       <div className="mt-5">
-        <p>🔓 {unlockedNote.content}</p>
+        <p className="flex gap-2 items-center">
+          <FaLockOpen className="" /> {unlockedNote.content}
+        </p>
       </div>
     )
   }
@@ -391,16 +412,22 @@ export default function Home() {
           {formatGatedContent(gatedNote.note.content)}
         </p>
         <div className="flex justify-center mt-4">
-          <AnimatedMenuButton
+          <Button
             onClick={() => {
               handleBuy(gatedNote)
             }}
+            icon={
+              <>
+                <AiFillThunderbolt />
+                <FaLockOpen />
+              </>
+            }
             label={
               gateLoading && gatedNote.note.id === gateLoading
                 ? "Unlocking..."
-                : `${(gatedNote.cost / 1000).toFixed(0)} ⚡🔓`
+                : `${(gatedNote.cost / 1000).toFixed(0)}`
             }
-            className={`border border-white/20`}></AnimatedMenuButton>
+            className={`border border-white/20`}></Button>
         </div>
       </div>
     )
@@ -428,7 +455,7 @@ export default function Home() {
           return (
             <div
               key={index}
-              className="flex flex-col px-8 py-4 border rounded-md border-white/20 hover:bg-neutral-900">
+              className="flex flex-col px-8 py-4 border rounded-md border-white/20">
               {/* This container ensures content wrapping */}
               <div className="flex-grow overflow-hidden">
                 <p className="mb-1 text-xs">ID: {event.note.id}</p>
@@ -446,6 +473,7 @@ export default function Home() {
   }
 
   const renderForm = () => {
+    // todo make it as a component to be reused both by pressing the Left post button and on Top header.
     if (!isPostFormOpen) return null
 
     // const [contentHeight, setContentHeight] = useState("auto")
@@ -504,16 +532,71 @@ export default function Home() {
               className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
           </div>
           <div className="flex justify-between mt-12">
-            <AnimatedMenuButton
+            <Button
               className="font-bold border border-white/20"
               onClick={() => setPostFormOpen(false)}
               label="Close"
             />
 
-            <AnimatedMenuButton
+            <Button
               className="font-bold border border-white/20"
               onClick={submitForm}
               label="Submit"
+            />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const renderEditProfile = () => {
+    if (!editProfileOn) return null
+
+    return (
+      <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-60 ">
+        <div className="w-1/2  max-w-xl p-5 text-white bg-black border rounded-lg shadow-lg border-white/20">
+          <h2 className="mb-4 text-lg">Edit profile</h2>
+          <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4 justify-between">
+            <label className="flex flex-col gap-2 mb-2 w-full relative">
+              <span className="text-white">Username</span>
+              <input
+                type="text"
+                placeholder="Username"
+                className="w-full p-2 text-white bg-black border rounded border-white/20 pl-8"
+              />
+              <FaAt className="absolute top-11 left-3 text-neutral-500" />
+            </label>
+            <label className="flex flex-col gap-2 mb-2 w-full">
+              <span className="text-white">Display Name</span>
+              <input
+                type="text"
+                placeholder="Display Name"
+                className="w-full p-2 text-white bg-black border rounded border-white/20"
+              />
+            </label>
+          </div>
+
+          <div className="mt-1 mb-2">
+            <label className="block mb-2">Lightning Address</label>
+            <input
+              type="email"
+              placeholder="email@email.com"
+              className="w-full p-2 text-white bg-black border rounded border-white/20"
+            />
+          </div>
+          <div className="mt-1 mb-2 h-80">
+            <label className="block mb-2">About me</label>
+            <textarea
+              placeholder={`Say something about you`}
+              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
+          </div>
+          <div className="flex justify-between mt-12">
+            <Button className="font-bold border border-white/20" label="Save" />
+
+            <Button
+              className="font-bold border border-white/20"
+              onClick={() => setEditProfileOn(false)}
+              label="Cancel"
             />
           </div>
         </div>
@@ -559,26 +642,38 @@ export default function Home() {
   const renderUserMenu = () => {
     return (
       <nav className="sticky top-0 flex-col items-start hidden gap-8 p-4 text-xl font-bold md:flex">
-        <AnimatedMenuButton label="HOME" />
-        <AnimatedMenuButton label="PROFILE" />
-        <AnimatedMenuButton label="EXPLORE" />
-        <AnimatedMenuButton label="SETTINGS" />
+        <AnimatedMenuButton label="HOME" icon={<FaHome size={24} />} />
+        <AnimatedMenuButton label="EXPLORE" icon={<FaCompass size={24} />} />
+        <AnimatedMenuButton label="PROFILE" icon={<FaUserAlt size={24} />} />
+        <AnimatedMenuButton label="MESSAGES" icon={<FaEnvelope size={24} />} />
+        {/* 
+        Div with a bubble absolute
+        <AnimatedMenuButton
+          label="NOTIFICATIONS"
+          icon={<FaEnvelope size={24} />}
+        /> */}
+
         <AnimatedMenuButton
           className="border border-blue-400"
           onClick={() => setPostFormOpen(true)}
           label="POST"
+          icon={<HiPencilAlt size={24} />}
         />
+        {/* <p className="text-xs mx-auto font-thin text- hidden">Version 0.0.1</p> */}
       </nav>
     )
   }
 
   const renderSearchBar = () => {
     return (
-      <input
-        type="text"
-        placeholder="search"
-        className="sticky top-0 w-full h-4 p-4 bg-transparent border rounded-full outline-none border-white/20"
-      />
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Search"
+          className="sticky top-0 w-full h-10 p-4 bg-transparent border rounded-full outline-none border-white/20 pl-12"
+        />
+        <FaSearch className="absolute top-3 left-4 text-white" />
+      </div>
     )
   }
 
@@ -744,13 +839,21 @@ export default function Home() {
             alt=""
           />
           <div className="flex justify-end w-full gap-2 mt-2">
-            <AnimatedMenuButton className="" label="edit profile" />
-            <AnimatedMenuButton label="follow" />
+            <Button
+              onClick={() => setEditProfileOn(true)}
+              className=""
+              label="edit profile"
+            />
+            <Button label="follow" />
           </div>
-          <div className="flex flex-col mt-10">
+          <div className="flex flex-col mt-16 lg:mt-12">
             <div className="flex items-center">
-              <p className="font-bold">
-                Nostr ✅
+              <p className="font-bold flex gap-2 items-center">
+                Nostr{" "}
+                <FaCheck
+                  className="text-green-500 bg-white rounded-full p-1"
+                  size={24}
+                />
                 <span className="ml-4 text-xs font-thin text-neutral-500 py-1 px-2 bg-neutral-900 rounded-full">
                   follows you
                 </span>
@@ -762,15 +865,15 @@ export default function Home() {
             <p className="font-extralight mt-2 text-xs text-neutral-500">
               nostr@nostrsomething.com
             </p>
-            <p className="font-extralight mt-2 text-sm text-neutral-500">
-              npub12m2hhug6a4..05wqku5wx6
+            <p className="font-extralight mt-2 text-sm text-neutral-500 flex gap-2 items-center hover:text-white cursor-pointer">
+              npub12m2hhug6a4..05wqku5wx6 <FaCopy />
             </p>
           </div>
         </div>
       )
     }
     return (
-      <div className="relative flex flex-col w-full h-40 mt-40 mb-8">
+      <div className="relative flex flex-col w-full h-40 mt-40 mb-12">
         {profileHeader()}
       </div>
     )
@@ -781,12 +884,13 @@ export default function Home() {
   return (
     <>
       {renderForm()}
+      {renderEditProfile()}
 
       <div className="flex justify-center w-full relative">
         <div className="sticky top">{renderUserMenu()}</div>
         <main className="items-center w-full md:min-w-[32rem] max-w-md min-h-screen mb-10 md:max-w-xl">
-          {/* {renderHeader()} */}
-          {renderProfile()}
+          {renderHeader()}
+          {/* {renderProfile()} */}
           {renderEvents()}
           {/* {renderMockPosts()} */}
         </main>
