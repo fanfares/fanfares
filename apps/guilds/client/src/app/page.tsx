@@ -23,7 +23,7 @@ import {
 } from "react-icons/fa"
 import { HiPencilAlt } from "react-icons/hi"
 import { AiFillThunderbolt } from "react-icons/ai"
-import { useEffect, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 import { WebLNProvider, requestProvider } from "webln"
 import {
   AnnouncementNote,
@@ -91,6 +91,8 @@ export default function Home() {
 
   const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA)
 
+  const [isChecked, setIsChecked] = useState<boolean>(false)
+
   // ------------------- EFFECTS -------------------------
 
   useEffect(() => {
@@ -111,11 +113,14 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    const newRelay = relayInit(RELAY)
+    const newRelay = relayInit("wss://relay.primal.net")
     newRelay.on("connect", () => {
       setRelay(newRelay)
     })
-    newRelay.connect()
+    // newRelay.connect()
+    if (newRelay) {
+      newRelay.connect()
+    }
 
     return () => {
       newRelay.close()
@@ -381,11 +386,10 @@ export default function Home() {
   }
 
   // ------------------- RENDERERS -------------------------
-  const renderHeader = () => {
-    // todo put this branding to the left
+  const renderLogo = () => {
     return (
-      <header className="sticky top-0 z-40 items-center justify-center w-full h-40 text-2xl font-bold text-center backdrop-blur-sm">
-        ZAPZ Life
+      <header className="items-center justify-center w-full text-2xl font-bold text-center backdrop-blur-sm">
+        ZAPS Back{" "}
       </header>
     )
   }
@@ -474,9 +478,101 @@ export default function Home() {
 
   const renderForm = () => {
     // todo make it as a component to be reused both by pressing the Left post button and on Top header.
-    if (!isPostFormOpen) return null
+    const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
+      const { checked } = event.target
+      setIsChecked(checked)
+    }
 
-    // const [contentHeight, setContentHeight] = useState("auto")
+    return (
+      <div className="flex items-center justify-center w-full bg-black my-4 ">
+        <div className="w-full p-5 text-white bg-black border rounded-lg shadow-lg border-white/20">
+          <div className="mt-1 mb-2 hidden">
+            <label className="block mb-2">Unlock Cost ( sats )</label>
+            <input
+              type="number"
+              min={`${MIN_SAT_COST}`}
+              max={`${MAX_SAT_COST}`}
+              value={formData.cost}
+              onChange={e =>
+                setFormData({ ...formData, cost: +e.target.value })
+              }
+              className="w-full p-2 text-white bg-black border rounded border-white/20"
+            />
+          </div>
+          {isChecked ? (
+            <>
+              {" "}
+              <div className="mt-1 mb-2">
+                <label className="block mb-2">Post preview</label>
+                <input
+                  type="text"
+                  placeholder={`Hey unlock my post for ${formData.cost} sats!`}
+                  maxLength={MAX_PREVIEW_LENGTH}
+                  value={formData.preview}
+                  onChange={e =>
+                    setFormData({ ...formData, preview: e.target.value })
+                  }
+                  className="w-full p-2 text-white bg-black border rounded border-white/20"
+                />
+              </div>
+              <div className="mt-1 mb-2">
+                <label className="block mb-2">Unlock Cost ( sats )</label>
+                <input
+                  type="number"
+                  min={`${MIN_SAT_COST}`}
+                  max={`${MAX_SAT_COST}`}
+                  value={formData.cost}
+                  onChange={e =>
+                    setFormData({ ...formData, cost: +e.target.value })
+                  }
+                  className="w-full p-2 text-white bg-black border rounded border-white/20"
+                />
+              </div>
+            </>
+          ) : null}
+          <div className="mt-1 mb-2 h-20">
+            <label className="mb-2 hidden">Content</label>
+            <textarea
+              maxLength={MAX_CONTENT_LENGTH}
+              placeholder={`What is going on?`}
+              onChange={e =>
+                setFormData({ ...formData, content: e.target.value })
+              }
+              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
+          </div>
+          <div className="flex justify-between mt-12 items-center">
+            <label
+              htmlFor="setAsGatedContentCheckbox"
+              className="relative inline-flex items-center cursor-pointer px-4 border border-white/20 py-2 rounded-full">
+              <input
+                checked={isChecked}
+                onChange={handleCheckboxChange}
+                type="checkbox"
+                value=""
+                name="setAsGatedContentCheckbox"
+                id="setAsGatedContentCheckbox"
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-4 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+              <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                Paid content?
+              </span>
+            </label>
+
+            <Button
+              className="font-bold border border-white/20"
+              onClick={submitForm}
+              label="Submit"
+            />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const renderFormModal = () => {
+    // todo make it as a component to be reused both by pressing the Left post button and on Top header.
+    if (!isPostFormOpen) return null
 
     return (
       <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-60">
@@ -641,26 +737,32 @@ export default function Home() {
 
   const renderUserMenu = () => {
     return (
-      <nav className="sticky top-0 flex-col items-start hidden gap-8 p-4 text-xl font-bold md:flex">
-        <AnimatedMenuButton label="HOME" icon={<FaHome size={24} />} />
-        <AnimatedMenuButton label="EXPLORE" icon={<FaCompass size={24} />} />
-        <AnimatedMenuButton label="PROFILE" icon={<FaUserAlt size={24} />} />
-        <AnimatedMenuButton label="MESSAGES" icon={<FaEnvelope size={24} />} />
-        {/* 
+      <>
+        <nav className="sticky top-0 flex-col items-start hidden gap-8 p-4 text-xl font-bold md:flex">
+          {renderLogo()}
+          <AnimatedMenuButton label="HOME" icon={<FaHome size={24} />} />
+          <AnimatedMenuButton label="EXPLORE" icon={<FaCompass size={24} />} />
+          <AnimatedMenuButton label="PROFILE" icon={<FaUserAlt size={24} />} />
+          <AnimatedMenuButton
+            label="MESSAGES"
+            icon={<FaEnvelope size={24} />}
+          />
+          {/* 
         Div with a bubble absolute
         <AnimatedMenuButton
-          label="NOTIFICATIONS"
-          icon={<FaEnvelope size={24} />}
-        /> */}
+        label="NOTIFICATIONS"
+        icon={<FaEnvelope size={24} />}
+      /> */}
 
-        <AnimatedMenuButton
-          className="border border-blue-400"
-          onClick={() => setPostFormOpen(true)}
-          label="POST"
-          icon={<HiPencilAlt size={24} />}
-        />
-        {/* <p className="text-xs mx-auto font-thin text- hidden">Version 0.0.1</p> */}
-      </nav>
+          <AnimatedMenuButton
+            className="border border-blue-400"
+            onClick={() => setPostFormOpen(true)}
+            label="POST"
+            icon={<HiPencilAlt size={24} />}
+          />
+          {/* <p className="text-xs mx-auto font-thin text- hidden">Version 0.0.1</p> */}
+        </nav>
+      </>
     )
   }
 
@@ -879,20 +981,34 @@ export default function Home() {
     )
   }
 
+  const renderMobileMenu = () => {
+    const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false)
+    return (
+      <div className="absolute top-5 right-5">
+        <button
+          className="bg-neutral-500 w-8 h-8 px-2 py-2 rounded-full flex items-center"
+          onClick={() => setMobileMenuOpen(mobileMenuOpen)}>
+          +
+        </button>
+      </div>
+    )
+  }
+
   // ------------------- MAIN -------------------------
 
   return (
     <>
-      {renderForm()}
+      {renderFormModal()}
       {renderEditProfile()}
 
       <div className="flex justify-center w-full relative">
         <div className="sticky top">{renderUserMenu()}</div>
-        <main className="items-center w-full md:min-w-[32rem] max-w-md min-h-screen mb-10 md:max-w-xl">
-          {renderHeader()}
+        <main className="items-center w-full mt-20 md:min-w-[32rem] max-w-md min-h-screen mb-10 md:max-w-xl">
+          {renderForm()}
+          {renderMobileMenu()}
           {/* {renderProfile()} */}
           {renderEvents()}
-          {/* {renderMockPosts()} */}
+          {renderMockPosts()}
         </main>
 
         <div>
