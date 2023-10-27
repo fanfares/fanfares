@@ -1,4 +1,10 @@
-const LazyIframe = ({ src, title }) => {
+export interface LazyIframeProps {
+  src: string;
+  title: string;
+}
+
+function LazyIframe(props: LazyIframeProps){
+  const { src, title } = props;
   return (
     <iframe
       className="mt-4 aspect-video w-[300px] md:w-[800px]"

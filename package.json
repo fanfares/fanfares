@@ -6,6 +6,8 @@
     "nip108-client": "cd apps/nip108/client && bun run dev",
     "nip108-script": "bun run apps/nip108/script/index.ts",
     "guilds-client": "cd apps/guilds/client && bun run dev",
+    "guilds-client-deploy": "cd apps/guilds/client && bun run start",
+    "guilds-client-build": "cd apps/guilds/client && bun run build",
     "server-update-landing": "cd server-scripts && ./update-landing.sh"
   },
   "workspaces": [
@@ -21,6 +23,7 @@
     "bolt11": "^1.4.1",
     "browserify-cipher": "^1.0.1",
     "clsx": "^2.0.0",
+    "crypto-browserify": "^3.12.0",
     "crypto-js": "^4.1.1",
     "firebase": "^10.5.0",
     "react-icons": "^4.11.0",
