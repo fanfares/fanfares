@@ -19,9 +19,11 @@ const Navbar = () => {
         passHref
         role="button"
         target=""
-        className={clsx("ml-auto drop-shadow-2xl md:px-6 md:py-3 md:text-sm")}>
+        className={clsx(
+          "ml-auto drop-shadow-2xl bg-white rounded-full md:text-sm"
+        )}>
         <AnimatedMenuButton
-          className="bg-white hover:bg-neutral-300 text-black"
+          className=" text-black hover:text-white"
           label="Start Listening"
         />
       </Link>

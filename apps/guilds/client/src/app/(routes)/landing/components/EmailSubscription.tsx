@@ -24,11 +24,9 @@ function EmailSubscription() {
             required
           />
 
-          <AnimatedMenuButton
-            // onClick={() => toast.success('Subscribed successfuly')}
-            className="btn mx-auto h-10 w-20 bg-white hover:bg-neutral-300 text-black focus:outline-white"
-            label="Submit"
-          />
+          <div className="text-sm font-medium bg-white hover:text-white rounded-full text-black">
+            <AnimatedMenuButton label="Submit" />
+          </div>
         </form>
         <Script src="https://sendfox.com/js/form.js"></Script>
       </div>

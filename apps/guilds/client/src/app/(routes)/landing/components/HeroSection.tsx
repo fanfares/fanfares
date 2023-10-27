@@ -33,7 +33,7 @@ const HeroSection = () => {
         target="_blank"
         href="/upload"
         passHref
-        className="mt-10 text-sm font-medium">
+        className="mt-10 text-sm font-medium bg-white hover:text-white rounded-full text-black">
         <AnimatedMenuButton label="Get Started" />
       </Link>
     </div>
