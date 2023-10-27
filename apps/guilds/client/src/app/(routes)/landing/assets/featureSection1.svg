@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="2048px" width="2048px">
+  <defs>
+    <radialGradient id="0" gradientTransform="translate(0 0) scale(1, 1)">
+      <stop offset="0%" stop-color="#2a4365"/>
+      <stop offset="13.83%" stop-color="rgba(56, 92, 130, 0.83)"/>
+      <stop offset="27.67%" stop-color="rgba(69, 118, 161, 0.67)"/>
+      <stop offset="41.5%" stop-color="rgba(82, 146, 191, 0.5)"/>
+      <stop offset="55.33%" stop-color="rgba(94, 175, 222, 0.33)"/>
+      <stop offset="83%" stop-color="rgba(190, 227, 248, 0)"/>
+    </radialGradient>
+  </defs>
+  <rect fill="url(#0)" height="100%" width="100%"/>
+</svg>

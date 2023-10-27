@@ -5,7 +5,7 @@ import {
   generatePrivateKey,
   SimplePool,
 } from "nostr-tools";
-import { NIP07, verifyZap } from "utils";
+import { NIP07, eventToNostrProfile, verifyZap } from "utils";
 import { WebLNProvider, requestProvider } from "webln";
 import { getSince } from "utils";
 import {
@@ -20,7 +20,7 @@ const STARTING_LOAD = 30;
 const MAX_SHOW = 30;
 
 const EXCALIBUR_RELAY = process.env.NEXT_PUBLIC_NOSTR_RELAY as string
-const POOL = [
+const POOL_RELAYS = [
     EXCALIBUR_RELAY,
     'wss://relay.primal.net',
     'wss://relay.damus.io',
@@ -36,10 +36,12 @@ const POOL = [
 
 export type ExcaliburContext = {
     events: VerifiedEvent[];
+    profiles: VerifiedEvent[];
 };
 
 const DEFAULT_EVENT: ExcaliburContext = {
-    events: []
+    events: [],
+    profiles: [],
 }
 const ExcaliburContext = createContext<ExcaliburContext>(DEFAULT_EVENT);
 export const useExcalibur = () => useContext(ExcaliburContext);
@@ -52,6 +54,7 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
   const [nostr, setNostr] = useState<NIP07 | null>(null);
   const [webln, setWebln] = useState<WebLNProvider | null>(null);
   const [publicKey, setPublicKey] = useState<string | null>(null);
+  const [pool, setPool] = useState<SimplePool | null>(null);
   const [events, setEvents] = useState<VerifiedEvent[]>([]);
   const [profiles, setProfiles] = useState<VerifiedEvent[]>([]);
 
@@ -81,7 +84,7 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
 
   useEffect(() => {
     const pool = new SimplePool();
-    const sub = pool.sub(POOL, [{
+    const sub = pool.sub(POOL_RELAYS, [{
         kinds: [1],
         // since: getSince({ days: 30 })
         limit: STARTING_LOAD
@@ -100,33 +103,34 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
         });
     });
 
+    setPool(pool);
+
     return () => {
-        pool.close(POOL);
+        pool.close(POOL_RELAYS);
     }
     
   }, []);
 
   useEffect(() => {
-    let postedEvents: {[key: string]: {amount: number, count: number}} = {};
+    if(!pool) return;
 
     for (const event of events) {
-      const amount = verifyZap(event);
-      if(!amount) return;
-      if (postedEvents[event.id]) {
-        postedEvents[event.id] = { 
-          amount: postedEvents[event.id].amount + amount, 
-          count: postedEvents[event.id].count + 1
-      };
-      } else {
-        postedEvents[event.id] = { amount, count: 1 };
-      }
+      pool.get(POOL_RELAYS, {
+        kinds: [0],
+        authors: [event.pubkey],
+      }).then((profile)=>{
+        if(!profile) return;
+        // eventToNostrProfile(profile);
+      })
     }
 
-  }, [events]);
+
+  }, [events, pool]);
 
   // ---------------- DATA ----------------------------
   const excalibur = {
-    events
+    events,
+    profiles,
   };
 
   return (
