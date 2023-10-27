@@ -41,7 +41,7 @@ import {
 } from "nip108"
 import AnimatedMenuButton from "@/components/AnimatedButton"
 import NavigationMenu from "@/components/NavigationMenu"
-import Button from "@/components/Button"
+import ButtonDefault from "@/components/Button"
 import { useExcalibur } from "@/components/ExcaliburProvider"
 import { getDefaultNostrProfile, getTag, verifyZap } from "utils"
 
@@ -437,7 +437,7 @@ export default function Home() {
           {formatGatedContent(gatedNote.note.content)}
         </p>
         <div className="flex justify-center mt-4">
-          <Button
+          <ButtonDefault
             onClick={() => {
               handleBuy(gatedNote)
             }}
@@ -452,7 +452,7 @@ export default function Home() {
                 ? "Unlocking..."
                 : `${(gatedNote.cost / 1000).toFixed(0)}`
             }
-            className={`border border-white/20`}></Button>
+            className={`border border-white/20`}></ButtonDefault>
         </div>
       </div>
     )
@@ -588,7 +588,7 @@ export default function Home() {
               </span>
             </label>
 
-            <Button
+            <ButtonDefault
               className="font-bold border border-white/20"
               onClick={submitSimpleForm}
               label="Submit"
@@ -657,13 +657,13 @@ export default function Home() {
               className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
           </div>
           <div className="flex justify-between mt-12">
-            <Button
+            <ButtonDefault
               className="font-bold border border-white/20"
               onClick={() => setPostFormOpen(false)}
               label="Close"
             />
 
-            <Button
+            <ButtonDefault
               className="font-bold border border-white/20"
               onClick={submitForm}
               label="Submit"
@@ -716,9 +716,12 @@ export default function Home() {
               className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
           </div>
           <div className="flex justify-between mt-12">
-            <Button className="font-bold border border-white/20" label="Save" />
+            <ButtonDefault
+              className="font-bold border border-white/20"
+              label="Save"
+            />
 
-            <Button
+            <ButtonDefault
               className="font-bold border border-white/20"
               onClick={() => setEditProfileOn(false)}
               label="Cancel"
@@ -862,12 +865,12 @@ export default function Home() {
             alt=""
           />
           <div className="flex justify-end w-full gap-2 mt-2">
-            <Button
+            <ButtonDefault
               onClick={() => setEditProfileOn(true)}
               className=""
               label="edit profile"
             />
-            <Button label="follow" />
+            <ButtonDefault label="follow" />
           </div>
           <div className="flex flex-col mt-16 lg:mt-12">
             <div className="flex items-center">

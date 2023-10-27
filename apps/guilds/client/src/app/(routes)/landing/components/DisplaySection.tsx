@@ -1,27 +1,28 @@
-import { FAProSolid, FontAwesomeIcon } from '@excalibur/config/fontawesome';
-import React, { useEffect, useState } from 'react';
-const LazyIframe = React.lazy(() => import('./LazyIframe'));
+"use client"
+// import { FAProSolid, FontAwesomeIcon } from "@excalibur/config/fontawesome"
+import React, { useEffect, useState } from "react"
+const LazyIframe = React.lazy(() => import("./LazyIframe"))
 
-const displayIcons = [
-  { icon: FAProSolid.faPodcast, text: 'Creative Content' },
-  { icon: FAProSolid.faMoneyBillTransfer, text: 'Peer to Peer payments' },
+// const displayIcons = [
+//   { icon: <BiPodcast/>, text: "Creative Content" },
+//   { icon: FAProSolid.faMoneyBillTransfer, text: "Peer to Peer payments" },
 
-  { icon: FAProSolid.faPeople, text: 'Build Community' }
-];
+//   { icon: FAProSolid.faPeople, text: "Build Community" },
+// ]
 
 const DisplaySection = () => {
-  const [isMounted, setIsMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    setIsMounted(true)
+  }, [])
 
-  const iconElements = displayIcons.map(({ icon, text }) => (
-    <div className="flex-col w-20 text-center" key={text}>
-      <FontAwesomeIcon className="text-4xl" icon={icon} />
-      <p className="mt-2 text-xs">{text}</p>
-    </div>
-  ));
+  // const iconElements = displayIcons.map(({ icon, text }) => (
+  //   <div className="flex-col w-20 text-center" key={text}>
+  //     <FontAwesomeIcon className="text-4xl" icon={icon} />
+  //     <p className="mt-2 text-xs">{text}</p>
+  //   </div>
+  // ))
 
   return (
     <div className="py-12 mt-12">
@@ -38,11 +39,9 @@ const DisplaySection = () => {
         )} */}
       </div>
 
-      <div className="flex flex-wrap items-start justify-center w-56 gap-16 mx-auto mt-16 justify-items-center md:w-full md:gap-16 ">
-        {iconElements}
-      </div>
+      <div className="flex flex-wrap items-start justify-center w-56 gap-16 mx-auto mt-16 justify-items-center md:w-full md:gap-16 "></div>
     </div>
-  );
-};
+  )
+}
 
-export default DisplaySection;
+export default DisplaySection
