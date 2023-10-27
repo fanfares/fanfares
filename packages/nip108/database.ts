@@ -1,13 +1,6 @@
 import { Database } from "bun:sqlite"
 import { Invoice } from "utils/lightning"
-
-export interface NoteEntry {
-  noteId: string
-  lud16: string
-  price: number
-  secret: string
-  timestamp: number
-}
+import { NoteEntry, PREntry } from "./models"
 
 // ---------------- SECURITY ------------------
 const NOTE_TABLE = process.env.DB_NOTE_TABLE as string
@@ -102,12 +95,6 @@ export function setupNoteTable(db: Database, table: string) {
   `
 
   db.query(createTableQuery).run()
-}
-
-export interface PREntry extends Invoice {
-  noteId: string
-  timestamp: number
-  paymentStatus: "UNPAID" | "PAID"
 }
 
 export function setupPRTable(db: Database, table: string) {

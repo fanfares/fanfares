@@ -1,3 +1,4 @@
+// @ts-ignore
 import * as cryptoBrowser from 'crypto-browserify';
 
 const algorithm: string = 'aes-256-cbc';

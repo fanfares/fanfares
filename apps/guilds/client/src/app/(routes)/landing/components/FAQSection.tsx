@@ -115,10 +115,10 @@ function FaqBox(props: FaqBoxProps) {
   }
 
   useEffect(() => {
-    if (isOpen) {
-      const actualHeight = descriptionRef.current?.scrollHeight || 0
+    if (isOpen && descriptionRef.current) {
+      const actualHeight = descriptionRef.current.scrollHeight || 0
       descriptionRef.current.style.height = `${actualHeight}px`
-    } else {
+    } else if(descriptionRef.current){
       descriptionRef.current.style.height = "0"
     }
     const timeout = setTimeout(() => setIsOpening(false), 500)
