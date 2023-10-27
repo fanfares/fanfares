@@ -3,9 +3,11 @@ import {
   relayInit,
   VerifiedEvent,
   generatePrivateKey,
+  Event as NostrEvent,
+  UnsignedEvent,
   SimplePool,
 } from "nostr-tools";
-import { NIP07, eventToNostrProfile, verifyZap } from "utils";
+import { NIP07, NostrProfile, eventToNostrProfile, verifyZap } from "utils";
 import { WebLNProvider, requestProvider } from "webln";
 import { getSince } from "utils";
 import {
@@ -15,34 +17,38 @@ import {
   useEffect,
   useState,
 } from "react";
+import { set } from "firebase/database";
 
-const STARTING_LOAD = 30;
-const MAX_SHOW = 30;
+const STARTING_LOAD = 1;
+const MAX_SHOW = 89;
 
-const EXCALIBUR_RELAY = process.env.NEXT_PUBLIC_NOSTR_RELAY as string
+const EXCALIBUR_RELAY = process.env.NEXT_PUBLIC_NOSTR_RELAY as string;
 const POOL_RELAYS = [
-    EXCALIBUR_RELAY,
-    'wss://relay.primal.net',
-    'wss://relay.damus.io',
-    'wss://cache2.primal.net/v1',
-    'wss://nostr.kollider.xyz/',
-    'wss://nostr.wine/',
-    'wss://nos.lol/',
-    'wss://welcome.nostr.wine/',
-    'wss://nostr-relay.nokotaro.com/',
-    'wss://relayable.org/',
-]
-
+  EXCALIBUR_RELAY,
+  "wss://relay.primal.net",
+  "wss://relay.damus.io",
+  "wss://cache2.primal.net/v1",
+  "wss://nostr.kollider.xyz/",
+  "wss://nostr.wine/",
+  "wss://nos.lol/",
+  "wss://welcome.nostr.wine/",
+  "wss://nostr-relay.nokotaro.com/",
+  "wss://relayable.org/",
+];
 
 export type ExcaliburContext = {
-    events: VerifiedEvent[];
-    profiles: VerifiedEvent[];
+  events: VerifiedEvent[];
+  profiles: NostrProfile[];
+  postEvent: (event: NostrEvent<number>) => Promise<void>;
+  isLoading: boolean;
 };
 
 const DEFAULT_EVENT: ExcaliburContext = {
-    events: [],
-    profiles: [],
-}
+  events: [],
+  profiles: [],
+  isLoading: false,
+  postEvent: () => Promise.resolve(),
+};
 const ExcaliburContext = createContext<ExcaliburContext>(DEFAULT_EVENT);
 export const useExcalibur = () => useContext(ExcaliburContext);
 
@@ -50,87 +56,122 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
   const { children } = props;
 
   // ---------------- STATES --------------------------
+
+  const [isLoading, setIsLoading] = useState(false);
   const [relay, setRelay] = useState<Relay | null>(null);
   const [nostr, setNostr] = useState<NIP07 | null>(null);
   const [webln, setWebln] = useState<WebLNProvider | null>(null);
   const [publicKey, setPublicKey] = useState<string | null>(null);
   const [pool, setPool] = useState<SimplePool | null>(null);
   const [events, setEvents] = useState<VerifiedEvent[]>([]);
-  const [profiles, setProfiles] = useState<VerifiedEvent[]>([]);
+  const [profiles, setProfiles] = useState<NostrProfile[]>([]);
 
-  // ---------------- FUNCTIONS --------------------------
+  const grabAndAddProfile = async (pubkey: string) => {
+    if(!pool) return;
 
-  const signin = () => {
-    // WebLN
-    requestProvider()
-      .then(setWebln)
-      .catch((e) => {
-        alert("Please download Alby or ZBD to use this app.");
+    pool
+    .get(POOL_RELAYS, {
+      kinds: [0],
+      authors: [pubkey],
+    })
+    .then((kind0: any) => {
+      const profile = eventToNostrProfile(pubkey, kind0);
+      setProfiles((prevProfiles) => {
+        return [profile, ...prevProfiles];
       });
-
-    // Nostr
-    if ((window as any).nostr) {
-      const nip07: NIP07 = (window as any).nostr;
-      nip07.getPublicKey().then(setPublicKey);
-      setNostr(nip07);
-    } else {
-      alert("Nostr not found");
-    }
-  };
+    });
+  }
 
   // ---------------- EFFECTS --------------------------
 
-  useEffect(signin, []);
-
   useEffect(() => {
     const pool = new SimplePool();
-    const sub = pool.sub(POOL_RELAYS, [{
+    const sub = pool.sub(POOL_RELAYS, [
+      {
         kinds: [1],
         // since: getSince({ days: 30 })
-        limit: STARTING_LOAD
-    }]);
+        limit: STARTING_LOAD,
+      },
+    ]);
 
-    sub.on('event', event => {
-        setEvents((prevEvents) => {
-            if(prevEvents.find(e => e.id === event.id)) return prevEvents;
-            if(!event.content) return prevEvents;
+    sub.on("event", (event) => {
+      setEvents((prevEvents) => {
+        if (prevEvents.find((e) => e.id === event.id)) return prevEvents;
+        if (!event.content) return prevEvents;
 
-            // const amount = verifyZap(event as any);
-            // if(!amount) return prevEvents;
-            // return [event as any, ...prevEvents];
-
-            return [event as any, ...(prevEvents.slice(0, MAX_SHOW))];
-        });
+        return [event as any, ...prevEvents.slice(0, MAX_SHOW)];
+      });
     });
 
     setPool(pool);
 
     return () => {
-        pool.close(POOL_RELAYS);
-    }
-    
+      pool.close(POOL_RELAYS);
+    };
   }, []);
 
   useEffect(() => {
-    if(!pool) return;
+    if (pool) {
+      // WebLN
+      requestProvider()
+        .then(setWebln)
+        .catch((e) => {
+          alert("Please download Alby or ZBD to use this app.");
+        });
+
+      // Nostr
+      if ((window as any).nostr) {
+        const nip07: NIP07 = (window as any).nostr;
+        nip07.getPublicKey().then(setPublicKey);
+        setNostr(nip07);
+      } else {
+        alert("Nostr not found");
+      }
+    }
+  }, [pool]);
+
+  useEffect(() => {
+    if(!publicKey) return;
+
+    grabAndAddProfile(publicKey);
+  }, [publicKey])
+
+  useEffect(() => {
+    if (!pool) return;
 
     for (const event of events) {
-      pool.get(POOL_RELAYS, {
-        kinds: [0],
-        authors: [event.pubkey],
-      }).then((profile)=>{
-        if(!profile) return;
-        // eventToNostrProfile(profile);
-      })
+      if (profiles.find((profile) => profile.pubkey === event.pubkey)) continue;
+      grabAndAddProfile(event.pubkey)
     }
-
-
   }, [events, pool]);
 
   // ---------------- DATA ----------------------------
+
+  const postEvent = async (event: NostrEvent<number>) => {
+    if(!nostr) throw new Error('No nostr');
+    if(!pool) throw new Error('No pool');
+    if(isLoading) return;
+
+    let errorString: string | undefined = undefined;
+
+    setIsLoading(true);
+    try {
+      const signedEvent = await nostr.signEvent(event);
+      await pool.publish(POOL_RELAYS, signedEvent);
+    } catch(e) {
+      errorString = `Error signing event: ${e}`;
+    } finally {
+      setIsLoading(false);
+    }
+
+    if(errorString) throw new Error(errorString);
+  };
+
   const excalibur = {
     events,
     profiles,
+    isLoading,
+    postEvent,
   };
 
   return (
@@ -139,5 +180,3 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
     </ExcaliburContext.Provider>
   );
 }
-
-

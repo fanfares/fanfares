@@ -43,7 +43,7 @@ import AnimatedMenuButton from "@/components/AnimatedButton"
 import NavigationMenu from "@/components/NavigationMenu"
 import ButtonDefault from "@/components/Button"
 import { useExcalibur } from "@/components/ExcaliburProvider"
-import { getTag, verifyZap } from "utils"
+import { getDefaultNostrProfile, getTag, verifyZap } from "utils"
 
 const RELAY = process.env.NEXT_PUBLIC_NOSTR_RELAY as string
 const GATE_SERVER = process.env.NEXT_PUBLIC_GATE_SERVER as string
@@ -92,7 +92,7 @@ export default function Home() {
   const [editProfileOn, setEditProfileOn] = useState<boolean>(false)
 
   const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA)
-  const { events } = useExcalibur()
+  const { events, profiles, postEvent } = useExcalibur();
 
   const [isChecked, setIsChecked] = useState<boolean>(false)
 
@@ -271,6 +271,24 @@ export default function Home() {
   const formatGatedContent = (content: string) => {
     return content.substring(0, 500) + "..."
   }
+
+  const submitSimpleForm = async () => {
+    const { content } = formData;
+
+    if (!content) return;
+    if (!publicKey) return;
+
+    const event = {
+      kind: 1,
+      pubkey: publicKey,
+      created_at: Math.floor(Date.now() / 1000),
+      tags: [],
+      content: content,
+    };
+
+    postEvent(event as any);
+
+  };
 
   const submitForm = async () => {
     if (submittingForm) return
@@ -459,43 +477,33 @@ export default function Home() {
     return (
       <div className="w-full space-y-4 md:min-w-[32rem]">
         {events.map((event, index) => {
+          const profileIndex = profiles.findIndex(profile => profile.pubkey === event.pubkey);
+  
+          const profile = (profileIndex === -1) ? getDefaultNostrProfile(event.pubkey) : profiles[profileIndex];
+          const name = (profile.display_name) ? profile.display_name : profile.name;
+  
           return (
             <div
               key={event.id}
               className="flex flex-col px-8 py-4 border rounded-md border-white/20">
               {/* This container ensures content wrapping */}
-              <div className="flex-grow overflow-hidden">
-                <p className="mb-1 text-xs">ID: {event.id}</p>
-                <p className="mb-5 text-xs">Author: {event.pubkey} </p>
-                <h3 className="break-words">{event.content}</h3>
+              <div className="flex-grow overflow-hidden flex">
+                <img 
+                  src={profile.picture}
+                  alt={profile.display_name}
+                  className="w-12 h-12 rounded-full object-cover mr-4" // Adjust width (w-12) and height (h-12) as needed
+                />
+                <div>
+                  <p className="mb-5 text-xs font-bold">{name}</p>
+                  <h3 className="break-words">{event.content}</h3>
+                </div>
               </div>
             </div>
           )
         })}
       </div>
-    )
-    // return (
-    //   <div className="w-full space-y-4 md:min-w-[32rem]">
-    //     {announcementNotes.map((event, index) => {
-    //       return (
-    //         <div
-    //           key={index}
-    //           className="flex flex-col px-8 py-4 border rounded-md border-white/20">
-    //           {/* This container ensures content wrapping */}
-    //           <div className="flex-grow overflow-hidden">
-    //             <p className="mb-1 text-xs">ID: {event.note.id}</p>
-    //             <p className="mb-5 text-xs">Author: {event.note.pubkey} </p>
-
-    //             <h3 className="break-words">{event.note.content}</h3>
-    //           </div>
-    //           {/* Button with a thin white outline */}
-    //           {renderGatedContent(event)}
-    //         </div>
-    //       )
-    //     })}
-    //   </div>
-    // )
-  }
+    );
+  };
 
   const renderForm = () => {
     // todo make it as a component to be reused both by pressing the Left post button and on Top header.
@@ -582,7 +590,7 @@ export default function Home() {
 
             <ButtonDefault
               className="font-bold border border-white/20"
-              onClick={submitForm}
+              onClick={submitSimpleForm}
               label="Submit"
             />
           </div>
@@ -847,114 +855,6 @@ export default function Home() {
     )
   }
 
-  const renderMockPosts = () => {
-    return (
-      <>
-        {/* MOCK POSTs */}
-        <div className="space-y-4">
-          <article className="flex flex-col px-8 py-4 border rounded-md border-white/20">
-            {/* This container ensures content wrapping */}
-            <div className="flex-grow overflow-hidden">
-              <p className="mb-1 text-xs">ID: 123123123</p>
-              <p className="mb-5 text-xs">Author: 123123123 </p>
-
-              <h3 className="break-words">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
-                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
-                Cum sint maiores fugit aliquid cumque.
-              </h3>
-            </div>
-            {/* Button with a thin white outline */}
-          </article>
-          <div className="flex flex-col px-8 py-4 border rounded-md border-white/20">
-            {/* This container ensures content wrapping */}
-            <div className="flex-grow overflow-hidden">
-              <p className="mb-1 text-xs">ID: 123123123</p>
-              <p className="mb-5 text-xs">Author: 123123123 </p>
-
-              <h3 className="break-words">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
-                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
-                Cum sint maiores fugit aliquid cumque.Lorem ipsum dolor sit amet
-                consectetur adipisicing elit. Corrupti, aperiam rem. Molestias,
-                hic recusandae repudiandae nisi quisquam ad quod voluptates,
-                fugiat sed, id consequuntur. Cum sint maiores fugit aliquid
-                cumque.Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
-                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
-                Cum sint maiores fugit aliquid cumque.Lorem ipsum dolor sit amet
-                consectetur adipisicing elit. Corrupti, aperiam rem. Molestias,
-                hic recusandae repudiandae nisi quisquam ad quod voluptates,
-                fugiat sed, id consequuntur. Cum sint maiores fugit aliquid
-                cumque.
-              </h3>
-            </div>
-            {/* Button with a thin white outline */}
-          </div>
-          <div className="flex flex-col px-8 py-4 border rounded-md border-white/20">
-            {/* This container ensures content wrapping */}
-            <div className="flex-grow overflow-hidden">
-              <p className="mb-1 text-xs">ID: 123123123</p>
-              <p className="mb-5 text-xs">Author: 123123123 </p>
-
-              <h3 className="break-words">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
-                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
-                Cum sint maiores fugit aliquid cumque. Lorem ipsum dolor sit
-                amet consectetur adipisicing elit. Corrupti, aperiam rem.
-                Molestias, hic recusandae repudiandae nisi quisquam ad quod
-                voluptates, fugiat sed, id consequuntur. Cum sint maiores fugit
-                aliquid cumque.Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Corrupti, aperiam rem. Molestias, hic
-                recusandae repudiandae nisi quisquam ad quod voluptates, fugiat
-                sed, id consequuntur. Cum sint maiores fugit aliquid
-                cumque.Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
-                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
-                Cum sint maiores fugit aliquid cumque.
-              </h3>
-            </div>
-            {/* Button with a thin white outline */}
-          </div>
-          <div className="flex flex-col px-8 py-4 border rounded-md border-white/20">
-            {/* This container ensures content wrapping */}
-            <div className="flex-grow overflow-hidden">
-              <p className="mb-1 text-xs">ID: 123123123</p>
-              <p className="mb-5 text-xs">Author: 123123123 </p>
-
-              <h3 className="break-words">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
-                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
-                Cum sint maiores fugit aliquid cumque.
-              </h3>
-            </div>
-            {/* Button with a thin white outline */}
-          </div>
-          <div className="flex flex-col px-8 py-4 border rounded-md border-white/20">
-            {/* This container ensures content wrapping */}
-            <div className="flex-grow overflow-hidden">
-              <p className="mb-1 text-xs">ID: 123123123</p>
-              <p className="mb-5 text-xs">Author: 123123123 </p>
-
-              <h3 className="break-words">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
-                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
-                Cum sint maiores fugit aliquid cumque.
-              </h3>
-            </div>
-            {/* Button with a thin white outline */}
-          </div>
-        </div>
-        {/* MOCK POSTs */}
-      </>
-    )
-  }
-
   const renderProfile = () => {
     const profileHeader = () => {
       return (
@@ -1032,7 +932,6 @@ export default function Home() {
           {renderMobileMenu()}
           {/* {renderProfile()} */}
           {renderEvents()}
-          {renderMockPosts()}
         </main>
 
         <div>
