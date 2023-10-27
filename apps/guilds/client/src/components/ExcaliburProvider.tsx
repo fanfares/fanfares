@@ -36,11 +36,19 @@ const POOL_RELAYS = [
   "wss://relayable.org/",
 ];
 
+const TEAM_KEYS = [
+  'db625e7637543ca7d7be65025834db318a0c7b75b0e23d4fb9e39229f5ba6fa7', // Simon
+  'c291d8d18aea2e879c09017e2f9f603d03d7eb6e787d23520bacf927c8b1323f', // Coach
+  '56d57bf11aed78a989a7f042a786e1f09c83b1e8360b0462cbf1377454657d1c', // Wemerson
+];
+
 export type ExcaliburContext = {
   events: VerifiedEvent[];
   profiles: NostrProfile[];
   postEvent: (event: NostrEvent<number>) => Promise<void>;
   isLoading: boolean;
+  teamKeys: string[];
+  relays: string[];
 };
 
 const DEFAULT_EVENT: ExcaliburContext = {
@@ -48,6 +56,8 @@ const DEFAULT_EVENT: ExcaliburContext = {
   profiles: [],
   isLoading: false,
   postEvent: () => Promise.resolve(),
+  teamKeys: TEAM_KEYS,
+  relays: POOL_RELAYS,
 };
 const ExcaliburContext = createContext<ExcaliburContext>(DEFAULT_EVENT);
 export const useExcalibur = () => useContext(ExcaliburContext);
@@ -68,6 +78,8 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
 
   const grabAndAddProfile = async (pubkey: string) => {
     if(!pool) return;
+
+    console.log('grabbing profile', pubkey);
 
     pool
     .get(POOL_RELAYS, {
@@ -103,6 +115,7 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
       });
     });
 
+
     setPool(pool);
 
     return () => {
@@ -112,6 +125,10 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
 
   useEffect(() => {
     if (pool) {
+
+      // Team
+      TEAM_KEYS.forEach(grabAndAddProfile)
+
       // WebLN
       requestProvider()
         .then(setWebln)
@@ -172,6 +189,8 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
     profiles,
     isLoading,
     postEvent,
+    teamKeys: TEAM_KEYS,
+    relays: POOL_RELAYS,
   };
 
   return (

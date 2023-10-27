@@ -21,7 +21,7 @@ export function getDefaultNostrProfile(pubkey: string): NostrProfile {
         pubkey: pubkey,
         picture: "https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/default_profile.png",
         banner: "file:///Users/coach/Documents/Work/Nostr-Playground/apps/guilds/client/assets/default_banner.png",
-        display_name: pubkeyToReadableName(pubkey),
+        display_name: '',
         name: '',
         about: ''
     }
@@ -79,4 +79,8 @@ export function stringHashCode(str: string): number {
         hash = hash & hash; // Convert to 32bit integer
     }
     return hash;
+}
+
+export function getDisplayName(profile: NostrProfile): string {
+    return profile.display_name || profile.name || pubkeyToReadableName(profile.pubkey);
 }
