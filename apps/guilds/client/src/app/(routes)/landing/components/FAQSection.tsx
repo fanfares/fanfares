@@ -5,8 +5,8 @@ import SectionTitle from "./SectionTitle"
 
 export interface FaqBoxProps {
   boxNumber: number
-  boxState: number
-  setBoxState: (boxNumber: number) => void
+  boxState: number | null
+  setBoxState: (boxNumber: number | null) => void
   boxTitle: string
   boxTitleId?: string
   boxButtonId?: string

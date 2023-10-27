@@ -1,3 +1,4 @@
+import AnimatedMenuButton from "@/components/AnimatedButton"
 import clsx from "clsx"
 import Image from "next/image"
 import Link from "next/link"
@@ -19,9 +20,12 @@ const Navbar = () => {
         role="button"
         target=""
         className={clsx(
-          "ml-auto rounded-lg bg-white px-2 py-2 text-xs font-medium text-black  drop-shadow-2xl  hover:scale-105  active:scale-95 md:px-6 md:py-3 md:text-sm"
+          "ml-auto drop-shadow-2xl  hover:scale-105  active:scale-95 md:px-6 md:py-3 md:text-sm"
         )}>
-        Start Listening
+        <AnimatedMenuButton
+          className="bg-white text-black"
+          label="Start Listening"
+        />
       </Link>
     </nav>
   )
