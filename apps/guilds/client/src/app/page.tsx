@@ -832,7 +832,7 @@ export default function Home() {
 
           const profileIndex = profiles.findIndex((profile)=>{return profile.pubkey === pubkey})
 
-          if(profileIndex === -1) return <p>{pubkey}</p>;
+          if(profileIndex === -1) return null;
           const profile = profiles[profileIndex];
           const name = getDisplayName(profile);
 
