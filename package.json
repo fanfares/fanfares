@@ -18,9 +18,12 @@
   ],
   "dependencies": {
     "@types/crypto-js": "^4.1.2",
+    "bolt11": "^1.4.1",
     "browserify-cipher": "^1.0.1",
     "crypto-js": "^4.1.1",
+    "firebase": "^10.5.0",
     "react-icons": "^4.11.0",
+    "reactfire": "^4.2.3",
     "webln": "^0.3.2"
   }
 }

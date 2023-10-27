@@ -42,6 +42,8 @@ import {
 import AnimatedMenuButton from "@/components/AnimatedButton"
 import NavigationMenu from "@/components/NavigationMenu"
 import Button from "@/components/Button"
+import { useExcalibur } from "@/components/ExcaliburProvider"
+import { getTag, verifyZap } from "utils"
 
 const RELAY = process.env.NEXT_PUBLIC_NOSTR_RELAY as string
 const GATE_SERVER = process.env.NEXT_PUBLIC_GATE_SERVER as string
@@ -90,6 +92,7 @@ export default function Home() {
   const [editProfileOn, setEditProfileOn] = useState<boolean>(false)
 
   const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA)
+  const { events } = useExcalibur();
 
   const [isChecked, setIsChecked] = useState<boolean>(false)
 
@@ -455,25 +458,43 @@ export default function Home() {
   const renderEvents = () => {
     return (
       <div className="w-full space-y-4 md:min-w-[32rem]">
-        {announcementNotes.map((event, index) => {
+        {events.map((event, index) => {
           return (
             <div
-              key={index}
+              key={event.id}
               className="flex flex-col px-8 py-4 border rounded-md border-white/20">
               {/* This container ensures content wrapping */}
               <div className="flex-grow overflow-hidden">
-                <p className="mb-1 text-xs">ID: {event.note.id}</p>
-                <p className="mb-5 text-xs">Author: {event.note.pubkey} </p>
-
-                <h3 className="break-words">{event.note.content}</h3>
+                <p className="mb-1 text-xs">ID: {event.id}</p>
+                <p className="mb-5 text-xs">Author: {event.pubkey} </p>
+                <h3 className="break-words">{event.content}</h3>
               </div>
-              {/* Button with a thin white outline */}
-              {renderGatedContent(event)}
             </div>
           )
         })}
       </div>
-    )
+    );
+    // return (
+    //   <div className="w-full space-y-4 md:min-w-[32rem]">
+    //     {announcementNotes.map((event, index) => {
+    //       return (
+    //         <div
+    //           key={index}
+    //           className="flex flex-col px-8 py-4 border rounded-md border-white/20">
+    //           {/* This container ensures content wrapping */}
+    //           <div className="flex-grow overflow-hidden">
+    //             <p className="mb-1 text-xs">ID: {event.note.id}</p>
+    //             <p className="mb-5 text-xs">Author: {event.note.pubkey} </p>
+
+    //             <h3 className="break-words">{event.note.content}</h3>
+    //           </div>
+    //           {/* Button with a thin white outline */}
+    //           {renderGatedContent(event)}
+    //         </div>
+    //       )
+    //     })}
+    //   </div>
+    // )
   }
 
   const renderForm = () => {
