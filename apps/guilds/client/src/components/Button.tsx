@@ -1,13 +1,18 @@
 import { ReactNode } from "react"
 
-interface ButtonProps {
+interface ButtonDefaultProps {
   label: string
   icon?: ReactNode
   onClick?: () => void
   className?: string
 }
 
-const Button = ({ label, onClick, className, icon }: ButtonProps) => {
+const ButtonDefault = ({
+  label,
+  onClick,
+  className,
+  icon,
+}: ButtonDefaultProps) => {
   return (
     <div className="relative text-center rounded-full md:w-36 group">
       <div className="absolute top-0 w-0 h-full duration-300 ease-in-out transform bg-neutral-900 rounded-full group-hover:w-full" />
@@ -21,4 +26,4 @@ const Button = ({ label, onClick, className, icon }: ButtonProps) => {
   )
 }
 
-export default Button
+export default ButtonDefault

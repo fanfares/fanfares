@@ -1,5 +1,6 @@
-import Button from '@components/Button';
-import Script from 'next/script';
+import ButtonDefault from "@/components/Button"
+import Script from "next/script"
+import Button from "./Button"
 
 function EmailSubscription() {
   return (
@@ -33,7 +34,7 @@ function EmailSubscription() {
         <Script src="https://sendfox.com/js/form.js"></Script>
       </div>
     </div>
-  );
+  )
 }
 
-export default EmailSubscription;
+export default EmailSubscription

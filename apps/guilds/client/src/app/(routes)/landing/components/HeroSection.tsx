@@ -1,6 +1,5 @@
-import { FontAwesomeIcon } from '@excalibur/config/fontawesome';
-import { faLinkedin } from '@fortawesome/free-brands-svg-icons';
-import Link from 'next/link';
+import Link from "next/link"
+import { BiLogoLinkedinSquare } from "react-icons/bi"
 
 const HeroSection = () => {
   return (
@@ -11,11 +10,14 @@ const HeroSection = () => {
         </h1>
       </div>
       <p className="max-w-xs mt-8 text-xs font-thin text-center md:max-w-md md:text-lg lg:max-w-lg lg:text-xl">
-        Excalibur is a creator led media platform that allows uncensored broadcasting of text, video and audio.
+        Excalibur is a creator led media platform that allows uncensored
+        broadcasting of text, video and audio.
       </p>
       <p className="px-4 mt-4 text-xs italic font-thin md:max-w-2xl md:text-base">
-        &quot;We empower creators to build community with their audience and to be rewarded fairly. Excalibur is a Web3
-        audio platform designed to deliver a higher quality of media with a seamless web3 user experience.&quot;
+        &quot;We empower creators to build community with their audience and to
+        be rewarded fairly. Excalibur is a Web3 audio platform designed to
+        deliver a higher quality of media with a seamless web3 user
+        experience.&quot;
       </p>
       <a
         className="flex items-center mt-2"
@@ -24,17 +26,17 @@ const HeroSection = () => {
         href="https://www.linkedin.com/comm/mynetwork/discovery-see-all?usecase=PEOPLE_FOLLOWS&followMember=simon-smith-a860885
 ">
         Simon Smith , CEO & Founder.
-        <FontAwesomeIcon className="ml-2 text-lg text-buttonAccentHover" icon={faLinkedin} />{' '}
+        <BiLogoLinkedinSquare />
       </a>
-      <Link href="/upload" passHref>
-        <a
-          target="_blank"
-          className="p-2 mt-10 text-sm font-medium rounded-md bg-buttonDefault drop-shadow-md hover:scale-105 hover:bg-buttonAccentHover/80 active:scale-95 md:px-4 md:py-3">
-          Get started
-        </a>
+      <Link
+        target="_blank"
+        className="p-2 mt-10 text-sm font-medium rounded-md bg-buttonDefault drop-shadow-md hover:scale-105 hover:bg-buttonAccentHover/80 active:scale-95 md:px-4 md:py-3"
+        href="/upload"
+        passHref>
+        Get started
       </Link>
     </div>
-  );
-};
+  )
+}
 
-export default HeroSection;
+export default HeroSection
