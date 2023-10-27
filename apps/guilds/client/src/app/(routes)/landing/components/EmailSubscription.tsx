@@ -1,6 +1,7 @@
 import ButtonDefault from "@/components/Button"
 import Script from "next/script"
 import Button from "./Button"
+import AnimatedMenuButton from "@/components/AnimatedButton"
 
 function EmailSubscription() {
   return (
@@ -23,12 +24,10 @@ function EmailSubscription() {
             required
           />
 
-          <Button
-            buttonType="submit"
-            type="submit"
+          <AnimatedMenuButton
             // onClick={() => toast.success('Subscribed successfuly')}
-            className="btn mx-auto h-10 w-20 focus:outline-white"
-            text="Submit"
+            className="btn mx-auto h-10 w-20 bg-white hover:bg-neutral-300 text-black focus:outline-white"
+            label="Submit"
           />
         </form>
         <Script src="https://sendfox.com/js/form.js"></Script>
