@@ -5,8 +5,9 @@ import {
   generatePrivateKey,
   SimplePool,
 } from "nostr-tools";
-import { NIP07 } from "utils";
+import { NIP07, verifyZap } from "utils";
 import { WebLNProvider, requestProvider } from "webln";
+import { getSince } from "utils";
 import {
   ReactNode,
   createContext,
@@ -22,7 +23,14 @@ const EXCALIBUR_RELAY = process.env.NEXT_PUBLIC_NOSTR_RELAY as string
 const POOL = [
     EXCALIBUR_RELAY,
     'wss://relay.primal.net',
-    'wss://relay.damus.io'
+    'wss://relay.damus.io',
+    'wss://cache2.primal.net/v1',
+    'wss://nostr.kollider.xyz/',
+    'wss://nostr.wine/',
+    'wss://nos.lol/',
+    'wss://welcome.nostr.wine/',
+    'wss://nostr-relay.nokotaro.com/',
+    'wss://relayable.org/',
 ]
 
 
@@ -75,15 +83,19 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
     const pool = new SimplePool();
     const sub = pool.sub(POOL, [{
         kinds: [1],
+        // since: getSince({ days: 30 })
         limit: STARTING_LOAD
     }]);
 
-    console.log('STARTED');
-
     sub.on('event', event => {
-
         setEvents((prevEvents) => {
             if(prevEvents.find(e => e.id === event.id)) return prevEvents;
+            if(!event.content) return prevEvents;
+
+            // const amount = verifyZap(event as any);
+            // if(!amount) return prevEvents;
+            // return [event as any, ...prevEvents];
+
             return [event as any, ...(prevEvents.slice(0, MAX_SHOW))];
         });
     });
@@ -93,6 +105,24 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
     }
     
   }, []);
+
+  useEffect(() => {
+    let postedEvents: {[key: string]: {amount: number, count: number}} = {};
+
+    for (const event of events) {
+      const amount = verifyZap(event);
+      if(!amount) return;
+      if (postedEvents[event.id]) {
+        postedEvents[event.id] = { 
+          amount: postedEvents[event.id].amount + amount, 
+          count: postedEvents[event.id].count + 1
+      };
+      } else {
+        postedEvents[event.id] = { amount, count: 1 };
+      }
+    }
+
+  }, [events]);
 
   // ---------------- DATA ----------------------------
   const excalibur = {
@@ -105,3 +135,5 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
     </ExcaliburContext.Provider>
   );
 }
+
+
