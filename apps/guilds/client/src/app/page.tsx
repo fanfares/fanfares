@@ -82,6 +82,11 @@ const DEFAULT_FORM_DATA: FormData = {
   content: "This is the content that will be unlocked!",
 }
 
+enum FeedType {
+  Live = 'Live',
+  Following = 'Following',
+}
+
 export default function Home() {
   // ------------------- STATES -------------------------
 
@@ -101,9 +106,10 @@ export default function Home() {
   const [editProfileOn, setEditProfileOn] = useState<boolean>(false)
 
   const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA)
-  const { events, profiles, postEvent, teamKeys } = useExcalibur()
+  const { events, profiles, postEvent, teamKeys, followingEvents } = useExcalibur()
 
   const [isChecked, setIsChecked] = useState<boolean>(false)
+  const [feedType, setFeedType] = useState<FeedType>(FeedType.Live)
 
   // ------------------- EFFECTS -------------------------
 
@@ -185,7 +191,6 @@ export default function Home() {
               },
             ])
             .then(gatedEvents => {
-              console.log(gatedEvents)
               setGatedNotes(
                 gatedEvents.map(gatedNote =>
                   eventToGatedNote(gatedNote as VerifiedEvent)
@@ -379,9 +384,7 @@ export default function Home() {
       })
 
       const responseJson = await response.json()
-      console.log(responseJson)
 
-      console.log("Publishing Gated Note...")
       await relay.publish(gatedNoteVerified)
 
       // ------------------- CREATE ANNOUNCEMENT NOTE -------------------------
@@ -392,13 +395,11 @@ export default function Home() {
         gatedNoteVerified
       )
 
-      console.log("Publishing Announcement Note...")
       const announcementNoteVerified = await nostr.signEvent(announcementNote)
       await relay.publish(announcementNoteVerified)
 
       // ------------------- ADD NOTE TO EVENTS -------------------------
 
-      console.log("Adding Notes to Events...")
       setAnnouncementNotes([
         eventToAnnouncementNote(announcementNoteVerified),
         ...announcementNotes,
@@ -482,10 +483,21 @@ export default function Home() {
     return renderLockedContent(gatedNote)
   }
 
+  const renderSwitch = () => {
+    return (
+      <div className="w-full space-y-4 md:min-w-[32rem] mb-5">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4 justify-center">
+          <p onClick={()=>setFeedType(FeedType.Live)} className={`${feedType === FeedType.Live ? 'font-bold' : ''}`}>{FeedType.Live}</p>
+          <p onClick={()=>setFeedType(FeedType.Following)} className={`${feedType === FeedType.Following ? 'font-bold' : ''}`}>{FeedType.Following}</p>
+        </div>
+      </div>
+    )
+  }
+
   const renderEvents = () => {
     return (
       <div className="w-full space-y-4 md:min-w-[32rem]">
-        {events.map((event, index) => {
+        {(feedType === FeedType.Live ? events : followingEvents).map((event, index) => {
           const profileIndex = profiles.findIndex(
             profile => profile.pubkey === event.pubkey
           )
@@ -989,6 +1001,7 @@ export default function Home() {
         <main className="items-center w-full md:min-w-[32rem] max-w-md min-h-screen mb-10 md:max-w-xl">
           {renderForm()}
           {/* {renderProfile()} */}
+          {renderSwitch()}
           {renderEvents()}
         </main>
 

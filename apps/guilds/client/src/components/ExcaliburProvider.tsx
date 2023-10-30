@@ -13,6 +13,7 @@ import { getSince } from "utils";
 import {
   ReactNode,
   createContext,
+  use,
   useContext,
   useEffect,
   useState,
@@ -21,6 +22,7 @@ import { set } from "firebase/database";
 
 const STARTING_LOAD = 1;
 const MAX_SHOW = 89;
+const MAX_SHOW_FOLLOWING = 20;
 
 const EXCALIBUR_RELAY = process.env.NEXT_PUBLIC_NOSTR_RELAY as string;
 const POOL_RELAYS = [
@@ -44,6 +46,7 @@ const TEAM_KEYS = [
 
 export type ExcaliburContext = {
   events: VerifiedEvent[];
+  followingEvents: VerifiedEvent[];
   profiles: NostrProfile[];
   postEvent: (event: NostrEvent<number>) => Promise<void>;
   isLoading: boolean;
@@ -53,6 +56,7 @@ export type ExcaliburContext = {
 
 const DEFAULT_EVENT: ExcaliburContext = {
   events: [],
+  followingEvents: [],
   profiles: [],
   isLoading: false,
   postEvent: () => Promise.resolve(),
@@ -74,19 +78,20 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
   const [publicKey, setPublicKey] = useState<string | null>(null);
   const [pool, setPool] = useState<SimplePool | null>(null);
   const [events, setEvents] = useState<VerifiedEvent[]>([]);
+  const [followingEvents, setFollowingEvents] = useState<VerifiedEvent[]>([]);
   const [profiles, setProfiles] = useState<NostrProfile[]>([]);
+  const [kind3, setKind3] = useState<NostrEvent<3> | null>(null);
 
   const grabAndAddProfile = async (pubkey: string) => {
     if(!pool) return;
-
-    console.log('grabbing profile', pubkey);
 
     pool
     .get(POOL_RELAYS, {
       kinds: [0],
       authors: [pubkey],
     })
-    .then((kind0: any) => {
+    .then((kind0) => {
+      if(!kind0) return;
       const profile = eventToNostrProfile(pubkey, kind0);
       setProfiles((prevProfiles) => {
         return [profile, ...prevProfiles];
@@ -119,6 +124,7 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
     setPool(pool);
 
     return () => {
+      sub.unsub();
       pool.close(POOL_RELAYS);
     };
   }, []);
@@ -149,9 +155,52 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
 
   useEffect(() => {
     if(!publicKey) return;
+    if(!pool) return;
 
     grabAndAddProfile(publicKey);
-  }, [publicKey])
+
+    pool.get(POOL_RELAYS, {
+      kinds: [3],
+      authors: [publicKey],
+    })
+    .then(setKind3)
+
+  }, [publicKey, pool])
+
+  useEffect(() => {
+    if (!kind3) return;
+    if (!pool) return;
+
+    const following = [];
+    const relays = [...POOL_RELAYS]; // Does not work right now
+    for (const tag of kind3.tags) {
+      if(tag[0] === 'p' && tag[1]) {
+        following.push(tag[1]);
+      }
+    }
+
+    const sub = pool.sub(relays, [
+      {
+        kinds: [1],
+        authors: [kind3.pubkey, ...following],
+        limit: MAX_SHOW_FOLLOWING,
+      },
+    ]);
+
+    sub.on("event", (event) => {
+      setFollowingEvents((prevEvents) => {
+        if (prevEvents.find((e) => e.id === event.id)) return prevEvents;
+        if (!event.content) return prevEvents;
+
+        return [event as any, ...prevEvents.slice(0, MAX_SHOW)];
+      });
+    });
+
+    return () => {
+      sub.unsub();
+      pool.close(relays);
+    }
+  }, [kind3, pool]);
 
   useEffect(() => {
     if (!pool) return;
@@ -160,7 +209,12 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
       if (profiles.find((profile) => profile.pubkey === event.pubkey)) continue;
       grabAndAddProfile(event.pubkey)
     }
-  }, [events, pool]);
+
+    for (const event of followingEvents) {
+      if (profiles.find((profile) => profile.pubkey === event.pubkey)) continue;
+      grabAndAddProfile(event.pubkey)
+    }
+  }, [events, followingEvents, pool]);
 
   // ---------------- DATA ----------------------------
 
@@ -189,6 +243,7 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
     profiles,
     isLoading,
     postEvent,
+    followingEvents,
     teamKeys: TEAM_KEYS,
     relays: POOL_RELAYS,
   };

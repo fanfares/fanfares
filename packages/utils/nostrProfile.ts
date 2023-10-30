@@ -1,4 +1,4 @@
-import { VerifiedEvent } from "nostr-tools";
+import { Event as NostrEvent } from "nostr-tools";
 
 export interface NostrProfile {
     pubkey: string;
@@ -27,7 +27,7 @@ export function getDefaultNostrProfile(pubkey: string): NostrProfile {
     }
 }
 
-export function eventToNostrProfile(pubkey: string, event: VerifiedEvent | null): NostrProfile {
+export function eventToNostrProfile(pubkey: string, event: NostrEvent<0> | null): NostrProfile {
 
     const profile = (event && event.content) ? JSON.parse((event as any).content) : {};
 
