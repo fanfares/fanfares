@@ -415,11 +415,12 @@ export default function Home() {
   // ------------------- RENDERERS -------------------------
   const renderLogo = () => {
     return (
-      <header className="items-center justify-center w-full text-2xl font-bold text-center backdrop-blur-sm">
-        ZapsBack
-      </header>
-    )
-  }
+      <div className="items-center justify-center w-full text-2xl font-bold text-center backdrop-blur-sm">
+        <header>Zaps⚡Back </header>
+        <p className="text-sm font-normal">( Alpha )</p>
+      </div>
+    );
+  };
 
   const renderUnlockedContent = (gatedNote: GatedNote, keyNote: KeyNote) => {
     const unlockedNote = unlockGatedNote(
