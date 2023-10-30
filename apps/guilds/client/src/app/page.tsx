@@ -45,7 +45,12 @@ import AnimatedMenuButton from "@/components/AnimatedButton"
 import NavigationMenu from "@/components/NavigationMenu"
 import ButtonDefault from "@/components/Button"
 import { useExcalibur } from "@/components/ExcaliburProvider"
-import { getTag, verifyZap } from "utils"
+import {
+  getDefaultNostrProfile,
+  getDisplayName,
+  getTag,
+  verifyZap,
+} from "utils"
 
 const RELAY = process.env.NEXT_PUBLIC_NOSTR_RELAY as string
 const GATE_SERVER = process.env.NEXT_PUBLIC_GATE_SERVER as string
@@ -94,7 +99,7 @@ export default function Home() {
   const [editProfileOn, setEditProfileOn] = useState<boolean>(false)
 
   const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA)
-  const { events } = useExcalibur()
+  const { events, profiles, postEvent, teamKeys } = useExcalibur()
 
   const [isChecked, setIsChecked] = useState<boolean>(false)
 
@@ -274,6 +279,23 @@ export default function Home() {
     return content.substring(0, 500) + "..."
   }
 
+  const submitSimpleForm = async () => {
+    const { content } = formData
+
+    if (!content) return
+    if (!publicKey) return
+
+    const event = {
+      kind: 1,
+      pubkey: publicKey,
+      created_at: Math.floor(Date.now() / 1000),
+      tags: [],
+      content: content,
+    }
+
+    postEvent(event as any)
+  }
+
   const submitForm = async () => {
     if (submittingForm) return
 
@@ -393,9 +415,10 @@ export default function Home() {
   // ------------------- RENDERERS -------------------------
   const renderLogo = () => {
     return (
-      <header className="items-center justify-center w-full text-2xl font-bold text-center backdrop-blur-sm">
-        Zaps⚡️Back
-      </header>
+      <div className="items-center justify-center w-full text-2xl font-bold text-center backdrop-blur-sm">
+        <header>Zaps⚡Back </header>
+        <p className="text-sm font-normal">( Alpha )</p>
+      </div>
     )
   }
 
@@ -461,42 +484,37 @@ export default function Home() {
     return (
       <div className="w-full space-y-4 md:min-w-[32rem]">
         {events.map((event, index) => {
+          const profileIndex = profiles.findIndex(
+            profile => profile.pubkey === event.pubkey
+          )
+
+          const profile =
+            profileIndex === -1
+              ? getDefaultNostrProfile(event.pubkey)
+              : profiles[profileIndex]
+          const name = getDisplayName(profile)
+
           return (
             <div
               key={event.id}
-              className="flex flex-col px-8 py-4 border rounded-md border-white/20">
+              className="flex flex-col p-4 border rounded-md border-white/20">
               {/* This container ensures content wrapping */}
-              <div className="flex-grow overflow-hidden">
-                <p className="mb-1 text-xs">ID: {event.id}</p>
-                <p className="mb-5 text-xs">Author: {event.pubkey} </p>
-                <h3 className="break-words">{event.content}</h3>
+              <div className="flex-grow overflow-hidden flex">
+                <img
+                  src={profile.picture}
+                  alt={profile.display_name}
+                  className="w-12 h-12 rounded-full object-cover mr-4" // Adjust width (w-12) and height (h-12) as needed
+                />
+                <div className="flex flex-col w-full">
+                  <p className="mb-5 text-xs font-bold">{name}</p>
+                  <h3 className="break-all">{event.content}</h3>
+                </div>
               </div>
             </div>
           )
         })}
       </div>
     )
-    // return (
-    //   <div className="w-full space-y-4 md:min-w-[32rem]">
-    //     {announcementNotes.map((event, index) => {
-    //       return (
-    //         <div
-    //           key={index}
-    //           className="flex flex-col px-8 py-4 border rounded-md border-white/20">
-    //           {/* This container ensures content wrapping */}
-    //           <div className="flex-grow overflow-hidden">
-    //             <p className="mb-1 text-xs">ID: {event.note.id}</p>
-    //             <p className="mb-5 text-xs">Author: {event.note.pubkey} </p>
-
-    //             <h3 className="break-words">{event.note.content}</h3>
-    //           </div>
-    //           {/* Button with a thin white outline */}
-    //           {renderGatedContent(event)}
-    //         </div>
-    //       )
-    //     })}
-    //   </div>
-    // )
   }
 
   const renderForm = () => {
@@ -571,7 +589,7 @@ export default function Home() {
 
             <ButtonDefault
               className="font-bold border border-white/20"
-              onClick={submitForm}
+              onClick={submitSimpleForm}
               label="Submit"
             />
           </div>
@@ -806,34 +824,40 @@ export default function Home() {
   }
 
   const mockTrendingPosts = () => {
-    let i = 0
-    const elements = []
+    return (
+      <div>
+        {teamKeys.map((pubkey, index) => {
+          const profileIndex = profiles.findIndex(profile => {
+            return profile.pubkey === pubkey
+          })
 
-    while (i < 30) {
-      elements.push(
-        <div
-          key={i}
-          className="flex h-16 gap-2 mt-4 p-1 hover:bg-neutral-900 duration-300 rounded">
-          <img
-            src="https://placebeard.it/640x360"
-            className="object-cover w-8 h-8 rounded-full"
-            alt=""
-          />
-          <div className="flex flex-col ">
-            <p className="text-sm font-bold">
-              User<span className="font-thin"> | 1h ago</span>
-            </p>
-            <p className="text-xs font-thin line-clamp-2">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            </p>
-          </div>
-        </div>
-      )
+          if (profileIndex === -1) return null
+          const profile = profiles[profileIndex]
+          const name = getDisplayName(profile)
 
-      i++
-    }
-
-    return <div>{elements}</div>
+          return (
+            <div
+              key={pubkey}
+              className="flex h-16 gap-2 mt-4 p-1 hover:bg-neutral-900 duration-300 rounded">
+              <img
+                src={profile.picture}
+                className="object-cover w-8 h-8 rounded-full"
+                alt={name}
+              />
+              <div className="flex flex-col ">
+                <p className="text-sm font-bold">
+                  {name}
+                  <span className="font-thin"> | 1h ago</span>
+                </p>
+                <p className="text-xs font-thin line-clamp-2">
+                  {profile.about.substring(0, 50)}...
+                </p>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    )
   }
 
   const renderTrending = () => {
@@ -956,12 +980,12 @@ export default function Home() {
     <>
       {renderFormModal()}
       {renderEditProfile()}
+      {renderMobileMenu()}
 
-      <div className="flex justify-center w-full relative">
+      <div className="flex justify-center w-full relative mt-16 md:mt-0">
         <div className="sticky top">{renderUserMenu()}</div>
-        <main className="items-center w-full mt-20 md:min-w-[32rem] max-w-md min-h-screen mb-10 md:max-w-xl">
+        <main className="items-center w-full md:min-w-[32rem] max-w-md min-h-screen mb-10 md:max-w-xl">
           {renderForm()}
-          {renderMobileMenu()}
           {/* {renderProfile()} */}
           {renderEvents()}
         </main>

@@ -1,7 +1,13 @@
 import clsx from 'clsx';
 import Image from 'next/image';
 
-const LazyEpisodeThumbnail = ({ src, transitioning }) => {
+export interface LazyEpisodeThumbnailProps {
+  src: string;
+  transitioning: boolean;
+}
+
+function LazyEpisodeThumbnail(props: LazyEpisodeThumbnailProps){
+  const { src, transitioning } = props;
   return (
     <div
       className={clsx(
