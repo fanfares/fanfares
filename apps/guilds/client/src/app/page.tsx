@@ -409,7 +409,7 @@ export default function Home() {
   const renderLogo = () => {
     return (
       <div className="items-center justify-center w-full text-2xl font-bold text-center backdrop-blur-sm">
-        <header>ZAPS Back </header>
+        <header>Zaps⚡Back </header>
         <p className="text-sm font-normal">( Alpha )</p>
       </div>
     );
