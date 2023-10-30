@@ -22,7 +22,9 @@ import {
   FaMinus,
   FaSearch,
   FaEnvelope,
+  FaHamburger,
 } from "react-icons/fa"
+import { GiHamburgerMenu } from "react-icons/gi"
 import { HiPencilAlt } from "react-icons/hi"
 import { AiFillThunderbolt } from "react-icons/ai"
 import { ChangeEvent, useEffect, useState } from "react"
@@ -499,7 +501,7 @@ export default function Home() {
               key={event.id}
               className="flex flex-col p-4 border rounded-md border-white/20">
               {/* This container ensures content wrapping */}
-              <div className="flex-grow overflow-hidden flex">
+              <div className="flex w-full overflow-hidden">
                 <img
                   src={profile.picture}
                   alt={profile.display_name}
@@ -507,7 +509,7 @@ export default function Home() {
                 />
                 <div className="flex flex-col w-full">
                   <p className="mb-5 text-xs font-bold">{name}</p>
-                  <h3 className="break-all">{event.content}</h3>
+                  <h3 className="break-words">{event.content}</h3>
                 </div>
               </div>
             </div>
@@ -926,15 +928,15 @@ export default function Home() {
   const renderMobileMenu = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false)
     return (
-      <div className="absolute md:hidden z-10 top-0 flex items-center w-full justify-center">
+      <div className="fixed md:hidden z-10 top-0 flex items-center w-full justify-center bg-black pb-2">
         <p className="mx-auto mt-5 z-20 font-bold text-2xl"> Zaps⚡️Back</p>{" "}
         <button
-          className="bg-neutral-500 w-8 h-8 px-2 py-2 rounded-full flex items-center absolute right-5 top-4 z-20"
+          className="fixed right-5 top-4 z-20"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-          {mobileMenuOpen ? <FaMinus /> : <FaPlus />}
+          <GiHamburgerMenu size={32} />
         </button>
         {mobileMenuOpen ? (
-          <div className="h-screen flex-col w-screen flex absolute  left-0 top-0 bg-black/60 items-center justify-center backdrop-blur-sm">
+          <div className="h-screen flex-col w-screen flex fixed  left-0 top-0 bg-black/60 items-center justify-center backdrop-blur-sm">
             <div className="mt-10 flex flex-col gap-4">
               <AnimatedMenuButton
                 mobile
