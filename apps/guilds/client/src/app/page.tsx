@@ -509,7 +509,7 @@ export default function Home() {
                 />
                 <div className="flex flex-col w-full">
                   <p className="mb-5 text-xs font-bold">{name}</p>
-                  <h3 className="break-words">{event.content}</h3>
+                  <h3 className="break-words pr-8 ">{event.content}</h3>
                 </div>
               </div>
             </div>
