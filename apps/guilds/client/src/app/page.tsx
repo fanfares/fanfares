@@ -496,7 +496,7 @@ export default function Home() {
           return (
             <div
               key={event.id}
-              className="flex flex-col px-8 py-4 border rounded-md border-white/20">
+              className="flex flex-col p-4 border rounded-md border-white/20">
               {/* This container ensures content wrapping */}
               <div className="flex-grow overflow-hidden flex">
                 <img
@@ -504,9 +504,9 @@ export default function Home() {
                   alt={profile.display_name}
                   className="w-12 h-12 rounded-full object-cover mr-4" // Adjust width (w-12) and height (h-12) as needed
                 />
-                <div>
+                <div className="flex flex-col w-full">
                   <p className="mb-5 text-xs font-bold">{name}</p>
-                  <h3 className="break-words">{event.content}</h3>
+                  <h3 className="break-all">{event.content}</h3>
                 </div>
               </div>
             </div>
