@@ -18,6 +18,8 @@ import {
   FaCompass,
   FaCog,
   FaAt,
+  FaPlus,
+  FaMinus,
   FaSearch,
   FaEnvelope,
 } from "react-icons/fa"
@@ -392,7 +394,7 @@ export default function Home() {
   const renderLogo = () => {
     return (
       <header className="items-center justify-center w-full text-2xl font-bold text-center backdrop-blur-sm">
-        ZAPS Back{" "}
+        ZapsBack
       </header>
     )
   }
@@ -507,19 +509,6 @@ export default function Home() {
     return (
       <div className="flex items-center justify-center w-full bg-black my-4 ">
         <div className="w-full p-5 text-white bg-black border rounded-lg shadow-lg border-white/20">
-          <div className="mt-1 mb-2 hidden">
-            <label className="block mb-2">Unlock Cost ( sats )</label>
-            <input
-              type="number"
-              min={`${MIN_SAT_COST}`}
-              max={`${MAX_SAT_COST}`}
-              value={formData.cost}
-              onChange={e =>
-                setFormData({ ...formData, cost: +e.target.value })
-              }
-              className="w-full p-2 text-white bg-black border rounded border-white/20"
-            />
-          </div>
           {isChecked ? (
             <>
               {" "}
@@ -593,68 +582,81 @@ export default function Home() {
 
   const renderFormModal = () => {
     // todo make it as a component to be reused both by pressing the Left post button and on Top header.
+    const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
+      const { checked } = event.target
+      setIsChecked(checked)
+    }
+
     if (!isPostFormOpen) return null
 
     return (
-      <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-60">
-        <div className="w-1/2 p-5 text-white bg-black border rounded-lg shadow-lg border-white/20">
-          <h2 className="mb-4 text-lg">Create Gated Post</h2>
-          <div className="mt-1 mb-2">
-            <label className="block mb-2">Lud16</label>
-            <input
-              type="email"
-              placeholder="coachchuckff@getalby.com"
-              value={formData.lud16}
-              onChange={e =>
-                setFormData({ ...formData, lud16: e.target.value })
-              }
-              className="w-full p-2 text-white bg-black border rounded border-white/20"
-            />
-          </div>
-          <div className="mt-1 mb-2">
-            <label className="block mb-2">Unlock Cost ( sats )</label>
-            <input
-              type="number"
-              min={`${MIN_SAT_COST}`}
-              max={`${MAX_SAT_COST}`}
-              value={formData.cost}
-              onChange={e =>
-                setFormData({ ...formData, cost: +e.target.value })
-              }
-              className="w-full p-2 text-white bg-black border rounded border-white/20"
-            />
-          </div>
-          <div className="mt-1 mb-2">
-            <label className="block mb-2">Preview</label>
-            <input
-              type="text"
-              placeholder={`Hey unlock my post for ${formData.cost} sats!`}
-              maxLength={MAX_PREVIEW_LENGTH}
-              value={formData.preview}
-              onChange={e =>
-                setFormData({ ...formData, preview: e.target.value })
-              }
-              className="w-full p-2 text-white bg-black border rounded border-white/20"
-            />
-          </div>
-          <div className="mt-1 mb-2 h-80">
-            <label className="block mb-2">Content</label>
+      <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-screen h-screen bg-black bg-opacity-60">
+        <div className="w-full h-full p-5 text-white bg-black border rounded-lg shadow-lg border-white/20">
+          {isChecked ? (
+            <>
+              {" "}
+              <div className="mt-1 mb-2">
+                <label className="block mb-2">Post preview</label>
+                <input
+                  type="text"
+                  placeholder={`Hey unlock my post for ${formData.cost} sats!`}
+                  maxLength={MAX_PREVIEW_LENGTH}
+                  value={formData.preview}
+                  onChange={e =>
+                    setFormData({ ...formData, preview: e.target.value })
+                  }
+                  className="w-full p-2 text-white bg-black border rounded border-white/20"
+                />
+              </div>
+              <div className="mt-1 mb-2">
+                <label className="block mb-2">Unlock Cost ( sats )</label>
+                <input
+                  type="number"
+                  min={`${MIN_SAT_COST}`}
+                  max={`${MAX_SAT_COST}`}
+                  value={formData.cost}
+                  onChange={e =>
+                    setFormData({ ...formData, cost: +e.target.value })
+                  }
+                  className="w-full p-2 text-white bg-black border rounded border-white/20"
+                />
+              </div>
+            </>
+          ) : null}
+          <div className="mt-1 mb-2 h-20">
+            <label className="mb-2 hidden">Content</label>
             <textarea
               maxLength={MAX_CONTENT_LENGTH}
-              placeholder={`This is the content that will be unlocked!`}
-              value={formData.content}
+              placeholder={`What is going on?`}
               onChange={e =>
                 setFormData({ ...formData, content: e.target.value })
               }
               className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
           </div>
-          <div className="flex justify-between mt-12">
+          <div className="flex justify-between mt-12 items-center">
+            <label
+              htmlFor="setAsGatedContentCheckbox"
+              className="relative inline-flex items-center cursor-pointer px-4 border border-white/20 py-2 rounded-full">
+              <input
+                checked={isChecked}
+                onChange={handleCheckboxChange}
+                type="checkbox"
+                value=""
+                name="setAsGatedContentCheckbox"
+                id="setAsGatedContentCheckbox"
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-4 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+              <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                Paid content?
+              </span>
+            </label>
+
             <ButtonDefault
               className="font-bold border border-white/20"
               onClick={() => setPostFormOpen(false)}
-              label="Close"
+              label="Cancel"
             />
-
             <ButtonDefault
               className="font-bold border border-white/20"
               onClick={submitForm}
@@ -847,114 +849,6 @@ export default function Home() {
     )
   }
 
-  const renderMockPosts = () => {
-    return (
-      <>
-        {/* MOCK POSTs */}
-        <div className="space-y-4">
-          <article className="flex flex-col px-8 py-4 border rounded-md border-white/20">
-            {/* This container ensures content wrapping */}
-            <div className="flex-grow overflow-hidden">
-              <p className="mb-1 text-xs">ID: 123123123</p>
-              <p className="mb-5 text-xs">Author: 123123123 </p>
-
-              <h3 className="break-words">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
-                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
-                Cum sint maiores fugit aliquid cumque.
-              </h3>
-            </div>
-            {/* Button with a thin white outline */}
-          </article>
-          <div className="flex flex-col px-8 py-4 border rounded-md border-white/20">
-            {/* This container ensures content wrapping */}
-            <div className="flex-grow overflow-hidden">
-              <p className="mb-1 text-xs">ID: 123123123</p>
-              <p className="mb-5 text-xs">Author: 123123123 </p>
-
-              <h3 className="break-words">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
-                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
-                Cum sint maiores fugit aliquid cumque.Lorem ipsum dolor sit amet
-                consectetur adipisicing elit. Corrupti, aperiam rem. Molestias,
-                hic recusandae repudiandae nisi quisquam ad quod voluptates,
-                fugiat sed, id consequuntur. Cum sint maiores fugit aliquid
-                cumque.Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
-                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
-                Cum sint maiores fugit aliquid cumque.Lorem ipsum dolor sit amet
-                consectetur adipisicing elit. Corrupti, aperiam rem. Molestias,
-                hic recusandae repudiandae nisi quisquam ad quod voluptates,
-                fugiat sed, id consequuntur. Cum sint maiores fugit aliquid
-                cumque.
-              </h3>
-            </div>
-            {/* Button with a thin white outline */}
-          </div>
-          <div className="flex flex-col px-8 py-4 border rounded-md border-white/20">
-            {/* This container ensures content wrapping */}
-            <div className="flex-grow overflow-hidden">
-              <p className="mb-1 text-xs">ID: 123123123</p>
-              <p className="mb-5 text-xs">Author: 123123123 </p>
-
-              <h3 className="break-words">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
-                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
-                Cum sint maiores fugit aliquid cumque. Lorem ipsum dolor sit
-                amet consectetur adipisicing elit. Corrupti, aperiam rem.
-                Molestias, hic recusandae repudiandae nisi quisquam ad quod
-                voluptates, fugiat sed, id consequuntur. Cum sint maiores fugit
-                aliquid cumque.Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Corrupti, aperiam rem. Molestias, hic
-                recusandae repudiandae nisi quisquam ad quod voluptates, fugiat
-                sed, id consequuntur. Cum sint maiores fugit aliquid
-                cumque.Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
-                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
-                Cum sint maiores fugit aliquid cumque.
-              </h3>
-            </div>
-            {/* Button with a thin white outline */}
-          </div>
-          <div className="flex flex-col px-8 py-4 border rounded-md border-white/20">
-            {/* This container ensures content wrapping */}
-            <div className="flex-grow overflow-hidden">
-              <p className="mb-1 text-xs">ID: 123123123</p>
-              <p className="mb-5 text-xs">Author: 123123123 </p>
-
-              <h3 className="break-words">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
-                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
-                Cum sint maiores fugit aliquid cumque.
-              </h3>
-            </div>
-            {/* Button with a thin white outline */}
-          </div>
-          <div className="flex flex-col px-8 py-4 border rounded-md border-white/20">
-            {/* This container ensures content wrapping */}
-            <div className="flex-grow overflow-hidden">
-              <p className="mb-1 text-xs">ID: 123123123</p>
-              <p className="mb-5 text-xs">Author: 123123123 </p>
-
-              <h3 className="break-words">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Corrupti, aperiam rem. Molestias, hic recusandae repudiandae
-                nisi quisquam ad quod voluptates, fugiat sed, id consequuntur.
-                Cum sint maiores fugit aliquid cumque.
-              </h3>
-            </div>
-            {/* Button with a thin white outline */}
-          </div>
-        </div>
-        {/* MOCK POSTs */}
-      </>
-    )
-  }
-
   const renderProfile = () => {
     const profileHeader = () => {
       return (
@@ -1008,12 +902,50 @@ export default function Home() {
   const renderMobileMenu = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false)
     return (
-      <div className="absolute top-5 right-5">
+      <div className="absolute md:hidden z-10 top-0 flex items-center w-full justify-center">
+        <p className="mx-auto mt-5 z-20 font-bold text-2xl"> ZapsBack</p>{" "}
         <button
-          className="bg-neutral-500 w-8 h-8 px-2 py-2 rounded-full flex items-center"
-          onClick={() => setMobileMenuOpen(mobileMenuOpen)}>
-          +
+          className="bg-neutral-500 w-8 h-8 px-2 py-2 rounded-full flex items-center absolute right-5 top-4 z-20"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          {mobileMenuOpen ? <FaMinus /> : <FaPlus />}
         </button>
+        {mobileMenuOpen ? (
+          <div className="h-screen flex-col w-screen flex absolute  left-0 top-0 bg-black/60 items-center justify-center backdrop-blur-sm">
+            <div className="mt-10 flex flex-col gap-4">
+              <AnimatedMenuButton
+                mobile
+                className="text-4xl"
+                label="HOME"
+                icon={<FaHome size={32} />}
+              />
+              <AnimatedMenuButton
+                mobile
+                className="text-4xl"
+                label="EXPLORE"
+                icon={<FaCompass size={32} />}
+              />
+              <AnimatedMenuButton
+                mobile
+                className="text-4xl"
+                label="PROFILE"
+                icon={<FaUserAlt size={32} />}
+              />
+              <AnimatedMenuButton
+                mobile
+                className="text-4xl"
+                label="MESSAGES"
+                icon={<FaEnvelope size={32} />}
+              />
+              <AnimatedMenuButton
+                mobile
+                onClick={() => setPostFormOpen(true)}
+                className="text-4xl"
+                label="POST"
+                icon={<HiPencilAlt size={32} />}
+              />
+            </div>
+          </div>
+        ) : null}
       </div>
     )
   }
@@ -1032,12 +964,12 @@ export default function Home() {
           {renderMobileMenu()}
           {/* {renderProfile()} */}
           {renderEvents()}
-          {renderMockPosts()}
         </main>
 
         <div>
           <aside className="sticky py-4 top-0 hidden ml-8 w-80 lg:flex lg:flex-col ">
             {renderSearchBar()}
+            {/* TO DO OUR PROFILES INSTEAD TRENDING */}
             {renderTrending()}
           </aside>
         </div>
