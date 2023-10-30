@@ -394,7 +394,7 @@ export default function Home() {
   const renderLogo = () => {
     return (
       <header className="items-center justify-center w-full text-2xl font-bold text-center backdrop-blur-sm">
-        ZapsBack
+        Zaps⚡️Back
       </header>
     )
   }
@@ -903,7 +903,7 @@ export default function Home() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false)
     return (
       <div className="absolute md:hidden z-10 top-0 flex items-center w-full justify-center">
-        <p className="mx-auto mt-5 z-20 font-bold text-2xl"> ZapsBack</p>{" "}
+        <p className="mx-auto mt-5 z-20 font-bold text-2xl"> Zaps⚡️Back</p>{" "}
         <button
           className="bg-neutral-500 w-8 h-8 px-2 py-2 rounded-full flex items-center absolute right-5 top-4 z-20"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
