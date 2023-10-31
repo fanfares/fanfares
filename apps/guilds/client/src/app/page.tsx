@@ -423,7 +423,7 @@ export default function Home() {
       <div className="flex flex-col items-center relative w-full h-20">
         <div className="w-32 h-20 relative">
           <img
-            src="https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/logo.PNG"
+            src="https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/ZapsLogo.png"
             alt="Zaps⚡️Back"
           />
         </div>
@@ -497,17 +497,15 @@ export default function Home() {
           <button
             onClick={() => setFeedType(FeedType.Live)}
             className={`${
-              feedType === FeedType.Live
-                ? "font-bold bg-neutral-500 px-4 py-2 "
-                : ""
-            }px-4 py-2 rounded-full`}>
+              feedType === FeedType.Live ? "font-bold bg-neutral-500 px-4 " : ""
+            }px-4 py-1 rounded-full`}>
             {FeedType.Live}
           </button>
           <button
             onClick={() => setFeedType(FeedType.Following)}
             className={`${
               feedType === FeedType.Following ? "font-bold bg-neutral-500 " : ""
-            } px-4 py-2 rounded-full`}>
+            } px-4 py-1 rounded-full`}>
             {FeedType.Following}
           </button>
         </div>
@@ -966,7 +964,7 @@ export default function Home() {
       <div className="fixed md:hidden z-10 top-0 flex items-center w-full justify-center bg-black pb-2">
         <div className="w-32 h-20 relative">
           <img
-            src="https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/logo.PNG"
+            src="https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/ZapsLogo.png"
             alt="Zaps⚡️Back"
           />
         </div>
