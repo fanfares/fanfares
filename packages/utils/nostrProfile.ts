@@ -20,7 +20,7 @@ export function getDefaultNostrProfile(pubkey: string): NostrProfile {
     return {    
         pubkey: pubkey,
         picture: "https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/default_profile.png",
-        banner: "file:///Users/coach/Documents/Work/Nostr-Playground/apps/guilds/client/assets/default_banner.png",
+        banner: "https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/default_banner.png",
         display_name: '',
         name: '',
         about: ''
