@@ -57,10 +57,10 @@ import Image from "next/image"
 
 const GATE_SERVER = "https://api.nostrplayground.com";
 
-const MIN_PREVIEW_LENGTH = 5;
+const MIN_PREVIEW_LENGTH = 1;
 const MAX_PREVIEW_LENGTH = 240;
 
-const MIN_CONTENT_LENGTH = 5;
+const MIN_CONTENT_LENGTH = 1;
 const MAX_CONTENT_LENGTH = 3400;
 
 const MIN_SAT_COST = 1;

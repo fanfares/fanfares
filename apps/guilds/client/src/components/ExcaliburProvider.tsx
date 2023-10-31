@@ -27,12 +27,10 @@ const STARTING_LOAD = 1;
 const MAX_SHOW = 89;
 const MAX_SHOW_FOLLOWING = 20;
 
-const EXCALIBUR_RELAY = process.env.NEXT_PUBLIC_NOSTR_RELAY as string;
 const POOL_RELAYS = [
-  EXCALIBUR_RELAY,
-  // "wss://relay.primal.net",
+  "wss://relay.primal.net",
   "wss://relay.damus.io",
-  "wss://dev.nostrplayground.com"
+  "wss://dev.nostrplayground.com",
   // "wss://cache2.primal.net/v1",
   // "wss://nostr.kollider.xyz/",
   // "wss://nostr.wine/",
@@ -229,8 +227,8 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
     const noteSub = pool.sub(relays, [
       {
         kinds: [1, NIP_108_KINDS.announcement],
-        authors: [kind3.pubkey],
-        // authors: [kind3.pubkey, ...following],
+        // authors: [kind3.pubkey],
+        authors: [kind3.pubkey, ...following],
         limit: MAX_SHOW_FOLLOWING,
       },
     ]);
