@@ -61,7 +61,7 @@ export function eventToGatedNote(event: VerifiedEvent<number>): GatedNote {
 export function eventToKeyNote(event: VerifiedEvent<number>): KeyNote {
     // Extract tags
     const ivTag = event.tags.find(tag => tag[0] === "iv");
-    const gateTag = event.tags.find(tag => tag[0] === "g");
+    const gateTag = event.tags.find(tag => tag[0] === "e" || tag[0] === "g");
 
     // Construct GatedNote
     const keyNote: KeyNote = {
@@ -75,7 +75,7 @@ export function eventToKeyNote(event: VerifiedEvent<number>): KeyNote {
 
 export function eventToAnnouncementNote(event: VerifiedEvent<number>): AnnouncementNote {
   // Extract tags
-  const gateTag = event.tags.find(tag => tag[0] === "g");
+  const gateTag = event.tags.find(tag => tag[0] === "e" || tag[0] === "g");
 
   // Construct GatedNote
   const announcementNote: AnnouncementNote = {
@@ -142,7 +142,7 @@ export function createKeyNoteUnsigned(
     pubkey: publicKey,
     created_at: Math.floor(Date.now() / 1000),
     tags: [
-      ["g", gatedNote.id],
+      ["e", gatedNote.id],
     ],
     content: encryptedSecret,
   };
@@ -173,7 +173,7 @@ export function createAnnouncementNoteUnsigned(
     pubkey: publicKey,
     created_at: Math.floor(Date.now() / 1000),
     tags: [
-      ["g", gatedNote.id],
+      ["e", gatedNote.id],
     ],
     content: content,
   };
