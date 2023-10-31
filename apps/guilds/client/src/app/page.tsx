@@ -422,7 +422,7 @@ export default function Home() {
     return (
       <div className="flex flex-col items-center relative w-full h-20">
         <div className="w-32 h-20 relative">
-          <img src="/assets/logo.png" alt="Zaps⚡️Back" />
+          <img src="./assets/logo.png" alt="Zaps⚡️Back" />
         </div>
         <p className="text-sm font-normal mt-auto">( Alpha )</p>
       </div>
@@ -962,7 +962,7 @@ export default function Home() {
     return (
       <div className="fixed md:hidden z-10 top-0 flex items-center w-full justify-center bg-black pb-2">
         <div className="w-32 h-20 relative">
-          <img src="/assets/logo.png" alt="Zaps⚡️Back" />
+          <img src="./assets/logo.png" alt="Zaps⚡️Back" />
         </div>
         <button
           className="fixed right-5 top-4 z-20"
