@@ -420,14 +420,14 @@ export default function Home() {
   // ------------------- RENDERERS -------------------------
   const renderLogo = () => {
     return (
-      <div className="flex flex-col items-center relative w-full h-20">
-        <div className="w-32 h-20 relative">
+      <div className="relative flex flex-col items-center w-full h-20">
+        <div className="relative w-32 h-20">
           <img
             src="https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/ZapsLogo.png"
             alt="Zaps⚡️Back"
           />
         </div>
-        <p className="text-sm font-normal mt-auto">( Alpha )</p>
+        <p className="mt-auto text-sm font-normal">( Alpha )</p>
       </div>
     )
   }
@@ -440,7 +440,7 @@ export default function Home() {
 
     return (
       <div className="mt-5">
-        <p className="flex gap-2 items-center">
+        <p className="flex items-center gap-2">
           <FaLockOpen className="" /> {unlockedNote.content}
         </p>
       </div>
@@ -493,7 +493,7 @@ export default function Home() {
   const renderSwitch = () => {
     return (
       <div className="w-full space-y-4 md:min-w-[32rem] mb-5">
-        <div className="flex flex-row gap-8 lg:items-center lg:gap-4 justify-center">
+        <div className="flex flex-row justify-center gap-8 lg:items-center lg:gap-4">
           <button
             onClick={() => setFeedType(FeedType.Live)}
             className={`${
@@ -537,11 +537,11 @@ export default function Home() {
                   <img
                     src={profile.picture}
                     alt={profile.display_name}
-                    className="w-12 h-12 rounded-full object-cover mr-4" // Adjust width (w-12) and height (h-12) as needed
+                    className="object-cover w-12 h-12 mr-4 rounded-full" // Adjust width (w-12) and height (h-12) as needed
                   />
                   <div className="flex flex-col w-full">
                     <p className="mb-5 text-xs font-bold">{name}</p>
-                    <h3 className="break-words pr-8 ">{event.content}</h3>
+                    <h3 className="pr-8 break-words ">{event.content}</h3>
                   </div>
                 </div>
               </div>
@@ -560,7 +560,7 @@ export default function Home() {
     }
 
     return (
-      <div className="flex items-center justify-center w-full bg-black my-4 ">
+      <div className="flex items-center justify-center w-full my-4 bg-black ">
         <div className="w-full p-5 text-white bg-black border rounded-lg shadow-lg border-white/20">
           {isChecked ? (
             <>
@@ -593,8 +593,8 @@ export default function Home() {
               </div>
             </>
           ) : null}
-          <div className="mt-1 mb-2 h-20">
-            <label className="mb-2 hidden">Content</label>
+          <div className="h-20 mt-1 mb-2">
+            <label className="hidden mb-2">Content</label>
             <textarea
               maxLength={MAX_CONTENT_LENGTH}
               placeholder={`What is going on?`}
@@ -603,10 +603,10 @@ export default function Home() {
               }
               className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
           </div>
-          <div className="flex justify-between mt-12 items-center">
+          <div className="flex items-center justify-between mt-12">
             <label
               htmlFor="setAsGatedContentCheckbox"
-              className="relative inline-flex items-center cursor-pointer px-4 border border-white/20 py-2 rounded-full">
+              className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer border-white/20">
               <input
                 checked={isChecked}
                 onChange={handleCheckboxChange}
@@ -676,8 +676,8 @@ export default function Home() {
               </div>
             </>
           ) : null}
-          <div className="mt-1 mb-2 h-20">
-            <label className="mb-2 hidden">Content</label>
+          <div className="h-20 mt-1 mb-2">
+            <label className="hidden mb-2">Content</label>
             <textarea
               maxLength={MAX_CONTENT_LENGTH}
               placeholder={`What is going on?`}
@@ -686,10 +686,10 @@ export default function Home() {
               }
               className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
           </div>
-          <div className="flex justify-between mt-12 items-center">
+          <div className="flex items-center justify-between mt-12">
             <label
               htmlFor="setAsGatedContentCheckbox"
-              className="relative inline-flex items-center cursor-pointer px-4 border border-white/20 py-2 rounded-full">
+              className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer border-white/20">
               <input
                 checked={isChecked}
                 onChange={handleCheckboxChange}
@@ -726,19 +726,19 @@ export default function Home() {
 
     return (
       <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-60 ">
-        <div className="w-1/2  max-w-xl p-5 text-white bg-black border rounded-lg shadow-lg border-white/20">
+        <div className="w-1/2 max-w-xl p-5 text-white bg-black border rounded-lg shadow-lg border-white/20">
           <h2 className="mb-4 text-lg">Edit profile</h2>
-          <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4 justify-between">
-            <label className="flex flex-col gap-2 mb-2 w-full relative">
+          <div className="flex flex-col justify-between lg:flex-row lg:items-center lg:gap-4">
+            <label className="relative flex flex-col w-full gap-2 mb-2">
               <span className="text-white">Username</span>
               <input
                 type="text"
                 placeholder="Username"
-                className="w-full p-2 text-white bg-black border rounded border-white/20 pl-8"
+                className="w-full p-2 pl-8 text-white bg-black border rounded border-white/20"
               />
               <FaAt className="absolute top-11 left-3 text-neutral-500" />
             </label>
-            <label className="flex flex-col gap-2 mb-2 w-full">
+            <label className="flex flex-col w-full gap-2 mb-2">
               <span className="text-white">Display Name</span>
               <input
                 type="text"
@@ -839,7 +839,7 @@ export default function Home() {
             label="POST"
             icon={<HiPencilAlt size={24} />}
           />
-          {/* <p className="text-xs mx-auto font-thin text- hidden">Version 0.0.1</p> */}
+          {/* <p className="hidden mx-auto text-xs font-thin text-">Version 0.0.1</p> */}
         </nav>
       </>
     )
@@ -851,9 +851,9 @@ export default function Home() {
         <input
           type="text"
           placeholder="Search"
-          className="sticky top-0 w-full h-10 p-4 bg-transparent border rounded-full outline-none border-white/20 pl-12"
+          className="sticky top-0 w-full h-10 p-4 pl-12 bg-transparent border rounded-full outline-none border-white/20"
         />
-        <FaSearch className="absolute top-3 left-4 text-white" />
+        <FaSearch className="absolute text-white top-3 left-4" />
       </div>
     )
   }
@@ -873,7 +873,7 @@ export default function Home() {
           return (
             <div
               key={pubkey}
-              className="flex h-16 gap-2 mt-4 p-1 hover:bg-neutral-900 duration-300 rounded">
+              className="flex h-16 gap-2 p-1 mt-4 duration-300 rounded hover:bg-neutral-900">
               <img
                 src={profile.picture}
                 className="object-cover w-8 h-8 rounded-full"
@@ -897,7 +897,7 @@ export default function Home() {
 
   const renderTrending = () => {
     return (
-      <div className="flex flex-col sticky top-0">
+      <div className="sticky top-0 flex flex-col">
         <p className="mt-10 sticky-top-0">TRENDING</p>
         <div
           id="trendingPosts"
@@ -927,13 +927,13 @@ export default function Home() {
           </div>
           <div className="flex flex-col mt-16 lg:mt-12">
             <div className="flex items-center">
-              <p className="font-bold flex gap-2 items-center">
+              <p className="flex items-center gap-2 font-bold">
                 Nostr{" "}
                 <FaCheck
-                  className="text-green-500 bg-white rounded-full p-1"
+                  className="p-1 text-green-500 bg-white rounded-full"
                   size={24}
                 />
-                <span className="ml-4 text-xs font-thin text-neutral-500 py-1 px-2 bg-neutral-900 rounded-full">
+                <span className="px-2 py-1 ml-4 text-xs font-thin rounded-full text-neutral-500 bg-neutral-900">
                   follows you
                 </span>
               </p>
@@ -941,10 +941,10 @@ export default function Home() {
                 Joined Nostr on Jan 1, 2023
               </p>
             </div>
-            <p className="font-extralight mt-2 text-xs text-neutral-500">
+            <p className="mt-2 text-xs font-extralight text-neutral-500">
               nostr@nostrsomething.com
             </p>
-            <p className="font-extralight mt-2 text-sm text-neutral-500 flex gap-2 items-center hover:text-white cursor-pointer">
+            <p className="flex items-center gap-2 mt-2 text-sm cursor-pointer font-extralight text-neutral-500 hover:text-white">
               npub12m2hhug6a4..05wqku5wx6 <FaCopy />
             </p>
           </div>
@@ -961,21 +961,21 @@ export default function Home() {
   const renderMobileMenu = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false)
     return (
-      <div className="fixed md:hidden z-10 top-0 flex items-center w-full justify-center bg-black pb-2">
-        <div className="w-32 h-20 relative">
+      <div className="fixed top-0 z-10 flex items-center justify-center w-full pb-2 bg-black md:hidden">
+        <div className="relative w-32 h-20">
           <img
             src="https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/ZapsLogo.png"
             alt="Zaps⚡️Back"
           />
         </div>
         <button
-          className="fixed right-5 top-4 z-20"
+          className="fixed z-20 right-5 top-4"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
           <GiHamburgerMenu size={32} />
         </button>
         {mobileMenuOpen ? (
-          <div className="h-screen flex-col w-screen flex fixed  left-0 top-0 bg-black/60 items-center justify-center backdrop-blur-sm">
-            <div className="mt-10 flex flex-col gap-4">
+          <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-screen h-screen bg-black/60 backdrop-blur-sm">
+            <div className="flex flex-col gap-4 mt-10">
               <AnimatedMenuButton
                 mobile
                 className="text-4xl"
@@ -1030,7 +1030,7 @@ export default function Home() {
       {renderEditProfile()}
       {renderMobileMenu()}
 
-      <div className="flex justify-center w-full relative mt-16 md:mt-0">
+      <div className="relative flex justify-center w-full mt-16 md:mt-0">
         <div className="sticky top">{renderUserMenu()}</div>
         <main className="items-center w-full md:min-w-[32rem] max-w-md min-h-screen mb-10 md:max-w-xl">
           {renderForm()}
@@ -1040,7 +1040,7 @@ export default function Home() {
         </main>
 
         <div>
-          <aside className="sticky py-4 top-0 hidden ml-8 w-80 lg:flex lg:flex-col ">
+          <aside className="sticky top-0 hidden py-4 ml-8 w-80 lg:flex lg:flex-col ">
             {renderSearchBar()}
             {/* TO DO OUR PROFILES INSTEAD TRENDING */}
             {renderTrending()}
