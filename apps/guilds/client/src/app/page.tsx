@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
 import {
   Relay,
   relayInit,
   VerifiedEvent,
   generatePrivateKey,
-} from "nostr-tools"
+} from "nostr-tools";
 import {
   FaGithub,
   FaExternalLinkAlt,
@@ -23,12 +23,12 @@ import {
   FaSearch,
   FaEnvelope,
   FaHamburger,
-} from "react-icons/fa"
-import { GiHamburgerMenu } from "react-icons/gi"
-import { HiPencilAlt } from "react-icons/hi"
-import { AiFillThunderbolt } from "react-icons/ai"
-import { ChangeEvent, useEffect, useState } from "react"
-import { WebLNProvider, requestProvider } from "webln"
+} from "react-icons/fa";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { HiPencilAlt } from "react-icons/hi";
+import { AiFillThunderbolt } from "react-icons/ai";
+import { ChangeEvent, useEffect, useState } from "react";
+import { WebLNProvider, requestProvider } from "webln";
 import {
   AnnouncementNote,
   CreateNotePostBody,
@@ -42,37 +42,34 @@ import {
   eventToKeyNote,
   unlockGatedNote,
   PREntry,
-} from "nip108"
-import AnimatedMenuButton from "@/components/AnimatedButton"
-import NavigationMenu from "@/components/NavigationMenu"
-import ButtonDefault from "@/components/Button"
-import { useExcalibur } from "@/components/ExcaliburProvider"
+} from "nip108";
+import AnimatedMenuButton from "@/components/AnimatedButton";
+import NavigationMenu from "@/components/NavigationMenu";
+import ButtonDefault from "@/components/Button";
+import { useExcalibur } from "@/components/ExcaliburProvider";
 import {
   getDefaultNostrProfile,
   getDisplayName,
   getTag,
   verifyZap,
-} from "utils"
+} from "utils";
 
-const RELAY = process.env.NEXT_PUBLIC_NOSTR_RELAY as string
-const GATE_SERVER = process.env.NEXT_PUBLIC_GATE_SERVER as string
+const GATE_SERVER = "https://api.nostrplayground.com";
 
-const MIN_PREVIEW_LENGTH = Number(process.env.NEXT_PUBLIC_MIN_PREVIEW_LENGTH)
-const MAX_PREVIEW_LENGTH = Number(process.env.NEXT_PUBLIC_MAX_PREVIEW_LENGTH)
+const MIN_PREVIEW_LENGTH = 5;
+const MAX_PREVIEW_LENGTH = 240;
 
-const MIN_CONTENT_LENGTH = Number(process.env.NEXT_PUBLIC_MIN_CONTENT_LENGTH)
-const MAX_CONTENT_LENGTH = Number(process.env.NEXT_PUBLIC_MAX_CONTENT_LENGTH)
+const MIN_CONTENT_LENGTH = 5;
+const MAX_CONTENT_LENGTH = 3400;
 
-const MIN_SAT_COST = Number(process.env.NEXT_PUBLIC_MIN_SAT_COST)
-const MAX_SAT_COST = Number(process.env.NEXT_PUBLIC_MAX_SAT_COST)
-
-const NOSTR_FETCH_LIMIT = Number(process.env.NEXT_PUBLIC_NOSTR_FETCH_LIMIT)
+const MIN_SAT_COST = 1;
+const MAX_SAT_COST = 50_000;
 
 interface FormData {
-  lud16: string
-  cost?: number
-  preview: string
-  content: string
+  lud16: string;
+  cost?: number;
+  preview: string;
+  content: string;
 }
 
 const DEFAULT_FORM_DATA: FormData = {
@@ -80,7 +77,7 @@ const DEFAULT_FORM_DATA: FormData = {
   cost: 1,
   preview: "Hey unlock my post for 1 sat!",
   content: "This is the content that will be unlocked!",
-}
+};
 
 enum FeedType {
   Live = "Live",
@@ -90,208 +87,95 @@ enum FeedType {
 export default function Home() {
   // ------------------- STATES -------------------------
 
-  const [gateLoading, setGateLoading] = useState<string | null>()
-  const [relay, setRelay] = useState<Relay | null>(null)
-  const [nostr, setNostr] = useState<any | null>(null)
-  const [publicKey, setPublicKey] = useState<string | null>(null)
-  const [webln, setWebln] = useState<null | WebLNProvider>(null)
-  const [announcementNotes, setAnnouncementNotes] = useState<
-    AnnouncementNote[]
-  >([])
-  const [gatedNotes, setGatedNotes] = useState<GatedNote[]>([])
-  const [keyNotes, setKeyNotes] = useState<KeyNote[]>([])
+  const [gateLoading, setGateLoading] = useState<string | null>();
 
-  const [submittingForm, setSubmittingForm] = useState<boolean>(false)
-  const [isPostFormOpen, setPostFormOpen] = useState<boolean>(false)
-  const [editProfileOn, setEditProfileOn] = useState<boolean>(false)
+  const [submittingForm, setSubmittingForm] = useState<boolean>(false);
+  const [isPostFormOpen, setPostFormOpen] = useState<boolean>(false);
+  const [editProfileOn, setEditProfileOn] = useState<boolean>(false);
 
-  const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA)
-  const { events, profiles, postEvent, teamKeys, followingEvents } =
-    useExcalibur()
+  const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA);
+  const {
+    events,
+    profiles,
+    postEvent,
+    teamKeys,
+    followingEvents,
+    gatedNotes,
+    keyNotes,
+    setKeyNotes,
+    pool,
+    relays,
+    publicKey,
+    nostr,
+    webln,
+  } = useExcalibur();
 
-  const [isChecked, setIsChecked] = useState<boolean>(false)
-  const [feedType, setFeedType] = useState<FeedType>(FeedType.Live)
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [feedType, setFeedType] = useState<FeedType>(FeedType.Live);
 
   // ------------------- EFFECTS -------------------------
 
-  useEffect(() => {
-    requestProvider()
-      .then(setWebln)
-      .catch(e => {
-        alert("Please download Alby or ZBD to use this app.")
-      })
-  }, [])
-
-  useEffect(() => {
-    if ((window as any).nostr) {
-      setNostr((window as any).nostr)
-      ;(window as any).nostr.getPublicKey().then(setPublicKey)
-    } else {
-      alert("Nostr not found")
-    }
-  }, [])
-
-  useEffect(() => {
-    const newRelay = relayInit("wss://relay.primal.net")
-    newRelay.on("connect", () => {
-      setRelay(newRelay)
-    })
-    // newRelay.connect()
-    if (newRelay) {
-      newRelay.connect()
-    }
-
-    return () => {
-      newRelay.close()
-    }
-  }, [])
-
-  useEffect(() => {
-    if (relay && nostr && publicKey) {
-      relay
-        .list([
-          {
-            kinds: [NIP_108_KINDS.announcement],
-            limit: NOSTR_FETCH_LIMIT,
-          },
-          {
-            kinds: [NIP_108_KINDS.key],
-            limit: NOSTR_FETCH_LIMIT,
-            authors: [publicKey as string],
-          },
-        ])
-        .then(notes => {
-          const newAnnouncementNotes: AnnouncementNote[] = []
-          const newKeyNotes: KeyNote[] = []
-
-          for (const note of notes) {
-            if (
-              note.kind === NIP_108_KINDS.announcement &&
-              note.tags.find(tag => tag[0] === "g")
-            ) {
-              newAnnouncementNotes.push(
-                eventToAnnouncementNote(note as VerifiedEvent)
-              )
-            } else if (note.kind === NIP_108_KINDS.key) {
-              newKeyNotes.push(eventToKeyNote(note as VerifiedEvent))
-            }
-          }
-
-          setAnnouncementNotes(newAnnouncementNotes)
-          setKeyNotes(newKeyNotes)
-
-          relay
-            .list([
-              {
-                ids: [
-                  ...newAnnouncementNotes.map(
-                    announcementNote => announcementNote.gate
-                  ),
-                  ...newKeyNotes.map(keyNote => keyNote.gate),
-                ],
-              },
-            ])
-            .then(gatedEvents => {
-              setGatedNotes(
-                gatedEvents.map(gatedNote =>
-                  eventToGatedNote(gatedNote as VerifiedEvent)
-                )
-              )
-            })
-        })
-    }
-  }, [relay, nostr, publicKey])
-
-  useEffect(() => {
-    if (gatedNotes.length > 0) {
-      unlockAll()
-    }
-  }, [gatedNotes])
-
-  // ------------------- FUNCTIONS -------------------------
-
-  const unlockAll = async () => {
-    const newKeyNotes: KeyNote[] = []
-    for (const keyNote of keyNotes) {
-      const gatedNote = gatedNotes.find(
-        gatedNote => gatedNote.note.id === keyNote.gate
-      )
-
-      if (!gatedNote) {
-        newKeyNotes.push(keyNote)
-        continue
-      }
-
-      const unlockedSecret = await nostr.nip04.decrypt(
-        gatedNote.note.pubkey,
-        keyNote.note.content
-      )
-
-      newKeyNotes.push({
-        ...keyNote,
-        unlockedSecret,
-      })
-    }
-
-    setKeyNotes(newKeyNotes)
-  }
-
   const handleBuy = async (gatedNote: GatedNote) => {
-    if (gateLoading) return
+    if (gateLoading) return;
 
-    setGateLoading(gatedNote.note.id)
+    setGateLoading(gatedNote.note.id);
 
     try {
-      if (!webln) throw new Error("No webln provider")
-      if (!nostr) throw new Error("No nostr provider")
-      if (!publicKey) throw new Error("No Public Key")
-      if (!relay) throw new Error("No relay")
+      if (!webln) throw new Error("No webln provider");
+      if (!nostr) throw new Error("No nostr provider");
+      if (!publicKey) throw new Error("No Public Key");
+      if (!pool) throw new Error("No pool");
+      if (!relays) throw new Error("No relays");
 
-      const uri = `${gatedNote.endpoint}/${gatedNote.note.id}`
-      const invoiceResponse = await fetch(uri)
-      const invoiceResponseJson = (await invoiceResponse.json()) as PREntry
+      const uri = `${gatedNote.endpoint}/${gatedNote.note.id}`;
+      const invoiceResponse = await fetch(uri);
+      const invoiceResponseJson = (await invoiceResponse.json()) as PREntry;
 
-      await webln.sendPayment(invoiceResponseJson.pr)
+      await webln.sendPayment(invoiceResponseJson.pr);
 
-      const resultResponse = await fetch(invoiceResponseJson.successAction.url)
-      const resultResponseJson = await resultResponse.json()
-      const secret = resultResponseJson.secret
+      const resultResponse = await fetch(invoiceResponseJson.successAction.url);
+      const resultResponseJson = await resultResponse.json();
+      const secret = resultResponseJson.secret;
 
-      const content = await nostr.nip04.encrypt(gatedNote.note.pubkey, secret)
+      const content = await (nostr as any).nip04.encrypt(
+        gatedNote.note.pubkey,
+        secret
+      );
 
       const keyEvent = {
         kind: NIP_108_KINDS.key,
         pubkey: publicKey,
         created_at: Math.floor(Date.now() / 1000),
-        tags: [["g", gatedNote.note.id]],
+        tags: [["e", gatedNote.note.id]],
         content: content,
-      }
+      };
 
-      const keyEventVerified = await nostr.signEvent(keyEvent)
+      const keyEventVerified = await (nostr as any).signEvent(keyEvent);
 
-      await relay.publish(keyEventVerified)
+      await pool.publish(relays, keyEventVerified);
 
       const keyNoteUnlocked = {
         ...eventToKeyNote(keyEventVerified),
         unlockedSecret: secret,
-      } as KeyNote
-      setKeyNotes([...keyNotes, keyNoteUnlocked])
+      } as KeyNote;
+      setKeyNotes([...keyNotes, keyNoteUnlocked]);
     } catch (e) {
-      alert(e)
+      console.log(e);
+      alert(e);
     }
 
-    setGateLoading(null)
-  }
+    setGateLoading(null);
+  };
 
   const formatGatedContent = (content: string) => {
-    return content.substring(0, 500) + "..."
-  }
+    return content.substring(0, 500) + "...";
+  };
 
   const submitSimpleForm = async () => {
-    const { content } = formData
+    const { content } = formData;
 
-    if (!content) return
-    if (!publicKey) return
+    if (!content) return;
+    if (!publicKey) return;
 
     const event = {
       kind: 1,
@@ -299,35 +183,35 @@ export default function Home() {
       created_at: Math.floor(Date.now() / 1000),
       tags: [],
       content: content,
-    }
+    };
 
-    postEvent(event as any)
-  }
+    postEvent(event as any);
+  };
 
   const submitForm = async () => {
-    if (submittingForm) return
+    if (submittingForm) return;
 
-    setSubmittingForm(true)
+    setSubmittingForm(true);
 
     try {
-      if (!webln) throw new Error("No webln provider")
-      if (!nostr) throw new Error("No nostr provider")
-      if (!publicKey) throw new Error("No Public Key")
-      if (!relay) throw new Error("No relay")
+      if (!webln) throw new Error("No webln provider");
+      if (!nostr) throw new Error("No nostr provider");
+      if (!publicKey) throw new Error("No Public Key");
+      if (!pool) throw new Error("No pool");
 
       // ------------------- VALIDATE FORM -------------------------
-      const { lud16, cost, preview, content } = formData
+      const { lud16, cost, preview, content } = formData;
 
       // 1. Check if lud16 is valid (looks like an email)
-      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
-      if (!emailRegex.test(lud16)) throw new Error("Invalid lud16 format")
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+      if (!emailRegex.test(lud16)) throw new Error("Invalid lud16 format");
 
       // 2. Check if price is valid
       if (!cost || cost < MIN_SAT_COST || cost > MAX_SAT_COST)
         throw new Error(
           `Price should be >= ${MIN_SAT_COST} and <= ${MAX_SAT_COST} sats`
-        )
-      const unlockCost = cost * 1000
+        );
+      const unlockCost = cost * 1000;
 
       // 3. Check if preview is valid
       if (
@@ -336,7 +220,7 @@ export default function Home() {
       )
         throw new Error(
           `Preview should be <= 260 chars and >= ${MIN_PREVIEW_LENGTH} chars`
-        )
+        );
 
       // 4. Check if content is valid
       if (
@@ -345,7 +229,7 @@ export default function Home() {
       )
         throw new Error(
           `Content should be <= ${MAX_CONTENT_LENGTH} chars and >= ${MIN_CONTENT_LENGTH} chars`
-        )
+        );
 
       // ------------------- CREATE LOCKED CONTENT -------------------------
 
@@ -355,26 +239,29 @@ export default function Home() {
         created_at: Math.floor(Date.now() / 1000),
         tags: [],
         content: content,
-      }
-      const lockedContentVerified = await nostr.signEvent(lockedContent)
+      };
 
-      const secret = generatePrivateKey()
+      const lockedContentVerified = await (nostr as any).signEvent(
+        lockedContent
+      );
+
+      const secret = generatePrivateKey();
       const gatedNote = createGatedNoteUnsigned(
         publicKey,
         secret,
         unlockCost,
         GATE_SERVER,
         lockedContentVerified
-      )
+      );
 
-      const gatedNoteVerified = await nostr.signEvent(gatedNote)
+      const gatedNoteVerified = await (nostr as any).signEvent(gatedNote);
 
       const postBody: CreateNotePostBody = {
         gateEvent: gatedNoteVerified,
         lud16: lud16,
         secret: secret,
         cost: unlockCost,
-      }
+      };
 
       const response = await fetch(GATE_SERVER + "/create", {
         method: "POST",
@@ -382,11 +269,11 @@ export default function Home() {
           "Content-type": "application/json",
         },
         body: JSON.stringify(postBody),
-      })
+      });
 
-      const responseJson = await response.json()
+      const responseJson = await response.json();
 
-      await relay.publish(gatedNoteVerified)
+      await pool.publish(relays, gatedNoteVerified);
 
       // ------------------- CREATE ANNOUNCEMENT NOTE -------------------------
 
@@ -394,27 +281,23 @@ export default function Home() {
         publicKey,
         preview,
         gatedNoteVerified
-      )
+      );
 
-      const announcementNoteVerified = await nostr.signEvent(announcementNote)
-      await relay.publish(announcementNoteVerified)
+      const announcementNoteVerified = await (nostr as any).signEvent(
+        announcementNote
+      );
+      await pool.publish(relays, announcementNoteVerified);
 
       // ------------------- ADD NOTE TO EVENTS -------------------------
-
-      setAnnouncementNotes([
-        eventToAnnouncementNote(announcementNoteVerified),
-        ...announcementNotes,
-      ])
-      setGatedNotes([eventToGatedNote(gatedNoteVerified), ...gatedNotes])
     } catch (e) {
-      alert(e)
-      console.log(e)
+      alert(e);
+      console.log(e);
     }
 
-    setSubmittingForm(false)
-    setFormData(DEFAULT_FORM_DATA)
-    setPostFormOpen(false)
-  }
+    setSubmittingForm(false);
+    setFormData(DEFAULT_FORM_DATA);
+    setPostFormOpen(false);
+  };
 
   // ------------------- RENDERERS -------------------------
   const renderLogo = () => {
@@ -423,66 +306,8 @@ export default function Home() {
         <header>Zaps⚡Back </header>
         <p className="text-sm font-normal">( Alpha )</p>
       </div>
-    )
-  }
-
-  const renderUnlockedContent = (gatedNote: GatedNote, keyNote: KeyNote) => {
-    const unlockedNote = unlockGatedNote(
-      gatedNote.note,
-      keyNote.unlockedSecret as string
-    )
-
-    return (
-      <div className="mt-5">
-        <p className="flex gap-2 items-center">
-          <FaLockOpen className="" /> {unlockedNote.content}
-        </p>
-      </div>
-    )
-  }
-
-  const renderLockedContent = (gatedNote: GatedNote) => {
-    return (
-      <div className="mt-5">
-        <p className="break-words select-none blur-sm">
-          {formatGatedContent(gatedNote.note.content)}
-        </p>
-        <div className="flex justify-center mt-4">
-          <ButtonDefault
-            onClick={() => {
-              handleBuy(gatedNote)
-            }}
-            icon={
-              <>
-                <AiFillThunderbolt />
-                <FaLockOpen />
-              </>
-            }
-            label={
-              gateLoading && gatedNote.note.id === gateLoading
-                ? "Unlocking..."
-                : `${(gatedNote.cost / 1000).toFixed(0)}`
-            }
-            className={`border border-white/20`}></ButtonDefault>
-        </div>
-      </div>
-    )
-  }
-
-  const renderGatedContent = (event: AnnouncementNote) => {
-    const gatedNote = gatedNotes.find(
-      gatedNote => gatedNote.note.id === event.gate
-    )
-    const keyNote = keyNotes.find(
-      keyNote => keyNote.gate === event.gate && keyNote.unlockedSecret
-    )
-
-    if (!gatedNote) return null
-
-    if (keyNote) return renderUnlockedContent(gatedNote, keyNote)
-
-    return renderLockedContent(gatedNote)
-  }
+    );
+  };
 
   const renderSwitch = () => {
     return (
@@ -494,66 +319,197 @@ export default function Home() {
               feedType === FeedType.Live
                 ? "font-bold bg-neutral-500 px-4 py-2 rounded-md"
                 : ""
-            }px-4 py-2 rounded-md`}>
+            }px-4 py-2 rounded-md`}
+          >
             {FeedType.Live}
           </button>
           <button
             onClick={() => setFeedType(FeedType.Following)}
             className={`${
               feedType === FeedType.Following ? "font-bold bg-neutral-500 " : ""
-            } px-4 py-2 rounded-md`}>
+            } px-4 py-2 rounded-md`}
+          >
             {FeedType.Following}
           </button>
         </div>
       </div>
-    )
-  }
+    );
+  };
+
+  const renderUnlockedContent = (
+    announcementNote: AnnouncementNote,
+    gatedNote: GatedNote,
+    keyNote: KeyNote
+  ) => {
+    const unlockedNote = unlockGatedNote(
+      gatedNote.note,
+      keyNote.unlockedSecret as string
+    );
+
+    const profileIndex = profiles.findIndex(
+      (profile) => profile.pubkey === gatedNote.note.pubkey
+    );
+
+    const profile =
+      profileIndex === -1
+        ? getDefaultNostrProfile(gatedNote.note.pubkey)
+        : profiles[profileIndex];
+    const name = getDisplayName(profile);
+
+    return (
+      <div
+        key={gatedNote.note.id}
+        className="flex flex-col p-4 border rounded-md border-white/20"
+      >
+        {/* This container ensures content wrapping */}
+        <div className="flex w-full overflow-hidden">
+          <img
+            src={profile.picture}
+            alt={profile.display_name}
+            className="w-12 h-12 rounded-full object-cover mr-4" // Adjust width (w-12) and height (h-12) as needed
+          />
+          <div className="flex flex-col w-full">
+            <p className="mb-5 text-xs font-bold">{name}</p>
+            <h3 className="break-words pr-8 mb-3">
+              🔓{announcementNote.note.content}🔓
+            </h3>
+            <h3 className="break-words pr-8 ">{unlockedNote.content}</h3>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderLockedContent = (
+    announcementNote: AnnouncementNote,
+    gatedNote: GatedNote
+  ) => {
+    const profileIndex = profiles.findIndex(
+      (profile) => profile.pubkey === gatedNote.note.pubkey
+    );
+
+    const profile =
+      profileIndex === -1
+        ? getDefaultNostrProfile(gatedNote.note.pubkey)
+        : profiles[profileIndex];
+    const name = getDisplayName(profile);
+
+    return (
+      <div
+        key={gatedNote.note.id}
+        className="flex flex-col p-4 border rounded-md border-white/20"
+      >
+        {/* This container ensures content wrapping */}
+        <div className="flex w-full overflow-hidden">
+          <img
+            src={profile.picture}
+            alt={profile.display_name}
+            className="w-12 h-12 rounded-full object-cover mr-4" // Adjust width (w-12) and height (h-12) as needed
+          />
+          <div className="flex flex-col w-full">
+            <p className="mb-5 text-xs font-bold">{name}</p>
+            <h3 className="break-words pr-8 mb-3">
+              🔓{announcementNote.note.content}🔓
+            </h3>
+            <p className="break-words select-none blur-sm">
+              {formatGatedContent(gatedNote.note.content)}
+            </p>
+            <div className="flex justify-center mt-4">
+              <ButtonDefault
+                onClick={() => {
+                  handleBuy(gatedNote);
+                }}
+                icon={
+                  <>
+                    <AiFillThunderbolt />
+                    <FaLockOpen />
+                  </>
+                }
+                label={
+                  gateLoading && gatedNote.note.id === gateLoading
+                    ? "Unlocking..."
+                    : `${(gatedNote.cost / 1000).toFixed(0)}`
+                }
+                className={`border border-white/20`}
+              ></ButtonDefault>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
+  };
+
+  const renderGatedContent = (announcementEvent: VerifiedEvent) => {
+    const event = eventToAnnouncementNote(announcementEvent);
+    const gatedNote = gatedNotes.find(
+      (gatedNote) => gatedNote.note.id === event.gate
+    );
+    const keyNote = keyNotes.find(
+      (keyNote) => keyNote.gate === event.gate && keyNote.unlockedSecret
+    );
+
+    if (!gatedNote) return null;
+
+    if (keyNote) return renderUnlockedContent(event, gatedNote, keyNote);
+
+    return renderLockedContent(event, gatedNote);
+  };
+
+  const renderNote = (event: VerifiedEvent) => {
+    const profileIndex = profiles.findIndex(
+      (profile) => profile.pubkey === event.pubkey
+    );
+
+    const profile =
+      profileIndex === -1
+        ? getDefaultNostrProfile(event.pubkey)
+        : profiles[profileIndex];
+    const name = getDisplayName(profile);
+
+    return (
+      <div
+        key={event.id}
+        className="flex flex-col p-4 border rounded-md border-white/20"
+      >
+        {/* This container ensures content wrapping */}
+        <div className="flex w-full overflow-hidden">
+          <img
+            src={profile.picture}
+            alt={profile.display_name}
+            className="w-12 h-12 rounded-full object-cover mr-4" // Adjust width (w-12) and height (h-12) as needed
+          />
+          <div className="flex flex-col w-full">
+            <p className="mb-5 text-xs font-bold">{name}</p>
+            <h3 className="break-words pr-8 ">{event.content}</h3>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   const renderEvents = () => {
     return (
       <div className="w-full space-y-4 md:min-w-[32rem]">
         {(feedType === FeedType.Live ? events : followingEvents).map(
           (event, index) => {
-            const profileIndex = profiles.findIndex(
-              profile => profile.pubkey === event.pubkey
-            )
+            if (event.kind === NIP_108_KINDS.announcement) {
+              return renderGatedContent(event);
+            }
 
-            const profile =
-              profileIndex === -1
-                ? getDefaultNostrProfile(event.pubkey)
-                : profiles[profileIndex]
-            const name = getDisplayName(profile)
-
-            return (
-              <div
-                key={event.id}
-                className="flex flex-col p-4 border rounded-md border-white/20">
-                {/* This container ensures content wrapping */}
-                <div className="flex w-full overflow-hidden">
-                  <img
-                    src={profile.picture}
-                    alt={profile.display_name}
-                    className="w-12 h-12 rounded-full object-cover mr-4" // Adjust width (w-12) and height (h-12) as needed
-                  />
-                  <div className="flex flex-col w-full">
-                    <p className="mb-5 text-xs font-bold">{name}</p>
-                    <h3 className="break-words pr-8 ">{event.content}</h3>
-                  </div>
-                </div>
-              </div>
-            )
+            return renderNote(event);
           }
         )}
       </div>
-    )
-  }
+    );
+  };
 
   const renderForm = () => {
     // todo make it as a component to be reused both by pressing the Left post button and on Top header.
     const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
-      const { checked } = event.target
-      setIsChecked(checked)
-    }
+      const { checked } = event.target;
+      setIsChecked(checked);
+    };
 
     return (
       <div className="flex items-center justify-center w-full bg-black my-4 ">
@@ -568,7 +524,7 @@ export default function Home() {
                   placeholder={`Hey unlock my post for ${formData.cost} sats!`}
                   maxLength={MAX_PREVIEW_LENGTH}
                   value={formData.preview}
-                  onChange={e =>
+                  onChange={(e) =>
                     setFormData({ ...formData, preview: e.target.value })
                   }
                   className="w-full p-2 text-white bg-black border rounded border-white/20"
@@ -581,7 +537,7 @@ export default function Home() {
                   min={`${MIN_SAT_COST}`}
                   max={`${MAX_SAT_COST}`}
                   value={formData.cost}
-                  onChange={e =>
+                  onChange={(e) =>
                     setFormData({ ...formData, cost: +e.target.value })
                   }
                   className="w-full p-2 text-white bg-black border rounded border-white/20"
@@ -594,15 +550,17 @@ export default function Home() {
             <textarea
               maxLength={MAX_CONTENT_LENGTH}
               placeholder={`What is going on?`}
-              onChange={e =>
+              onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
               }
-              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
+              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"
+            ></textarea>
           </div>
           <div className="flex justify-between mt-12 items-center">
             <label
               htmlFor="setAsGatedContentCheckbox"
-              className="relative inline-flex items-center cursor-pointer px-4 border border-white/20 py-2 rounded-full">
+              className="relative inline-flex items-center cursor-pointer px-4 border border-white/20 py-2 rounded-full"
+            >
               <input
                 checked={isChecked}
                 onChange={handleCheckboxChange}
@@ -620,23 +578,23 @@ export default function Home() {
 
             <ButtonDefault
               className="font-bold border border-white/20"
-              onClick={submitSimpleForm}
+              onClick={isChecked ? submitForm : submitSimpleForm}
               label="Submit"
             />
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const renderFormModal = () => {
     // todo make it as a component to be reused both by pressing the Left post button and on Top header.
     const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
-      const { checked } = event.target
-      setIsChecked(checked)
-    }
+      const { checked } = event.target;
+      setIsChecked(checked);
+    };
 
-    if (!isPostFormOpen) return null
+    if (!isPostFormOpen) return null;
 
     return (
       <div className="md:w-1/2 md:h-fit md:absolute md:inset-x-0 md:inset-y-0 md:translate-x-1/2 md:translate-y-1/2 fixed top-0 left-0 z-50 flex items-center justify-center w-screen h-screen bg-black md:border-white md:border md:rounded-md">
@@ -651,7 +609,7 @@ export default function Home() {
                   placeholder={`Hey unlock my post for ${formData.cost} sats!`}
                   maxLength={MAX_PREVIEW_LENGTH}
                   value={formData.preview}
-                  onChange={e =>
+                  onChange={(e) =>
                     setFormData({ ...formData, preview: e.target.value })
                   }
                   className="w-full p-2 text-white bg-black border rounded border-white/20"
@@ -664,7 +622,7 @@ export default function Home() {
                   min={`${MIN_SAT_COST}`}
                   max={`${MAX_SAT_COST}`}
                   value={formData.cost}
-                  onChange={e =>
+                  onChange={(e) =>
                     setFormData({ ...formData, cost: +e.target.value })
                   }
                   className="w-full p-2 text-white bg-black border rounded border-white/20"
@@ -677,15 +635,17 @@ export default function Home() {
             <textarea
               maxLength={MAX_CONTENT_LENGTH}
               placeholder={`What is going on?`}
-              onChange={e =>
+              onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
               }
-              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
+              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"
+            ></textarea>
           </div>
           <div className="flex justify-between mt-12 items-center">
             <label
               htmlFor="setAsGatedContentCheckbox"
-              className="relative inline-flex items-center cursor-pointer px-4 border border-white/20 py-2 rounded-full">
+              className="relative inline-flex items-center cursor-pointer px-4 border border-white/20 py-2 rounded-full"
+            >
               <input
                 checked={isChecked}
                 onChange={handleCheckboxChange}
@@ -714,11 +674,11 @@ export default function Home() {
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const renderEditProfile = () => {
-    if (!editProfileOn) return null
+    if (!editProfileOn) return null;
 
     return (
       <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-60 ">
@@ -756,7 +716,8 @@ export default function Home() {
             <label className="block mb-2">About me</label>
             <textarea
               placeholder={`Say something about you`}
-              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
+              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"
+            ></textarea>
           </div>
           <div className="flex justify-between mt-12">
             <ButtonDefault
@@ -772,21 +733,22 @@ export default function Home() {
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const renderPostButton = () => {
     return (
       <div
         className="fixed font-bold text-white border rounded-full shadow-lg bottom-8 right-8 border-white/20 "
-        style={{ zIndex: 1000 }}>
+        style={{ zIndex: 1000 }}
+      >
         <AnimatedMenuButton
           onClick={() => setPostFormOpen(true)}
           label="POST"
         />
       </div>
-    )
-  }
+    );
+  };
 
   const renderSocials = () => {
     return (
@@ -794,21 +756,23 @@ export default function Home() {
         <a
           href="https://github.com/project-excalibur/NIP-108"
           target="_blank"
-          rel="noopener noreferrer">
+          rel="noopener noreferrer"
+        >
           <FaGithub className="text-white hover:text-gray-400" size={24} />
         </a>
         <a
           href="https://nostrplayground.com"
           target="_blank"
-          rel="noopener noreferrer">
+          rel="noopener noreferrer"
+        >
           <FaExternalLinkAlt
             className="text-white hover:text-gray-400"
             size={24}
           />
         </a>
       </div>
-    )
-  }
+    );
+  };
 
   const renderUserMenu = () => {
     return (
@@ -838,8 +802,8 @@ export default function Home() {
           {/* <p className="text-xs mx-auto font-thin text- hidden">Version 0.0.1</p> */}
         </nav>
       </>
-    )
-  }
+    );
+  };
 
   const renderSearchBar = () => {
     return (
@@ -851,25 +815,26 @@ export default function Home() {
         />
         <FaSearch className="absolute top-3 left-4 text-white" />
       </div>
-    )
-  }
+    );
+  };
 
   const mockTrendingPosts = () => {
     return (
       <div>
         {teamKeys.map((pubkey, index) => {
-          const profileIndex = profiles.findIndex(profile => {
-            return profile.pubkey === pubkey
-          })
+          const profileIndex = profiles.findIndex((profile) => {
+            return profile.pubkey === pubkey;
+          });
 
-          if (profileIndex === -1) return null
-          const profile = profiles[profileIndex]
-          const name = getDisplayName(profile)
+          if (profileIndex === -1) return null;
+          const profile = profiles[profileIndex];
+          const name = getDisplayName(profile);
 
           return (
             <div
               key={pubkey}
-              className="flex h-16 gap-2 mt-4 p-1 hover:bg-neutral-900 duration-300 rounded">
+              className="flex h-16 gap-2 mt-4 p-1 hover:bg-neutral-900 duration-300 rounded"
+            >
               <img
                 src={profile.picture}
                 className="object-cover w-8 h-8 rounded-full"
@@ -885,11 +850,11 @@ export default function Home() {
                 </p>
               </div>
             </div>
-          )
+          );
         })}
       </div>
-    )
-  }
+    );
+  };
 
   const renderTrending = () => {
     return (
@@ -897,12 +862,13 @@ export default function Home() {
         <p className="mt-10 sticky-top-0">TRENDING</p>
         <div
           id="trendingPosts"
-          className="overflow-scroll h-[400px] mt-4 cursor-pointer">
+          className="overflow-scroll h-[400px] mt-4 cursor-pointer"
+        >
           {mockTrendingPosts()}
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const renderProfile = () => {
     const profileHeader = () => {
@@ -945,23 +911,24 @@ export default function Home() {
             </p>
           </div>
         </div>
-      )
-    }
+      );
+    };
     return (
       <div className="relative flex flex-col w-full h-40 mt-40 mb-12">
         {profileHeader()}
       </div>
-    )
-  }
+    );
+  };
 
   const renderMobileMenu = () => {
-    const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false)
+    const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
     return (
       <div className="fixed md:hidden z-10 top-0 flex items-center w-full justify-center bg-black pb-2">
         <p className="mx-auto mt-5 z-20 font-bold text-2xl"> Zaps⚡️Back</p>{" "}
         <button
           className="fixed right-5 top-4 z-20"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
           <GiHamburgerMenu size={32} />
         </button>
         {mobileMenuOpen ? (
@@ -1002,8 +969,8 @@ export default function Home() {
           </div>
         ) : null}
       </div>
-    )
-  }
+    );
+  };
 
   // ------------------- MAIN -------------------------
 
@@ -1031,5 +998,5 @@ export default function Home() {
         </div>
       </div>
     </>
-  )
+  );
 }
