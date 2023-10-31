@@ -25,6 +25,12 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+body {
+  background: black;
+  color: white;
+}
+
 /* width */
 ::-webkit-scrollbar {
   width: 10px;
