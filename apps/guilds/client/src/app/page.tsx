@@ -52,7 +52,8 @@ import {
   getDisplayName,
   getTag,
   verifyZap,
-} from "utils";
+} from "utils"
+import Image from "next/image"
 
 const GATE_SERVER = "https://api.nostrplayground.com";
 
@@ -302,9 +303,14 @@ export default function Home() {
   // ------------------- RENDERERS -------------------------
   const renderLogo = () => {
     return (
-      <div className="items-center justify-center w-full text-2xl font-bold text-center backdrop-blur-sm">
-        <header>Zaps⚡Back </header>
-        <p className="text-sm font-normal">( Alpha )</p>
+      <div className="flex flex-col items-center relative w-full h-20">
+        <div className="w-32 h-20 relative">
+          <img
+            src="https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/ZapsLogo.png"
+            alt="Zaps⚡️Back"
+          />
+        </div>
+        <p className="text-sm font-normal mt-auto">( Alpha )</p>
       </div>
     );
   };
@@ -316,19 +322,15 @@ export default function Home() {
           <button
             onClick={() => setFeedType(FeedType.Live)}
             className={`${
-              feedType === FeedType.Live
-                ? "font-bold bg-neutral-500 px-4 py-2 rounded-md"
-                : ""
-            }px-4 py-2 rounded-md`}
-          >
+              feedType === FeedType.Live ? "font-bold bg-neutral-500 px-4 " : ""
+            }px-4 py-1 rounded-full`}>
             {FeedType.Live}
           </button>
           <button
             onClick={() => setFeedType(FeedType.Following)}
             className={`${
               feedType === FeedType.Following ? "font-bold bg-neutral-500 " : ""
-            } px-4 py-2 rounded-md`}
-          >
+            } px-4 py-1 rounded-full`}>
             {FeedType.Following}
           </button>
         </div>
@@ -597,7 +599,7 @@ export default function Home() {
     if (!isPostFormOpen) return null;
 
     return (
-      <div className="md:w-1/2 md:h-fit md:absolute md:inset-x-0 md:inset-y-0 md:translate-x-1/2 md:translate-y-1/2 fixed top-0 left-0 z-50 flex items-center justify-center w-screen h-screen bg-black md:border-white md:border md:rounded-md">
+      <div className="md:w-1/2 md:min-w-[36rem] md:h-fit md:absolute md:inset-x-0 md:inset-y-0 md:translate-x-1/2 md:translate-y-1/2 fixed top-0 left-0 z-50 flex items-center justify-center w-screen h-screen bg-black md:border-white md:border md:rounded-md">
         <div className="w-full h-full p-5 text-white bg-black border rounded-lg shadow-lg border-white/20">
           {isChecked ? (
             <>
@@ -924,7 +926,12 @@ export default function Home() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
     return (
       <div className="fixed md:hidden z-10 top-0 flex items-center w-full justify-center bg-black pb-2">
-        <p className="mx-auto mt-5 z-20 font-bold text-2xl"> Zaps⚡️Back</p>{" "}
+        <div className="w-32 h-20 relative">
+          <img
+            src="https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/ZapsLogo.png"
+            alt="Zaps⚡️Back"
+          />
+        </div>
         <button
           className="fixed right-5 top-4 z-20"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
