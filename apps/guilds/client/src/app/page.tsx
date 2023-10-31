@@ -55,19 +55,16 @@ import {
 } from "utils"
 import Image from "next/image"
 
-const RELAY = process.env.NEXT_PUBLIC_NOSTR_RELAY as string
-const GATE_SERVER = process.env.NEXT_PUBLIC_GATE_SERVER as string
+const GATE_SERVER = "https://api.nostrplayground.com"
 
-const MIN_PREVIEW_LENGTH = Number(process.env.NEXT_PUBLIC_MIN_PREVIEW_LENGTH)
-const MAX_PREVIEW_LENGTH = Number(process.env.NEXT_PUBLIC_MAX_PREVIEW_LENGTH)
+const MIN_PREVIEW_LENGTH = 1
+const MAX_PREVIEW_LENGTH = 240
 
-const MIN_CONTENT_LENGTH = Number(process.env.NEXT_PUBLIC_MIN_CONTENT_LENGTH)
-const MAX_CONTENT_LENGTH = Number(process.env.NEXT_PUBLIC_MAX_CONTENT_LENGTH)
+const MIN_CONTENT_LENGTH = 1
+const MAX_CONTENT_LENGTH = 3400
 
-const MIN_SAT_COST = Number(process.env.NEXT_PUBLIC_MIN_SAT_COST)
-const MAX_SAT_COST = Number(process.env.NEXT_PUBLIC_MAX_SAT_COST)
-
-const NOSTR_FETCH_LIMIT = Number(process.env.NEXT_PUBLIC_NOSTR_FETCH_LIMIT)
+const MIN_SAT_COST = 1
+const MAX_SAT_COST = 50_000
 
 interface FormData {
   lud16: string
@@ -92,150 +89,32 @@ export default function Home() {
   // ------------------- STATES -------------------------
 
   const [gateLoading, setGateLoading] = useState<string | null>()
-  const [relay, setRelay] = useState<Relay | null>(null)
-  const [nostr, setNostr] = useState<any | null>(null)
-  const [publicKey, setPublicKey] = useState<string | null>(null)
-  const [webln, setWebln] = useState<null | WebLNProvider>(null)
-  const [announcementNotes, setAnnouncementNotes] = useState<
-    AnnouncementNote[]
-  >([])
-  const [gatedNotes, setGatedNotes] = useState<GatedNote[]>([])
-  const [keyNotes, setKeyNotes] = useState<KeyNote[]>([])
 
   const [submittingForm, setSubmittingForm] = useState<boolean>(false)
   const [isPostFormOpen, setPostFormOpen] = useState<boolean>(false)
   const [editProfileOn, setEditProfileOn] = useState<boolean>(false)
 
   const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA)
-  const { events, profiles, postEvent, teamKeys, followingEvents } =
-    useExcalibur()
+  const {
+    events,
+    profiles,
+    postEvent,
+    teamKeys,
+    followingEvents,
+    gatedNotes,
+    keyNotes,
+    setKeyNotes,
+    pool,
+    relays,
+    publicKey,
+    nostr,
+    webln,
+  } = useExcalibur()
 
   const [isChecked, setIsChecked] = useState<boolean>(false)
   const [feedType, setFeedType] = useState<FeedType>(FeedType.Live)
 
   // ------------------- EFFECTS -------------------------
-
-  useEffect(() => {
-    requestProvider()
-      .then(setWebln)
-      .catch(e => {
-        alert("Please download Alby or ZBD to use this app.")
-      })
-  }, [])
-
-  useEffect(() => {
-    if ((window as any).nostr) {
-      setNostr((window as any).nostr)
-      ;(window as any).nostr.getPublicKey().then(setPublicKey)
-    } else {
-      alert("Nostr not found")
-    }
-  }, [])
-
-  useEffect(() => {
-    const newRelay = relayInit("wss://relay.primal.net")
-    newRelay.on("connect", () => {
-      setRelay(newRelay)
-    })
-    // newRelay.connect()
-    if (newRelay) {
-      newRelay.connect()
-    }
-
-    return () => {
-      newRelay.close()
-    }
-  }, [])
-
-  useEffect(() => {
-    if (relay && nostr && publicKey) {
-      relay
-        .list([
-          {
-            kinds: [NIP_108_KINDS.announcement],
-            limit: NOSTR_FETCH_LIMIT,
-          },
-          {
-            kinds: [NIP_108_KINDS.key],
-            limit: NOSTR_FETCH_LIMIT,
-            authors: [publicKey as string],
-          },
-        ])
-        .then(notes => {
-          const newAnnouncementNotes: AnnouncementNote[] = []
-          const newKeyNotes: KeyNote[] = []
-
-          for (const note of notes) {
-            if (
-              note.kind === NIP_108_KINDS.announcement &&
-              note.tags.find(tag => tag[0] === "g")
-            ) {
-              newAnnouncementNotes.push(
-                eventToAnnouncementNote(note as VerifiedEvent)
-              )
-            } else if (note.kind === NIP_108_KINDS.key) {
-              newKeyNotes.push(eventToKeyNote(note as VerifiedEvent))
-            }
-          }
-
-          setAnnouncementNotes(newAnnouncementNotes)
-          setKeyNotes(newKeyNotes)
-
-          relay
-            .list([
-              {
-                ids: [
-                  ...newAnnouncementNotes.map(
-                    announcementNote => announcementNote.gate
-                  ),
-                  ...newKeyNotes.map(keyNote => keyNote.gate),
-                ],
-              },
-            ])
-            .then(gatedEvents => {
-              setGatedNotes(
-                gatedEvents.map(gatedNote =>
-                  eventToGatedNote(gatedNote as VerifiedEvent)
-                )
-              )
-            })
-        })
-    }
-  }, [relay, nostr, publicKey])
-
-  useEffect(() => {
-    if (gatedNotes.length > 0) {
-      unlockAll()
-    }
-  }, [gatedNotes])
-
-  // ------------------- FUNCTIONS -------------------------
-
-  const unlockAll = async () => {
-    const newKeyNotes: KeyNote[] = []
-    for (const keyNote of keyNotes) {
-      const gatedNote = gatedNotes.find(
-        gatedNote => gatedNote.note.id === keyNote.gate
-      )
-
-      if (!gatedNote) {
-        newKeyNotes.push(keyNote)
-        continue
-      }
-
-      const unlockedSecret = await nostr.nip04.decrypt(
-        gatedNote.note.pubkey,
-        keyNote.note.content
-      )
-
-      newKeyNotes.push({
-        ...keyNote,
-        unlockedSecret,
-      })
-    }
-
-    setKeyNotes(newKeyNotes)
-  }
 
   const handleBuy = async (gatedNote: GatedNote) => {
     if (gateLoading) return
@@ -246,7 +125,8 @@ export default function Home() {
       if (!webln) throw new Error("No webln provider")
       if (!nostr) throw new Error("No nostr provider")
       if (!publicKey) throw new Error("No Public Key")
-      if (!relay) throw new Error("No relay")
+      if (!pool) throw new Error("No pool")
+      if (!relays) throw new Error("No relays")
 
       const uri = `${gatedNote.endpoint}/${gatedNote.note.id}`
       const invoiceResponse = await fetch(uri)
@@ -258,19 +138,22 @@ export default function Home() {
       const resultResponseJson = await resultResponse.json()
       const secret = resultResponseJson.secret
 
-      const content = await nostr.nip04.encrypt(gatedNote.note.pubkey, secret)
+      const content = await (nostr as any).nip04.encrypt(
+        gatedNote.note.pubkey,
+        secret
+      )
 
       const keyEvent = {
         kind: NIP_108_KINDS.key,
         pubkey: publicKey,
         created_at: Math.floor(Date.now() / 1000),
-        tags: [["g", gatedNote.note.id]],
+        tags: [["e", gatedNote.note.id]],
         content: content,
       }
 
-      const keyEventVerified = await nostr.signEvent(keyEvent)
+      const keyEventVerified = await (nostr as any).signEvent(keyEvent)
 
-      await relay.publish(keyEventVerified)
+      await pool.publish(relays, keyEventVerified)
 
       const keyNoteUnlocked = {
         ...eventToKeyNote(keyEventVerified),
@@ -278,6 +161,7 @@ export default function Home() {
       } as KeyNote
       setKeyNotes([...keyNotes, keyNoteUnlocked])
     } catch (e) {
+      console.log(e)
       alert(e)
     }
 
@@ -314,7 +198,7 @@ export default function Home() {
       if (!webln) throw new Error("No webln provider")
       if (!nostr) throw new Error("No nostr provider")
       if (!publicKey) throw new Error("No Public Key")
-      if (!relay) throw new Error("No relay")
+      if (!pool) throw new Error("No pool")
 
       // ------------------- VALIDATE FORM -------------------------
       const { lud16, cost, preview, content } = formData
@@ -357,7 +241,10 @@ export default function Home() {
         tags: [],
         content: content,
       }
-      const lockedContentVerified = await nostr.signEvent(lockedContent)
+
+      const lockedContentVerified = await (nostr as any).signEvent(
+        lockedContent
+      )
 
       const secret = generatePrivateKey()
       const gatedNote = createGatedNoteUnsigned(
@@ -368,7 +255,7 @@ export default function Home() {
         lockedContentVerified
       )
 
-      const gatedNoteVerified = await nostr.signEvent(gatedNote)
+      const gatedNoteVerified = await (nostr as any).signEvent(gatedNote)
 
       const postBody: CreateNotePostBody = {
         gateEvent: gatedNoteVerified,
@@ -387,7 +274,7 @@ export default function Home() {
 
       const responseJson = await response.json()
 
-      await relay.publish(gatedNoteVerified)
+      await pool.publish(relays, gatedNoteVerified)
 
       // ------------------- CREATE ANNOUNCEMENT NOTE -------------------------
 
@@ -397,16 +284,12 @@ export default function Home() {
         gatedNoteVerified
       )
 
-      const announcementNoteVerified = await nostr.signEvent(announcementNote)
-      await relay.publish(announcementNoteVerified)
+      const announcementNoteVerified = await (nostr as any).signEvent(
+        announcementNote
+      )
+      await pool.publish(relays, announcementNoteVerified)
 
       // ------------------- ADD NOTE TO EVENTS -------------------------
-
-      setAnnouncementNotes([
-        eventToAnnouncementNote(announcementNoteVerified),
-        ...announcementNotes,
-      ])
-      setGatedNotes([eventToGatedNote(gatedNoteVerified), ...gatedNotes])
     } catch (e) {
       alert(e)
       console.log(e)
@@ -432,64 +315,6 @@ export default function Home() {
     )
   }
 
-  const renderUnlockedContent = (gatedNote: GatedNote, keyNote: KeyNote) => {
-    const unlockedNote = unlockGatedNote(
-      gatedNote.note,
-      keyNote.unlockedSecret as string
-    )
-
-    return (
-      <div className="mt-5">
-        <p className="flex items-center gap-2">
-          <FaLockOpen className="" /> {unlockedNote.content}
-        </p>
-      </div>
-    )
-  }
-
-  const renderLockedContent = (gatedNote: GatedNote) => {
-    return (
-      <div className="mt-5">
-        <p className="break-words select-none blur-sm">
-          {formatGatedContent(gatedNote.note.content)}
-        </p>
-        <div className="flex justify-center mt-4">
-          <ButtonDefault
-            onClick={() => {
-              handleBuy(gatedNote)
-            }}
-            icon={
-              <>
-                <AiFillThunderbolt />
-                <FaLockOpen />
-              </>
-            }
-            label={
-              gateLoading && gatedNote.note.id === gateLoading
-                ? "Unlocking..."
-                : `${(gatedNote.cost / 1000).toFixed(0)}`
-            }
-            className={`border border-white/20`}></ButtonDefault>
-        </div>
-      </div>
-    )
-  }
-
-  const renderGatedContent = (event: AnnouncementNote) => {
-    const gatedNote = gatedNotes.find(
-      gatedNote => gatedNote.note.id === event.gate
-    )
-    const keyNote = keyNotes.find(
-      keyNote => keyNote.gate === event.gate && keyNote.unlockedSecret
-    )
-
-    if (!gatedNote) return null
-
-    if (keyNote) return renderUnlockedContent(gatedNote, keyNote)
-
-    return renderLockedContent(gatedNote)
-  }
-
   const renderSwitch = () => {
     return (
       <div className="w-full space-y-4 md:min-w-[32rem] mb-5">
@@ -513,39 +338,163 @@ export default function Home() {
     )
   }
 
+  const renderUnlockedContent = (
+    announcementNote: AnnouncementNote,
+    gatedNote: GatedNote,
+    keyNote: KeyNote
+  ) => {
+    const unlockedNote = unlockGatedNote(
+      gatedNote.note,
+      keyNote.unlockedSecret as string
+    )
+
+    const profileIndex = profiles.findIndex(
+      profile => profile.pubkey === gatedNote.note.pubkey
+    )
+
+    const profile =
+      profileIndex === -1
+        ? getDefaultNostrProfile(gatedNote.note.pubkey)
+        : profiles[profileIndex]
+    const name = getDisplayName(profile)
+
+    return (
+      <div
+        key={gatedNote.note.id}
+        className="flex flex-col p-4 border rounded-md border-white/20">
+        {/* This container ensures content wrapping */}
+        <div className="flex w-full overflow-hidden">
+          <img
+            src={profile.picture}
+            alt={profile.display_name}
+            className="object-cover w-12 h-12 mr-4 rounded-full" // Adjust width (w-12) and height (h-12) as needed
+          />
+          <div className="flex flex-col w-full">
+            <p className="mb-5 text-xs font-bold">{name}</p>
+            <h3 className="pr-8 mb-3 break-words">
+              🔓{announcementNote.note.content}🔓
+            </h3>
+            <h3 className="pr-8 break-words ">{unlockedNote.content}</h3>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const renderLockedContent = (
+    announcementNote: AnnouncementNote,
+    gatedNote: GatedNote
+  ) => {
+    const profileIndex = profiles.findIndex(
+      profile => profile.pubkey === gatedNote.note.pubkey
+    )
+
+    const profile =
+      profileIndex === -1
+        ? getDefaultNostrProfile(gatedNote.note.pubkey)
+        : profiles[profileIndex]
+    const name = getDisplayName(profile)
+
+    return (
+      <div
+        key={gatedNote.note.id}
+        className="flex flex-col p-4 border rounded-md border-white/20">
+        {/* This container ensures content wrapping */}
+        <div className="flex w-full overflow-hidden">
+          <img
+            src={profile.picture}
+            alt={profile.display_name}
+            className="object-cover w-12 h-12 mr-4 rounded-full" // Adjust width (w-12) and height (h-12) as needed
+          />
+          <div className="flex flex-col w-full">
+            <p className="mb-5 text-xs font-bold">{name}</p>
+            <h3 className="pr-8 mb-3 break-words">
+              🔓{announcementNote.note.content}🔓
+            </h3>
+            <p className="break-words select-none blur-sm">
+              {formatGatedContent(gatedNote.note.content)}
+            </p>
+            <div className="flex justify-center mt-4">
+              <ButtonDefault
+                onClick={() => {
+                  handleBuy(gatedNote)
+                }}
+                icon={
+                  <>
+                    <AiFillThunderbolt />
+                    <FaLockOpen />
+                  </>
+                }
+                label={
+                  gateLoading && gatedNote.note.id === gateLoading
+                    ? "Unlocking..."
+                    : `${(gatedNote.cost / 1000).toFixed(0)}`
+                }
+                className={`border border-white/20 w-40`}></ButtonDefault>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const renderGatedContent = (announcementEvent: VerifiedEvent) => {
+    const event = eventToAnnouncementNote(announcementEvent)
+    const gatedNote = gatedNotes.find(
+      gatedNote => gatedNote.note.id === event.gate
+    )
+    const keyNote = keyNotes.find(
+      keyNote => keyNote.gate === event.gate && keyNote.unlockedSecret
+    )
+
+    if (!gatedNote) return null
+
+    if (keyNote) return renderUnlockedContent(event, gatedNote, keyNote)
+
+    return renderLockedContent(event, gatedNote)
+  }
+
+  const renderNote = (event: VerifiedEvent) => {
+    const profileIndex = profiles.findIndex(
+      profile => profile.pubkey === event.pubkey
+    )
+
+    const profile =
+      profileIndex === -1
+        ? getDefaultNostrProfile(event.pubkey)
+        : profiles[profileIndex]
+    const name = getDisplayName(profile)
+
+    return (
+      <div
+        key={event.id}
+        className="flex flex-col p-4 border rounded-md border-white/20">
+        {/* This container ensures content wrapping */}
+        <div className="flex w-full overflow-hidden">
+          <img
+            src={profile.picture}
+            alt={profile.display_name}
+            className="object-cover w-12 h-12 mr-4 rounded-full" // Adjust width (w-12) and height (h-12) as needed
+          />
+          <div className="flex flex-col w-full">
+            <p className="mb-5 text-xs font-bold">{name}</p>
+            <h3 className="pr-8 break-words ">{event.content}</h3>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const renderEvents = () => {
     return (
       <div className="w-full space-y-4 md:min-w-[32rem]">
         {(feedType === FeedType.Live ? events : followingEvents).map(
           (event, index) => {
-            const profileIndex = profiles.findIndex(
-              profile => profile.pubkey === event.pubkey
-            )
+            if (event.kind === NIP_108_KINDS.announcement) {
+              return renderGatedContent(event)
+            }
 
-            const profile =
-              profileIndex === -1
-                ? getDefaultNostrProfile(event.pubkey)
-                : profiles[profileIndex]
-            const name = getDisplayName(profile)
-
-            return (
-              <div
-                key={event.id}
-                className="flex flex-col p-4 border rounded-md border-white/20">
-                {/* This container ensures content wrapping */}
-                <div className="flex w-full overflow-hidden">
-                  <img
-                    src={profile.picture}
-                    alt={profile.display_name}
-                    className="object-cover w-12 h-12 mr-4 rounded-full" // Adjust width (w-12) and height (h-12) as needed
-                  />
-                  <div className="flex flex-col w-full">
-                    <p className="mb-5 text-xs font-bold">{name}</p>
-                    <h3 className="pr-8 break-words ">{event.content}</h3>
-                  </div>
-                </div>
-              </div>
-            )
+            return renderNote(event)
           }
         )}
       </div>
@@ -624,7 +573,7 @@ export default function Home() {
 
             <ButtonDefault
               className="font-bold border border-white/20"
-              onClick={submitSimpleForm}
+              onClick={isChecked ? submitForm : submitSimpleForm}
               label="Submit"
             />
           </div>
