@@ -20,7 +20,7 @@ const AnimatedMenuButton = ({
 }: AnimatedMenuButtonProps) => {
   return (
     <div className="relative text-center rounded-full md:w-36 group">
-      <div className="absolute top-0 w-0 h-full duration-300 ease-in-out transform bg-neutral-900 rounded-full group-hover:md:w-full" />
+      <div className="absolute top-0 w-0 h-full duration-300 ease-in-out transform rounded-full bg-neutral-900 group-hover:md:w-full" />
       <button
         onClick={onClick}
         className={clsx(

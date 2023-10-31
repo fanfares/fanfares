@@ -16,7 +16,7 @@ const ButtonDefault = ({
 }: ButtonDefaultProps) => {
   return (
     <div className="relative text-center rounded-full md:w-36 group">
-      <div className="absolute top-0 w-0 h-full duration-300 ease-in-out transform bg-neutral-900 rounded-full group-hover:w-full" />
+      <div className="absolute top-0 w-0 h-full duration-300 ease-in-out transform rounded-full bg-neutral-900 group-hover:w-full" />
       <button
         onClick={onClick}
         className={clsx(
@@ -25,7 +25,7 @@ const ButtonDefault = ({
           { "gap-2 ": icon }
         )}>
         <span className="">{label}</span>
-        <span className="">{icon}</span>
+        <span className="flex gap-2">{icon}</span>
       </button>
     </div>
   )

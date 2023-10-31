@@ -414,25 +414,25 @@ export default function Home() {
             <p className="break-words select-none blur-sm">
               {formatGatedContent(gatedNote.note.content)}
             </p>
-            <div className="flex justify-center mt-4">
-              <ButtonDefault
-                onClick={() => {
-                  handleBuy(gatedNote)
-                }}
-                icon={
-                  <>
-                    <AiFillThunderbolt />
-                    <FaLockOpen />
-                  </>
-                }
-                label={
-                  gateLoading && gatedNote.note.id === gateLoading
-                    ? "Unlocking..."
-                    : `${(gatedNote.cost / 1000).toFixed(0)}`
-                }
-                className={`border border-white/20 w-40`}></ButtonDefault>
-            </div>
           </div>
+        </div>
+        <div className="flex mx-auto mt-4">
+          <ButtonDefault
+            onClick={() => {
+              handleBuy(gatedNote)
+            }}
+            icon={
+              <>
+                <AiFillThunderbolt />
+                <FaLockOpen />
+              </>
+            }
+            label={
+              gateLoading && gatedNote.note.id === gateLoading
+                ? "Unlocking..."
+                : `${(gatedNote.cost / 1000).toFixed(0)}`
+            }
+            className={`border border-white/20`}></ButtonDefault>
         </div>
       </div>
     )
