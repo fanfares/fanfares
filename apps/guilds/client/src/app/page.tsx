@@ -643,7 +643,7 @@ export default function Home() {
     if (!isPostFormOpen) return null
 
     return (
-      <div className="md:w-1/2 md:min-w-[36rem] md:h-fit md:absolute md:inset-x-0 md:inset-y-0 md:translate-x-1/2 md:translate-y-1/2 fixed top-0 left-0 z-50 flex items-center justify-center w-screen h-screen bg-black md:border-white md:border md:rounded-md">
+      <div className="md:w-1/2 md:min-w-[36rem] md:h-fit  md:inset-x-0 md:inset-y-0 md:translate-x-1/2 md:translate-y-1/2 fixed top-0 left-0 z-50 flex items-center justify-center w-screen h-screen bg-black md:border-white md:border md:rounded-md">
         <div className="w-full h-full p-5 text-white bg-black border rounded-lg shadow-lg border-white/20">
           {isChecked ? (
             <>
@@ -1011,6 +1011,14 @@ export default function Home() {
           </div>
         ) : null}
       </div>
+    )
+  }
+
+  const renderZapModal = () => {
+    return (
+      <>
+        <div></div>
+      </>
     )
   }
 
