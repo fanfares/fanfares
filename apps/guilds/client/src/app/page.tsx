@@ -667,7 +667,7 @@ export default function Home() {
             />
             <ButtonDefault
               className="font-bold border border-white/20"
-              onClick={submitForm}
+              onClick={isChecked ? submitForm : submitSimpleForm}
               label="Submit"
             />
           </div>
