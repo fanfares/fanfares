@@ -9,7 +9,6 @@ import { WebLNProvider, requestProvider } from "webln";
 import {
   ReactNode,
   createContext,
-  use,
   useContext,
   useEffect,
   useState,
@@ -53,7 +52,6 @@ export type ExcaliburContext = {
   gatedNotes: GatedNote[];
   keyNotes: KeyNote[];
   setKeyNotes: (keyNotes: KeyNote[]) => void;
-  postEvent: (event: NostrEvent<number>) => Promise<void>;
   isLoading: boolean;
   teamKeys: string[];
   relays: string[];
@@ -61,6 +59,8 @@ export type ExcaliburContext = {
   publicKey: string | null,
   webln: WebLNProvider | null,
   nostr: NIP07 | null,
+
+  postEvent: (event: NostrEvent<number>) => Promise<void>;
 };
 
 const DEFAULT_EVENT: ExcaliburContext = {
