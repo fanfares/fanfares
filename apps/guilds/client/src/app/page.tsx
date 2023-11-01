@@ -367,15 +367,16 @@ export default function Home() {
     return (
       <div
         key={gatedNote.note.id}
-        className="flex flex-col p-4 border rounded-md border-white/20">
+        className="flex flex-col border rounded-md border-white/20 p-4">
         {/* This container ensures content wrapping */}
-        <div className="flex w-full overflow-hidden">
+        <div className="flex gap-2">
           <img
             src={profile.picture}
             alt={profile.display_name}
-            className="object-cover w-12 h-12 mr-4 rounded-full" // Adjust width (w-12) and height (h-12) as needed
+            className="object-fill rounded-full min-w-[48px] w-12 h-12"
           />
-          <div className="flex flex-col w-full">
+          <div className="flex flex-col max-w-sm md:max-w-md ">
+            {" "}
             <p className="mb-5 text-xs font-bold">{name}</p>
             <h3 className="pr-8 mb-3 break-words">
               🔓{announcementNote.note.content}🔓
@@ -404,15 +405,15 @@ export default function Home() {
     return (
       <div
         key={gatedNote.note.id}
-        className="flex flex-col p-4 border rounded-md border-white/20">
+        className="flex flex-col border rounded-md border-white/20 p-4">
         {/* This container ensures content wrapping */}
-        <div className="flex w-full overflow-hidden">
+        <div className="flex gap-2">
           <img
             src={profile.picture}
             alt={profile.display_name}
-            className="object-cover w-12 h-12 mr-4 rounded-full" // Adjust width (w-12) and height (h-12) as needed
+            className="object-fill rounded-full min-w-[48px] w-12 h-12"
           />
-          <div className="flex flex-col max-w-sm md:max-w-md lg:max-w-lg">
+          <div className="flex flex-col max-w-sm md:max-w-md">
             <p className="mb-5 text-xs font-bold">{name}</p>
             <h3 className="pr-8 mb-3 break-words">
               🔓{announcementNote.note.content}🔓
@@ -476,12 +477,13 @@ export default function Home() {
         key={event.id}
         className="flex flex-col p-4 border rounded-md border-white/20">
         {/* This container ensures content wrapping */}
-        <div className="flex w-full overflow-hidden">
+        <div className="flex gap-2">
           <img
             src={profile.picture}
             alt={profile.display_name}
-            className="object-cover w-12 h-12 mr-4 rounded-full" // Adjust width (w-12) and height (h-12) as needed
+            className="object-fill rounded-full min-w-[48px] w-12 h-12"
           />
+
           <div className="flex flex-col max-w-sm md:max-w-md lg:max-w-lg">
             <p className="mb-5 text-xs font-bold">{name}</p>
             <h3 className="pr-8 break-words ">{event.content}</h3>
