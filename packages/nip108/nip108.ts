@@ -1,9 +1,8 @@
 import {
   getPublicKey,
   finishEvent,
-  VerifiedEvent,
+  Event as NostrEvent,
   nip04,
-  generatePrivateKey,
   EventTemplate
 } from "nostr-tools";
 import { decrypt, encrypt, hashToKey } from "../utils/crypto";
@@ -16,32 +15,32 @@ export enum NIP_108_KINDS {
 }
 
 export interface CreateNotePostBody {
-  gateEvent: VerifiedEvent<number>;
+  gateEvent: NostrEvent<number>;
   lud16: string;
   secret: string;
   cost: number;
 }
 
 export interface GatedNote {
-    note: VerifiedEvent<number>;
+    note: NostrEvent<number>;
     iv: string,
     cost: number,
     endpoint: string
 }
 
 export interface KeyNote {
-    note: VerifiedEvent<number>;
+    note: NostrEvent<number>;
     iv: string,
     gate: string,
     unlockedSecret?: string,
 }
 
 export interface AnnouncementNote {
-  note: VerifiedEvent<number>;
+  note: NostrEvent<number>;
   gate: string,
 }
 
-export function eventToGatedNote(event: VerifiedEvent<number>): GatedNote {
+export function eventToGatedNote(event: NostrEvent<number>): GatedNote {
     // Extract tags
     const ivTag = event.tags.find(tag => tag[0] === "iv");
     const costTag = event.tags.find(tag => tag[0] === "cost");
@@ -58,7 +57,7 @@ export function eventToGatedNote(event: VerifiedEvent<number>): GatedNote {
     return gatedNote;
 }
 
-export function eventToKeyNote(event: VerifiedEvent<number>): KeyNote {
+export function eventToKeyNote(event: NostrEvent<number>): KeyNote {
     // Extract tags
     const ivTag = event.tags.find(tag => tag[0] === "iv");
     const gateTag = event.tags.find(tag => tag[0] === "e" || tag[0] === "g");
@@ -73,7 +72,7 @@ export function eventToKeyNote(event: VerifiedEvent<number>): KeyNote {
     return keyNote;
 }
 
-export function eventToAnnouncementNote(event: VerifiedEvent<number>): AnnouncementNote {
+export function eventToAnnouncementNote(event: NostrEvent<number>): AnnouncementNote {
   // Extract tags
   const gateTag = event.tags.find(tag => tag[0] === "e" || tag[0] === "g");
 
@@ -91,7 +90,7 @@ export function createGatedNoteUnsigned(
   secret: string,
   cost: number,
   endpoint: string,
-  payload: VerifiedEvent<number>,
+  payload: NostrEvent<number>,
 ): EventTemplate<number> {
   const noteToEncrypt = JSON.stringify(payload);
   const noteSecretKey = hashToKey(secret);
@@ -117,8 +116,8 @@ export function createGatedNote(
   secret: string,
   cost: number,
   endpoint: string,
-  payload: VerifiedEvent<number>
-): VerifiedEvent<number> {
+  payload: NostrEvent<number>
+): NostrEvent<number> {
 
   const event = createGatedNoteUnsigned(
     getPublicKey(privateKey),
@@ -134,7 +133,7 @@ export function createGatedNote(
 export function createKeyNoteUnsigned(
   publicKey: string,
   encryptedSecret: string,
-  gatedNote: VerifiedEvent<number>
+  gatedNote: NostrEvent<number>
   ): EventTemplate<number> {
 
   const event = {
@@ -153,8 +152,8 @@ export function createKeyNoteUnsigned(
 export async function createKeyNote(
   privateKey: string,
   secret: string,
-  gatedNote: VerifiedEvent<number>
-): Promise<VerifiedEvent<number>> {
+  gatedNote: NostrEvent<number>
+): Promise<NostrEvent<number>> {
   const encryptedSecret = await nip04.encrypt(privateKey, gatedNote.pubkey, secret);
 
   const event = createKeyNoteUnsigned(getPublicKey(privateKey), encryptedSecret, gatedNote)
@@ -165,7 +164,7 @@ export async function createKeyNote(
 export function createAnnouncementNoteUnsigned(
   publicKey: string,
   content: string,
-  gatedNote: VerifiedEvent<number>
+  gatedNote: NostrEvent<number>
 ): EventTemplate<number> {
 
   const event = {
@@ -184,8 +183,8 @@ export function createAnnouncementNoteUnsigned(
 export function createAnnouncementNote(
   privateKey: string,
   content: string,
-  gatedNote: VerifiedEvent<number>
-): VerifiedEvent<number> {
+  gatedNote: NostrEvent<number>
+): NostrEvent<number> {
 
   const event = createAnnouncementNoteUnsigned(getPublicKey(privateKey), content, gatedNote)
 
@@ -193,9 +192,9 @@ export function createAnnouncementNote(
 }
 
 export function unlockGatedNote(
-  gatedNote: VerifiedEvent<number>,
+  gatedNote: NostrEvent<number>,
   secret: string
-): VerifiedEvent<number> {
+): NostrEvent<number> {
   // 1. Derive the encryption key from the secret
   const noteSecretKey = hashToKey(secret);
 
@@ -213,14 +212,14 @@ export function unlockGatedNote(
   const decryptedContent = decrypt(iv, content, noteSecretKey);
 
   // 4. Parse the decrypted content into a VerifiedEvent<number> object
-  return JSON.parse(decryptedContent) as VerifiedEvent<number>;
+  return JSON.parse(decryptedContent) as NostrEvent<number>;
 }
 
 export async function unlockGatedNoteFromKeyNote(
   privateKey: string,
-  keyNote: VerifiedEvent<number>,
-  gatedNote: VerifiedEvent<number>
-): Promise<VerifiedEvent<number>> {
+  keyNote: NostrEvent<number>,
+  gatedNote: NostrEvent<number>
+): Promise<NostrEvent<number>> {
   // 1. Decrypt key using nip04
   const decryptedSecret = await nip04.decrypt(privateKey, gatedNote.pubkey, keyNote.content);
   
