@@ -201,7 +201,13 @@ export default function Home() {
       if (!pool) throw new Error("No pool")
 
       // ------------------- VALIDATE FORM -------------------------
-      const { lud16, cost, preview, content } = formData
+      const { cost, preview, content } = formData
+
+      const profileIndex = profiles.findIndex(
+        profile => profile.pubkey === publicKey
+      )
+      if(profileIndex === -1) throw new Error("No profile found")
+      const lud16 = profiles[profileIndex].lud16 ?? '';
 
       // 1. Check if lud16 is valid (looks like an email)
       const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
