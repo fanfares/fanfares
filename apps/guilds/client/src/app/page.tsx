@@ -206,8 +206,8 @@ export default function Home() {
       const profileIndex = profiles.findIndex(
         profile => profile.pubkey === publicKey
       )
-      if(profileIndex === -1) throw new Error("No profile found")
-      const lud16 = profiles[profileIndex].lud16 ?? '';
+      if (profileIndex === -1) throw new Error("No profile found")
+      const lud16 = profiles[profileIndex].lud16 ?? ""
 
       // 1. Check if lud16 is valid (looks like an email)
       const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
@@ -412,7 +412,7 @@ export default function Home() {
             alt={profile.display_name}
             className="object-cover w-12 h-12 mr-4 rounded-full" // Adjust width (w-12) and height (h-12) as needed
           />
-          <div className="flex flex-col w-full">
+          <div className="flex flex-col max-w-sm md:max-w-md lg:max-w-lg">
             <p className="mb-5 text-xs font-bold">{name}</p>
             <h3 className="pr-8 mb-3 break-words">
               🔓{announcementNote.note.content}🔓
@@ -482,7 +482,7 @@ export default function Home() {
             alt={profile.display_name}
             className="object-cover w-12 h-12 mr-4 rounded-full" // Adjust width (w-12) and height (h-12) as needed
           />
-          <div className="flex flex-col w-full">
+          <div className="flex flex-col max-w-sm md:max-w-md lg:max-w-lg">
             <p className="mb-5 text-xs font-bold">{name}</p>
             <h3 className="pr-8 break-words ">{event.content}</h3>
           </div>
