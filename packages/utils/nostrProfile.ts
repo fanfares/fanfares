@@ -1,6 +1,7 @@
 import { Event as NostrEvent } from "nostr-tools";
 
-export const DEFAULT_PICTURE = "https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/default_profile.png";
+// export const DEFAULT_PICTURE = "https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/default_profile.png";
+export const DEFAULT_PICTURE = "https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/default_profile_dark.png";
 export const DEFAULT_BANNER = "https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/default_banner.png";
 
 export interface NostrProfile {
