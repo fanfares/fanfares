@@ -1,11 +1,6 @@
-"use client"
+"use client";
 
-import {
-  Relay,
-  relayInit,
-  VerifiedEvent,
-  generatePrivateKey,
-} from "nostr-tools"
+import { Event as NostrEvent } from "nostr-tools";
 import {
   FaGithub,
   FaExternalLinkAlt,
@@ -23,12 +18,12 @@ import {
   FaSearch,
   FaEnvelope,
   FaHamburger,
-} from "react-icons/fa"
-import { GiHamburgerMenu } from "react-icons/gi"
-import { HiPencilAlt } from "react-icons/hi"
-import { AiFillThunderbolt } from "react-icons/ai"
-import { ChangeEvent, useEffect, useState } from "react"
-import { WebLNProvider, requestProvider } from "webln"
+} from "react-icons/fa";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { HiPencilAlt } from "react-icons/hi";
+import { AiFillThunderbolt } from "react-icons/ai";
+import { ChangeEvent, useEffect, useState } from "react";
+import { WebLNProvider, requestProvider } from "webln";
 import {
   AnnouncementNote,
   CreateNotePostBody,
@@ -42,43 +37,36 @@ import {
   eventToKeyNote,
   unlockGatedNote,
   PREntry,
-} from "nip108"
-import AnimatedMenuButton from "@/components/AnimatedButton"
-import NavigationMenu from "@/components/NavigationMenu"
-import ButtonDefault from "@/components/Button"
-import { useExcalibur } from "@/components/ExcaliburProvider"
-import {
-  getDefaultNostrProfile,
-  getDisplayName,
-  getTag,
-  verifyZap,
-} from "utils"
-import Image from "next/image"
+} from "nip108";
+import AnimatedMenuButton from "@/components/AnimatedButton";
+import NavigationMenu from "@/components/NavigationMenu";
+import ButtonDefault from "@/components/Button";
+import { useExcalibur } from "@/components/ExcaliburProvider";
+import { getDefaultNostrProfile, getDisplayName } from "utils";
+import Image from "next/image";
 
-const GATE_SERVER = "https://api.nostrplayground.com"
+const GATE_SERVER = "https://api.nostrplayground.com";
 
-const MIN_PREVIEW_LENGTH = 1
-const MAX_PREVIEW_LENGTH = 240
+const MIN_PREVIEW_LENGTH = 1;
+const MAX_PREVIEW_LENGTH = 240;
 
-const MIN_CONTENT_LENGTH = 1
-const MAX_CONTENT_LENGTH = 3400
+const MIN_CONTENT_LENGTH = 1;
+const MAX_CONTENT_LENGTH = 3400;
 
-const MIN_SAT_COST = 1
-const MAX_SAT_COST = 50_000
+const MIN_SAT_COST = 1;
+const MAX_SAT_COST = 50_000;
 
 interface FormData {
-  lud16: string
-  cost?: number
-  preview: string
-  content: string
+  cost: number;
+  preview: string;
+  content: string;
 }
 
 const DEFAULT_FORM_DATA: FormData = {
-  lud16: "coachchuckff@getalby.com",
   cost: 1,
   preview: "Hey unlock my post for 1 sat!",
   content: "This is the content that will be unlocked!",
-}
+};
 
 enum FeedType {
   Live = "Live",
@@ -87,224 +75,86 @@ enum FeedType {
 
 export default function Home() {
   // ------------------- STATES -------------------------
+  const [isPostFormOpen, setPostFormOpen] = useState<boolean>(false);
+  const [editProfileOn, setEditProfileOn] = useState<boolean>(false);
+  const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA);
 
-  const [gateLoading, setGateLoading] = useState<string | null>()
-
-  const [submittingForm, setSubmittingForm] = useState<boolean>(false)
-  const [isPostFormOpen, setPostFormOpen] = useState<boolean>(false)
-  const [editProfileOn, setEditProfileOn] = useState<boolean>(false)
-
-  const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA)
   const {
     events,
-    profiles,
-    postEvent,
-    teamKeys,
     followingEvents,
+
+    profiles,
     gatedNotes,
-    keyNotes,
-    setKeyNotes,
-    pool,
-    relays,
-    publicKey,
-    nostr,
-    webln,
-  } = useExcalibur()
+    unlockedKeyNotes,
 
-  const [isChecked, setIsChecked] = useState<boolean>(false)
-  const [feedType, setFeedType] = useState<FeedType>(FeedType.Live)
+    isPosting,
+    isBuying,
 
-  // ------------------- EFFECTS -------------------------
+    postNote,
+    postGatedNote,
+    buyKey,
 
-  const handleBuy = async (gatedNote: GatedNote) => {
-    if (gateLoading) return
+    redactTeamKeys,
+  } = useExcalibur();
 
-    setGateLoading(gatedNote.note.id)
+  const [isPostingGatedContent, setIsPostingGatedContent] = useState<boolean>(false);
+  const [feedType, setFeedType] = useState<FeedType>(FeedType.Live);
 
-    try {
-      if (!webln) throw new Error("No webln provider")
-      if (!nostr) throw new Error("No nostr provider")
-      if (!publicKey) throw new Error("No Public Key")
-      if (!pool) throw new Error("No pool")
-      if (!relays) throw new Error("No relays")
-
-      const uri = `${gatedNote.endpoint}/${gatedNote.note.id}`
-      const invoiceResponse = await fetch(uri)
-      const invoiceResponseJson = (await invoiceResponse.json()) as PREntry
-
-      await webln.sendPayment(invoiceResponseJson.pr)
-
-      const resultResponse = await fetch(invoiceResponseJson.successAction.url)
-      const resultResponseJson = await resultResponse.json()
-      const secret = resultResponseJson.secret
-
-      const content = await (nostr as any).nip04.encrypt(
-        gatedNote.note.pubkey,
-        secret
-      )
-
-      const keyEvent = {
-        kind: NIP_108_KINDS.key,
-        pubkey: publicKey,
-        created_at: Math.floor(Date.now() / 1000),
-        tags: [["e", gatedNote.note.id]],
-        content: content,
-      }
-
-      const keyEventVerified = await (nostr as any).signEvent(keyEvent)
-
-      await pool.publish(relays, keyEventVerified)
-
-      const keyNoteUnlocked = {
-        ...eventToKeyNote(keyEventVerified),
-        unlockedSecret: secret,
-      } as KeyNote
-      setKeyNotes([...keyNotes, keyNoteUnlocked])
-    } catch (e) {
-      console.log(e)
-      alert(e)
-    }
-
-    setGateLoading(null)
-  }
+  // ------------------- FUNCTIONS -------------------------
 
   const formatGatedContent = (content: string) => {
-    return content.substring(0, 500) + "..."
-  }
+    return content.substring(0, 500) + "...";
+  };
 
-  const submitSimpleForm = async () => {
-    const { content } = formData
-
-    if (!content) return
-    if (!publicKey) return
-
-    const event = {
-      kind: 1,
-      pubkey: publicKey,
-      created_at: Math.floor(Date.now() / 1000),
-      tags: [],
-      content: content,
-    }
-
-    postEvent(event as any)
-  }
-
-  const submitForm = async () => {
-    if (submittingForm) return
-
-    setSubmittingForm(true)
+  const handlePost = async () => {
+    if(isPosting) return;
 
     try {
-      if (!webln) throw new Error("No webln provider")
-      if (!nostr) throw new Error("No nostr provider")
-      if (!publicKey) throw new Error("No Public Key")
-      if (!pool) throw new Error("No pool")
+      if(isPostingGatedContent) await submitGatedForm();
+      else await submitNoteForm();
+    } catch (error) {
+      console.log(error);
+    } finally{
+      setPostFormOpen(false);
+    }
+  }
 
-      // ------------------- VALIDATE FORM -------------------------
-      const { cost, preview, content } = formData
+  const submitNoteForm = async () => {
+    const { content } = formData;
 
-      const profileIndex = profiles.findIndex(
-        profile => profile.pubkey === publicKey
-      )
-      if (profileIndex === -1) throw new Error("No profile found")
-      const lud16 = profiles[profileIndex].lud16 ?? ""
-
-      // 1. Check if lud16 is valid (looks like an email)
-      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
-      if (!emailRegex.test(lud16)) throw new Error("Invalid lud16 format")
-
-      // 2. Check if price is valid
-      if (!cost || cost < MIN_SAT_COST || cost > MAX_SAT_COST)
-        throw new Error(
-          `Price should be >= ${MIN_SAT_COST} and <= ${MAX_SAT_COST} sats`
-        )
-      const unlockCost = cost * 1000
-
-      // 3. Check if preview is valid
-      if (
-        preview.length > MAX_PREVIEW_LENGTH ||
-        preview.length < MIN_PREVIEW_LENGTH
-      )
-        throw new Error(
-          `Preview should be <= 260 chars and >= ${MIN_PREVIEW_LENGTH} chars`
-        )
-
-      // 4. Check if content is valid
-      if (
-        content.length > MAX_CONTENT_LENGTH ||
-        content.length < MIN_CONTENT_LENGTH
-      )
-        throw new Error(
-          `Content should be <= ${MAX_CONTENT_LENGTH} chars and >= ${MIN_CONTENT_LENGTH} chars`
-        )
-
-      // ------------------- CREATE LOCKED CONTENT -------------------------
-
-      const lockedContent = {
-        kind: 1,
-        pubkey: publicKey,
-        created_at: Math.floor(Date.now() / 1000),
-        tags: [],
-        content: content,
-      }
-
-      const lockedContentVerified = await (nostr as any).signEvent(
-        lockedContent
-      )
-
-      const secret = generatePrivateKey()
-      const gatedNote = createGatedNoteUnsigned(
-        publicKey,
-        secret,
-        unlockCost,
-        GATE_SERVER,
-        lockedContentVerified
-      )
-
-      const gatedNoteVerified = await (nostr as any).signEvent(gatedNote)
-
-      const postBody: CreateNotePostBody = {
-        gateEvent: gatedNoteVerified,
-        lud16: lud16,
-        secret: secret,
-        cost: unlockCost,
-      }
-
-      const response = await fetch(GATE_SERVER + "/create", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(postBody),
-      })
-
-      const responseJson = await response.json()
-
-      await pool.publish(relays, gatedNoteVerified)
-
-      // ------------------- CREATE ANNOUNCEMENT NOTE -------------------------
-
-      const announcementNote = createAnnouncementNoteUnsigned(
-        publicKey,
-        preview,
-        gatedNoteVerified
-      )
-
-      const announcementNoteVerified = await (nostr as any).signEvent(
-        announcementNote
-      )
-      await pool.publish(relays, announcementNoteVerified)
-
-      // ------------------- ADD NOTE TO EVENTS -------------------------
-    } catch (e) {
-      alert(e)
-      console.log(e)
+    if (!content) {
+      alert("Please set some content");
+      return;
     }
 
-    setSubmittingForm(false)
-    setFormData(DEFAULT_FORM_DATA)
-    setPostFormOpen(false)
-  }
+    postNote(content);
+  };
+
+  const submitGatedForm = async () => {
+    const { cost, preview, content } = formData;
+
+    if (!cost) {
+      alert("Please set a cost");
+      return;
+    }
+    if (!preview) {
+      alert("Please set a preview");
+      return;
+    }
+    if (!content) {
+      alert("Please set some content");
+      return;
+    }
+
+    //TODO validate form data
+
+    postGatedNote(cost, preview, content);
+  };
+
+  const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { checked } = event.target;
+    setIsPostingGatedContent(checked);
+  };
 
   // ------------------- RENDERERS -------------------------
   const renderLogo = () => {
@@ -318,8 +168,8 @@ export default function Home() {
         </div>
         <p className="mt-auto text-sm font-normal">( Alpha )</p>
       </div>
-    )
-  }
+    );
+  };
 
   const renderSwitch = () => {
     return (
@@ -329,20 +179,22 @@ export default function Home() {
             onClick={() => setFeedType(FeedType.Live)}
             className={`${
               feedType === FeedType.Live ? "font-bold bg-neutral-500 px-4 " : ""
-            }px-4 py-1 rounded-full`}>
+            }px-4 py-1 rounded-full`}
+          >
             {FeedType.Live}
           </button>
           <button
             onClick={() => setFeedType(FeedType.Following)}
             className={`${
               feedType === FeedType.Following ? "font-bold bg-neutral-500 " : ""
-            } px-4 py-1 rounded-full`}>
+            } px-4 py-1 rounded-full`}
+          >
             {FeedType.Following}
           </button>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const renderUnlockedContent = (
     announcementNote: AnnouncementNote,
@@ -352,22 +204,18 @@ export default function Home() {
     const unlockedNote = unlockGatedNote(
       gatedNote.note,
       keyNote.unlockedSecret as string
-    )
-
-    const profileIndex = profiles.findIndex(
-      profile => profile.pubkey === gatedNote.note.pubkey
-    )
+    );
 
     const profile =
-      profileIndex === -1
-        ? getDefaultNostrProfile(gatedNote.note.pubkey)
-        : profiles[profileIndex]
-    const name = getDisplayName(profile)
+      profiles[gatedNote.note.pubkey] ??
+      getDefaultNostrProfile(gatedNote.note.pubkey);
+    const name = getDisplayName(profile);
 
     return (
       <div
         key={gatedNote.note.id}
-        className="flex flex-col border rounded-md border-white/20 p-4">
+        className="flex flex-col border rounded-md border-white/20 p-4"
+      >
         {/* This container ensures content wrapping */}
         <div className="flex gap-2">
           <img
@@ -385,27 +233,23 @@ export default function Home() {
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const renderLockedContent = (
     announcementNote: AnnouncementNote,
     gatedNote: GatedNote
   ) => {
-    const profileIndex = profiles.findIndex(
-      profile => profile.pubkey === gatedNote.note.pubkey
-    )
-
     const profile =
-      profileIndex === -1
-        ? getDefaultNostrProfile(gatedNote.note.pubkey)
-        : profiles[profileIndex]
-    const name = getDisplayName(profile)
+      profiles[gatedNote.note.pubkey] ??
+      getDefaultNostrProfile(gatedNote.note.pubkey);
+    const name = getDisplayName(profile);
 
     return (
       <div
         key={gatedNote.note.id}
-        className="flex flex-col border rounded-md border-white/20 p-4">
+        className="flex flex-col border rounded-md border-white/20 p-4"
+      >
         {/* This container ensures content wrapping */}
         <div className="flex gap-2">
           <img
@@ -425,9 +269,7 @@ export default function Home() {
         </div>
         <div className="flex mx-auto mt-4">
           <ButtonDefault
-            onClick={() => {
-              handleBuy(gatedNote)
-            }}
+            onClick={() => buyKey(gatedNote.note.id)}
             icon={
               <>
                 <AiFillThunderbolt />
@@ -435,47 +277,38 @@ export default function Home() {
               </>
             }
             label={
-              gateLoading && gatedNote.note.id === gateLoading
+              isBuying && isBuying === gatedNote.note.id
                 ? "Unlocking..."
                 : `${(gatedNote.cost / 1000).toFixed(0)}`
             }
-            className={`border border-white/20`}></ButtonDefault>
+            className={`border border-white/20`}
+          ></ButtonDefault>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
-  const renderGatedContent = (announcementEvent: VerifiedEvent) => {
-    const event = eventToAnnouncementNote(announcementEvent)
-    const gatedNote = gatedNotes.find(
-      gatedNote => gatedNote.note.id === event.gate
-    )
-    const keyNote = keyNotes.find(
-      keyNote => keyNote.gate === event.gate && keyNote.unlockedSecret
-    )
+  const renderGatedContent = (announcementEvent: NostrEvent) => {
+    const event = eventToAnnouncementNote(announcementEvent);
+    const gatedNote = gatedNotes[event.gate];
+    const keyNote = unlockedKeyNotes[event.gate];
+    if (!gatedNote) return null;
 
-    if (!gatedNote) return null
+    if (keyNote) return renderUnlockedContent(event, gatedNote, keyNote);
 
-    if (keyNote) return renderUnlockedContent(event, gatedNote, keyNote)
+    return renderLockedContent(event, gatedNote);
+  };
 
-    return renderLockedContent(event, gatedNote)
-  }
-
-  const renderNote = (event: VerifiedEvent) => {
-    const profileIndex = profiles.findIndex(
-      profile => profile.pubkey === event.pubkey
-    )
-
+  const renderNote = (event: NostrEvent) => {
     const profile =
-      profileIndex === -1
-        ? getDefaultNostrProfile(event.pubkey)
-        : profiles[profileIndex]
-    const name = getDisplayName(profile)
+      profiles[event.pubkey] ?? getDefaultNostrProfile(event.pubkey);
+    const name = getDisplayName(profile);
 
     return (
       <div
         key={event.id}
-        className="flex flex-col p-4 border rounded-md border-white/20">
+        className="flex flex-col p-4 border rounded-md border-white/20"
+      >
         {/* This container ensures content wrapping */}
         <div className="flex gap-2">
           <img
@@ -490,36 +323,33 @@ export default function Home() {
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const renderEvents = () => {
     return (
       <div className="w-full space-y-4 md:min-w-[32rem]">
         {(feedType === FeedType.Live ? events : followingEvents).map(
-          (event, index) => {
+          (event) => {
             if (event.kind === NIP_108_KINDS.announcement) {
-              return renderGatedContent(event)
+              return renderGatedContent(event);
             }
 
-            return renderNote(event)
+            return renderNote(event);
           }
         )}
       </div>
-    )
-  }
+    );
+  };
 
   const renderForm = () => {
     // todo make it as a component to be reused both by pressing the Left post button and on Top header.
-    const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
-      const { checked } = event.target
-      setIsChecked(checked)
-    }
+
 
     return (
       <div className="flex items-center justify-center w-full my-4 bg-black ">
         <div className="w-full p-5 text-white bg-black border rounded-lg shadow-lg border-white/20">
-          {isChecked ? (
+          {isPostingGatedContent ? (
             <>
               {" "}
               <div className="mt-1 mb-2">
@@ -529,7 +359,7 @@ export default function Home() {
                   placeholder={`Hey unlock my post for ${formData.cost} sats!`}
                   maxLength={MAX_PREVIEW_LENGTH}
                   value={formData.preview}
-                  onChange={e =>
+                  onChange={(e) =>
                     setFormData({ ...formData, preview: e.target.value })
                   }
                   className="w-full p-2 text-white bg-black border rounded border-white/20"
@@ -542,7 +372,7 @@ export default function Home() {
                   min={`${MIN_SAT_COST}`}
                   max={`${MAX_SAT_COST}`}
                   value={formData.cost}
-                  onChange={e =>
+                  onChange={(e) =>
                     setFormData({ ...formData, cost: +e.target.value })
                   }
                   className="w-full p-2 text-white bg-black border rounded border-white/20"
@@ -555,17 +385,19 @@ export default function Home() {
             <textarea
               maxLength={MAX_CONTENT_LENGTH}
               placeholder={`What is going on?`}
-              onChange={e =>
+              onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
               }
-              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
+              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"
+            ></textarea>
           </div>
           <div className="flex items-center justify-between mt-12">
             <label
               htmlFor="setAsGatedContentCheckbox"
-              className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer border-white/20">
+              className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer border-white/20"
+            >
               <input
-                checked={isChecked}
+                checked={isPostingGatedContent}
                 onChange={handleCheckboxChange}
                 type="checkbox"
                 value=""
@@ -581,28 +413,28 @@ export default function Home() {
 
             <ButtonDefault
               className="font-bold border border-white/20"
-              onClick={isChecked ? submitForm : submitSimpleForm}
-              label="Submit"
+              onClick={handlePost}
+              label={isPosting ? "Working" : "Submit"}
             />
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const renderFormModal = () => {
     // todo make it as a component to be reused both by pressing the Left post button and on Top header.
     const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
-      const { checked } = event.target
-      setIsChecked(checked)
-    }
+      const { checked } = event.target;
+      setIsPostingGatedContent(checked);
+    };
 
-    if (!isPostFormOpen) return null
+    if (!isPostFormOpen) return null;
 
     return (
       <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-screen h-screen bg-black/20 backdrop-blur-md md:border-white ">
         <div className="md:w-1/2 md:min-w-[36rem] absolute md:h-fit md:inset-x-0 md:inset-y-0 md:translate-x-1/2 md:translate-y-1/2 p-5 md:border md:rounded-md text-white bg-black border rounded-lg shadow-lg border-white/20">
-          {isChecked ? (
+          {isPostingGatedContent ? (
             <>
               {" "}
               <div className="mt-1 mb-2">
@@ -612,7 +444,7 @@ export default function Home() {
                   placeholder={`Hey unlock my post for ${formData.cost} sats!`}
                   maxLength={MAX_PREVIEW_LENGTH}
                   value={formData.preview}
-                  onChange={e =>
+                  onChange={(e) =>
                     setFormData({ ...formData, preview: e.target.value })
                   }
                   className="w-full p-2 text-white bg-black border rounded border-white/20"
@@ -625,7 +457,7 @@ export default function Home() {
                   min={`${MIN_SAT_COST}`}
                   max={`${MAX_SAT_COST}`}
                   value={formData.cost}
-                  onChange={e =>
+                  onChange={(e) =>
                     setFormData({ ...formData, cost: +e.target.value })
                   }
                   className="w-full p-2 text-white bg-black border rounded border-white/20"
@@ -638,17 +470,19 @@ export default function Home() {
             <textarea
               maxLength={MAX_CONTENT_LENGTH}
               placeholder={`What is going on?`}
-              onChange={e =>
+              onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
               }
-              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
+              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"
+            ></textarea>
           </div>
           <div className="flex items-center justify-between mt-12">
             <label
               htmlFor="setAsGatedContentCheckbox"
-              className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer border-white/20">
+              className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer border-white/20"
+            >
               <input
-                checked={isChecked}
+                checked={isPostingGatedContent}
                 onChange={handleCheckboxChange}
                 type="checkbox"
                 value=""
@@ -669,17 +503,17 @@ export default function Home() {
             />
             <ButtonDefault
               className="font-bold border border-white/20"
-              onClick={isChecked ? submitForm : submitSimpleForm}
-              label="Submit"
+              onClick={handlePost}
+              label={isPosting ? "Working" : "Submit"}
             />
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const renderEditProfile = () => {
-    if (!editProfileOn) return null
+    if (!editProfileOn) return null;
 
     return (
       <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-60 ">
@@ -717,7 +551,8 @@ export default function Home() {
             <label className="block mb-2">About me</label>
             <textarea
               placeholder={`Say something about you`}
-              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
+              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"
+            ></textarea>
           </div>
           <div className="flex justify-between mt-12">
             <ButtonDefault
@@ -733,43 +568,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-    )
-  }
-
-  const renderPostButton = () => {
-    return (
-      <div
-        className="fixed font-bold text-white border rounded-full shadow-lg bottom-8 right-8 border-white/20 "
-        style={{ zIndex: 1000 }}>
-        <AnimatedMenuButton
-          onClick={() => setPostFormOpen(true)}
-          label="POST"
-        />
-      </div>
-    )
-  }
-
-  const renderSocials = () => {
-    return (
-      <div className="fixed z-50 flex flex-col items-center justify-center gap-2 text-center bottom-5 left-5">
-        <a
-          href="https://github.com/project-excalibur/NIP-108"
-          target="_blank"
-          rel="noopener noreferrer">
-          <FaGithub className="text-white hover:text-gray-400" size={24} />
-        </a>
-        <a
-          href="https://nostrplayground.com"
-          target="_blank"
-          rel="noopener noreferrer">
-          <FaExternalLinkAlt
-            className="text-white hover:text-gray-400"
-            size={24}
-          />
-        </a>
-      </div>
-    )
-  }
+    );
+  };
 
   const renderUserMenu = () => {
     return (
@@ -783,12 +583,6 @@ export default function Home() {
             label="MESSAGES"
             icon={<FaEnvelope size={24} />}
           />
-          {/* 
-        Div with a bubble absolute
-        <AnimatedMenuButton
-        label="NOTIFICATIONS"
-        icon={<FaEnvelope size={24} />}
-      /> */}
 
           <AnimatedMenuButton
             className="border border-blue-400"
@@ -796,11 +590,10 @@ export default function Home() {
             label="POST"
             icon={<HiPencilAlt size={24} />}
           />
-          {/* <p className="hidden mx-auto text-xs font-thin text-">Version 0.0.1</p> */}
         </nav>
       </>
-    )
-  }
+    );
+  };
 
   const renderSearchBar = () => {
     return (
@@ -812,25 +605,21 @@ export default function Home() {
         />
         <FaSearch className="absolute text-white top-3 left-4" />
       </div>
-    )
-  }
+    );
+  };
 
   const mockTrendingPosts = () => {
     return (
       <div>
-        {teamKeys.map((pubkey, index) => {
-          const profileIndex = profiles.findIndex(profile => {
-            return profile.pubkey === pubkey
-          })
-
-          if (profileIndex === -1) return null
-          const profile = profiles[profileIndex]
-          const name = getDisplayName(profile)
+        {redactTeamKeys.map((pubkey) => {
+          const profile = profiles[pubkey] ?? getDefaultNostrProfile(pubkey);
+          const name = getDisplayName(profile);
 
           return (
             <div
               key={pubkey}
-              className="flex h-16 gap-2 p-1 mt-4 duration-300 rounded hover:bg-neutral-900">
+              className="flex h-16 gap-2 p-1 mt-4 duration-300 rounded hover:bg-neutral-900"
+            >
               <img
                 src={profile.picture}
                 className="object-cover w-8 h-8 rounded-full"
@@ -846,11 +635,11 @@ export default function Home() {
                 </p>
               </div>
             </div>
-          )
+          );
         })}
       </div>
-    )
-  }
+    );
+  };
 
   const renderTrending = () => {
     return (
@@ -858,16 +647,17 @@ export default function Home() {
         <p className="mt-10 sticky-top-0">TRENDING</p>
         <div
           id="trendingPosts"
-          className="overflow-scroll h-[400px] mt-4 cursor-pointer">
+          className="overflow-scroll h-[400px] mt-4 cursor-pointer"
+        >
           {mockTrendingPosts()}
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const renderProfile = () => {
-    const profileHeader = () => {
-      return (
+    return (
+      <div className="relative flex flex-col w-full h-40 mt-40 mb-12">
         <div className="p-2">
           <img
             className="absolute z-40 object-cover w-40 h-40 border rounded-full border-white/20 -top-1/2"
@@ -906,17 +696,12 @@ export default function Home() {
             </p>
           </div>
         </div>
-      )
-    }
-    return (
-      <div className="relative flex flex-col w-full h-40 mt-40 mb-12">
-        {profileHeader()}
       </div>
-    )
-  }
+    );
+  };
 
   const renderMobileMenu = () => {
-    const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false)
+    const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
     return (
       <div className="fixed top-0 z-10 flex items-center justify-center w-full pb-2 bg-black md:hidden">
         <div className="relative w-32 h-20">
@@ -927,7 +712,8 @@ export default function Home() {
         </div>
         <button
           className="fixed z-20 right-5 top-4"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
           <GiHamburgerMenu size={32} />
         </button>
         {mobileMenuOpen ? (
@@ -968,16 +754,8 @@ export default function Home() {
           </div>
         ) : null}
       </div>
-    )
-  }
-
-  const renderZapModal = () => {
-    return (
-      <>
-        <div></div>
-      </>
-    )
-  }
+    );
+  };
 
   // ------------------- MAIN -------------------------
 
@@ -1005,5 +783,5 @@ export default function Home() {
         </div>
       </div>
     </>
-  )
+  );
 }

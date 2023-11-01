@@ -1,4 +1,4 @@
-import { Event as NostrEvent } from 'nostr-tools';
+import { EventTemplate, Event as NostrEvent } from 'nostr-tools';
 
 export interface RelayPolicy {
     read: boolean;
@@ -7,7 +7,7 @@ export interface RelayPolicy {
 
 export interface NIP07 {
     getPublicKey(): Promise<string>;
-    signEvent(event: NostrEvent): Promise<NostrEvent>;
+    signEvent(event: EventTemplate): Promise<NostrEvent>;
   
     // Optional methods
     getRelays?(): Promise<{ [url: string]: RelayPolicy }>;

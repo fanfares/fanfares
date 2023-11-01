@@ -1,5 +1,8 @@
 import { Event as NostrEvent } from "nostr-tools";
 
+export const DEFAULT_PICTURE = "https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/default_profile.png";
+export const DEFAULT_BANNER = "https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/default_banner.png";
+
 export interface NostrProfile {
     pubkey: string;
     picture: string;
@@ -14,13 +17,11 @@ export interface NostrProfile {
     lud06?: string;
 }
 
-
-
 export function getDefaultNostrProfile(pubkey: string): NostrProfile {
     return {    
         pubkey: pubkey,
-        picture: "https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/default_profile.png",
-        banner: "https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/default_banner.png",
+        picture: DEFAULT_PICTURE,
+        banner: DEFAULT_BANNER,
         display_name: '',
         name: '',
         about: ''

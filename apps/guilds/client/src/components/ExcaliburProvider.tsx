@@ -1,22 +1,26 @@
 import {
-  Relay,
-  VerifiedEvent,
   Event as NostrEvent,
   SimplePool,
+  generatePrivateKey
 } from "nostr-tools";
 import { NIP07, NostrProfile, eventToNostrProfile } from "utils";
 import { WebLNProvider, requestProvider } from "webln";
 import {
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
 } from "react";
 import {
+  CreateNotePostBody,
   GatedNote,
   KeyNote,
   NIP_108_KINDS,
+  PREntry,
+  createAnnouncementNoteUnsigned,
+  createGatedNoteUnsigned,
   eventToAnnouncementNote,
   eventToGatedNote,
   eventToKeyNote,
@@ -39,6 +43,8 @@ const POOL_RELAYS = [
   // "wss://relayable.org/",
 ];
 
+const GATE_SERVER = "https://api.nostrplayground.com"
+
 const TEAM_KEYS = [
   "db625e7637543ca7d7be65025834db318a0c7b75b0e23d4fb9e39229f5ba6fa7", // Simon
   "c291d8d18aea2e879c09017e2f9f603d03d7eb6e787d23520bacf927c8b1323f", // Coach
@@ -46,39 +52,45 @@ const TEAM_KEYS = [
 ];
 
 export type ExcaliburContext = {
-  events: VerifiedEvent[];
-  followingEvents: VerifiedEvent[];
-  profiles: NostrProfile[];
-  gatedNotes: GatedNote[];
-  keyNotes: KeyNote[];
-  setKeyNotes: (keyNotes: KeyNote[]) => void;
-  isLoading: boolean;
-  teamKeys: string[];
-  relays: string[];
-  pool: SimplePool | null;
-  publicKey: string | null,
-  webln: WebLNProvider | null,
-  nostr: NIP07 | null,
+  events: NostrEvent[];
+  followingEvents: NostrEvent[];
+  profiles: {
+    [pubkey: string]: NostrProfile;
+  };
+  gatedNotes: {
+    [id: string]: GatedNote;
+  };
+  unlockedKeyNotes: {
+    [gateId: string]: KeyNote;
+  };
 
-  postEvent: (event: NostrEvent<number>) => Promise<void>;
+  isPosting: boolean;
+  isBuying: string | null;
+
+  postNote: (content: string) => Promise<void>;
+  postGatedNote: (msats: number, preview: string, content: string) => Promise<void>;
+  buyKey: (gateId: string) => Promise<void>;
+
+  redactTeamKeys: string[];
 };
 
 const DEFAULT_EVENT: ExcaliburContext = {
   events: [],
   followingEvents: [],
-  profiles: [],
-  gatedNotes: [],
-  keyNotes: [],
-  isLoading: false,
-  postEvent: () => Promise.resolve(),
-  setKeyNotes: () => {},
-  teamKeys: TEAM_KEYS,
-  relays: POOL_RELAYS,
-  pool: null,
-  publicKey: null,
-  webln: null,
-  nostr: null,
+  profiles: {},
+  gatedNotes: {},
+  unlockedKeyNotes: {},
+
+  isPosting: false,
+  isBuying: null,
+
+  postNote: (content: string) => Promise.resolve(),
+  postGatedNote: (msats: number, preview: string, content: string) => Promise.resolve(),
+  buyKey: (gateId: string) => Promise.resolve(),
+
+  redactTeamKeys: TEAM_KEYS,
 };
+
 const ExcaliburContext = createContext<ExcaliburContext>(DEFAULT_EVENT);
 export const useExcalibur = () => useContext(ExcaliburContext);
 
@@ -87,66 +99,144 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
 
   // ---------------- STATES --------------------------
 
-  const [isLoading, setIsLoading] = useState(false);
   const [nostr, setNostr] = useState<NIP07 | null>(null);
   const [webln, setWebln] = useState<WebLNProvider | null>(null);
   const [publicKey, setPublicKey] = useState<string | null>(null);
-  const [pool, setPool] = useState<SimplePool | null>(null);
-  const [gatedNotes, setGatedNotes] = useState<GatedNote[]>([]);
-  const [keyNotes, setKeyNotes] = useState<KeyNote[]>([]);
-  const [unlockedKeyNotes, setUnlockedKeyNotes] = useState<KeyNote[]>([]);
-  const [events, setEvents] = useState<VerifiedEvent[]>([]);
-  const [badEvents, setBadEvents] = useState<string[]>([]);
-  const [followingEvents, setFollowingEvents] = useState<VerifiedEvent[]>([]);
-  const [profiles, setProfiles] = useState<NostrProfile[]>([]);
   const [kind3, setKind3] = useState<NostrEvent<3> | null>(null);
 
-  const grabAndAddProfile = async (pubkey: string, relays: string [] = POOL_RELAYS) => {
-    if (!pool) return;
+  const [pool, setPool] = useState<SimplePool | null>(null);
 
-    pool
-      .get(relays, {
-        kinds: [0],
-        authors: [pubkey],
-      })
-      .then((kind0) => {
-        if (!kind0) return;
-        const profile = eventToNostrProfile(pubkey, kind0);
-        setProfiles((prevProfiles) => {
-          return [profile, ...prevProfiles];
+  const [events, setEvents] = useState<NostrEvent[]>([]);
+  const [followingEvents, setFollowingEvents] = useState<NostrEvent[]>([]);
+
+  const [profiles, setProfiles] = useState<{ [pubkey: string]: NostrProfile }>(
+    {}
+  );
+  const [gatedNotes, setGatedNotes] = useState<{ [gateId: string]: GatedNote }>(
+    {}
+  );
+  const [keyNotes, setKeyNotes] = useState<{ [gateId: string]: KeyNote }>({});
+  const [unlockedKeyNotes, setUnlockedKeyNotes] = useState<{
+    [gateId: string]: KeyNote;
+  }>({});
+
+  const [badEvents, setBadEvents] = useState<{ [id: string]: boolean }>({});
+
+  const [isPosting, setIsPosting] = useState(false);
+  const [isBuying, setIsBuying] = useState<string | null>(null);
+
+
+  // ---------------- FUNCTIONS -----------------------
+
+  const grabAndAddProfile = useCallback(
+    async (pubkey: string, relays: string[] = POOL_RELAYS) => {
+      if (!pool) return;
+
+      pool
+        .get(relays, {
+          kinds: [0],
+          authors: [pubkey],
+        })
+        .then((kind0) => {
+          if (!kind0) return;
+          const profile = eventToNostrProfile(pubkey, kind0);
+          setProfiles((prevProfiles) => {
+            return {
+              ...prevProfiles,
+              [pubkey]: profile,
+            };
+          });
         });
-      });
-  };
+    },
+    [pool]
+  );
 
-  const grabAndAddGate = async (event: VerifiedEvent, relays: string[] = POOL_RELAYS) => {
+  const grabAndAddGate = useCallback((
+    announcementEvent: NostrEvent,
+    relays: string[] = POOL_RELAYS
+  )=>{
     if (!pool) return;
 
-    const announcement = eventToAnnouncementNote(event);
+    console.log("Here");
+
+
+    const announcement = eventToAnnouncementNote(announcementEvent);
     if (!announcement.gate) return;
 
-    if (gatedNotes.find((g) => g.note.id === announcement.gate)) return;
-    if (badEvents.find((e) => e === announcement.gate)) return;
+    const gatedNote = gatedNotes[announcement.gate];
+    if (gatedNote) return;
+
+    if(badEvents[announcement.gate]) return;
+
+
 
     pool
       .get(relays, {
         ids: [announcement.gate],
       })
       .then((gatedNoteRaw) => {
-        if (!gatedNoteRaw){
+        if (!gatedNoteRaw) {
           setBadEvents((prev) => {
-            return [announcement.gate, ...prev];
-          })
+            return {
+              ...prev,
+              [announcement.gate]: true,
+            };
+          });
           return;
         }
-        const gatedNote = eventToGatedNote(gatedNoteRaw as any);
+
+        const gatedNote = eventToGatedNote(gatedNoteRaw);
         setGatedNotes((prev) => {
-          return [gatedNote, ...prev];
+          return {
+            ...prev,
+            [announcement.gate]: gatedNote,
+          };
         });
       });
-  };
+
+  }, [pool, gatedNotes, badEvents])
+
+  const insertAndSortNotes = useCallback((newNote: NostrEvent, notes: NostrEvent[], sliceAmount: number = MAX_SHOW): NostrEvent[] => {
+    if (notes.find((e) => e.id === newNote.id)) return notes;
+    if (!newNote.content) return notes;
+
+    const newNotes = [newNote as any, ...notes.slice(0, sliceAmount)];
+    const sortedNotes = newNotes.sort((a, b) => b.created_at - a.created_at);
+    return sortedNotes;
+  }, []);
+
+  const unlockAll = useCallback(async (keysToUnlock: {[gateId: string]: KeyNote}, unlockedKeys: {[gateId: string]: KeyNote}, gatedNotes: {[gateId: string]: GatedNote}) => {
+    if(!nostr) return;
+
+    const keyNotes = Object.values(keysToUnlock);
+
+    for(const keyNote of keyNotes){
+      if(unlockedKeys[keyNote.gate]) continue;
+
+      const gatedNote = gatedNotes[keyNote.gate];
+      if(!gatedNote) continue;
+
+      const unlockedSecret = await (nostr as any).nip04.decrypt(
+        gatedNote.note.pubkey,
+        keyNote.note.content
+      );
+
+      keyNote.unlockedSecret = unlockedSecret;
+
+      setUnlockedKeyNotes((prev) => {
+        return {
+          ...prev,
+          [keyNote.gate]: {
+            ...keyNote,
+          }
+        }
+      });
+    }
+  },[nostr])
 
   // ---------------- EFFECTS --------------------------
 
+  // SETUP POOL AND LOAD INITIAL EVENTS
   useEffect(() => {
     const pool = new SimplePool();
     const sub = pool.sub(POOL_RELAYS, [
@@ -157,24 +247,24 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
     ]);
 
     sub.on("event", (event) => {
-      setEvents((prevEvents) => {
-        if (prevEvents.find((e) => e.id === event.id)) return prevEvents;
-        if (!event.content) return prevEvents;
-        return [event as any, ...prevEvents.slice(0, MAX_SHOW)].sort((a, b) => b.created_at - a.created_at);
-        // return [event as any, ...prevEvents.slice(0, MAX_SHOW)];
-      });
+      setEvents((prevEvents) => {return insertAndSortNotes(event, prevEvents)});
     });
 
     setPool(pool);
 
     return () => {
-      sub.unsub();
-      pool.close(POOL_RELAYS);
+      try {
+        sub.unsub();
+        pool.close(POOL_RELAYS);
+      } catch (e) {
+        console.error(e);
+      }
     };
   }, []);
 
+  // Initial Loads
   useEffect(() => {
-    if (pool) {
+    if(!pool) return;
       // Team
       TEAM_KEYS.forEach((key) => {
         grabAndAddProfile(key);
@@ -195,9 +285,9 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
       } else {
         alert("Nostr not found");
       }
-    }
   }, [pool]);
 
+  // Load User Information
   useEffect(() => {
     if (!publicKey) return;
     if (!pool) return;
@@ -212,38 +302,33 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
       .then(setKind3);
   }, [publicKey, pool]);
 
+  // Load Following Notes and Key Notes
   useEffect(() => {
     if (!kind3) return;
     if (!pool) return;
 
     const following = [];
-    const relays = [...POOL_RELAYS]; // Does not work right now
     for (const tag of kind3.tags) {
       if (tag[0] === "p" && tag[1]) {
         following.push(tag[1]);
       }
     }
 
-    const noteSub = pool.sub(relays, [
+    const followingNoteSub = pool.sub(POOL_RELAYS, [
       {
         kinds: [1, NIP_108_KINDS.announcement],
-        // authors: [kind3.pubkey],
         authors: [kind3.pubkey, ...following],
         limit: MAX_SHOW_FOLLOWING,
       },
     ]);
 
-    noteSub.on("event", (event) => {
+    followingNoteSub.on("event", (event) => {
       setFollowingEvents((prevEvents) => {
-        if (prevEvents.find((e) => e.id === event.id)) return prevEvents;
-        if (!event.content) return prevEvents;
-
-        return [event as any, ...prevEvents.slice(0, MAX_SHOW)].sort((a, b) => b.created_at - a.created_at);
-        // return [event as any, ...prevEvents.slice(0, MAX_SHOW), ];
+        return insertAndSortNotes(event, prevEvents, MAX_SHOW_FOLLOWING);
       });
     });
 
-    const keySub = pool.sub(relays, [
+    const keySub = pool.sub(POOL_RELAYS, [
       {
         kinds: [NIP_108_KINDS.key],
         authors: [kind3.pubkey],
@@ -252,101 +337,251 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
 
     keySub.on("event", (event) => {
       setKeyNotes((prevEvents) => {
-        if (prevEvents.find((k) => k.note.id === event.id)) return prevEvents;
+        const keyNote = eventToKeyNote(event);
+        if(!keyNote.gate) return prevEvents;
+        if(keyNotes[keyNote.gate]) return prevEvents;
 
-        console.log("key event", event.id);
-        return [eventToKeyNote(event as any), ...prevEvents];
+        return {
+          ...prevEvents,
+          [keyNote.gate]: keyNote,
+        };
       });
     });
 
     return () => {
-      noteSub.unsub();
-      keySub.unsub();
-      pool.close(relays);
+      try {
+        followingNoteSub.unsub();
+        keySub.unsub();
+        pool.close(POOL_RELAYS);
+      } catch (e) {
+        console.error(e);
+      }
     };
   }, [kind3, pool]);
 
+  // UPDATES ON EVENTS
   useEffect(() => {
     if (!pool) return;
 
-    const allEvents = [...events, ...followingEvents];
+    const allNotes = [...events, ...followingEvents];
 
-    for (const event of allEvents) {
-      if (!profiles.find((profile) => profile.pubkey === event.pubkey)) {
-        grabAndAddProfile(event.pubkey);
+    for (const note of allNotes) {
+      if(!profiles[note.pubkey]){
+        grabAndAddProfile(note.pubkey);
       }
 
-      if (event.kind === NIP_108_KINDS.announcement) {
-        grabAndAddGate(event, POOL_RELAYS);
+      if (note.kind === NIP_108_KINDS.announcement) {
+        grabAndAddGate(note, POOL_RELAYS);
       }
     }
+
   }, [events, followingEvents, pool]);
 
   useEffect(() => {
-    if(!nostr) return;
+    if (!nostr) return;
 
-    const unlockNotes = async () => {
-      for (const keyNote of keyNotes) {
-        if(unlockedKeyNotes.find((k) => k.note.id === keyNote.note.id)) continue;
-        const gatedNote = gatedNotes.find((g) => g.note.id === keyNote.gate);
-        if(!gatedNote) continue;
+    unlockAll(keyNotes, unlockedKeyNotes, gatedNotes);
 
-        const unlockedSecret = await (nostr as any).nip04.decrypt(
-          gatedNote.note.pubkey,
-          keyNote.note.content
-        );
-
-        setUnlockedKeyNotes((prev) => {
-          return [
-            {
-              ...keyNote,
-              unlockedSecret,
-            },
-            ...prev
-          ]
-        });
-      }
-    };
-    unlockNotes();
-  }, [nostr, keyNotes, gatedNotes])
+  }, [nostr, keyNotes, gatedNotes]);
 
   // ---------------- DATA ----------------------------
 
-  const postEvent = async (event: NostrEvent<number>) => {
-    if (!nostr) throw new Error("No nostr");
-    if (!pool) throw new Error("No pool");
-    if (isLoading) return;
+  const postNote = useCallback(async (content: string)=>{
+    if (isPosting) return;
+      if (!nostr) throw new Error("No nostr");
+      if (!pool) throw new Error("No pool");
+      if (!content) throw new Error("No content");
+      if (!publicKey) throw new Error("No Public Key");
 
-    let errorString: string | undefined = undefined;
+      const event = {
+        kind: 1,
+        pubkey: publicKey,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [],
+        content: content,
+      }
+  
+      let errorString: string | undefined = undefined;
+  
+      setIsPosting(true);
+      try {
+        const signedEvent = await nostr.signEvent(event);
+        await pool.publish(POOL_RELAYS, signedEvent);
+      } catch (e) {
+        errorString = `Error signing event: ${e}`;
+      } finally {
+        setIsPosting(false);
+      }
+  
+      if (errorString) throw new Error(errorString);
+  },[nostr, pool, isPosting, publicKey]);
 
-    setIsLoading(true);
+  const postGatedNote = useCallback(async (msats: number, preview: string, content: string)=>{
+    if (isPosting) return
+    if (!webln) throw new Error("No webln provider")
+    if (!nostr) throw new Error("No nostr provider")
+    if (!publicKey) throw new Error("No Public Key")
+    if (!pool) throw new Error("No pool")
+
+    setIsPosting(true)
+
     try {
-      const signedEvent = await nostr.signEvent(event);
-      await pool.publish(POOL_RELAYS, signedEvent);
+      // ------------------- VALIDATE FORM -------------------------
+
+      console.log(publicKey);
+      const profile = profiles[publicKey];
+      if (!profile) throw new Error("No profile found")
+
+      const lud16 = profile.lud16
+      if(!lud16) throw new Error("No lud16 found");
+
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+      if (!emailRegex.test(lud16)) throw new Error("Invalid lud16 format")
+
+      const unlockCost = msats * 1000
+
+      // ------------------- CREATE LOCKED CONTENT -------------------------
+
+      const lockedContent = {
+        kind: 1,
+        pubkey: publicKey,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [],
+        content: content,
+      }
+
+      const lockedContentVerified = await (nostr as any).signEvent(
+        lockedContent
+      )
+
+      const secret = generatePrivateKey();
+      const gatedNote = createGatedNoteUnsigned(
+        publicKey,
+        secret,
+        unlockCost,
+        GATE_SERVER,
+        lockedContentVerified
+      )
+
+      const gatedNoteVerified = await nostr.signEvent(gatedNote)
+
+      const postBody: CreateNotePostBody = {
+        gateEvent: gatedNoteVerified,
+        lud16: lud16,
+        secret: secret,
+        cost: unlockCost,
+      }
+
+      const response = await fetch(GATE_SERVER + "/create", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(postBody),
+      })
+
+      const responseJson = await response.json()
+      await pool.publish(POOL_RELAYS, gatedNoteVerified)
+
+      // ------------------- CREATE ANNOUNCEMENT NOTE -------------------------
+
+      const announcementNote = createAnnouncementNoteUnsigned(
+        publicKey,
+        preview,
+        gatedNoteVerified
+      )
+
+      const announcementNoteVerified = await (nostr as any).signEvent(
+        announcementNote
+      )
+      await pool.publish(POOL_RELAYS, announcementNoteVerified)
+
+      // ------------------- ADD NOTE TO EVENTS -------------------------
     } catch (e) {
-      errorString = `Error signing event: ${e}`;
+      alert(e)
+      console.log(e)
     } finally {
-      setIsLoading(false);
+      setIsPosting(false)
     }
 
-    if (errorString) throw new Error(errorString);
-  };
+  }, [webln, nostr, publicKey, pool, isPosting, profiles])
+
+  const buyKey = useCallback(async (gateId: string) => {
+    if(isBuying) return;
+    if(!gateId) return;
+    const gatedNote = gatedNotes[gateId];
+    if(!gatedNote) return;
+
+    setIsBuying(gatedNote.note.id);
+    try {
+      if (!webln) throw new Error("No webln provider")
+      if (!nostr) throw new Error("No nostr provider")
+      if (!publicKey) throw new Error("No Public Key")
+      if (!pool) throw new Error("No pool")
+
+      const uri = `${gatedNote.endpoint}/${gatedNote.note.id}`
+      const invoiceResponse = await fetch(uri)
+      const invoiceResponseJson = (await invoiceResponse.json()) as PREntry
+
+      await webln.sendPayment(invoiceResponseJson.pr)
+
+      const resultResponse = await fetch(invoiceResponseJson.successAction.url)
+      const resultResponseJson = await resultResponse.json()
+      const secret = resultResponseJson.secret
+
+      const content = await (nostr as any).nip04.encrypt(
+        gatedNote.note.pubkey,
+        secret
+      )
+
+      const keyEvent = {
+        kind: NIP_108_KINDS.key,
+        pubkey: publicKey,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [["e", gatedNote.note.id]],
+        content: content,
+      }
+
+      const keyEventVerified = await (nostr as any).signEvent(keyEvent)
+
+      await pool.publish(POOL_RELAYS, keyEventVerified)
+
+      const keyNoteUnlocked = {
+        ...eventToKeyNote(keyEventVerified),
+        unlockedSecret: secret,
+      } as KeyNote
+      setUnlockedKeyNotes((prevNotes)=>{
+        return {
+          ...prevNotes,
+          [keyNoteUnlocked.gate]: keyNoteUnlocked,
+        }
+      })
+    } catch (e) {
+      console.log(e)
+      alert(e)
+    } finally {
+      setIsBuying(null);
+    }
+
+  }, [gatedNotes, isBuying, webln, nostr, publicKey, pool]);
+
 
   const excalibur = {
     events,
-    profiles,
-    isLoading,
-    postEvent,
-    gatedNotes,
-    keyNotes: unlockedKeyNotes,
-    setKeyNotes,
     followingEvents,
-    teamKeys: TEAM_KEYS,
-    relays: POOL_RELAYS,
-    pool,
-    publicKey,
-    webln,
-    nostr,
+
+    profiles,
+    gatedNotes,
+    unlockedKeyNotes,
+
+    isPosting,
+    isBuying,
+
+    postNote,
+    postGatedNote,
+    buyKey,
+
+    redactTeamKeys: TEAM_KEYS,
   };
 
   return (
@@ -355,3 +590,4 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
     </ExcaliburContext.Provider>
   );
 }
+
