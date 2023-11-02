@@ -428,7 +428,6 @@ export function ExcaliburProvider(props: { children: ReactNode }) {
     try {
       // ------------------- VALIDATE FORM -------------------------
 
-      console.log(publicKey);
       const profile = profiles[publicKey];
       if (!profile) throw new Error("No profile found")
 
