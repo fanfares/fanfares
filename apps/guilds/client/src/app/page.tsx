@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { Event as NostrEvent } from "nostr-tools";
+import { Event as NostrEvent } from "nostr-tools"
 import {
   FaCopy,
   FaCheck,
@@ -11,11 +11,11 @@ import {
   FaAt,
   FaSearch,
   FaEnvelope,
-} from "react-icons/fa";
-import { GiHamburgerMenu } from "react-icons/gi";
-import { HiPencilAlt } from "react-icons/hi";
-import { AiFillThunderbolt } from "react-icons/ai";
-import { ChangeEvent, useState } from "react";
+} from "react-icons/fa"
+import { GiHamburgerMenu } from "react-icons/gi"
+import { HiPencilAlt } from "react-icons/hi"
+import { AiFillThunderbolt } from "react-icons/ai"
+import { ChangeEvent, useState } from "react"
 import {
   AnnouncementNote,
   GatedNote,
@@ -23,35 +23,35 @@ import {
   NIP_108_KINDS,
   eventToAnnouncementNote,
   unlockGatedNote,
-} from "nip108";
-import AnimatedMenuButton from "@/components/AnimatedButton";
-import ButtonDefault from "@/components/Button";
-import { useExcalibur } from "@/components/ExcaliburProvider";
-import { getDefaultNostrProfile, getDisplayName } from "utils";
-import { RenderContent } from "@/components/RenderContent";
+} from "nip108"
+import AnimatedMenuButton from "@/components/AnimatedButton"
+import ButtonDefault from "@/components/Button"
+import { useExcalibur } from "@/components/ExcaliburProvider"
+import { getDefaultNostrProfile, getDisplayName } from "utils"
+import { RenderContent } from "@/components/RenderContent"
 
-const GATE_SERVER = "https://api.nostrplayground.com";
+const GATE_SERVER = "https://api.nostrplayground.com"
 
-const MIN_PREVIEW_LENGTH = 1;
-const MAX_PREVIEW_LENGTH = 240;
+const MIN_PREVIEW_LENGTH = 1
+const MAX_PREVIEW_LENGTH = 240
 
-const MIN_CONTENT_LENGTH = 1;
-const MAX_CONTENT_LENGTH = 3400;
+const MIN_CONTENT_LENGTH = 1
+const MAX_CONTENT_LENGTH = 3400
 
-const MIN_SAT_COST = 1;
-const MAX_SAT_COST = 50_000;
+const MIN_SAT_COST = 1
+const MAX_SAT_COST = 50_000
 
 interface FormData {
-  cost: string;
-  preview: string;
-  content: string;
+  cost: string
+  preview: string
+  content: string
 }
 
 const DEFAULT_FORM_DATA: FormData = {
   cost: "1",
   preview: "",
   content: "",
-};
+}
 
 enum FeedType {
   Live = "Live",
@@ -60,9 +60,9 @@ enum FeedType {
 
 export default function Home() {
   // ------------------- STATES -------------------------
-  const [isPostFormOpen, setPostFormOpen] = useState<boolean>(false);
-  const [editProfileOn, setEditProfileOn] = useState<boolean>(false);
-  const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA);
+  const [isPostFormOpen, setPostFormOpen] = useState<boolean>(false)
+  const [editProfileOn, setEditProfileOn] = useState<boolean>(false)
+  const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA)
 
   const {
     events,
@@ -80,70 +80,70 @@ export default function Home() {
     buyKey,
 
     redactTeamKeys,
-  } = useExcalibur();
+  } = useExcalibur()
 
   const [isPostingGatedContent, setIsPostingGatedContent] =
-    useState<boolean>(false);
-  const [feedType, setFeedType] = useState<FeedType>(FeedType.Live);
+    useState<boolean>(false)
+  const [feedType, setFeedType] = useState<FeedType>(FeedType.Live)
 
   // ------------------- FUNCTIONS -------------------------
 
   const formatGatedContent = (content: string) => {
-    return content.substring(0, 500) + "...";
-  };
+    return content.substring(0, 500) + "..."
+  }
 
   const handlePost = async () => {
-    if (isPosting) return;
+    if (isPosting) return
 
     try {
-      if (isPostingGatedContent) await submitGatedForm();
-      else await submitNoteForm();
+      if (isPostingGatedContent) await submitGatedForm()
+      else await submitNoteForm()
 
-      setFormData(DEFAULT_FORM_DATA);
+      setFormData(DEFAULT_FORM_DATA)
     } catch (error) {
-      console.log(error);
+      console.log(error)
     } finally {
-      setPostFormOpen(false);
+      setPostFormOpen(false)
     }
-  };
+  }
 
   const submitNoteForm = async () => {
-    const { content } = formData;
+    const { content } = formData
 
     if (!content) {
-      alert("Please set some content");
-      return;
+      alert("Please set some content")
+      return
     }
 
-    postNote(content);
-  };
+    postNote(content)
+  }
 
   const submitGatedForm = async () => {
-    const { cost, preview, content } = formData;
+    const { cost, preview, content } = formData
 
-    const sats = Number(cost);
+    const sats = Number(cost)
     if (!cost || !sats) {
-      alert("Please set a cost");
-      return;
+      alert("Please set a cost")
+      return
     }
     if (!preview) {
-      alert("Please set a preview");
-      return;
+      alert("Please set a preview")
+      return
     }
     if (!content) {
-      alert("Please set some content");
-      return;
+      alert("Please set some content")
+      return
     }
 
     //TODO validate form data
 
-    postGatedNote(sats, preview, content);
-  };
+    postGatedNote(sats, preview, content)
+  }
 
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { checked } = event.target;
-    setIsPostingGatedContent(checked);
-  };
+    const { checked } = event.target
+    setIsPostingGatedContent(checked)
+  }
 
   // ------------------- RENDERERS -------------------------
   const renderLogo = () => {
@@ -157,8 +157,8 @@ export default function Home() {
         </div>
         <p className="mt-auto text-sm font-normal">( Alpha )</p>
       </div>
-    );
-  };
+    )
+  }
 
   const renderSwitch = () => {
     return (
@@ -168,22 +168,20 @@ export default function Home() {
             onClick={() => setFeedType(FeedType.Live)}
             className={`${
               feedType === FeedType.Live ? "font-bold bg-neutral-500 px-4 " : ""
-            }px-4 py-1 rounded-full`}
-          >
+            }px-4 py-1 rounded-full`}>
             {FeedType.Live}
           </button>
           <button
             onClick={() => setFeedType(FeedType.Following)}
             className={`${
               feedType === FeedType.Following ? "font-bold bg-neutral-500 " : ""
-            } px-4 py-1 rounded-full`}
-          >
+            } px-4 py-1 rounded-full`}>
             {FeedType.Following}
           </button>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const renderUnlockedContent = (
     announcementNote: AnnouncementNote,
@@ -193,37 +191,36 @@ export default function Home() {
     const unlockedNote = unlockGatedNote(
       gatedNote.note,
       keyNote.unlockedSecret as string
-    );
+    )
 
     const profile =
       profiles[gatedNote.note.pubkey] ??
-      getDefaultNostrProfile(gatedNote.note.pubkey);
-    const name = getDisplayName(profile);
+      getDefaultNostrProfile(gatedNote.note.pubkey)
+    const name = getDisplayName(profile)
 
     return (
       <div
         key={gatedNote.note.id}
-        className="flex flex-col border rounded-md border-white/20 p-4"
-      >
+        className="flex flex-col border rounded-md border-white/20 p-4">
         {/* This container ensures content wrapping */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full">
           <img
             src={profile.picture}
             alt={profile.display_name}
             className="object-fill rounded-full min-w-[48px] w-12 h-12"
           />
-          <div className="flex flex-col max-w-sm md:max-w-md ">
+          <div className="flex flex-col w-full">
             {" "}
             <p className="mb-5 text-xs font-bold">{name}</p>
-            <h3 className="pr-8 mb-3 break-words">
+            <h3 className="pr-8 mb-3 break-words max-w-sm md:max-w-md">
               🔓{announcementNote.note.content}🔓
             </h3>
             <h3 className="pr-8 break-words ">{unlockedNote.content}</h3>
           </div>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const renderLockedContent = (
     announcementNote: AnnouncementNote,
@@ -231,14 +228,13 @@ export default function Home() {
   ) => {
     const profile =
       profiles[gatedNote.note.pubkey] ??
-      getDefaultNostrProfile(gatedNote.note.pubkey);
-    const name = getDisplayName(profile);
+      getDefaultNostrProfile(gatedNote.note.pubkey)
+    const name = getDisplayName(profile)
 
     return (
       <div
         key={gatedNote.note.id}
-        className="flex flex-col border rounded-md border-white/20 p-4"
-      >
+        className="flex flex-col border rounded-md border-white/20 p-4">
         {/* This container ensures content wrapping */}
         <div className="flex gap-2">
           <img
@@ -246,12 +242,12 @@ export default function Home() {
             alt={profile.display_name}
             className="object-fill rounded-full min-w-[48px] w-12 h-12"
           />
-          <div className="flex flex-col max-w-sm md:max-w-md">
+          <div className="flex flex-col w-full">
             <p className="mb-5 text-xs font-bold">{name}</p>
-            <h3 className="pr-8 mb-3 break-words">
+            <h3 className="pr-8 mb-3 break-words max-w-sm md:max-w-md">
               🔓{announcementNote.note.content}🔓
             </h3>
-            <p className="break-words select-none blur-sm">
+            <p className="break-words select-none blur-sm ">
               {formatGatedContent(gatedNote.note.content)}
             </p>
           </div>
@@ -270,34 +266,32 @@ export default function Home() {
                 ? "Unlocking..."
                 : `${(gatedNote.cost / 1000).toFixed(0)}`
             }
-            className={`border border-white/20`}
-          ></ButtonDefault>
+            className={`border border-white/20`}></ButtonDefault>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const renderGatedContent = (announcementEvent: NostrEvent) => {
-    const event = eventToAnnouncementNote(announcementEvent);
-    const gatedNote = gatedNotes[event.gate];
-    const keyNote = unlockedKeyNotes[event.gate];
-    if (!gatedNote) return null;
+    const event = eventToAnnouncementNote(announcementEvent)
+    const gatedNote = gatedNotes[event.gate]
+    const keyNote = unlockedKeyNotes[event.gate]
+    if (!gatedNote) return null
 
-    if (keyNote) return renderUnlockedContent(event, gatedNote, keyNote);
+    if (keyNote) return renderUnlockedContent(event, gatedNote, keyNote)
 
-    return renderLockedContent(event, gatedNote);
-  };
+    return renderLockedContent(event, gatedNote)
+  }
 
   const renderNote = (event: NostrEvent) => {
     const profile =
-      profiles[event.pubkey] ?? getDefaultNostrProfile(event.pubkey);
-    const name = getDisplayName(profile);
+      profiles[event.pubkey] ?? getDefaultNostrProfile(event.pubkey)
+    const name = getDisplayName(profile)
 
     return (
       <div
         key={event.id}
-        className="flex flex-col p-4 border rounded-md border-white/20"
-      >
+        className="flex flex-col p-4 border rounded-md border-white/20">
         {/* This container ensures content wrapping */}
         <div className="flex gap-2">
           <img
@@ -306,31 +300,29 @@ export default function Home() {
             className="object-fill rounded-full min-w-[48px] w-12 h-12"
           />
 
-          <div className="flex flex-col max-w-sm md:max-w-md lg:max-w-lg">
+          <div className="flex flex-col w-full">
             <p className="mb-5 text-xs font-bold">{name}</p>
             <RenderContent rawContent={event.content} />
             {/* <h3 className="pr-8 break-words ">{event.content}</h3> */}
           </div>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const renderEvents = () => {
     return (
       <div className="w-full space-y-4 md:min-w-[32rem]">
-        {(feedType === FeedType.Live ? events : followingEvents).map(
-          (event) => {
-            if (event.kind === NIP_108_KINDS.announcement) {
-              return renderGatedContent(event);
-            }
-
-            return renderNote(event);
+        {(feedType === FeedType.Live ? events : followingEvents).map(event => {
+          if (event.kind === NIP_108_KINDS.announcement) {
+            return renderGatedContent(event)
           }
-        )}
+
+          return renderNote(event)
+        })}
       </div>
-    );
-  };
+    )
+  }
 
   const renderForm = () => {
     // todo make it as a component to be reused both by pressing the Left post button and on Top header.
@@ -348,7 +340,7 @@ export default function Home() {
                   placeholder={`Hey unlock my post for ${formData.cost} sats!`}
                   maxLength={MAX_PREVIEW_LENGTH}
                   value={formData.preview}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({ ...formData, preview: e.target.value })
                   }
                   className="w-full p-2 text-white bg-black border rounded border-white/20"
@@ -361,12 +353,12 @@ export default function Home() {
                   inputMode="numeric" // enables number keyboard on mobile devices
                   pattern="[0-9]*" // allows only numbers as input
                   value={formData.cost}
-                  onChange={(e) => {
-                    const newCost = e.target.value;
+                  onChange={e => {
+                    const newCost = e.target.value
 
                     // Allow only empty string or numbers
                     if (newCost === "" || !isNaN(+newCost)) {
-                      setFormData({ ...formData, cost: newCost });
+                      setFormData({ ...formData, cost: newCost })
                     }
                   }}
                   className="w-full p-2 text-white bg-black border rounded border-white/20"
@@ -378,19 +370,21 @@ export default function Home() {
             <label className="hidden mb-2">Content</label>
             <textarea
               maxLength={MAX_CONTENT_LENGTH}
-              placeholder={isPostingGatedContent ? `This is the content that will be unlocked!` : `What is going on?`}
+              placeholder={
+                isPostingGatedContent
+                  ? `This is the content that will be unlocked!`
+                  : `What is going on?`
+              }
               value={formData.content}
-              onChange={(e) =>
+              onChange={e =>
                 setFormData({ ...formData, content: e.target.value })
               }
-              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"
-            ></textarea>
+              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
           </div>
           <div className="flex items-center justify-between mt-12">
             <label
               htmlFor="setAsGatedContentCheckbox"
-              className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer border-white/20"
-            >
+              className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer border-white/20">
               <input
                 checked={isPostingGatedContent}
                 onChange={handleCheckboxChange}
@@ -414,17 +408,17 @@ export default function Home() {
           </div>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const renderFormModal = () => {
     // todo make it as a component to be reused both by pressing the Left post button and on Top header.
     const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
-      const { checked } = event.target;
-      setIsPostingGatedContent(checked);
-    };
+      const { checked } = event.target
+      setIsPostingGatedContent(checked)
+    }
 
-    if (!isPostFormOpen) return null;
+    if (!isPostFormOpen) return null
 
     return (
       <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-screen h-screen bg-black/20 backdrop-blur-md md:border-white ">
@@ -439,7 +433,7 @@ export default function Home() {
                   placeholder={`Hey unlock my post for ${formData.cost} sats!`}
                   maxLength={MAX_PREVIEW_LENGTH}
                   value={formData.preview}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({ ...formData, preview: e.target.value })
                   }
                   className="w-full p-2 text-white bg-black border rounded border-white/20"
@@ -452,12 +446,12 @@ export default function Home() {
                   inputMode="numeric" // enables number keyboard on mobile devices
                   pattern="[0-9]*" // allows only numbers as input
                   value={formData.cost}
-                  onChange={(e) => {
-                    const newCost = e.target.value;
+                  onChange={e => {
+                    const newCost = e.target.value
 
                     // Allow only empty string or numbers
                     if (newCost === "" || !isNaN(+newCost)) {
-                      setFormData({ ...formData, cost: newCost });
+                      setFormData({ ...formData, cost: newCost })
                     }
                   }}
                   className="w-full p-2 text-white bg-black border rounded border-white/20"
@@ -469,19 +463,21 @@ export default function Home() {
             <label className="hidden mb-2">Content</label>
             <textarea
               maxLength={MAX_CONTENT_LENGTH}
-              placeholder={isPostingGatedContent ? `This is the content that will be unlocked!` : `What is going on?`}
+              placeholder={
+                isPostingGatedContent
+                  ? `This is the content that will be unlocked!`
+                  : `What is going on?`
+              }
               value={formData.content}
-              onChange={(e) =>
+              onChange={e =>
                 setFormData({ ...formData, content: e.target.value })
               }
-              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"
-            ></textarea>
+              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
           </div>
           <div className="flex items-center justify-between mt-12">
             <label
               htmlFor="setAsGatedContentCheckbox"
-              className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer border-white/20"
-            >
+              className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer border-white/20">
               <input
                 checked={isPostingGatedContent}
                 onChange={handleCheckboxChange}
@@ -510,11 +506,11 @@ export default function Home() {
           </div>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const renderEditProfile = () => {
-    if (!editProfileOn) return null;
+    if (!editProfileOn) return null
 
     return (
       <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-60 ">
@@ -552,8 +548,7 @@ export default function Home() {
             <label className="block mb-2">About me</label>
             <textarea
               placeholder={`Say something about you`}
-              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"
-            ></textarea>
+              className="w-full h-full p-2 text-white bg-black border rounded resize-none border-white/20"></textarea>
           </div>
           <div className="flex justify-between mt-12">
             <ButtonDefault
@@ -569,8 +564,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const renderUserMenu = () => {
     return (
@@ -593,8 +588,8 @@ export default function Home() {
           />
         </nav>
       </>
-    );
-  };
+    )
+  }
 
   const renderSearchBar = () => {
     return (
@@ -606,21 +601,20 @@ export default function Home() {
         />
         <FaSearch className="absolute text-white top-3 left-4" />
       </div>
-    );
-  };
+    )
+  }
 
   const mockTrendingPosts = () => {
     return (
       <div>
-        {redactTeamKeys.map((pubkey) => {
-          const profile = profiles[pubkey] ?? getDefaultNostrProfile(pubkey);
-          const name = getDisplayName(profile);
+        {redactTeamKeys.map(pubkey => {
+          const profile = profiles[pubkey] ?? getDefaultNostrProfile(pubkey)
+          const name = getDisplayName(profile)
 
           return (
             <div
               key={pubkey}
-              className="flex h-16 gap-2 p-1 mt-4 duration-300 rounded hover:bg-neutral-900"
-            >
+              className="flex h-16 gap-2 p-1 mt-4 duration-300 rounded hover:bg-neutral-900">
               <img
                 src={profile.picture}
                 className="object-cover w-8 h-8 rounded-full"
@@ -636,11 +630,11 @@ export default function Home() {
                 </p>
               </div>
             </div>
-          );
+          )
         })}
       </div>
-    );
-  };
+    )
+  }
 
   const renderTrending = () => {
     return (
@@ -648,13 +642,12 @@ export default function Home() {
         <p className="mt-10 sticky-top-0">TRENDING</p>
         <div
           id="trendingPosts"
-          className="overflow-scroll h-[400px] mt-4 cursor-pointer"
-        >
+          className="overflow-scroll h-[400px] mt-4 cursor-pointer">
           {mockTrendingPosts()}
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const renderProfile = () => {
     return (
@@ -698,11 +691,11 @@ export default function Home() {
           </div>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const renderMobileMenu = () => {
-    const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false)
     return (
       <div className="fixed top-0 z-10 flex items-center justify-center w-full pb-2 bg-black md:hidden">
         <div className="relative w-32 h-20">
@@ -713,8 +706,7 @@ export default function Home() {
         </div>
         <button
           className="fixed z-20 right-5 top-4"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
           <GiHamburgerMenu size={32} />
         </button>
         {mobileMenuOpen ? (
@@ -755,8 +747,8 @@ export default function Home() {
           </div>
         ) : null}
       </div>
-    );
-  };
+    )
+  }
 
   // ------------------- MAIN -------------------------
 
@@ -784,5 +776,5 @@ export default function Home() {
         </div>
       </div>
     </>
-  );
+  )
 }
