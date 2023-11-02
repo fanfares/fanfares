@@ -92,9 +92,9 @@ export function RenderContent(props: RenderContentProps) {
   const renderContent = useCallback((content: Content) => {
     switch (content.type) {
       case ContentType.video:
-        return <video src={content.content} />
+        return <video className="rounded" src={content.content} />
       case ContentType.image:
-        return <img src={content.content} />
+        return <img className="rounded drop-shadow-md" src={content.content} />
       case ContentType.text:
         return <span>{content.content}</span>
       case ContentType.link:
@@ -116,7 +116,7 @@ export function RenderContent(props: RenderContentProps) {
               src={content.content}
               title="YouTube video player"
               frameBorder="0"
-              className="absolute top-0 left-0 w-full h-full"
+              className="absolute top-0 left-0 w-full h-full rounded "
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen></iframe>
           </div>
