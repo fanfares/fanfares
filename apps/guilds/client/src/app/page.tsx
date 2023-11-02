@@ -2,48 +2,33 @@
 
 import { Event as NostrEvent } from "nostr-tools";
 import {
-  FaGithub,
-  FaExternalLinkAlt,
   FaCopy,
   FaCheck,
-  FaLock,
   FaLockOpen,
   FaHome,
   FaUserAlt,
   FaCompass,
-  FaCog,
   FaAt,
-  FaPlus,
-  FaMinus,
   FaSearch,
   FaEnvelope,
-  FaHamburger,
 } from "react-icons/fa";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { HiPencilAlt } from "react-icons/hi";
 import { AiFillThunderbolt } from "react-icons/ai";
-import { ChangeEvent, useEffect, useState } from "react";
-import { WebLNProvider, requestProvider } from "webln";
+import { ChangeEvent, useState } from "react";
 import {
   AnnouncementNote,
-  CreateNotePostBody,
   GatedNote,
   KeyNote,
   NIP_108_KINDS,
-  createAnnouncementNoteUnsigned,
-  createGatedNoteUnsigned,
   eventToAnnouncementNote,
-  eventToGatedNote,
-  eventToKeyNote,
   unlockGatedNote,
-  PREntry,
 } from "nip108";
 import AnimatedMenuButton from "@/components/AnimatedButton";
-import NavigationMenu from "@/components/NavigationMenu";
 import ButtonDefault from "@/components/Button";
 import { useExcalibur } from "@/components/ExcaliburProvider";
 import { getDefaultNostrProfile, getDisplayName } from "utils";
-import Image from "next/image";
+import { RenderContent } from "@/components/RenderContent";
 
 const GATE_SERVER = "https://api.nostrplayground.com";
 
@@ -57,15 +42,15 @@ const MIN_SAT_COST = 1;
 const MAX_SAT_COST = 50_000;
 
 interface FormData {
-  cost: number;
+  cost: string;
   preview: string;
   content: string;
 }
 
 const DEFAULT_FORM_DATA: FormData = {
-  cost: 1,
-  preview: "Hey unlock my post for 1 sat!",
-  content: "This is the content that will be unlocked!",
+  cost: "1",
+  preview: "",
+  content: "",
 };
 
 enum FeedType {
@@ -97,7 +82,8 @@ export default function Home() {
     redactTeamKeys,
   } = useExcalibur();
 
-  const [isPostingGatedContent, setIsPostingGatedContent] = useState<boolean>(false);
+  const [isPostingGatedContent, setIsPostingGatedContent] =
+    useState<boolean>(false);
   const [feedType, setFeedType] = useState<FeedType>(FeedType.Live);
 
   // ------------------- FUNCTIONS -------------------------
@@ -107,17 +93,19 @@ export default function Home() {
   };
 
   const handlePost = async () => {
-    if(isPosting) return;
+    if (isPosting) return;
 
     try {
-      if(isPostingGatedContent) await submitGatedForm();
+      if (isPostingGatedContent) await submitGatedForm();
       else await submitNoteForm();
+
+      setFormData(DEFAULT_FORM_DATA);
     } catch (error) {
       console.log(error);
-    } finally{
+    } finally {
       setPostFormOpen(false);
     }
-  }
+  };
 
   const submitNoteForm = async () => {
     const { content } = formData;
@@ -133,7 +121,8 @@ export default function Home() {
   const submitGatedForm = async () => {
     const { cost, preview, content } = formData;
 
-    if (!cost) {
+    const sats = Number(cost);
+    if (!cost || !sats) {
       alert("Please set a cost");
       return;
     }
@@ -148,7 +137,7 @@ export default function Home() {
 
     //TODO validate form data
 
-    postGatedNote(cost, preview, content);
+    postGatedNote(sats, preview, content);
   };
 
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -319,7 +308,8 @@ export default function Home() {
 
           <div className="flex flex-col max-w-sm md:max-w-md lg:max-w-lg">
             <p className="mb-5 text-xs font-bold">{name}</p>
-            <h3 className="pr-8 break-words ">{event.content}</h3>
+            <RenderContent rawContent={event.content} />
+            {/* <h3 className="pr-8 break-words ">{event.content}</h3> */}
           </div>
         </div>
       </div>
@@ -345,7 +335,6 @@ export default function Home() {
   const renderForm = () => {
     // todo make it as a component to be reused both by pressing the Left post button and on Top header.
 
-
     return (
       <div className="flex items-center justify-center w-full my-4 bg-black ">
         <div className="w-full p-5 text-white bg-black border rounded-lg shadow-lg border-white/20">
@@ -368,13 +357,18 @@ export default function Home() {
               <div className="mt-1 mb-2">
                 <label className="block mb-2">Unlock Cost ( sats )</label>
                 <input
-                  type="number"
-                  min={`${MIN_SAT_COST}`}
-                  max={`${MAX_SAT_COST}`}
+                  type="text" // change to text input
+                  inputMode="numeric" // enables number keyboard on mobile devices
+                  pattern="[0-9]*" // allows only numbers as input
                   value={formData.cost}
-                  onChange={(e) =>
-                    setFormData({ ...formData, cost: +e.target.value })
-                  }
+                  onChange={(e) => {
+                    const newCost = e.target.value;
+
+                    // Allow only empty string or numbers
+                    if (newCost === "" || !isNaN(+newCost)) {
+                      setFormData({ ...formData, cost: newCost });
+                    }
+                  }}
                   className="w-full p-2 text-white bg-black border rounded border-white/20"
                 />
               </div>
@@ -384,7 +378,8 @@ export default function Home() {
             <label className="hidden mb-2">Content</label>
             <textarea
               maxLength={MAX_CONTENT_LENGTH}
-              placeholder={`What is going on?`}
+              placeholder={isPostingGatedContent ? `This is the content that will be unlocked!` : `What is going on?`}
+              value={formData.content}
               onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
               }
@@ -453,13 +448,18 @@ export default function Home() {
               <div className="mt-1 mb-2">
                 <label className="block mb-2">Unlock Cost ( sats )</label>
                 <input
-                  type="number"
-                  min={`${MIN_SAT_COST}`}
-                  max={`${MAX_SAT_COST}`}
+                  type="text" // change to text input
+                  inputMode="numeric" // enables number keyboard on mobile devices
+                  pattern="[0-9]*" // allows only numbers as input
                   value={formData.cost}
-                  onChange={(e) =>
-                    setFormData({ ...formData, cost: +e.target.value })
-                  }
+                  onChange={(e) => {
+                    const newCost = e.target.value;
+
+                    // Allow only empty string or numbers
+                    if (newCost === "" || !isNaN(+newCost)) {
+                      setFormData({ ...formData, cost: newCost });
+                    }
+                  }}
                   className="w-full p-2 text-white bg-black border rounded border-white/20"
                 />
               </div>
@@ -469,7 +469,8 @@ export default function Home() {
             <label className="hidden mb-2">Content</label>
             <textarea
               maxLength={MAX_CONTENT_LENGTH}
-              placeholder={`What is going on?`}
+              placeholder={isPostingGatedContent ? `This is the content that will be unlocked!` : `What is going on?`}
+              value={formData.content}
               onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
               }
