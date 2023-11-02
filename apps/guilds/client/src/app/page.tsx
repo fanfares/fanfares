@@ -213,11 +213,11 @@ export default function Home() {
             {" "}
             <p className="mb-5 text-xs font-bold">{name}</p>
             <div>
-              <h3 className="pr-8 mb-3 break-words max-w-sm md:max-w-md">
+              <h3 className="pr-8 mb-3 break-words max-w-xs md:max-w-md">
                 🔓{announcementNote.note.content}🔓
               </h3>
             </div>
-            <div className="max-w-sm md:max-w-md">
+            <div className="max-w-xs md:max-w-md">
               <h3 className="pr-8 break-words ">{unlockedNote.content}</h3>
             </div>
           </div>
@@ -249,11 +249,11 @@ export default function Home() {
           <div className="flex flex-col w-full">
             <p className="mb-5 text-xs font-bold">{name}</p>
             <div>
-              <h3 className="pr-8 mb-3 break-words max-w-sm md:max-w-md">
+              <h3 className="pr-8 mb-3 break-words max-w-xs md:max-w-md">
                 🔓{announcementNote.note.content}🔓
               </h3>
             </div>
-            <p className="break-words select-none blur-sm max-w-sm md:max-w-md">
+            <p className="break-words select-none blur-sm max-w-xs md:max-w-md">
               {formatGatedContent(gatedNote.note.content)}
             </p>
           </div>
@@ -306,7 +306,7 @@ export default function Home() {
             className="object-fill rounded-full min-w-[48px] w-12 h-12"
           />
 
-          <div className="flex flex-col w-full break-words max-w-sm md:max-w-md">
+          <div className="flex flex-col w-full break-words max-w-xs md:max-w-md">
             <p className="mb-5 text-xs font-bold">{name}</p>
             <RenderContent rawContent={event.content} />
             {/* <h3 className="pr-8 break-words ">{event.content}</h3> */}
@@ -764,7 +764,7 @@ export default function Home() {
       {renderEditProfile()}
       {renderMobileMenu()}
 
-      <div className="relative flex justify-center w-full mt-16 md:mt-0">
+      <div className="relative flex justify-center w-full mt-20 md:mt-0">
         <div className="sticky top">{renderUserMenu()}</div>
         <main className="items-center w-full md:min-w-[32rem] max-w-md min-h-screen mb-10 md:max-w-xl">
           {renderForm()}
