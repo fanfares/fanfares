@@ -212,10 +212,14 @@ export default function Home() {
           <div className="flex flex-col w-full">
             {" "}
             <p className="mb-5 text-xs font-bold">{name}</p>
-            <h3 className="pr-8 mb-3 break-words max-w-sm md:max-w-md">
-              🔓{announcementNote.note.content}🔓
-            </h3>
-            <h3 className="pr-8 break-words ">{unlockedNote.content}</h3>
+            <div>
+              <h3 className="pr-8 mb-3 break-words max-w-sm md:max-w-md">
+                🔓{announcementNote.note.content}🔓
+              </h3>
+            </div>
+            <div className="max-w-sm md:max-w-md">
+              <h3 className="pr-8 break-words ">{unlockedNote.content}</h3>
+            </div>
           </div>
         </div>
       </div>
@@ -244,10 +248,12 @@ export default function Home() {
           />
           <div className="flex flex-col w-full">
             <p className="mb-5 text-xs font-bold">{name}</p>
-            <h3 className="pr-8 mb-3 break-words max-w-sm md:max-w-md">
-              🔓{announcementNote.note.content}🔓
-            </h3>
-            <p className="break-words select-none blur-sm ">
+            <div>
+              <h3 className="pr-8 mb-3 break-words max-w-sm md:max-w-md">
+                🔓{announcementNote.note.content}🔓
+              </h3>
+            </div>
+            <p className="break-words select-none blur-sm max-w-sm md:max-w-md">
               {formatGatedContent(gatedNote.note.content)}
             </p>
           </div>
@@ -300,7 +306,7 @@ export default function Home() {
             className="object-fill rounded-full min-w-[48px] w-12 h-12"
           />
 
-          <div className="flex flex-col w-full">
+          <div className="flex flex-col w-full break-words max-w-sm md:max-w-md">
             <p className="mb-5 text-xs font-bold">{name}</p>
             <RenderContent rawContent={event.content} />
             {/* <h3 className="pr-8 break-words ">{event.content}</h3> */}
