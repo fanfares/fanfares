@@ -8,6 +8,7 @@
     "guilds-client": "cd apps/guilds/client && bun run dev",
     "guilds-client-deploy": "cd apps/guilds/client && bun run start",
     "guilds-client-build": "cd apps/guilds/client && bun run build",
+    "fanfares": "cd apps/fanfares && bun run dev",
     "fanfares-deploy": "cd apps/fanfares && bun run start",
     "fanfares-build": "cd apps/fanfares && bun run build",
     "server-update-landing": "cd server-scripts && ./update-landing.sh"

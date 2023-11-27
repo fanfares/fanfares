@@ -1,5 +1,4 @@
 import { Database } from "bun:sqlite"
-import { Invoice } from "utils/lightning"
 import { NoteEntry, PREntry } from "./models"
 
 // ---------------- SECURITY ------------------
