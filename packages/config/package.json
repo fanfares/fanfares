@@ -1,0 +1,43 @@
+{
+  "name": "@excalibur/config",
+  "version": "1.0.0",
+  "description": "Config folder for the monorepo",
+  "author": "The Excalibur Foundation",
+  "license": "MIT",
+  "files": [
+    "tailwind/postcss.config.js",
+    "tailwind/tailwind.config.js",
+    "lint/eslint-preset.js",
+    "lint/eslint-preset.js",
+    "ts/base.json",
+    "ts/nextjs.json",
+    "ts/react-library.json",
+    "fontawesome/index.ts"
+  ],
+  "scripts": {
+    "build": "echo TODO create build",
+    "test": "echo TODO create tests",
+    "lint": "echo TODO create lint",
+    "clean": "rm -rf .turbo ; rm -rf node_modules  ; echo done"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.2.0",
+    "@fortawesome/free-solid-svg-icons": "^6.2.0",
+    "@fortawesome/pro-duotone-svg-icons": "^6.2.0",
+    "@fortawesome/pro-light-svg-icons": "^6.2.0",
+    "@fortawesome/pro-regular-svg-icons": "^6.2.0",
+    "@fortawesome/pro-solid-svg-icons": "^6.2.0",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "eslint-config-next": "^12.2.5",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-react": "^7.31.1",
+    "postcss": "^8.4.16",
+    "tailwindcss": "^3.1.8"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.41.0",
+    "@typescript-eslint/parser": "^5.41.0",
+    "eslint-plugin-no-only-tests": "^3.1.0",
+    "typescript": "^4.8.2"
+  }
+}

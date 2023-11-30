@@ -1,0 +1,1179 @@
+html {
+  @apply text-skin-base;
+  @apply bg-skin-fill;
+  @apply font-objective;
+
+  background-color: hsla(0, 0%, 0%, 1);
+  background-image: radial-gradient(at 0% 24%, hsla(240, 32%, 23%, 0.5) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(240, 32%, 23%, 0.64) 0px, transparent 50%),
+    radial-gradient(at 51% 0%, hsla(240, 32%, 23%, 1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(240, 32%, 23%, 0.67) 0px, transparent 50%);
+}
+
+/* .defaultBackground {
+  background-color: hsla(0, 0%, 0%, 1);
+  background-image: radial-gradient(at 0% 24%, hsla(240, 32%, 23%, 0.5) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(240, 32%, 23%, 0.64) 0px, transparent 50%),
+    radial-gradient(at 51% 0%, hsla(240, 32%, 23%, 1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(240, 32%, 23%, 0.67) 0px, transparent 50%);
+} */
+
+/* .div-rotate-1:hover {
+  -webkit-transform: rotateY(180deg);
+  -webkit-backface-visibility: hidden;
+}
+
+.div-rotate-2 {
+  -webkit-transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+} */
+
+/*REMOVING SCROLLBAR FROM BROWSERS*/
+
+* {
+  -ms-overflow-style: none;
+}
+::-webkit-scrollbar {
+  display: none;
+}
+body,
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
+.App {
+  height: 100vh;
+  overflow-y: auto;
+}
+/* @font-face {
+  font-family: 'Objective';
+  src: url('../../../public/fonts/Objective-Regular.otf');
+} */
+@font-face {
+  font-family: 'Yrsa';
+  src: url('../../../public/fonts/Yrsa.ttf');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Catamaran';
+  src: url('../../../public/fonts/Catamaran.ttf');
+  font-display: swap;
+}
+
+* {
+  font-family: 'Catamaran' !important;
+}
+
+@layer base {
+  /* Core Components */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Catamaran' !important;
+  }
+
+  /* Roots */
+  :root {
+    --color-text-base: 255, 255, 255; /* #ffffff */
+    --color-text-muted: 194, 202, 255; /* #c2caf5 */
+    --color-text-inverted: 73, 74, 110; /* #494A6E */
+    --color-fill: 57, 59, 77; /* #393B4D */
+    --color-button-default: 80, 70, 229; /* #5046E5 */
+    --color-button-disabled: 65, 67, 93; /* #41435D */
+    --color-button-hover: 255, 255, 255; /* #ffffff */
+    --color-button-accent: 73, 77, 104; /* #494D68 */
+    --color-button-active: 234, 236, 247 /* #EAECF7 */;
+    --color-button-accent-hover: 95, 112, 255; /* #5F70FF */
+    --color-button-muted: 147, 156, 227; /* #929ce3 */
+    --card-color: hsla(0, 0%, 9%, 0.2);
+  }
+
+  /* Classes */
+  .btn {
+    @apply flex items-center justify-center px-4 py-3 text-xs font-medium border border-transparent rounded-md shadow-sm outline-none cursor-pointer bg-skin-button-default text-skin-base drop-shadow-lg hover:bg-skin-button-accent-hover active:scale-95 active:bg-skin-button-active active:text-skin-inverted disabled:bg-skin-fill/50 disabled:text-skin-muted/30 sm:px-8;
+  }
+  .editable-input {
+    @apply w-full bg-transparent rounded-lg outline-none text-start outline-1 outline-buttonDefault enabled:animate-pulse enabled:text-skin-muted disabled:border-none disabled:outline-0;
+  }
+}
+.rainbow_text_animated {
+  background: linear-gradient(to right, #6666ff, #0099ff, #00ff00, #ff3399, #6666ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rainbow_animation 6s ease-in-out infinite;
+  background-size: 400% 100%;
+}
+
+@keyframes rainbow_animation {
+  0%,
+  100% {
+    background-position: 0 0;
+  }
+
+  50% {
+    background-position: 100% 0;
+  }
+}
+
+.hex:hover {
+  background: hsl(234, 100%, 69%);
+}
+
+.hex {
+  display: inline-block;
+
+  position: relative;
+  width: 50px;
+  height: 50px;
+  box-sizing: border-box;
+  -webkit-clip-path: polygon(
+    92.32051% 40%,
+    93.79385% 43.1596%,
+    94.69616% 46.52704%,
+    95% 50%,
+    94.69616% 53.47296%,
+    93.79385% 56.8404%,
+    92.32051% 60%,
+    79.82051% 81.65064%,
+    77.82089% 84.50639%,
+    75.35575% 86.97152%,
+    72.5% 88.97114%,
+    69.3404% 90.44449%,
+    65.97296% 91.34679%,
+    62.5% 91.65064%,
+    37.5% 91.65064%,
+    34.02704% 91.34679%,
+    30.6596% 90.44449%,
+    27.5% 88.97114%,
+    24.64425% 86.97152%,
+    22.17911% 84.50639%,
+    20.17949% 81.65064%,
+    7.67949% 60%,
+    6.20615% 56.8404%,
+    5.30384% 53.47296%,
+    5% 50%,
+    5.30384% 46.52704%,
+    6.20615% 43.1596%,
+    7.67949% 40%,
+    20.17949% 18.34936%,
+    22.17911% 15.49361%,
+    24.64425% 13.02848%,
+    27.5% 11.02886%,
+    30.6596% 9.55551%,
+    34.02704% 8.65321%,
+    37.5% 8.34936%,
+    62.5% 8.34936%,
+    65.97296% 8.65321%,
+    69.3404% 9.55551%,
+    72.5% 11.02886%,
+    75.35575% 13.02848%,
+    77.82089% 15.49361%,
+    79.82051% 18.34936%
+  );
+  clip-path: polygon(
+    92.32051% 40%,
+    93.79385% 43.1596%,
+    94.69616% 46.52704%,
+    95% 50%,
+    94.69616% 53.47296%,
+    93.79385% 56.8404%,
+    92.32051% 60%,
+    79.82051% 81.65064%,
+    77.82089% 84.50639%,
+    75.35575% 86.97152%,
+    72.5% 88.97114%,
+    69.3404% 90.44449%,
+    65.97296% 91.34679%,
+    62.5% 91.65064%,
+    37.5% 91.65064%,
+    34.02704% 91.34679%,
+    30.6596% 90.44449%,
+    27.5% 88.97114%,
+    24.64425% 86.97152%,
+    22.17911% 84.50639%,
+    20.17949% 81.65064%,
+    7.67949% 60%,
+    6.20615% 56.8404%,
+    5.30384% 53.47296%,
+    5% 50%,
+    5.30384% 46.52704%,
+    6.20615% 43.1596%,
+    7.67949% 40%,
+    20.17949% 18.34936%,
+    22.17911% 15.49361%,
+    24.64425% 13.02848%,
+    27.5% 11.02886%,
+    30.6596% 9.55551%,
+    34.02704% 8.65321%,
+    37.5% 8.34936%,
+    62.5% 8.34936%,
+    65.97296% 8.65321%,
+    69.3404% 9.55551%,
+    72.5% 11.02886%,
+    75.35575% 13.02848%,
+    77.82089% 15.49361%,
+    79.82051% 18.34936%
+  );
+}
+
+.hex .img {
+  position: absolute;
+  top: 5px; /* equal to border thickness */
+  left: 5px; /* equal to border thickness */
+  width: 40px; /* container height - (border thickness * 2) */
+  height: 40px; /* container height - (border thickness * 2) */
+  -webkit-clip-path: polygon(
+    92.32051% 40%,
+    93.79385% 43.1596%,
+    94.69616% 46.52704%,
+    95% 50%,
+    94.69616% 53.47296%,
+    93.79385% 56.8404%,
+    92.32051% 60%,
+    79.82051% 81.65064%,
+    77.82089% 84.50639%,
+    75.35575% 86.97152%,
+    72.5% 88.97114%,
+    69.3404% 90.44449%,
+    65.97296% 91.34679%,
+    62.5% 91.65064%,
+    37.5% 91.65064%,
+    34.02704% 91.34679%,
+    30.6596% 90.44449%,
+    27.5% 88.97114%,
+    24.64425% 86.97152%,
+    22.17911% 84.50639%,
+    20.17949% 81.65064%,
+    7.67949% 60%,
+    6.20615% 56.8404%,
+    5.30384% 53.47296%,
+    5% 50%,
+    5.30384% 46.52704%,
+    6.20615% 43.1596%,
+    7.67949% 40%,
+    20.17949% 18.34936%,
+    22.17911% 15.49361%,
+    24.64425% 13.02848%,
+    27.5% 11.02886%,
+    30.6596% 9.55551%,
+    34.02704% 8.65321%,
+    37.5% 8.34936%,
+    62.5% 8.34936%,
+    65.97296% 8.65321%,
+    69.3404% 9.55551%,
+    72.5% 11.02886%,
+    75.35575% 13.02848%,
+    77.82089% 15.49361%,
+    79.82051% 18.34936%
+  );
+  clip-path: polygon(
+    92.32051% 40%,
+    93.79385% 43.1596%,
+    94.69616% 46.52704%,
+    95% 50%,
+    94.69616% 53.47296%,
+    93.79385% 56.8404%,
+    92.32051% 60%,
+    79.82051% 81.65064%,
+    77.82089% 84.50639%,
+    75.35575% 86.97152%,
+    72.5% 88.97114%,
+    69.3404% 90.44449%,
+    65.97296% 91.34679%,
+    62.5% 91.65064%,
+    37.5% 91.65064%,
+    34.02704% 91.34679%,
+    30.6596% 90.44449%,
+    27.5% 88.97114%,
+    24.64425% 86.97152%,
+    22.17911% 84.50639%,
+    20.17949% 81.65064%,
+    7.67949% 60%,
+    6.20615% 56.8404%,
+    5.30384% 53.47296%,
+    5% 50%,
+    5.30384% 46.52704%,
+    6.20615% 43.1596%,
+    7.67949% 40%,
+    20.17949% 18.34936%,
+    22.17911% 15.49361%,
+    24.64425% 13.02848%,
+    27.5% 11.02886%,
+    30.6596% 9.55551%,
+    34.02704% 8.65321%,
+    37.5% 8.34936%,
+    62.5% 8.34936%,
+    65.97296% 8.65321%,
+    69.3404% 9.55551%,
+    72.5% 11.02886%,
+    75.35575% 13.02848%,
+    77.82089% 15.49361%,
+    79.82051% 18.34936%
+  );
+}
+
+/* INPUT REMOVE ARROW BUTTONS */
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* PROGRESS BAR */
+
+.progressBar {
+  --bar-bg: rgba(255, 255, 255, 0.2);
+  --seek-before-width: 0;
+  --seek-before-color: #fff;
+  --knobby: hsl(234, 100%, 69%);
+  --selectedKnobby: hsl(228, 39%, 23%);
+
+  appearance: none;
+  background: var(--bar-bg);
+  width: 100%;
+  height: 5px;
+  border-radius: 10px;
+  position: relative;
+  outline: none;
+}
+
+.donationBar {
+  --bar-bg: rgba(255, 255, 255, 0.2);
+  --seek-before-width: 0;
+  --seek-before-color: #fff;
+  --knobby: hsl(234, 100%, 69%);
+  --selectedKnobby: hsl(228, 39%, 23%);
+
+  appearance: none;
+  background: var(--bar-bg);
+  width: 100%;
+  height: 5px;
+  border-radius: 10px;
+  position: relative;
+  top: 30px;
+  outline: none;
+}
+
+/* progress bar - safari */
+.progressBar::-webkit-slider-runnable-track {
+  background: var(--bar-bg);
+  border-radius: 10px;
+  position: relative;
+  width: 100%;
+  height: 5px;
+  outline: none;
+}
+
+.donationBar::-webkit-slider-runnable-track {
+  background: var(--bar-bg);
+  border-radius: 10px;
+  position: relative;
+  width: 100%;
+  height: 5px;
+  outline: none;
+}
+
+/* progress bar - firefox */
+.progressBar::-moz-range-track {
+  background: var(--bar-bg);
+  width: 100%;
+  height: 5px;
+  border-radius: 10px;
+  position: relative;
+  outline: none;
+}
+
+.progressBar::-moz-focus-outer {
+  border: 0;
+}
+
+.donationBar::-moz-range-track {
+  background: var(--bar-bg);
+  width: 100%;
+  height: 5px;
+  border-radius: 10px;
+  position: relative;
+  outline: none;
+}
+
+.donationBar::-moz-focus-outer {
+  border: 0;
+}
+
+/* progress bar - chrome and safari  */
+.progressBar::before {
+  content: '';
+  height: 5px;
+  width: var(--seek-before-width);
+  background-color: var(--seek-before-color);
+  border-radius: 10px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.donationBar::before {
+  content: '';
+  height: 5px;
+  width: var(--seek-before-width);
+  background-color: var(--seek-before-color);
+  border-radius: 10px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  cursor: pointer;
+}
+
+/* progressbar firefox */
+.progressBar::-moz-range-progress {
+  background-color: var(--seek-before-color);
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  height: 5px;
+}
+
+.donationBar::-moz-range-progress {
+  background-color: var(--seek-before-color);
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  height: 5px;
+}
+
+/* knobby chrome and safari */
+.progressBar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  display: hidden;
+  height: 15px;
+  width: 15px;
+  border-radius: 50px;
+  background-color: transparent;
+  cursor: pointer;
+  position: relative;
+  margin: -2px 0 0 0px;
+  z-index: 3;
+  box-sizing: border-box;
+}
+
+.donationBar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  display: block;
+  height: 15px;
+  width: 15px;
+  border-radius: 50px;
+  background-color: white;
+  cursor: pointer;
+  position: relative;
+  margin: -2px 0 0 0px;
+  top: -2px;
+  z-index: 3;
+  box-sizing: border-box;
+}
+
+/* knobby while dragging chrome and safari */
+
+.progressBar:active::-webkit-slider-thumb {
+  transform: scale(1.2);
+  background: transparent;
+  display: hidden;
+}
+
+.donationBar:active::-webkit-slider-thumb {
+  transform: scale(1.2);
+  display: block;
+  background: white;
+}
+
+/* knobby firefox  */
+.progressBar:-moz-range-thumb {
+  height: 15px;
+  width: 15px;
+  border-radius: 100%;
+  background-color: transparent;
+  cursor: pointer;
+  position: relative;
+  z-index: 3;
+  box-sizing: border-box;
+  display: hidden;
+}
+
+.donationBar:-moz-range-thumb {
+  height: 15px;
+  width: 15px;
+  border-radius: 100%;
+  display: block;
+  background-color: white;
+  cursor: pointer;
+  position: relative;
+  z-index: 3;
+  box-sizing: border-box;
+}
+
+/* knobny while dragging firefox  */
+.progressBar:active::-moz-range-thumb {
+  transform: scale(1.2);
+  background: var(--selectedKnobby);
+  display: hidden;
+}
+
+.donationBar:active::-moz-range-thumb {
+  transform: scale(1.2);
+  background: var(--selectedKnobby);
+  display: block;
+}
+
+.volumeControlBar:active::-webkit-slider-thumb {
+  transform: scale(1.2);
+  background: white;
+  display: hidden;
+}
+
+@keyframes move {
+  100% {
+    transform: translate3d(0, 0, 1px) rotate(360deg);
+  }
+}
+/* 
+.background {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background: #000000;
+  overflow: hidden;
+}
+
+.background span {
+  width: 20vmin;
+  height: 20vmin;
+  border-radius: 20vmin;
+  backface-visibility: hidden;
+  position: absolute;
+  animation: move;
+  animation-duration: 45;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.background span:nth-child(0) {
+  color: #247ad6;
+  top: 79%;
+  left: 86%;
+  animation-duration: 29s;
+  animation-delay: -32s;
+  transform-origin: 10vw 19vh;
+  box-shadow: 40vmin 0 5.6811016792792985vmin currentColor;
+}
+.background span:nth-child(1) {
+  color: #19486c;
+  top: 84%;
+  left: 21%;
+  animation-duration: 26s;
+  animation-delay: -31s;
+  transform-origin: 9vw -10vh;
+  box-shadow: -40vmin 0 5.3881537320104425vmin currentColor;
+}
+.background span:nth-child(2) {
+  color: #2e0a6b;
+  top: 31%;
+  left: 28%;
+  animation-duration: 44s;
+  animation-delay: -12s;
+  transform-origin: -18vw 19vh;
+  box-shadow: -40vmin 0 5.871049777415038vmin currentColor;
+}
+.background span:nth-child(3) {
+  color: #19486c;
+  top: 56%;
+  left: 83%;
+  animation-duration: 37s;
+  animation-delay: -39s;
+  transform-origin: 6vw 17vh;
+  box-shadow: 40vmin 0 5.465486911909202vmin currentColor;
+}
+.background span:nth-child(4) {
+  color: #247ad6;
+  top: 4%;
+  left: 100%;
+  animation-duration: 11s;
+  animation-delay: -26s;
+  transform-origin: 20vw -11vh;
+  box-shadow: -40vmin 0 5.58143856587528vmin currentColor;
+}
+.background span:nth-child(5) {
+  color: #2e0a6b;
+  top: 63%;
+  left: 1%;
+  animation-duration: 23s;
+  animation-delay: -8s;
+  transform-origin: 9vw -20vh;
+  box-shadow: 40vmin 0 5.007386534683534vmin currentColor;
+}
+.background span:nth-child(6) {
+  color: #2e0a6b;
+  top: 44%;
+  left: 17%;
+  animation-duration: 8s;
+  animation-delay: -33s;
+  transform-origin: -5vw 10vh;
+  box-shadow: 40vmin 0 5.839304725426119vmin currentColor;
+}
+.background span:nth-child(7) {
+  color: #2e0a6b;
+  top: 5%;
+  left: 55%;
+  animation-duration: 25s;
+  animation-delay: -2s;
+  transform-origin: 6vw 2vh;
+  box-shadow: -40vmin 0 5.285152120288451vmin currentColor;
+}
+.background span:nth-child(8) {
+  color: #247ad6;
+  top: 71%;
+  left: 1%;
+  animation-duration: 44s;
+  animation-delay: -7s;
+  transform-origin: 15vw -16vh;
+  box-shadow: 40vmin 0 5.639338049752661vmin currentColor;
+}
+.background span:nth-child(9) {
+  color: #2e0a6b;
+  top: 34%;
+  left: 5%;
+  animation-duration: 55s;
+  animation-delay: -13s;
+  transform-origin: -3vw -19vh;
+  box-shadow: 40vmin 0 5.0677641008035055vmin currentColor;
+}
+.background span:nth-child(10) {
+  color: #2e0a6b;
+  top: 57%;
+  left: 49%;
+  animation-duration: 7s;
+  animation-delay: -9s;
+  transform-origin: -12vw -11vh;
+  box-shadow: -40vmin 0 5.502646031475461vmin currentColor;
+}
+.background span:nth-child(11) {
+  color: #247ad6;
+  top: 94%;
+  left: 33%;
+  animation-duration: 53s;
+  animation-delay: -29s;
+  transform-origin: -17vw 23vh;
+  box-shadow: 40vmin 0 5.308382346556337vmin currentColor;
+}
+.background span:nth-child(12) {
+  color: #247ad6;
+  top: 85%;
+  left: 73%;
+  animation-duration: 22s;
+  animation-delay: -10s;
+  transform-origin: -2vw -5vh;
+  box-shadow: 40vmin 0 5.942743168745086vmin currentColor;
+}
+.background span:nth-child(13) {
+  color: #247ad6;
+  top: 49%;
+  left: 93%;
+  animation-duration: 54s;
+  animation-delay: -27s;
+  transform-origin: -13vw -14vh;
+  box-shadow: -40vmin 0 5.537301879679092vmin currentColor;
+}
+.background span:nth-child(14) {
+  color: #19486c;
+  top: 99%;
+  left: 73%;
+  animation-duration: 30s;
+  animation-delay: -44s;
+  transform-origin: 20vw 1vh;
+  box-shadow: 40vmin 0 5.946921418007799vmin currentColor;
+}
+.background span:nth-child(15) {
+  color: #2e0a6b;
+  top: 19%;
+  left: 49%;
+  animation-duration: 17s;
+  animation-delay: -16s;
+  transform-origin: 0vw 3vh;
+  box-shadow: -40vmin 0 5.1427621648374915vmin currentColor;
+}
+.background span:nth-child(16) {
+  color: #19486c;
+  top: 54%;
+  left: 82%;
+  animation-duration: 33s;
+  animation-delay: -17s;
+  transform-origin: -18vw -2vh;
+  box-shadow: 40vmin 0 5.42894425906569vmin currentColor;
+}
+.background span:nth-child(17) {
+  color: #2e0a6b;
+  top: 76%;
+  left: 99%;
+  animation-duration: 19s;
+  animation-delay: -9s;
+  transform-origin: -3vw 9vh;
+  box-shadow: -40vmin 0 5.983518866748636vmin currentColor;
+}
+.background span:nth-child(18) {
+  color: #247ad6;
+  top: 29%;
+  left: 17%;
+  animation-duration: 54s;
+  animation-delay: -4s;
+  transform-origin: 20vw 23vh;
+  box-shadow: -40vmin 0 5.092139843189604vmin currentColor;
+}
+.background span:nth-child(19) {
+  color: #19486c;
+  top: 88%;
+  left: 43%;
+  animation-duration: 29s;
+  animation-delay: -25s;
+  transform-origin: 5vw 17vh;
+  box-shadow: 40vmin 0 5.5911935379475235vmin currentColor;
+} */
+
+/* .signupImageBackground {
+  background-image: url('https://img.freepik.com/free-photo/diverse-team-influencers-creating-channel-content-podcast-filming-vlog-social-media-modern-man-woman-recording-episode-show-camera-live-broadcasting-conversation_482257-48354.jpg?w=1800&t=st=1669114508~exp=1669115108~hmac=3a695c9c441fb0cd0989debc567eff841c2d6f56651ce83c874b99f5d511e3c9');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: rgba(39, 9, 90, 0.5);
+  background-blend-mode: overlay;
+} */
+
+/* .volume::-webkit-slider-runnable-track {
+  height: 5px;
+  background: #888888;
+} */
+@tailwind base;
+
+@tailwind components;
+@tailwind utilities;
+
+/* Solana Wallet Adapter CSS */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+
+.wallet-adapter-button {
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-family: 'DM Sans', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  height: 48px;
+  line-height: 48px;
+  padding: 0 24px;
+  border-radius: 4px;
+}
+
+.wallet-adapter-button-trigger {
+  background-color: #512da8;
+}
+
+.wallet-adapter-button:not([disabled]):focus-visible {
+  outline-color: white;
+}
+
+.wallet-adapter-button:not([disabled]):hover {
+  background-color: #1a1f2e;
+}
+
+.wallet-adapter-button[disabled] {
+  background: #404144;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.wallet-adapter-button-end-icon,
+.wallet-adapter-button-start-icon,
+.wallet-adapter-button-end-icon img,
+.wallet-adapter-button-start-icon img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.wallet-adapter-button-end-icon {
+  margin-left: 12px;
+}
+
+.wallet-adapter-button-start-icon {
+  margin-right: 12px;
+}
+
+.wallet-adapter-collapse {
+  width: 100%;
+}
+
+.wallet-adapter-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.wallet-adapter-dropdown-list {
+  position: absolute;
+  z-index: 99;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-row-gap: 10px;
+  padding: 10px;
+  top: 100%;
+  right: 0;
+  margin: 0;
+  list-style: none;
+  background: #2c2d30;
+  border-radius: 10px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 200ms ease, transform 200ms ease, visibility 200ms;
+  font-family: 'DM Sans', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.wallet-adapter-dropdown-list-active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(10px);
+}
+
+.wallet-adapter-dropdown-list-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  white-space: nowrap;
+  box-sizing: border-box;
+  padding: 0 20px;
+  width: 100%;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  height: 37px;
+  color: #fff;
+}
+
+.wallet-adapter-dropdown-list-item:not([disabled]):hover {
+  background-color: #1a1f2e;
+}
+
+.wallet-adapter-modal-collapse-button svg {
+  align-self: center;
+  fill: #999;
+}
+
+.wallet-adapter-modal-collapse-button.wallet-adapter-modal-collapse-button-active svg {
+  transform: rotate(180deg);
+  transition: transform ease-in 150ms;
+}
+
+.wallet-adapter-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  transition: opacity linear 150ms;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+  overflow-y: auto;
+}
+
+.wallet-adapter-modal.wallet-adapter-modal-fade-in {
+  opacity: 1;
+}
+
+.wallet-adapter-modal-button-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  padding: 12px;
+  cursor: pointer;
+  background: #1a1f2e;
+  border: none;
+  border-radius: 50%;
+}
+
+.wallet-adapter-modal-button-close:focus-visible {
+  outline-color: white;
+}
+
+.wallet-adapter-modal-button-close svg {
+  fill: #777;
+  transition: fill 200ms ease 0s;
+}
+
+.wallet-adapter-modal-button-close:hover svg {
+  fill: #fff;
+}
+
+.wallet-adapter-modal-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.wallet-adapter-modal-container {
+  display: flex;
+  margin: 3rem;
+  min-height: calc(100vh - 6rem); /* 100vh - 2 * margin */
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .wallet-adapter-modal-container {
+    margin: 1rem;
+    min-height: calc(100vh - 2rem); /* 100vh - 2 * margin */
+  }
+}
+
+.wallet-adapter-modal-wrapper {
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  z-index: 1050;
+  max-width: 400px;
+  border-radius: 10px;
+  background: #10141f;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.6);
+  font-family: 'DM Sans', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  flex: 1;
+}
+
+.wallet-adapter-modal-wrapper .wallet-adapter-button {
+  width: 100%;
+}
+
+.wallet-adapter-modal-title {
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 36px;
+  margin: 0;
+  padding: 64px 48px 48px 48px;
+  text-align: center;
+  color: #fff;
+}
+
+@media (max-width: 374px) {
+  .wallet-adapter-modal-title {
+    font-size: 18px;
+  }
+}
+
+.wallet-adapter-modal-list {
+  margin: 0 0 12px 0;
+  padding: 0;
+  width: 100%;
+  list-style: none;
+}
+
+.wallet-adapter-modal-list .wallet-adapter-button {
+  font-weight: 400;
+  border-radius: 0;
+  font-size: 18px;
+}
+
+.wallet-adapter-modal-list .wallet-adapter-button-end-icon,
+.wallet-adapter-modal-list .wallet-adapter-button-start-icon,
+.wallet-adapter-modal-list .wallet-adapter-button-end-icon img,
+.wallet-adapter-modal-list .wallet-adapter-button-start-icon img {
+  width: 28px;
+  height: 28px;
+}
+
+.wallet-adapter-modal-list .wallet-adapter-button span {
+  margin-left: auto;
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+.wallet-adapter-modal-list-more {
+  cursor: pointer;
+  border: none;
+  padding: 12px 24px 24px 12px;
+  align-self: flex-end;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  color: #fff;
+}
+
+.wallet-adapter-modal-list-more svg {
+  transition: all 0.1s ease;
+  fill: rgba(255, 255, 255, 1);
+  margin-left: 0.5rem;
+}
+
+.wallet-adapter-modal-list-more-icon-rotate {
+  transform: rotate(180deg);
+}
+
+.wallet-adapter-modal-middle {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 24px 24px 24px;
+  box-sizing: border-box;
+}
+
+.wallet-adapter-modal-middle-button {
+  display: block;
+  cursor: pointer;
+  margin-top: 48px;
+  width: 100%;
+  background-color: #512da8;
+  padding: 12px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.featureSectionAnimated {
+  opacity: 0;
+  filter: blur(5px);
+  transform: translateX(-100%);
+}
+
+.showAnimation {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateX(0);
+}
+
+@media (prefers-reduced.motion) {
+  .hidden {
+    transition: none;
+  }
+}
+
+.carrouselEpisodesSection {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' viewBox='0 0 800 800' opacity='1'%3E%3Cdefs%3E%3ClinearGradient x1='50%25' y1='0%25' x2='50%25' y2='100%25' id='uundulate-grad'%3E%3Cstop stop-color='hsl(37, 99%25, 67%25)' stop-opacity='1' offset='45%25'%3E%3C/stop%3E%3Cstop stop-color='hsl(316, 73%25, 52%25)' stop-opacity='1' offset='100%25'%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Cg stroke-width='3' stroke='url(%23uundulate-grad)' fill='none'%3E%3Cpath d='M671.5448095597509 342.6912439930909C708.1427902151408 504.44589307367244 819.9989261346468 711.7805437154973 772.3929845865193 779.6750869507594C724.7870430383919 847.5696301860214 545.2380264914942 710.7037153736051 443.0362901287399 668.5850515223493C340.83455376598545 626.4663876710933 370.6454198786039 643.308597704877 281.8246500452992 577.5055004647305C193.00388021199456 511.70240322458426 3.062959617941374 421.9390688505222 16.696594928878028 352.73018476964694C30.330230239814682 283.5213006887717 226.42733234784293 318.1106513360454 347.2660995377953 245.30285687652872C468.10486672774755 172.49506241701204 529.1646128527409 -17.03647595198305 596.7226774406485 3.252771363967213C664.2807420285559 23.54201867991742 634.9468289043609 180.93659491250924 671.5448095597509 342.6912439930909C708.1427902151408 504.44589307367244 819.9989261346468 711.7805437154973 772.3929845865193 779.6750869507594 '%3E%3C/path%3E%3Cpath d='M660.2304679260764 345.07912027080386C695.303532720825 500.0939923063613 802.4989963103515 698.7896991714434 756.8766356600627 763.8553031052361C711.254275009774 828.9209070390289 539.1864674856638 697.7577386771301 441.2431368046907 657.3940191530098C343.2998061237179 617.0302996288896 371.8685528149772 633.1707509112656 286.74864839139354 570.1094493894586C201.62874396780984 507.04814786765166 19.602028398508935 421.02495242584223 32.66759557148987 354.6997718483367C45.73316274447086 288.3745912708314 233.65955226466463 321.5227189744687 349.46337082170226 251.7485826174318C465.2671893787399 181.97444626039498 523.7827794151917 0.34005532344139056 588.5259246452698 19.783917334560385C653.2690698753478 39.22777934567932 625.1574031313277 190.0642482352464 660.2304679260764 345.07912027080386C695.303532720825 500.0939923063613 802.4989963103515 698.7896991714434 756.8766356600627 763.8553031052361 '%3E%3C/path%3E%3Cpath d='M648.91615680998 347.4669660309387C682.4643057440875 495.74206102147184 784.9990970036345 685.7988241098113 741.3603172511844 748.0354887421349C697.7215374987343 810.2721533744584 533.1349389974114 684.8117314630769 439.4500139982199 646.2029562660922C345.7650889990284 607.5941810691077 373.0917162689285 623.0328736000761 291.6726772550659 562.7133677966085C210.25363824120325 502.39386199314094 36.14112769665462 420.11080548358416 48.638626731679835 356.66932840944844C61.136125766705106 293.22785133531283 240.89180269906433 324.9347560953138 351.66067262318734 258.19427784075685C462.42954254731035 191.4537995861998 518.4009764952209 17.716556081287706 580.3292023674694 36.31503278757543C642.2574282397179 54.9135094938631 615.3680078758724 199.1918710404056 648.91615680998 347.4669660309387C682.4643057440875 495.74206102147184 784.9990970036345 685.7988241098113 741.3603172511844 748.0354887421349 '%3E%3C/path%3E%3Cpath d='M637.6016931059929 349.8548728262299C669.6249261794592 491.39019077173884 767.4990451090266 672.8080100833355 725.8438462544152 732.2157354141897C684.1886473998038 791.623460745044 527.0832579212683 671.8657852841799 437.65673860385834 635.011954414331C348.23021928644823 598.158123544482 374.3147271349893 612.8950573240428 296.5965535308477 555.3173472389146C218.8783799267061 497.7396371537866 52.680074406909625 419.19671957648234 64.60950530397923 358.63894600571643C76.53893620104878 298.08117243495053 248.12390054557352 328.3468542513151 353.8578218367818 264.64003409923794C459.59174312799007 200.93321394716088 513.0190209873592 35.093117874290215 572.1323275017784 52.84620927574667C631.2456340161974 70.59930067720313 605.5784600325268 208.31955488072094 637.6016931059929 349.8548728262299C669.6249261794592 491.39019077173884 767.4990451090266 672.8080100833355 725.8438462544152 732.2157354141897 '%3E%3C/path%3E%3Cpath d='M626.2873514723184 352.2426880687866C656.7856686851434 487.03822896927124 749.9991152847317 659.8171045041253 710.3274973279588 716.3958905335104C670.655879371186 772.9746765628952 521.0316989154378 658.9197475525485 435.8635852798093 623.8208610098352C350.69547164418066 588.721974467122 375.5378600713626 602.757149495275 301.520551876942 547.9212351284864C227.50324368252143 493.08532076169774 69.21914318747719 418.282542116646 80.58050594659107 360.60847204924994C91.94186870570496 302.93440198185397 255.3561204623952 331.75886085458205 356.05509312068875 271.0856988049849C456.7540657789824 210.41253675538763 507.63718754981016 52.469588114558405 563.9355747063997 69.3772942111836C620.2339618629893 86.28500030780879 595.7890342594935 217.44714716830197 626.2873514723184 352.2426880687866C656.7856686851434 487.03822896927124 749.9991152847317 659.8171045041253 710.3274973279588 716.3958905335104 '%3E%3C/path%3E%3Cpath d='M614.9729793210658 354.63053382892144C643.9463806732496 482.686297684382 732.4991549428582 646.8262294424932 694.8111178839241 700.576076170409C657.12308082499 754.3259228983247 514.9801093920292 645.9737403384953 434.070401438182 612.6297981229177C353.16069348433484 579.2858559073401 376.7609624901577 592.6192721840855 306.4445197054582 540.5251535356363C236.12807692075864 488.431034887187 85.75818145046662 417.36839517438796 96.55147607162479 362.5780286103618C107.34477069278296 307.7876620463355 262.58830986163866 335.17089797542724 358.2523338870176 277.5313940283098C453.9163579123965 219.89189008119246 502.255323594683 69.84608887240472 555.738791393443 85.90840966419864C609.2222591922031 101.97073045599257 585.999577968882 226.57476997346106 614.9729793210658 354.63053382892144C643.9463806732496 482.686297684382 732.4991549428582 646.8262294424932 694.8111178839241 700.576076170409 '%3E%3C/path%3E%3Cpath d='M603.6586376873913 357.0183795890564C631.1071231789336 478.33436639949264 714.9992251185632 633.8353543808613 679.2947689574676 684.7562618073077C643.590312796372 735.6771692337543 508.9285503861987 633.0277331244422 432.27724811413304 601.4387352360002C355.62594584206727 569.8497373475583 377.984095426531 582.481394872896 311.36851805155254 533.1290719427861C244.75294067657399 483.7767490126764 102.29725023103418 416.4542482321299 112.52247671423663 364.54758517147343C122.74770319743914 312.6409221108171 269.82052977846035 338.5829350962723 360.44960517092454 283.9770892516349C451.07868056338884 229.37124340699734 496.8734901571338 87.22258963025104 547.5420385980644 102.43952511721369C598.2105870389951 117.65646060417635 576.2101521958489 235.70239277862015 603.6586376873913 357.0183795890564C631.1071231789336 478.33436639949264 714.9992251185632 633.8353543808613 679.2947689574676 684.7562618073077 '%3E%3C/path%3E%3Cpath d='M592.3442655361387 359.4062863843476C618.2678351670398 473.9824961497595 697.4992647766899 620.8445403543856 663.7783895134329 668.9365084793627C630.057514250176 717.02847660434 502.87696086279016 620.0817869455452 430.48406427250586 590.2477333842389C358.09116768222145 560.4136798229326 379.20719784532616 572.3435785968627 316.2924858800686 525.7330513850923C253.3777739148112 479.12252417332206 118.83628849402356 415.5401623250282 128.49344683927035 366.5172027677414C138.1506051845172 317.4942432104548 277.05271917770386 341.99503325227374 362.6468459372534 290.4228455101161C448.24097269680306 238.8506577679584 491.4916262020067 104.59915142325355 539.3452552851078 118.97070160538499C587.1988843682088 133.34225178751637 566.4206959052374 244.83007661893555 592.3442655361387 359.4062863843476C618.2678351670398 473.9824961497595 697.4992647766899 620.8445403543856 663.7783895134329 668.9365084793627 '%3E%3C/path%3E%3Cpath d='M581.0298323497298 361.79413214448243C605.4284861199897 469.63056486487017 679.9992433996603 607.8536652927535 648.261949034242 653.1166941162614C616.5246546688238 698.3797229397694 496.82531030422524 607.135779731492 428.69081939572243 579.0566704973214C360.5563284872195 550.9775612631507 380.4302392289651 562.2057012856732 321.2163926734286 518.3369697922423C262.00254611789217 474.46823829881134 135.37526572185675 414.62601538277 144.46435592914787 368.48675932885317C153.55344613643894 322.34750327493634 284.2848475417911 345.4070703731188 364.84402566842596 296.868540733441C445.4032037950609 248.33001109376323 486.1097012117232 121.97565218109986 531.1484109369948 135.50181705840004C576.1871206622665 149.02798193570015 556.6311785794699 253.9576994240947 581.0298323497298 361.79413214448243C605.4284861199897 469.63056486487017 679.9992433996603 607.8536652927535 648.261949034242 653.1166941162614 '%3E%3C/path%3E%3Cpath d='M569.7155212336334 364.1820389397735C592.5892591432521 465.27869461513706 662.4993440929431 594.8628512662776 632.7456306253637 637.2969407883163C602.991917157784 679.7310303103551 490.77378181597294 594.189833552595 426.8976965892514 567.8656686455599C363.02161136253005 541.5415037385251 381.6534026829165 552.0678850096399 326.140421537101 510.9409492345484C270.62744039128563 469.8140134594569 151.91436502000244 413.71192947566817 160.43538708933784 370.45637692512105C168.95640915867324 327.20082437457404 291.51709797619094 348.81916852912013 367.04132746991115 303.3142969919222C442.56555696363125 257.8094254547243 480.7278982917521 139.35221397410243 522.9516886591944 152.03299354657128C565.1754790266365 164.71377311904018 546.8417833240146 263.08538326441004 569.7155212336334 364.1820389397735C592.5892591432521 465.27869461513706 662.4993440929431 594.8628512662776 632.7456306253637 637.2969407883163 '%3E%3C/path%3E%3Cpath d='M558.4011795999588 366.5698694411194C579.7500016489364 460.92674807145863 644.999414268648 581.8719609458565 617.229281698907 621.477111166426C589.4591491291662 661.0822613869955 484.7222228101425 581.2438110797527 425.10454326520244 556.6745904998535C365.48686372026236 532.1053699199542 382.8765356192898 541.9299924396614 331.06441988319534 503.5448523829092C279.252304147101 465.1597123261572 168.45343380057 412.79776727462104 176.40638773194968 372.42591822744384C184.35934166332942 332.05406918026654 298.7493178930126 352.23119039117626 369.2385987538181 309.75997695645816C439.7278796146236 267.28876352174007 475.34606485420306 156.72869947315962 514.7549358638157 168.56409374079726C554.1638068734285 180.3994880084349 537.0523575509814 272.2129908107801 558.4011795999588 366.5698694411194C579.7500016489364 460.92674807145863 644.999414268648 581.8719609458565 617.229281698907 621.477111166426 '%3E%3C/path%3E%3Cpath d='M547.0867921899171 368.9578067539886C566.9106983782533 456.57490833930365 627.4994386679857 568.8811774369588 601.7128869960834 605.6573883560591C575.9263353241811 642.4335992751594 478.6706180279448 568.2978954184339 423.3113441647862 545.4836191656702C367.9520703016276 522.6693429129066 384.0996227792958 531.7922066812062 335.9883724529225 496.14886234279356C287.8771221265491 460.50551800438086 184.9924568047703 411.8837118850972 192.37734259819433 374.39556634128985C199.76222839161835 336.9074207974824 305.981492033467 355.6433190647557 371.4358242613579 316.20576373251754C436.89015648924874 276.76820840027926 469.9641856402868 174.1052917837403 506.55813729207 185.09530074654668C543.1520889438532 196.08530970935306 527.2628860015809 281.3407051686736 547.0867921899171 368.9578067539886C566.9106983782533 456.57490833930365 627.4994386679857 568.8811774369588 601.7128869960834 605.6573883560591 '%3E%3C/path%3E%3Cpath d='M535.7724047798754 371.34562199654545C554.0713951075704 452.22294653683616 609.9994630673234 555.8902718577486 586.1964922932597 589.8375434753797C562.3935215191959 623.7848150930107 472.61901324574706 555.3518576868025 421.51814506436995 534.2925257611746C370.4172768829927 513.2331938355467 385.32270993930194 521.6542988524385 340.9123250226496 488.7527502323653C296.5019401059973 455.85120161229213 201.5314798089707 410.96953442526114 208.34829746443904 376.36509238482347C215.16511511990734 341.76065034438585 313.21366617392147 359.0553256680227 373.63304976889765 322.65142843826436C434.0524333638738 286.247531208506 464.58230642637045 191.4817620240085 498.3613387203243 201.6263856819836C532.1403710142779 211.7710093399587 517.4734144521805 290.4682974562546 535.7724047798754 371.34562199654545C554.0713951075704 452.22294653683616 609.9994630673234 555.8902718577486 586.1964922932597 589.8375434753797 '%3E%3C/path%3E%3Cpath d='M524.4580631462009 373.73348301546935C541.2321376132547 447.87103051073586 592.4995332430282 542.8994120549057 570.6801433668031 574.0177443710675C548.8607534905781 605.1360766872292 466.56745423991663 542.4058657315384 419.7249917403209 523.1014781330462C372.88252924072515 503.79709053455383 386.5458428756752 511.51643680003804 345.8363233687439 481.35668389830425C305.12680386181256 451.1969309965705 218.07054858953825 410.055402741792 224.31929810705088 378.3346642047242C230.56804762456352 346.6139256676564 320.4458860907431 362.4673780476569 375.8303210528046 329.0971389203784C431.2147560148661 295.7268997930999 459.2004729888214 208.85827804064382 490.16458592494564 218.15751639378772C521.1286988610699 227.45675474693155 507.6839886791472 299.59593552020283 524.4580631462009 373.73348301546935C541.2321376132547 447.87103051073586 592.4995332430282 542.8994120549057 570.6801433668031 574.0177443710675 '%3E%3C/path%3E%3Cpath d='M513.1436757361591 376.1213440343933C528.3928343425716 443.51911448463557 574.9995576423659 529.9085522520627 555.1637486639794 558.1979452667551C535.327939685593 586.4873382814476 460.5158494577189 529.4598737762742 417.93179263990464 511.9104305049176C375.3477358220903 494.360987233561 387.7689300356813 501.37857474763746 350.760275938471 473.9606175642432C313.7516218412607 446.54266038084893 234.60957159373862 409.141271058323 240.29025297329554 380.30423602462497C245.97093435285245 351.467200990927 327.6780602311976 365.879430427291 378.0275465603444 335.54284940249244C428.37703288949115 305.20626837769385 453.81859377490514 226.2347940572792 481.9677873531998 234.68864710559183C510.1169809314947 243.1425001539044 497.89451712974676 308.723573584151 513.1436757361591 376.1213440343933C528.3928343425716 443.51911448463557 574.9995576423659 529.9085522520627 555.1637486639794 558.1979452667551 '%3E%3C/path%3E%3Cpath d='M501.8293035849066 378.50920505331726C515.5535463306778 439.1671984585354 557.4995973004925 516.9176924492197 539.6473692199447 542.3781461624429C521.795141139397 567.8385998756662 454.46425993431035 516.5138818210102 416.13860879827746 500.71938287678915C377.81295766224457 484.92488393256826 388.99203245447643 491.2407126952371 355.6842437669872 466.56455123018213C322.37645507949793 441.8883897651273 251.148609856728 408.227139374854 256.26122309832925 382.2738078445258C261.3738363399305 356.3204763141976 334.9102496304411 369.2914828069252 380.2247873266732 341.9885598846065C425.53932502290536 314.68563696228773 448.43672981977784 243.61131007391458 473.77100404024316 251.21977781739588C499.1052782607085 258.82824556087724 488.1050608391354 317.85121164809914 501.8293035849066 378.50920505331726C515.5535463306778 439.1671984585354 557.4995973004925 516.9176924492197 539.6473692199447 542.3781461624429 '%3E%3C/path%3E%3Cpath d='M490.514946692443 380.89709658981934C502.71427357757295 434.8153129500132 539.9996522174083 503.92686316395486 524.1310050346991 526.5583775757088C508.26235785199003 549.1898919874628 448.41268566969075 503.5679203833241 414.34544021543934 489.52836576623884C380.2781947611879 475.48881114915343 390.21515013206067 481.10288116041465 360.6082268542924 459.1685154136992C331.0013035765242 437.23414966698374 267.6876633785065 407.3130382089631 272.23220848215203 384.2434101820047C276.7767535857976 361.1737821550463 342.1424542884737 372.70356570413753 382.4220433517911 348.43430088429864C422.7016324151086 324.16503606445974 443.0548811234397 260.987856608128 465.57423598607556 267.7509390467781C488.0935908487113 274.5140214854282 478.31561980731306 326.9788802296255 490.514946692443 380.89709658981934C502.71427357757295 434.8153129500132 539.9996522174083 503.92686316395486 524.1310050346991 526.5583775757088 '%3E%3C/path%3E%3Cpath d='M479.20057454119035 383.2849270911652C489.87498556567914 430.4633664063348 522.499691875535 490.9359728435337 508.61462559066445 510.7385479538184C494.72955930579406 530.5411230641032 442.3610961462822 490.62189791048183 412.55225637381216 478.33728762053215C382.7434166013421 466.0526773305826 391.43825255085585 470.9649885904362 365.5321946828086 451.77241856206007C339.6261368147614 432.57984853368407 284.22670164149594 406.398876007916 288.2031786071858 386.2129514843274C292.1796555728756 366.02702696073874 349.3746436877172 376.1155875661936 384.61928411812 354.8799808488345C419.86392454852273 333.6443741314755 437.67301716831247 278.3643421071853 457.3774526731188 284.2820392410041C477.0818881779252 290.1997363748229 468.5261635167017 336.1064877759955 479.20057454119035 383.2849270911652C489.87498556567914 430.4633664063348 522.499691875535 490.9359728435337 508.61462559066445 510.7385479538184 '%3E%3C/path%3E%3Cpath d='M467.88621764872676 385.67281862766725C477.0357128125743 426.1114808978126 504.99974679245076 477.9451435582689 493.09826140541895 494.9187793670844C481.196776018387 511.89241517589994 436.3095218816626 477.6759364727958 410.75908779097404 467.14627050998183C385.2086537002854 456.61660454716787 392.66137022844003 460.8271570556138 370.45617777011387 444.3763827455772C348.2509853117877 427.9256084355406 300.76575516327443 405.4847748420251 304.1741639910086 388.18255382180627C307.58257281874273 370.88033280158743 356.60684834574977 379.5276704634059 386.8165401432379 361.3257218485267C417.02623194072595 343.1237732336475 432.2911684719743 295.7408886413988 449.1806846189512 300.81320047038633C466.070200765928 305.8855122993739 458.7367224848793 345.23415635752184 467.88621764872676 385.67281862766725C477.0357128125743 426.1114808978126 504.99974679245076 477.9451435582689 493.09826140541895 494.9187793670844 '%3E%3C/path%3E%3Cpath d='M456.5718454974741 388.06066438780215C464.19642480068035 421.75954961292325 487.49978645057746 464.9542684966368 477.5818819613842 479.09896500398304C467.66397747219105 493.24366151132926 430.257932358254 464.7299292587426 408.96590394934685 455.95520762306427C387.67387554043967 447.18048598738596 393.88447264723516 450.6892797444242 375.38014559863007 436.98030115272707C356.8758185500249 423.27132256102993 317.3047934262638 404.570627899767 320.1451341160423 390.15211038291795C322.9854748058208 375.733592866069 363.83903774499333 382.939707584251 389.0137809095667 367.77141707185166C414.1885240741401 352.6031265594524 426.9093045168471 313.1173893992451 440.98390130599444 317.3443159234014C455.0584980951419 321.57124244755767 448.9472661942679 354.36177916268093 456.5718454974741 388.06066438780215C464.19642480068035 421.75954961292325 487.49978645057746 464.9542684966368 477.5818819613842 479.09896500398304 '%3E%3C/path%3E%3Cpath d='M445.2574733462215 390.4485406655151C451.3571367887865 417.4076488456121 469.99982610870416 451.9634239525829 462.06550251734956 463.2791811584599C454.131178925995 474.5949383643369 424.2063428348454 451.78395256226753 407.17272010771967 444.7641752537249C390.13909738059397 437.7443979451822 395.10757506603034 440.5514329508128 380.3041134271462 429.58425007745507C365.5006517882621 418.61706720409734 333.84383168925325 403.65651147508703 336.116104241076 392.1216974616078C338.3883767928988 380.5868834481286 371.07122714423684 386.35177522267423 391.21102167589555 374.2171428127548C411.3508162075543 362.08251040283534 421.52744056171986 330.4939206746695 432.7871179930378 333.87546189399455C444.04679542435565 337.25700311331957 439.1578099036565 363.4894324854182 445.2574733462215 390.4485406655151C451.3571367887865 417.4076488456121 469.99982610870416 451.9634239525829 462.06550251734956 463.2791811584599 '%3E%3C/path%3E%3Cpath d='M433.9431164537579 392.83641694322813C438.51786403568167 413.05574807830084 452.4998810256199 438.972579408529 446.549138332104 447.45939731293674C440.59839563858804 455.9462152173445 418.1547685702258 438.83797586579243 405.37955152488155 433.57314288438545C392.6043344795373 428.30830990297846 396.3306927436146 430.4135861572014 385.22809651445147 422.1881990021831C374.12550028528835 413.9628118471648 350.38288521103175 402.7423950504071 352.0870896248988 394.0912845402977C353.7912940387659 385.44017403018825 378.3034318022694 389.7638428610975 393.4082777010135 380.6628685536579C408.51312359975753 371.5618942462183 416.1455918653817 347.8704519500939 424.59034993887013 350.40660786458767C433.03510801235853 352.9427637790815 429.36836887183415 372.6170858081554 433.9431164537579 392.83641694322813C438.51786403568167 413.05574807830084 452.4998810256199 438.972579408529 446.549138332104 447.45939731293674 '%3E%3C/path%3E%3Cpath d='M422.62872904371625 395.224262703363C425.67856076499874 408.7038167934115 434.99990542495755 425.9817043468969 431.0327436292803 431.6395829498354C427.06558183360295 437.29746155277394 412.10316378802816 425.89196865173926 403.5863524244653 422.3820799974679C395.06954106090245 418.87219134319656 397.55377990362064 420.27570884601187 390.1520490841786 414.792117409333C382.7503182647365 409.30852597265414 366.9219082152321 401.82824810814895 368.0580444911435 396.0608411014094C369.1941807670549 390.29343409466975 385.5356059427239 393.17587998194256 395.6055032085533 387.10856377698286C405.6754004743826 381.04124757202317 410.76371265146537 365.24695270794024 416.39355136712436 366.9377233176027C422.0233900827833 368.62849392726525 419.5788973224337 381.7447086133146 422.62872904371625 395.224262703363C425.67856076499874 408.7038167934115 434.99990542495755 425.9817043468969 431.0327436292803 431.6395829498354 '%3E%3C/path%3E%3Cpath d='M411.31437215125266 397.61213898107604C412.83928801189387 404.3519160261003 417.4999603418733 412.990859802843 415.51637944403467 415.8197991043122C413.53279854619603 418.6487384057815 406.0515895234086 412.94599195526416 401.7931838416272 411.1910476281285C397.53477815984576 409.43610330099284 398.7768975812048 410.13786205240046 395.0760321714838 407.39606633406106C391.3751667617628 404.6542706157216 383.46096173701056 400.914131683469 384.0290298749663 398.0304281800992C384.59709801292195 395.14672467672943 392.7678106007565 396.5879476203658 397.80275923367117 393.554289517886C402.83770786658584 390.5206314154061 405.38186395512724 382.6234839833646 408.1967833129567 383.4688692881959C411.0117026707862 384.31425459302716 409.7894562906114 390.8723619360518 411.31437215125266 397.61213898107604C412.83928801189387 404.3519160261003 417.4999603418733 412.990859802843 415.51637944403467 415.8197991043122 '%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 30%;
+  background-position-x: right;
+  background-position-y: center;
+}
+
+.topSvg {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' viewBox='0 0 800 800'%3E%3Cdefs%3E%3ClinearGradient x1='50%25' y1='0%25' x2='50%25' y2='100%25' id='nnneon-grad'%3E%3Cstop stop-color='hsl(157, 100%25, 54%25)' stop-opacity='1' offset='0%25'%3E%3C/stop%3E%3Cstop stop-color='hsl(331, 87%25, 61%25)' stop-opacity='1' offset='100%25'%3E%3C/stop%3E%3C/linearGradient%3E%3Cfilter id='nnneon-filter' x='-100%25' y='-100%25' width='400%25' height='400%25' filterUnits='objectBoundingBox' primitiveUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeGaussianBlur stdDeviation='17 8' x='0%25' y='0%25' width='100%25' height='100%25' in='SourceGraphic' edgeMode='none' result='blur'%3E%3C/feGaussianBlur%3E%3C/filter%3E%3Cfilter id='nnneon-filter2' x='-100%25' y='-100%25' width='400%25' height='400%25' filterUnits='objectBoundingBox' primitiveUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeGaussianBlur stdDeviation='10 17' x='0%25' y='0%25' width='100%25' height='100%25' in='SourceGraphic' edgeMode='none' result='blur'%3E%3C/feGaussianBlur%3E%3C/filter%3E%3C/defs%3E%3Cg stroke-width='16' stroke='url(%23nnneon-grad)' fill='none'%3E%3Cpath d='M375.241557778823 70.14878247490125C385.384706562465 49.652550455668404 414.6153167009451 49.652550455668404 424.7584654845871 70.14878247490125L739.0993974377737 705.3496635733758C748.1845870754094 723.7078789372331 734.826126422443 745.2233979665868 714.3437058803121 745.2233979665868H85.65631738309793C65.1738968409669 745.2233979665868 51.81543618800072 723.7078789372331 60.90062582563638 705.3496635733758L375.241557778823 70.14878247490125Z ' filter='url(%23nnneon-filter)'%3E%3C/path%3E%3Cpath d='M387.241557778823 70.14878247490125C397.384706562465 49.652550455668404 426.6153167009451 49.652550455668404 436.7584654845871 70.14878247490125L751.0993974377737 705.3496635733758C760.1845870754094 723.7078789372331 746.826126422443 745.2233979665868 726.3437058803121 745.2233979665868H97.65631738309793C77.1738968409669 745.2233979665868 63.81543618800072 723.7078789372331 72.90062582563638 705.3496635733758L387.241557778823 70.14878247490125Z ' filter='url(%23nnneon-filter2)' opacity='0.25'%3E%3C/path%3E%3Cpath d='M363.241557778823 70.14878247490125C373.384706562465 49.652550455668404 402.6153167009451 49.652550455668404 412.7584654845871 70.14878247490125L727.0993974377737 705.3496635733758C736.1845870754094 723.7078789372331 722.826126422443 745.2233979665868 702.3437058803121 745.2233979665868H73.65631738309793C53.173896840966904 745.2233979665868 39.81543618800072 723.7078789372331 48.90062582563638 705.3496635733758L363.241557778823 70.14878247490125Z ' filter='url(%23nnneon-filter2)' opacity='0.25'%3E%3C/path%3E%3Cpath d='M375.241557778823 70.14878247490125C385.384706562465 49.652550455668404 414.6153167009451 49.652550455668404 424.7584654845871 70.14878247490125L739.0993974377737 705.3496635733758C748.1845870754094 723.7078789372331 734.826126422443 745.2233979665868 714.3437058803121 745.2233979665868H85.65631738309793C65.1738968409669 745.2233979665868 51.81543618800072 723.7078789372331 60.90062582563638 705.3496635733758L375.241557778823 70.14878247490125Z '%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 60%;
+  background-position: center;
+}
+
+#cards {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 32px;
+  padding: 0 32px;
+  max-width: 896px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+#cards:hover > .card::after {
+  opacity: 1;
+}
+.card {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 320px;
+  padding: 0 32px;
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.card::before,
+.card::after {
+  border-radius: inherit;
+  content: '';
+  height: 100%;
+  left: 0px;
+  opacity: 0;
+  position: absolute;
+  top: 0px;
+  transition: opacity 500ms;
+  width: 100%;
+}
+
+.card::before {
+  background: radial-gradient(
+    800px circle at var(--mouse-x) var(--mouse-y),
+    rgba(255, 255, 255, 0.06),
+    transparent 40%
+  );
+  z-index: 3;
+}
+
+.card::after {
+  background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.1), transparent 40%);
+  z-index: 1;
+}
+
+.card > .card-content {
+  background-color: var(--card-color);
+  border-radius: inherit;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  inset: 1px;
+  padding: 10px;
+  position: absolute;
+  z-index: 2;
+}
+
+.card-image {
+  align-items: center;
+  display: flex;
+  height: 32px;
+  width: 32px;
+  margin: 10px auto 0;
+  justify-content: center;
+  overflow: hidden;
+}
