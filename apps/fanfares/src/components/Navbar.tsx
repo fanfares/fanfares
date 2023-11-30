@@ -1,4 +1,5 @@
 // import { FAProSolid, FontAwesomeIcon } from '@excalibur/config/fontawesome';
+import { FAProSolid, FontAwesomeIcon } from "@excalibur/config/fontawesome"
 import { IconDefinition } from "@fortawesome/free-brands-svg-icons"
 // import { Keypair } from '@solana/web3.js';
 import Image from "next/image"
@@ -6,31 +7,31 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 // import { useAppState } from 'src/controllers/state/use-app-state';
 // import { E2EID } from 'src/controllers/utils/e2e-ids';
-import LoginLogoutButton from "src/views/components/LoginLogoutButton"
+// import LoginLogoutButton from "src/views/components/LoginLogoutButton"
 
-import { contentfulLoader } from "../../controllers/utils/image-loader"
-import { HexagonPFP } from "./HexagonPFP"
+// import { contentfulLoader } from "../../controllers/utils/image-loader"
+// import { HexagonPFP } from "./HexagonPFP"
 
 export function Navbar() {
   // const [showMobileMenu, setShowMobileMenu] = useState(false);
 
-  const { asPath: currentPath } = useRouter()
+  // const { asPath: currentPath } = useRouter()
 
   // const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  const { balance, publicKey, currentCreatorHasUserAccount, playerMediaKey } =
-    useAppState()
+  // const { balance, publicKey, currentCreatorHasUserAccount, playerMediaKey } =
+  //   useAppState()
 
-  const getCreatorPlug = () => {
-    return `/creator/${publicKey?.toString() ?? "owner"}`
-  }
+  // const getCreatorPlug = () => {
+  //   return `/creator/${publicKey?.toString() ?? "owner"}`
+  // }
 
-  const needHelp = () => {
-    // setShowMobileMenu(false);
-    router.push(
-      `/support?startingTab=ContactUs&tick=${Keypair.generate().publicKey.toString()}`
-    )
-  }
+  // const needHelp = () => {
+  //   // setShowMobileMenu(false);
+  //   router.push(
+  //     `/support?startingTab=ContactUs&tick=${Keypair.generate().publicKey.toString()}`
+  //   )
+  // }
 
   // const toggleMobileMenu = () => {
   //   setShowMobileMenu(!showMobileMenu);
@@ -147,20 +148,21 @@ export function Navbar() {
   //   );
   // };
 
-  const isCurrentLink = (href: string) => {
-    return (
-      (currentPath === "/" && href === "/") ||
-      (href !== "/" && currentPath.includes(href.split("/")[1]))
-    )
-  }
+  // const isCurrentLink = (href: string) => {
+  //   return (
+  //     (currentPath === "/" && href === "/") ||
+  //     (href !== "/" && currentPath.includes(href.split("/")[1]))
+  //   )
+  // }
 
   const renderDesktopNavLink = (
     href: string,
     title: string,
     icon: FAProSolid.IconDefinition,
-    id?
+    id?: string,
   ) => {
-    const isCurrent = isCurrentLink(href)
+    // const isCurrent = isCurrentLink(href)
+    const isCurrent = false
 
     return (
       <Link className="group" href={href} passHref>
@@ -192,7 +194,7 @@ export function Navbar() {
         <div className="flex items-center justify-center mx-auto bg-transparent rounded w-fit">
           <Link href="/">
             <Image
-              loader={contentfulLoader}
+              // loader={contentfulLoader}
               className="cursor-pointer"
               src={"/assets/excalibur.png"}
               alt=""
@@ -210,7 +212,7 @@ export function Navbar() {
             FAProSolid.faCloudArrowUp,
             "click-to-upload"
           )}
-          {renderDesktopNavLink(
+          {/* {renderDesktopNavLink(
             `/player/${playerMediaKey?.toString() ?? "demo"}`,
             "Player",
             FAProSolid.faPodcast
@@ -224,7 +226,7 @@ export function Navbar() {
                 "Creator",
                 FAProSolid.faUser
               )
-            : null}
+            : null} */}
           {renderDesktopNavLink(
             "/support/",
             "Support",
@@ -232,22 +234,24 @@ export function Navbar() {
           )}
         </div>
 
-        <LoginLogoutButton />
+        {/* <LoginLogoutButton /> */}
 
         <div className="mt-auto left-5">
-          <HexagonPFP />
+          {/* <HexagonPFP /> */}
           <p className="flex flex-col mt-2 text-sm font-black">
-            <span id={E2EID.navbarBalance}>
+            {/* <span id={E2EID.navbarBalance}> */}
+            {/* <span >
               {balance === null ? "" : balance.toFixed(5)}
             </span>
             <span id="e2e-balance-status" className="font-thin text-skin-muted">
               {balance === null ? "No wallet connected" : "SOL"}
-            </span>
+            </span> */}
           </p>
         </div>
-        <div className={`static left-5 h-10 ${publicKey ? "mt-3" : ""}`}>
+        {/* <div className={`static left-5 h-10 ${publicKey ? "mt-3" : ""}`}> */}
+        <div className={`static left-5 h-10 `}>
           <p
-            onClick={needHelp}
+            // onClick={needHelp}
             className="flex flex-col mt-2 text-sm font-black">
             <span
               id="e2e-balance-status"
@@ -265,7 +269,8 @@ export function Navbar() {
     icon: IconDefinition,
     text: string
   ) => {
-    const isCurrent = isCurrentLink(href)
+    // const isCurrent = isCurrentLink(href)
+    const isCurrent = false
 
     return (
       <Link passHref href={href} arial-label={text}>
@@ -291,19 +296,19 @@ export function Navbar() {
     return (
       <div className="fixed bottom-0 z-40 flex flex-row items-center justify-between w-screen h-16 space-x-4 overflow-hidden border-t-2 border-buttonAccentHover bg-transparent/60 backdrop-blur-md md:hidden">
         <div className="flex w-full justify-evenly">
-          {renderMobileLink1(
+          {/* {renderMobileLink1(
             `/player/${playerMediaKey?.toString() ?? "demo"}`,
             FAProSolid.faPlayCircle,
             "Listen"
-          )}
+          )} */}
           {renderMobileLink1("/discover", FAProSolid.faCompass, "Discover")}
           {renderMobileLink1("/upload", FAProSolid.faCloudArrowUp, "Upload")}
           {/* {publicKey !== null ? renderMobileLink1('/wallet', FAProSolid.faWallet, 'Wallet') : null} */}
           {renderMobileLink1("/wallet", FAProSolid.faWallet, "Wallet")}
           {/* {renderMobileLink1(getCreatorPlug(), FAProSolid.faUser, 'Creator')} */}
-          {currentCreatorHasUserAccount
+          {/* {currentCreatorHasUserAccount
             ? renderMobileLink1(getCreatorPlug(), FAProSolid.faUser, "Creator")
-            : null}
+            : null} */}
         </div>
       </div>
     )

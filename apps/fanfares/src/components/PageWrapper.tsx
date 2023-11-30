@@ -1,3 +1,4 @@
+'use client';
 import Head from "next/head"
 import { useRouter } from "next/navigation"
 import { ReactNode } from "react"
@@ -28,14 +29,14 @@ const PageWrapper = (props: PageWrapperProps) => {
     noIndex,
     pagePublishDateUnix,
   } = props
-  const config = getConfig()
+  // const config = getConfig()
   const router = useRouter()
   const title = pageTitle ?? DEFAULT_PAGE_TITLE
   const author = pageAuthor
   const publishDate = pagePublishDateUnix
   const description = pageDescription ?? DEFAULT_PAGE_DESCRIPTION
-  const photoUrl = pagePhotoUrl ?? config.defaultMediaThumbnailUrl
-  const url = "https://excalibur.fm" + router.asPath
+  // const photoUrl = pagePhotoUrl ?? config.defaultMediaThumbnailUrl
+  // const url = "https://excalibur.fm" + router.asPath
 
   return (
     <>
@@ -45,31 +46,31 @@ const PageWrapper = (props: PageWrapperProps) => {
         <title>{title}</title>
         {noIndex ? <meta name="robots" content="noindex" /> : null}
         <meta key="description" name="description" content={description} />
-        <link rel="canonical" href={url} />
+        {/* <link rel="canonical" href={url} /> */}
         {author ? <meta name="author" content={author} /> : null}
-        {publishDate ? (
+        {/* {publishDate ? (
           <meta
             name="publish_date"
             property="og:publish_date"
             content={unixToPublishDate(publishDate)}
           />
-        ) : null}
-        <meta property="og:url" content={url} />
+        ) : null} */}
+        {/* <meta property="og:url" content={url} /> */}
         <meta property="og:type" content="website" />
         <meta property="og:title" content={title} />
         <meta property="og:site_name" content="Excalibur FM" />
         <meta property="og:description" content={description} />
-        <meta property="og:image" content={photoUrl} />
-        <meta
+        {/* <meta property="og:image" content={photoUrl} /> */}
+        {/* <meta
           property="og:image:alt"
           content={config.defaultMediaThumbnailUrl}
-        />
+        /> */}
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:site" content="@ExcaliburDao" />
         <meta name="twitter:creator" content="@ExcaliburDao" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={photoUrl} />
+        {/* <meta name="twitter:image" content={photoUrl} /> */}
         <meta name="theme-color" content="#ffffff" />
       </Head>
       <div className="flex w-full App">

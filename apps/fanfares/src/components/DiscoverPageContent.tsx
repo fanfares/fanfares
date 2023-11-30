@@ -91,13 +91,13 @@ function DiscoverPageContent() {
   const renderPodcastTileGrid = () => {
     return (
       <div className="flex flex-wrap justify-center gap-3 mt-4 md:justify-start md:gap-4">
-        {filteredPodcasts.map(MediaMetadata => {
+        {/* {filteredPodcasts.map(MediaMetadata => {
           return renderPodcastTile({
             tileKey: MediaMetadata.media_key,
             metadata: MediaMetadata,
             playerUrl: getPlayerUrl(MediaMetadata.media_key),
           })
-        })}
+        })} */}
       </div>
     )
   }
@@ -107,11 +107,11 @@ function DiscoverPageContent() {
     return (
       <div key={props.tileKey} id={id} className="">
         {/* <LazyLoad placeholder={<DiscoveryMediaTileLoading />}> */}
-        <DiscoveryMediaTile
+        {/* <DiscoveryMediaTile
           tileKey={props.tileKey}
           metadata={props.metadata}
           playerUrl={props.playerUrl}
-        />
+        /> */}
         {/* </LazyLoad> */}
       </div>
     )
