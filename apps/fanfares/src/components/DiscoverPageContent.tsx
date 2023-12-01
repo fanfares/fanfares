@@ -6,11 +6,14 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 // import { isMediaBlacklisted } from 'src/controllers/firebase/media-blacklist';
 // import { useAppState } from 'src/controllers/state/use-app-state';
 // import LazyLoad from '../../components/LazyLoad';
+import Image from "next/image"
+
 import {
   DiscoveryMediaTile,
   DiscoveryMediaTileProps,
 } from "./DiscoveryMediaTile"
 import DiscoveryMediaTileLoading from "./DiscoveryMediaTileLoading"
+import Link from "next/link"
 
 export interface DiscoveryMediaInfo extends Metadata {
   media_key: string
@@ -98,6 +101,35 @@ function DiscoverPageContent() {
             playerUrl: getPlayerUrl(MediaMetadata.media_key),
           })
         })} */}
+        <Link href={""}>
+          <div className="e2e-podcast-tile group h-60 w-40 cursor-pointer flex-col items-center justify-start rounded-lg border border-white/[10%] p-2 transition duration-300 ease-linear hover:scale-105 hover:bg-black/[10%] md:flex md:h-64 md:w-40">
+            <div className="relative w-full transition duration-300 rounded-lg group/playButton h-36 group-hover:brightness-110">
+              {/* //should be IMAGE, this is just mocking */}
+              <img
+                // priority
+                // loader={contentfulLoader}
+                src={
+                  "https://www.partnershipprojectsuk.com/wp-content/uploads/2020/08/Neon-podcast-logo.jpg"
+                }
+                alt={" thumbnail"}
+                // layout="fill"
+                // objectFit="cover"
+                className="object-cover h-full rounded-md drop-shadow-2xl"
+              />
+            </div>
+            <div className="mt-2 flex  w-full flex-col items-start border-white/[10%]">
+              <h2 className="e2e-podcast-title mt-2 w-[130px] truncate px-1 text-xs font-bold uppercase  leading-[18px] md:w-[140px] md:text-sm">
+                {/* {metadataNameSlicer()} */}
+                Name
+              </h2>
+              <p className="e2e-podcast-title mt-1 h-8 w-full overflow-clip px-1 text-xs font-thin leading-[18px] line-clamp-2 ">
+                description
+              </p>
+            </div>
+            {/* {renderDateAndTime()} */}
+            01/01/01 01:01
+          </div>
+        </Link>
       </div>
     )
   }
@@ -107,11 +139,11 @@ function DiscoverPageContent() {
     return (
       <div key={props.tileKey} id={id} className="">
         {/* <LazyLoad placeholder={<DiscoveryMediaTileLoading />}> */}
-        {/* <DiscoveryMediaTile
+        <DiscoveryMediaTile
           tileKey={props.tileKey}
           metadata={props.metadata}
           playerUrl={props.playerUrl}
-        /> */}
+        />
         {/* </LazyLoad> */}
       </div>
     )
