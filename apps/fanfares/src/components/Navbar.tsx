@@ -190,7 +190,7 @@ export function Navbar() {
   const renderDesktopSideBar = () => {
     return (
       <div
-        className={`desktop-sidebar fixed z-40 hidden h-full w-52 flex-col  px-4 transition-all duration-100 ease-linear md:flex`}>
+        className={`desktop-sidebar fixed z-40 hidden h-full w-52 flex-col px-4 transition-all duration-100 ease-linear md:flex`}>
         <div className="flex items-center justify-center mx-auto bg-transparent rounded w-fit">
           <Link href="/">
             <Image
@@ -294,7 +294,7 @@ export function Navbar() {
 
   const renderMobileNav1 = () => {
     return (
-      <div className="fixed bottom-0 z-40 flex flex-row items-center justify-between w-screen h-16 space-x-4 overflow-hidden border-t-2 border-buttonAccentHover bg-transparent/60 backdrop-blur-md md:hidden">
+      <div className="fixed bottom-0 z-40 flex flex-row items-center justify-between w-screen h-16 space-x-4 overflow-hidden border-t-2 border-buttonAccentHover  md:hidden">
         <div className="flex w-full justify-evenly">
           {/* {renderMobileLink1(
             `/player/${playerMediaKey?.toString() ?? "demo"}`,

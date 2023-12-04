@@ -8,9 +8,7 @@ const PAGE_DESCRIPTION =
 
 const DiscoverPage: NextPage = () => {
   return (
-    <PageWrapper pageTitle={PAGE_TITLE} pageDescription={PAGE_DESCRIPTION}>
-      <DiscoverPageContent />
-    </PageWrapper>
+    <DiscoverPageContent />
   )
 }
 
