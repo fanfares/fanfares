@@ -38,11 +38,11 @@ export default function RootLayout({
       <body className="h-screen w-screen flex md:flex-row flex-col-reverse">
         {/* Desktop Navbar */}
         <div className="bg-red-500 md:block md:w-52">
-          <Navbar />
+          {/* <Navbar /> */}
         </div>
         {/* Mobile Navbar */}
         <div className="bg-purple-500 md:hidden h-16">
-          <MobileNavbar /> 
+          {/* <MobileNavbar />  */}
         </div>
         {/* Content */}
         <div className="bg-green-500 flex-1 p-10">
