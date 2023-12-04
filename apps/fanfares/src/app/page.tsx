@@ -1,6 +1,4 @@
-import PageWrapper from "@/components/PageWrapper"
 import DiscoverPage from "@/components/discover"
-
 
 export default function Home() {
   // ------------------- STATES -------------------------

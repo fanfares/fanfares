@@ -159,7 +159,7 @@ export function Navbar() {
     href: string,
     title: string,
     icon: FAProSolid.IconDefinition,
-    id?: string,
+    id?: string
   ) => {
     // const isCurrent = isCurrentLink(href)
     const isCurrent = false
@@ -171,7 +171,7 @@ export function Navbar() {
           className={`desktop-sidebar-item  group mx-auto w-48 cursor-pointer rounded-lg p-2 py-3 hover:text-buttonMuted  active:scale-95 active:text-skin-inverted ${
             isCurrent ? "text-buttonAccentHover" : "text-white"
           } flex items-center space-x-4`}>
-          <a
+          <Link
             className="flex items-center gap-2 group-hover:text-buttonMuted "
             href={href}>
             <FontAwesomeIcon
@@ -181,7 +181,7 @@ export function Navbar() {
               }`}
             />
             <span className="">{title}</span>
-          </a>
+          </Link>
         </div>
       </Link>
     )
@@ -278,14 +278,14 @@ export function Navbar() {
           className={`group flex cursor-pointer flex-col items-center active:scale-95 active:text-skin-inverted ${
             isCurrent ? "text-buttonAccentHover  " : "text-white"
           } `}>
-          <a className="flex items-center gap-2" href={href}>
+          <Link className="flex items-center gap-2" href={href}>
             <FontAwesomeIcon
               icon={icon}
               className={`flex w-10 justify-center text-xl group-hover:text-skin-muted  ${
                 isCurrent ? "text-buttonAccentHover" : "text-white"
               }`}
             />
-          </a>
+          </Link>
           <p className="mt-1 text-xs font-semibold"> {text}</p>
         </div>
       </Link>

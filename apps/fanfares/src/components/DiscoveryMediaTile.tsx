@@ -43,14 +43,6 @@ export function DiscoveryMediaTile(props: DiscoveryMediaTileProps) {
   //     return null
   //   }
 
-  return (
-    <div className="mb-1 ml-1 mr-1 flex flex-row items-center justify-between pt-2 text-xs font-bold leading-[12px] text-gray-500">
-      <Text>01/01/23</Text>
-      <FontAwesomeIcon icon={FAProSolid.faCircleSmall} className="text-[8px]" />
-      <Text>10 Min</Text>
-    </div>
-  )
-
   // const metadataNameSlicer = () => {
   //   if (metadata.name.length > 40) {
   //     return metadata.name.slice(0, 40) + "..."
@@ -89,15 +81,6 @@ export function DiscoveryMediaTile(props: DiscoveryMediaTileProps) {
     )
   }
 
-  const MockMedia = [
-    {
-      id: 0,
-      link: "",
-      img: "",
-      date: Date.now(),
-    },
-  ]
-
   const renderDiscoveryTileSmallScreen = () => {
     return (
       <Link href={""}>
@@ -132,6 +115,14 @@ export function DiscoveryMediaTile(props: DiscoveryMediaTileProps) {
       </Link>
     )
   }
+
+  // return (
+  //   <div className="mb-1 ml-1 mr-1 flex flex-row items-center justify-between pt-2 text-xs font-bold leading-[12px] text-gray-500">
+  //     <Text>01/01/23</Text>
+  //     <FontAwesomeIcon icon={FAProSolid.faCircleSmall} className="text-[8px]" />
+  //     <Text>10 Min</Text>
+  //   </div>
+  // )
 
   return (
     <Media
