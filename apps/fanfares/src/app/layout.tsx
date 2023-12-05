@@ -1,9 +1,7 @@
-import { Navbar } from "@/components/Navbar";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Media from "react-media";
-import { MobileNavbar } from "@/components/MobileNavbar";
+import { Providers } from "@/components/Providers";
 
 const inter = Inter({
   weight: ["400", "700", "900"],
@@ -27,8 +25,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
-
   // Layout should define
   // - size of section
   // - padding of contents
@@ -36,18 +32,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable}`}>
       <body className="h-screen w-screen flex md:flex-row flex-col-reverse">
-        {/* Desktop Navbar */}
-        <div className="bg-red-500 md:block md:w-52">
-          {/* <Navbar /> */}
-        </div>
-        {/* Mobile Navbar */}
-        <div className="bg-purple-500 md:hidden h-16">
-          {/* <MobileNavbar />  */}
-        </div>
-        {/* Content */}
-        <div className="bg-green-500 flex-1 p-10">
-          {children}
-        </div>
+        <Providers>
+          {/* Desktop Navbar */}
+          <div className="bg-red-500 md:block md:w-52">{/* <Navbar /> */}</div>
+          {/* Mobile Navbar */}
+          <div className="bg-purple-500 md:hidden h-16">
+            {/* <MobileNavbar />  */}
+          </div>
+          {/* Content */}
+          <div className="bg-green-500 flex-1 p-10">{children}</div>
+        </Providers>
       </body>
     </html>
   );

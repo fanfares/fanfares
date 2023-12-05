@@ -4,7 +4,7 @@ export default function TestPage1() {
   return (
     <>
       <p>Test Page 1</p>
-      <TestComponent content="page 1" />
+      <TestComponent content="page 1" toPage="/test0"/>
     </>
   );
 }

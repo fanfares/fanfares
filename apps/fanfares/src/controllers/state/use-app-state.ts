@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { NostrSlice, createNostrSlice } from './nostr-slice';
-import { StateStorage, createJSONStorage, persist } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
+import { useEffect } from 'react';
 
 
 export type CombinedState = NostrSlice;
@@ -16,6 +17,14 @@ export const useAppState = create<CombinedState>()(
     {
       name: 'nostr-app-state', // name of the item in the storage (must be unique)
       storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used
+
+      // WHAT TO PERSIST
+      partialize: (state) => ({ // What
+        nostrTest: state.nostrTest,
+      }),
+
+      // REHYDRATE
+      skipHydration: true,
       onRehydrateStorage: (state) => {
         console.log('hydration starts')
         // optional
@@ -28,6 +37,11 @@ export const useAppState = create<CombinedState>()(
         }
       },
     },
-    
   )
 );
+
+export function setupAppState(){
+  useEffect(() => {
+    useAppState.persist.rehydrate();
+}, []);
+}

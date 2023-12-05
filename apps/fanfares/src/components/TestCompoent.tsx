@@ -1,20 +1,24 @@
 'use client';
-import { useAppState } from "@/controllers/state/use-app-state"
+
+import { setupAppState, useAppState } from "@/controllers/state/use-app-state";
+import Link from "next/link";
+import { useEffect } from "react";
 
 export interface TestComponentProps {
-    content: string
+    content: string,
+    toPage: string,
 }
 
 export default function TestComponent(props: TestComponentProps){
-    const { content } = props
-    const { nostrState, changeNostrState } = useAppState()
+    const { content, toPage } = props
+    const { nostrTest, nostrSetTest } = useAppState();
 
-    const onPress = () => {
-        changeNostrState(content)
+    const onClick = () => {
+        nostrSetTest(content)
     }
 
     return <div>
-        <p onClick={onPress}>{nostrState}</p>
-        
+        <p onClick={onClick}>{nostrTest}</p>
+        <Link href={toPage} >To Next Page</Link>
     </div>
 }

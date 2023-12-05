@@ -8,7 +8,7 @@ const PAGE_DESCRIPTION =
 
 const DiscoverPage: NextPage = () => {
   return (
-    <DiscoverPageContent />
+  <DiscoverPageContent />
   )
 }
 
