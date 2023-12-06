@@ -1,6 +1,7 @@
-// import { FAProSolid, FontAwesomeIcon } from '@excalibur/config/fontawesome';
-import { FAProSolid, FontAwesomeIcon } from "@excalibur/config/fontawesome"
-import { IconDefinition } from "@fortawesome/free-brands-svg-icons"
+import * as test from '@fortawesome/pro-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IconDefinition, faQuestionCircle, faCloudArrowUp, faCompass, faWallet } from '@fortawesome/pro-solid-svg-icons';
+
 // import { Keypair } from '@solana/web3.js';
 import Image from "next/image"
 import Link from "next/link"
@@ -160,7 +161,7 @@ export function Navbar() {
   const renderDesktopNavLink = (
     href: string,
     title: string,
-    icon: FAProSolid.IconDefinition,
+    icon: IconDefinition,
     id?: string
   ) => {
     // const isCurrent = isCurrentLink(href)
@@ -205,11 +206,11 @@ export function Navbar() {
           </Link>
         </div>
         <div className="flex flex-col mx-auto mt-5 mb-20 space-y-4">
-          {renderDesktopNavLink("/discover", "Discover", FAProSolid.faCompass)}
+          {renderDesktopNavLink("/discover", "Discover", faCompass)}
           {renderDesktopNavLink(
             "/test",
             "Upload Audio",
-            FAProSolid.faCloudArrowUp,
+            faCloudArrowUp,
             "click-to-upload"
           )}
           {/* {renderDesktopNavLink(
@@ -230,7 +231,7 @@ export function Navbar() {
           {renderDesktopNavLink(
             "/support/",
             "Support",
-            FAProSolid.faQuestionCircle
+            faQuestionCircle
           )}
         </div>
 
@@ -301,10 +302,10 @@ export function Navbar() {
             FAProSolid.faPlayCircle,
             "Listen"
           )} */}
-          {renderMobileLink1("/discover", FAProSolid.faCompass, "Discover")}
-          {renderMobileLink1("/upload", FAProSolid.faCloudArrowUp, "Upload")}
+          {renderMobileLink1("/discover", faCompass, "Discover")}
+          {renderMobileLink1("/upload", faCloudArrowUp, "Upload")}
           {/* {publicKey !== null ? renderMobileLink1('/wallet', FAProSolid.faWallet, 'Wallet') : null} */}
-          {renderMobileLink1("/wallet", FAProSolid.faWallet, "Wallet")}
+          {renderMobileLink1("/wallet", faWallet, "Wallet")}
           {/* {renderMobileLink1(getCreatorPlug(), FAProSolid.faUser, 'Creator')} */}
           {/* {currentCreatorHasUserAccount
             ? renderMobileLink1(getCreatorPlug(), FAProSolid.faUser, "Creator")

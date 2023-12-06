@@ -15,12 +15,12 @@
   },
   "workspaces": [
     "packages/utils",
-    "packages/config",
     "packages/nip108",
     "apps/nip108/script",
     "apps/nip108/client",
     "apps/nip108/server",
-    "apps/guilds/client"
+    "apps/guilds/client",
+    "apps/fanfares"
   ],
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.0",

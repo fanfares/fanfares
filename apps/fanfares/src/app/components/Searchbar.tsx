@@ -1,6 +1,7 @@
 import { useState } from "react"
-import { FontAwesomeIcon } from "@excalibur/config/fontawesome"
-import { faSearch } from "@fortawesome/pro-duotone-svg-icons"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from "@fortawesome/pro-solid-svg-icons"
+// import { faSearch } from "@fortawesome/pro-duotone-svg-icons"
 
 export default function Searchbar() {
   const [searchQuery, setSearchQuery] = useState("")

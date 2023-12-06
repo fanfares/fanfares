@@ -1,6 +1,5 @@
-// import { FAProSolid, FontAwesomeIcon } from '@excalibur/config/fontawesome';
-import { FAProSolid, FontAwesomeIcon } from "@excalibur/config/fontawesome"
-import { IconDefinition } from "@fortawesome/free-brands-svg-icons"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IconDefinition, faQuestionCircle, faCloudArrowUp, faCompass, faWallet } from '@fortawesome/pro-solid-svg-icons';
 // import { Keypair } from '@solana/web3.js';
 import Image from "next/image"
 import Link from "next/link"
@@ -50,10 +49,10 @@ export function MobileNavbar() {
             FAProSolid.faPlayCircle,
             "Listen"
           )} */}
-          {renderMobileLink("/discover", FAProSolid.faCompass, "Discover")}
-          {renderMobileLink("/upload", FAProSolid.faCloudArrowUp, "Upload")}
+          {renderMobileLink("/discover", faCompass, "Discover")}
+          {renderMobileLink("/upload", faCloudArrowUp, "Upload")}
           {/* {publicKey !== null ? renderMobileLink('/wallet', FAProSolid.faWallet, 'Wallet') : null} */}
-          {renderMobileLink("/wallet", FAProSolid.faWallet, "Wallet")}
+          {renderMobileLink("/wallet", faWallet, "Wallet")}
           {/* {renderMobileLink1(getCreatorPlug(), FAProSolid.faUser, 'Creator')} */}
           {/* {currentCreatorHasUserAccount
             ? renderMobileLink1(getCreatorPlug(), FAProSolid.faUser, "Creator")
