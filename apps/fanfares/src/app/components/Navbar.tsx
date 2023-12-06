@@ -6,6 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import TestState from "./TestState"
+import { E2E } from "../controllers/testing/e2e"
 // import { useAppState } from 'src/controllers/state/use-app-state';
 // import { E2EID } from 'src/controllers/utils/e2e-ids';
 // import LoginLogoutButton from "src/views/components/LoginLogoutButton"
