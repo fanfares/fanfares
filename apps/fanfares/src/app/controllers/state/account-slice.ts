@@ -6,22 +6,50 @@ import { NIP07 } from 'utils';
 
 export interface AccountSlice {
     accountPublicKey: string | null;
-    nip07: NIP07 | null;
+    accountNIP07: NIP07 | null;
+    accountWebln: WebLNProvider | null;
+
+    accountSetNostr: (nip07: NIP07, publicKey: string) => void;
+    accountSetWebln: (webln: WebLNProvider) => void;
 }
 
 const DEFAULT_STATE: AccountSlice = {
     accountPublicKey: null,
-    nip07: null,
+    accountNIP07: null,
+    accountWebln: null,
+    accountSetNostr: (nip07, webln) => {},
+    accountSetWebln: (webln) => {},
 };
 
-export const createNostrSlice: StateCreator<
+export const createAccountSlice: StateCreator<
   CombinedState & AccountSlice,
   [],
   [],
   AccountSlice
 > = (set, get) => {
+
+    const accountSetNostr = (nip07: NIP07, publicKey: string) => {
+
+        // Init function goes here
+
+        set({
+            accountPublicKey: publicKey,
+            accountNIP07: nip07,
+        });
+    }
+
+    const accountSetWebln = (webln: WebLNProvider) => {
+
+        // Init function goes here
+
+        set({
+            accountWebln: webln,
+        });
+    }
+
     return {
         ...DEFAULT_STATE,
-
+        accountSetNostr,
+        accountSetWebln
     };
 };
