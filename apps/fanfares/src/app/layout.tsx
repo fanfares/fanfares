@@ -1,7 +1,11 @@
+import { Navbar } from "@/app/components/Navbar";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Providers } from "@/components/Providers";
+import { MobileNavbar } from "@/app/components/MobileNavbar";
+import { ContainerGrid } from "@/app/components/ContainerGrid";
+import { Providers } from "./components/Providers";
+import { DebugOverlay } from "./components/DebugOverlay";
 
 const inter = Inter({
   weight: ["400", "700", "900"],
@@ -31,16 +35,23 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${inter.variable}`}>
-      <body className="h-screen w-screen flex md:flex-row flex-col-reverse">
+      <body className="container flex flex-col-reverse items-start w-full h-screen mx-auto md:mx-0 md:flex-row">
         <Providers>
+          {/* Debug Overlay */}
+          <DebugOverlay />
+
           {/* Desktop Navbar */}
-          <div className="bg-red-500 md:block md:w-52">{/* <Navbar /> */}</div>
-          {/* Mobile Navbar */}
-          <div className="bg-purple-500 md:hidden h-16">
-            {/* <MobileNavbar />  */}
-          </div>
+          <header className="w-full md:w-36 lg:w-52 ">
+            <div className="md:block md:w-52">
+              <Navbar />
+            </div>
+            {/* Mobile Navbar */}
+            <div className="h-16 md:hidden">
+              <MobileNavbar />
+            </div>
+          </header>
           {/* Content */}
-          <div className="bg-green-500 flex-1 p-10">{children}</div>
+          <ContainerGrid className="flex-1">{children}</ContainerGrid>
         </Providers>
       </body>
     </html>

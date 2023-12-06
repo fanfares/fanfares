@@ -33,10 +33,8 @@
     "@fortawesome/sharp-light-svg-icons": "^6.5.0",
     "@fortawesome/sharp-regular-svg-icons": "^6.5.0",
     "@fortawesome/sharp-solid-svg-icons": "^6.5.0",
-    "@radix-ui/react-slot": "^1.0.2",
     "@types/crypto-js": "^4.1.2",
     "bolt11": "^1.4.1",
-    "browserify-cipher": "^1.0.1",
     "clsx": "^2.0.0",
     "crypto-browserify": "^3.12.0",
     "crypto-js": "^4.1.1",
@@ -44,10 +42,7 @@
     "next": "latest",
     "nostr-tools": "^1.17.0",
     "react-icons": "^4.11.0",
-    "react-media": "^1.10.0",
-    "react-share": "^5.0.3",
     "react-toastify": "^9.1.3",
-    "reactfire": "^4.2.3",
     "webln": "^0.3.2",
     "zustand": "^4.4.6"
   }

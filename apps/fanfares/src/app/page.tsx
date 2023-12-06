@@ -1,5 +1,3 @@
-import DiscoverPage from "@/components/discover"
-
 export default function Home() {
   // ------------------- STATES -------------------------
 
@@ -10,10 +8,5 @@ export default function Home() {
   // ------------------- MAIN -------------------------
 
   //TODO make this the Discover page
-  return (
-    <>
-      {/* <h1><{NIP_108_KINDS.gate}></h1> */}
-      <DiscoverPage />
-    </>
-  )
+  return <>{/* <h1><{NIP_108_KINDS.gate}></h1> */}</>
 }
