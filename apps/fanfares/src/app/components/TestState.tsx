@@ -16,7 +16,7 @@ function getRandomAnimalEmoji(exceptEmoji: string): string {
   }
 
 export default function TestState(){
-    const { nostrTest, nostrSetTest, accountPublicKey } = useAppState();
+    const { nostrTest, nostrSetTest, accountPublicKey, accountProfile } = useAppState();
 
     const onClick = () => {
         nostrSetTest(getRandomAnimalEmoji(nostrTest))
@@ -33,6 +33,10 @@ export default function TestState(){
         return <p>{key}</p>
     }
 
+    const renderProfile = () => {
+        return <p>{accountProfile?.name ?? 'Profile not loaded'}</p>
+    }
+
     const renderStateTest = () => {
 
         return <p onClick={onClick}>{nostrTest}</p>
@@ -40,6 +44,7 @@ export default function TestState(){
 
     return <div>
         {renderKey()}
+        {renderProfile()}
         {renderStateTest()}
     </div>
 }
