@@ -16,13 +16,30 @@ function getRandomAnimalEmoji(exceptEmoji: string): string {
   }
 
 export default function TestState(){
-    const { nostrTest, nostrSetTest } = useAppState();
+    const { nostrTest, nostrSetTest, accountPublicKey } = useAppState();
 
     const onClick = () => {
         nostrSetTest(getRandomAnimalEmoji(nostrTest))
     }
 
+    const renderKey = () => {
+        let key = accountPublicKey;
+        if (key) {
+            key = key.slice(0, 10) + "..." + key.slice(-10);
+        } else {
+            key = "Not Connected";
+        }
+
+        return <p>{key}</p>
+    }
+
+    const renderStateTest = () => {
+
+        return <p onClick={onClick}>{nostrTest}</p>
+    }
+
     return <div>
-        <p onClick={onClick}>{nostrTest}</p>
+        {renderKey()}
+        {renderStateTest()}
     </div>
 }
