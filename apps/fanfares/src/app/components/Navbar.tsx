@@ -294,7 +294,7 @@ export function Navbar() {
 
   const renderMobileNav = () => {
     return (
-      <div className="bottom-0 left-0 z-40 flex flex-row items-center justify-between h-16 space-x-4 overflow-hidden border-t-2  border-buttonAccentHover md:hidden">
+      <div className="bottom-0 left-0 z-40 flex flex-row items-center justify-between h-16 space-x-4 overflow-hidden border-t-2 border-buttonAccentHover md:hidden">
         <div className="flex w-full justify-evenly">
           {renderMobileLink("/discover", faCompass, "Discover")}
           {renderMobileLink("/upload", faCloudArrowUp, "Upload")}
