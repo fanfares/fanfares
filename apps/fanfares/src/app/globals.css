@@ -3,25 +3,39 @@
 @tailwind utilities;
 
 :root {
-  --color-text-base: 255, 255, 255; /* #ffffff */
-  --color-text-muted: 194, 202, 255; /* #c2caf5 */
-  --color-text-inverted: 73, 74, 110; /* #494A6E */
+  --color-base: 255, 255, 255; /* #ffffff */
+  --color-muted: 194, 202, 255; /* #c2caf5 */
+  --color-inverted: 73, 74, 110; /* #494A6E */
   --color-fill: 57, 59, 77; /* #393B4D */
-  --color-button-default: 80, 70, 229; /* #5046E5 */
-  --color-button-disabled: 65, 67, 93; /* #41435D */
-  --color-button-hover: 255, 255, 255; /* #ffffff */
-  --color-button-accent: 73, 77, 104; /* #494D68 */
-  --color-button-active: 234, 236, 247 /* #EAECF7 */;
-  --color-button-accent-hover: 95, 112, 255; /* #5F70FF */
-  --color-button-muted: 147, 156, 227; /* #929ce3 */
+  --button-default: 80, 70, 229; /* #5046E5 */
+  --button-disabled: 65, 67, 93; /* #41435D */
+  --button-hover: 255, 255, 255; /* #ffffff */
+  --button-accent: 73, 77, 104; /* #494D68 */
+  --button-active: 234, 236, 247 /* #EAECF7 */;
+  --button-accent-hover: 95, 112, 255; /* #5F70FF */
+  --button-butted: 147, 156, 227; /* #929ce3 */
   --card-color: hsla(0, 0%, 9%, 0.2);
 }
 
 html {
-  @apply text-skin-base;
-  @apply bg-skin-fill;
-  @apply font-objective;
+  @apply h-screen overflow-hidden text-skin-base font-objective;
 
+  background-color: hsla(0, 0%, 0%, 1);
+  background-image: radial-gradient(
+      at 0% 24%,
+      hsla(240, 32%, 23%, 0.5) 0px,
+      transparent 50%
+    ),
+    radial-gradient(at 0% 100%, hsla(240, 32%, 23%, 0.64) 0px, transparent 50%),
+    radial-gradient(at 51% 0%, hsla(240, 32%, 23%, 1) 0px, transparent 50%),
+    radial-gradient(
+      at 100% 100%,
+      hsla(240, 32%, 23%, 0.67) 0px,
+      transparent 50%
+    );
+}
+
+#e2e-navbar-mobile-container {
   background-color: hsla(0, 0%, 0%, 1);
   background-image: radial-gradient(
       at 0% 24%,

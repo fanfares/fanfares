@@ -39,15 +39,17 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${inter.variable}`}>
-      <body className="container flex flex-col-reverse items-start w-full h-screen mx-auto md:mx-0 md:flex-row">
+      <body className="md:flex">
         <Providers>
           {/* Debug Overlay */}
           <DebugOverlay />
-          <header className="w-full md:w-36 lg:w-52">
+          <header className="">
             <Navbar />
           </header>
           {/* Content */}
-          <ContainerGrid className="flex-1">{children}</ContainerGrid>
+          <ContainerGrid className="block md:ml-44 md:h-screen">
+            {children}
+          </ContainerGrid>
         </Providers>
       </body>
     </html>

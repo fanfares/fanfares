@@ -137,7 +137,7 @@ function DiscoverPageContent() {
           />
         </div>
         {/* <div className="mt-2 h-full flex w-full flex-col items-start border-white/[10%] justify-start truncate line-clamp-2"></div> */}
-        <div className="flex-col flex-1 w-40 mt-2 md:px-2 space-y-2">
+        <div className="flex-col flex-1 w-40 mt-2 space-y-2 md:px-2">
           <p className="e2e-podcast-title text-xs font-bold uppercase md:leading-[18px] md:text-sm md:w-11/12 truncate mr-auto ">
             {/* {metadataNameSlicer()} */}
             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Porro
@@ -145,7 +145,7 @@ function DiscoverPageContent() {
             quod at accusamus odio reiciendis enim sit dignissimos tempore omnis
             id ipsam consequuntur.
           </p>
-          <p className="text-xs/4 tracking-tight line-clamp-2 md:text-base/4 ">
+          <p className="tracking-tight text-xs/4 line-clamp-2 md:text-base/4 ">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore
             nisi magni ab voluptas veniam rem, asperiores optio harum
             necessitatibus nam repellendus nihil minima est quam excepturi
@@ -176,13 +176,11 @@ function DiscoverPageContent() {
   // }
 
   return (
-    <div className="flex flex-col w-full h-screen gap-4 overflow-y-scroll md:px-4 md:pb-10 pb-20">
-      <h1 className="mt-20 text-xl font-black text-center text-gray-100 uppercase md:mt-4 md:text-start md:text-4xl">
+    <div className="space-y-4">
+      <h1 className="font-black text-center text-gray-100 uppercase text-xl/4 md:mt-4 md:text-start md:text-4xl">
         This Week on Excalibur
       </h1>
-      <div className="">
-        <Searchbar />
-      </div>
+      <Searchbar />
       {renderLoading()}
       {renderContent()}
     </div>

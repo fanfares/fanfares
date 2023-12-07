@@ -1,4 +1,3 @@
-import * as test from "@fortawesome/pro-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   IconDefinition,
@@ -6,6 +5,7 @@ import {
   faCloudArrowUp,
   faCompass,
   faWallet,
+  faComment,
 } from "@fortawesome/pro-solid-svg-icons"
 
 // import { Keypair } from '@solana/web3.js';
@@ -186,12 +186,12 @@ export function Navbar() {
             isCurrent ? "text-buttonAccentHover" : "text-white"
           }`}
         />
-        <p className="">{title}</p>
+        <p className="md:hidden lg:block">{title}</p>
       </Link>
     )
   }
 
-  const renderDesktopSideBar = () => {
+  const renderDesktopNavbar = () => {
     return (
       <div
         className={`desktop-sidebar fixed z-40 hidden h-full flex-col px-4 transition-all duration-100 ease-linear md:flex md:mx-auto `}>
@@ -210,6 +210,8 @@ export function Navbar() {
         </div>
         <div className="flex flex-col mx-auto mt-5 mb-20 space-y-4 ">
           {renderDesktopNavLink("/discover", "Discover", faCompass)}
+          {renderDesktopNavLink("/feed", "Feed", faComment)}
+
           {renderDesktopNavLink(
             "/test",
             "Upload Audio",
@@ -294,7 +296,9 @@ export function Navbar() {
 
   const renderMobileNav = () => {
     return (
-      <div className="bottom-0 left-0 z-40 flex flex-row items-center justify-between h-16 space-x-4 overflow-hidden border-t-2  border-buttonAccentHover md:hidden">
+      <div
+        id="#e2e-navbar-mobile-container"
+        className="fixed bottom-0 left-0 z-40 flex flex-row items-center justify-between w-screen h-16 space-x-4 overflow-hidden bg-black border-t-2 border-buttonAccentHover md:hidden">
         <div className="flex w-full justify-evenly">
           {renderMobileLink("/discover", faCompass, "Discover")}
           {renderMobileLink("/upload", faCloudArrowUp, "Upload")}
@@ -307,7 +311,7 @@ export function Navbar() {
   return (
     <>
       {renderMobileNav()}
-      {renderDesktopSideBar()}
+      {renderDesktopNavbar()}
     </>
   )
 }

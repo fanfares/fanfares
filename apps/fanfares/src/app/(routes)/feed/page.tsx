@@ -1,5 +1,5 @@
-import { ContainerGrid } from "@/app/components/ContainerGrid"
+import { PostForm } from "@/app/components/PostForm"
 
 export default function Feed() {
-  return <ContainerGrid>Hello</ContainerGrid>
+  return <PostForm />
 }

@@ -26,9 +26,9 @@ const config: Config = {
       },
       textColor: {
         skin: {
-          base: withOpacity("--color-text-base")({ opacityValue: undefined }),
-          muted: withOpacity("--color-text-muted")({ opacityValue: undefined }),
-          inverted: withOpacity("--color-text-inverted")({
+          base: withOpacity("--color-base")({ opacityValue: undefined }),
+          muted: withOpacity("--color-muted")({ opacityValue: undefined }),
+          inverted: withOpacity("--color-inverted")({
             opacityValue: undefined,
           }),
         },
@@ -36,39 +36,37 @@ const config: Config = {
       backgroundColor: {
         skin: {
           fill: withOpacity("--color-fill")({ opacityValue: undefined }),
-          "button-accent": withOpacity("--color-button-accent")({
+          "button-accent": withOpacity("--button-accent")({
             opacityValue: undefined,
           }),
 
-          "button-accent-hover": withOpacity("--color-button-accent-hover")({
+          "button-accent-hover": withOpacity("--button-accent-hover")({
             opacityValue: undefined,
           }),
-          "button-muted": withOpacity("--color-button-muted")({
+          "button-muted": withOpacity("--button-butted")({
             opacityValue: undefined,
           }),
-          "button-default": withOpacity("--color-button-default")({
+          "button-default": withOpacity("--button-default")({
             opacityValue: undefined,
           }),
-          "button-disabled": withOpacity("--color-button-disabled")({
+          "button-disabled": withOpacity("--button-disabled")({
             opacityValue: undefined,
           }),
-          "button-muted-hover": withOpacity("--color-button-muted-hover")({
+          "button-muted-hover": withOpacity("--button-butted-hover")({
             opacityValue: undefined,
           }),
-          "button-active": withOpacity("--color-button-active")({
+          "button-active": withOpacity("--button-active")({
             opacityValue: undefined,
           }),
-          "button-muted-active": withOpacity("--color-button-muted-active")({
+          "button-muted-active": withOpacity("--button-butted-active")({
             opacityValue: undefined,
           }),
-          "button-muted-focus": withOpacity("--color-button-muted-focus")({
+          "button-muted-focus": withOpacity("--button-butted-focus")({
             opacityValue: undefined,
           }),
-          "button-muted-disabled": withOpacity("--color-button-muted-disabled")(
-            {
-              opacityValue: undefined,
-            }
-          ),
+          "button-muted-disabled": withOpacity("--button-butted-disabled")({
+            opacityValue: undefined,
+          }),
         },
       },
       gradientColorStops: {
@@ -79,46 +77,46 @@ const config: Config = {
         },
       },
       colors: {
-        textBase: withOpacity("--color-text-base")({
+        textBase: withOpacity("--color-base")({
           opacityValue: undefined,
         }),
-        textMuted: withOpacity("--color-text-muted")({
+        textMuted: withOpacity("--color-muted")({
           opacityValue: undefined,
         }),
-        textInverted: withOpacity("--color-text-inverted")({
+        textInverted: withOpacity("--color-inverted")({
           opacityValue: undefined,
         }),
         bgFill: withOpacity("--color-fill")({
           opacityValue: undefined,
         }),
-        buttonDefault: withOpacity("--color-button-default")({
+        buttonDefault: withOpacity("--button-default")({
           opacityValue: undefined,
         }),
-        buttonDisabled: withOpacity("--color-button-disabled")({
+        buttonDisabled: withOpacity("--button-disabled")({
           opacityValue: undefined,
         }),
-        buttonAccent: withOpacity("--color-button-accent")({
+        buttonAccent: withOpacity("--button-accent")({
           opacityValue: undefined,
         }),
-        buttonAccentHover: withOpacity("--color-button-accent-hover")({
+        buttonAccentHover: withOpacity("--button-accent-hover")({
           opacityValue: undefined,
         }),
-        buttonMuted: withOpacity("--color-button-muted")({
+        buttonMuted: withOpacity("--button-butted")({
           opacityValue: undefined,
         }),
-        buttonMutedHover: withOpacity("--color-button-muted-hover")({
+        buttonMutedHover: withOpacity("--button-butted-hover")({
           opacityValue: undefined,
         }),
-        buttonActive: withOpacity("--color-button-active")({
+        buttonActive: withOpacity("--button-active")({
           opacityValue: undefined,
         }),
-        buttonMutedActive: withOpacity("--color-button-muted-active")({
+        buttonMutedActive: withOpacity("--button-butted-active")({
           opacityValue: undefined,
         }),
-        buttonMutedFocus: withOpacity("--color-button-muted-focus")({
+        buttonMutedFocus: withOpacity("--button-butted-focus")({
           opacityValue: undefined,
         }),
-        buttonMutedDisabled: withOpacity("--color-button-muted-disabled")({
+        buttonMutedDisabled: withOpacity("--button-butted-disabled")({
           opacityValue: undefined,
         }),
       },
