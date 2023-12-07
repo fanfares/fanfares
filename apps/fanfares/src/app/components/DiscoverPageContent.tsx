@@ -74,18 +74,19 @@ function DiscoverPageContent() {
     if (isLoading) return null
     return (
       // <div className="flex items-center justify-center w-full pb-10 mx-auto rounded lg:justify-start">
-      <div className="container flex flex-wrap justify-start gap-3 mt-4 md:justify-center ">
-        {" "}
-        {renderEpisodeCard()}
-        {renderEpisodeCard()}
-        {renderEpisodeCard()}
-        {renderEpisodeCard()}
-        {renderEpisodeCard()}
-        {renderEpisodeCard()}
-        {renderEpisodeCard()}
-        {renderEpisodeCard()}
-        {renderEpisodeCard()}
-        {renderEpisodeCard()}
+      <div className="container flex justify-center ">
+        <div className="flex flex-wrap gap-3 ">
+          {renderEpisodeCard()}
+          {renderEpisodeCard()}
+          {renderEpisodeCard()}
+          {renderEpisodeCard()}
+          {renderEpisodeCard()}
+          {renderEpisodeCard()}
+          {renderEpisodeCard()}
+          {renderEpisodeCard()}
+          {renderEpisodeCard()}
+          {renderEpisodeCard()}
+        </div>
       </div>
 
       // </div>
@@ -136,21 +137,21 @@ function DiscoverPageContent() {
           />
         </div>
         {/* <div className="mt-2 h-full flex w-full flex-col items-start border-white/[10%] justify-start truncate line-clamp-2"></div> */}
-        <div className="flex-col flex-1 w-40 mt-2 md:px-2">
-          <p className="e2e-podcast-title text-xs font-bold uppercase md:leading-[18px] md:text-sm md:w-11/12 truncate mr-auto">
+        <div className="flex-col flex-1 w-40 mt-2 md:px-2 space-y-2">
+          <p className="e2e-podcast-title text-xs font-bold uppercase md:leading-[18px] md:text-sm md:w-11/12 truncate mr-auto ">
             {/* {metadataNameSlicer()} */}
             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Porro
             totam iure obcaecati quisquam saepe molestiae laborum veritatis,
             quod at accusamus odio reiciendis enim sit dignissimos tempore omnis
             id ipsam consequuntur.
           </p>
-          <p className="mt-2 text-sm leading-4 tracking-tight line-clamp-2 md:text-base md:leading-4">
+          <p className="text-xs/4 tracking-tight line-clamp-2 md:text-base/4 ">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore
             nisi magni ab voluptas veniam rem, asperiores optio harum
             necessitatibus nam repellendus nihil minima est quam excepturi
             fugit. Tenetur, voluptas nemo.
           </p>
-          <p className="mt-2 ml-auto text-xs font-thin text-right md:text-start ">
+          <p className="ml-auto text-xs font-thin text-right md:text-start ">
             D 01/01/01 H 01:01:00
           </p>{" "}
           {/* {renderDateAndTime()} */}
@@ -175,7 +176,7 @@ function DiscoverPageContent() {
   // }
 
   return (
-    <div className="flex flex-col w-full h-screen gap-4 pb-8 overflow-y-scroll md:px-4 md:pb-10">
+    <div className="flex flex-col w-full h-screen gap-4 overflow-y-scroll md:px-4 md:pb-10 pb-20">
       <h1 className="mt-20 text-xl font-black text-center text-gray-100 uppercase md:mt-4 md:text-start md:text-4xl">
         This Week on Excalibur
       </h1>

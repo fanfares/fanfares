@@ -1,11 +1,15 @@
-import { Navbar } from "@/app/components/Navbar";
-import "./globals.css";
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { MobileNavbar } from "@/app/components/MobileNavbar";
-import { ContainerGrid } from "@/app/components/ContainerGrid";
-import { Providers } from "./components/Providers";
-import { DebugOverlay } from "./components/DebugOverlay";
+import { Navbar } from "@/app/components/Navbar"
+import "./globals.css"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import { ContainerGrid } from "@/app/components/ContainerGrid"
+import { Providers } from "./components/Providers"
+import { DebugOverlay } from "./components/DebugOverlay"
+
+import "@fortawesome/fontawesome-svg-core/styles.css"
+// Prevent fontawesome from adding its CSS since we did it manually above:
+import { config } from "@fortawesome/fontawesome-svg-core"
+config.autoAddCss = false /* eslint-disable import/first */
 
 const inter = Inter({
   weight: ["400", "700", "900"],
@@ -13,7 +17,7 @@ const inter = Inter({
   variable: "--font-inter",
   display: "swap",
   subsets: ["latin"],
-});
+})
 
 export const metadata: Metadata = {
   title: "Fanfares",
@@ -22,12 +26,12 @@ export const metadata: Metadata = {
     title: "Fanfares",
     description: "Podcasting built on Nostr",
   },
-};
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   // Layout should define
   // - size of section
@@ -39,21 +43,13 @@ export default function RootLayout({
         <Providers>
           {/* Debug Overlay */}
           <DebugOverlay />
-
-          {/* Desktop Navbar */}
-          <header className="w-full md:w-36 lg:w-52 ">
-            <div className="md:block md:w-52">
-              <Navbar />
-            </div>
-            {/* Mobile Navbar */}
-            <div className="h-16 md:hidden">
-              <MobileNavbar />
-            </div>
+          <header className="w-full md:w-36 lg:w-52">
+            <Navbar />
           </header>
           {/* Content */}
           <ContainerGrid className="flex-1">{children}</ContainerGrid>
         </Providers>
       </body>
     </html>
-  );
+  )
 }

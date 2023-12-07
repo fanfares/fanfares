@@ -1,5 +1,11 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconDefinition, faQuestionCircle, faCloudArrowUp, faCompass, faWallet } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {
+  IconDefinition,
+  faQuestionCircle,
+  faCloudArrowUp,
+  faCompass,
+  faWallet,
+} from "@fortawesome/pro-solid-svg-icons"
 // import { Keypair } from '@solana/web3.js';
 import Image from "next/image"
 import Link from "next/link"
