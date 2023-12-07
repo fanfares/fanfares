@@ -1,6 +1,12 @@
-import * as test from '@fortawesome/pro-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconDefinition, faQuestionCircle, faCloudArrowUp, faCompass, faWallet } from '@fortawesome/pro-solid-svg-icons';
+import * as test from "@fortawesome/pro-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {
+  IconDefinition,
+  faQuestionCircle,
+  faCloudArrowUp,
+  faCompass,
+  faWallet,
+} from "@fortawesome/pro-solid-svg-icons"
 
 // import { Keypair } from '@solana/web3.js';
 import Image from "next/image"
@@ -168,22 +174,19 @@ export function Navbar() {
     const isCurrent = false
 
     return (
-      <Link className="group" href={href}>
-        <div
-          id={id}
-          className={`desktop-sidebar-item  group mx-auto md:w-28 lg:w-48 cursor-pointer rounded-lg p-2 py-3 hover:text-buttonMuted  active:scale-95 active:text-skin-inverted ${
+      <Link
+        className={`desktop-sidebar-item group mx-auto cursor-pointer rounded-lg p-2 py-3 hover:text-buttonMuted gap-2 group-hover:text-buttonMuted md:mx-auto lg:mx-0 active:scale-95 flex items-center ${
+          isCurrent ? "text-buttonAccentHover" : "text-white"
+        } `}
+        href={href}
+        id={id}>
+        <FontAwesomeIcon
+          icon={icon}
+          className={`flex justify-center group-hover:text-buttonMuted text-xl w-5 ${
             isCurrent ? "text-buttonAccentHover" : "text-white"
-          } flex items-center space-x-4`}>
-          <div className="flex items-center gap-2 group-hover:text-buttonMuted md:mx-auto lg:mx-0">
-            <FontAwesomeIcon
-              icon={icon}
-              className={`flex w-8 justify-center text-xl group-hover:text-buttonMuted  ${
-                isCurrent ? "text-buttonAccentHover" : "text-white"
-              }`}
-            />
-            <span className="md:hidden lg:block">{title}</span>
-          </div>
-        </div>
+          }`}
+        />
+        <p className="">{title}</p>
       </Link>
     )
   }
@@ -205,7 +208,7 @@ export function Navbar() {
             />
           </Link>
         </div>
-        <div className="flex flex-col mx-auto mt-5 mb-20 space-y-4">
+        <div className="flex flex-col mx-auto mt-5 mb-20 space-y-4 ">
           {renderDesktopNavLink("/discover", "Discover", faCompass)}
           {renderDesktopNavLink(
             "/test",
@@ -228,11 +231,7 @@ export function Navbar() {
                 FAProSolid.faUser
               )
             : null} */}
-          {renderDesktopNavLink(
-            "/support/",
-            "Support",
-            faQuestionCircle
-          )}
+          {renderDesktopNavLink("/support/", "Support", faQuestionCircle)}
         </div>
 
         {/* <LoginLogoutButton /> */}
@@ -265,7 +264,7 @@ export function Navbar() {
     )
   }
 
-  const renderMobileLink1 = (
+  const renderMobileLink = (
     href: string,
     icon: IconDefinition,
     text: string
@@ -293,23 +292,13 @@ export function Navbar() {
     )
   }
 
-  const renderMobileNav1 = () => {
+  const renderMobileNav = () => {
     return (
-      <div className="fixed bottom-0 z-40 flex flex-row items-center justify-between w-screen h-16 space-x-4 overflow-hidden border-t-2 border-buttonAccentHover md:hidden">
+      <div className="bottom-0 left-0 z-40 flex flex-row items-center justify-between h-16 space-x-4 overflow-hidden border-t-2  border-buttonAccentHover md:hidden">
         <div className="flex w-full justify-evenly">
-          {/* {renderMobileLink1(
-            `/player/${playerMediaKey?.toString() ?? "demo"}`,
-            FAProSolid.faPlayCircle,
-            "Listen"
-          )} */}
-          {renderMobileLink1("/discover", faCompass, "Discover")}
-          {renderMobileLink1("/upload", faCloudArrowUp, "Upload")}
-          {/* {publicKey !== null ? renderMobileLink1('/wallet', FAProSolid.faWallet, 'Wallet') : null} */}
-          {renderMobileLink1("/wallet", faWallet, "Wallet")}
-          {/* {renderMobileLink1(getCreatorPlug(), FAProSolid.faUser, 'Creator')} */}
-          {/* {currentCreatorHasUserAccount
-            ? renderMobileLink1(getCreatorPlug(), FAProSolid.faUser, "Creator")
-            : null} */}
+          {renderMobileLink("/discover", faCompass, "Discover")}
+          {renderMobileLink("/upload", faCloudArrowUp, "Upload")}
+          {renderMobileLink("/wallet", faWallet, "Wallet")}
         </div>
       </div>
     )
@@ -317,12 +306,7 @@ export function Navbar() {
 
   return (
     <>
-      {/* <div className="z-40 md:hidden">{renderMobileNav1()}</div>
-      <div className="z-40 hidden mobileNavbar h-fit drop-shadow-md md:hidden">
-        {showMobileMenu && <Modal isOpen={showMobileMenu}>{renderMobileNavMenu()}</Modal>}
-        {renderMobileNav()}
-      </div> */}
-      {renderMobileNav1()}
+      {renderMobileNav()}
       {renderDesktopSideBar()}
     </>
   )
