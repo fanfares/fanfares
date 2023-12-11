@@ -3,15 +3,19 @@ import { NostrSlice, createNostrSlice } from "./nostr-slice";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { useEffect } from "react";
 import { AccountSlice, createAccountSlice } from "./account-slice";
+import { TestSlice, createTestSlice } from "./test-slice";
+import { PrimalSlice, createPrimalSlice } from "./primal-slice";
 
-export type CombinedState = NostrSlice & AccountSlice;
+export type CombinedState = TestSlice & NostrSlice & AccountSlice & PrimalSlice;
 
 export const useAppState = create<CombinedState>()(
   persist(
     (set, get, slice) => {
       return {
+        ...createTestSlice(set, get, slice),
         ...createNostrSlice(set, get, slice),
         ...createAccountSlice(set, get, slice),
+        ...createPrimalSlice(set, get, slice),
       };
     },
     {
@@ -20,7 +24,7 @@ export const useAppState = create<CombinedState>()(
 
       // WHAT TO PERSIST
       partialize: (state) => ({
-        nostrTest: state.nostrTest,
+        testState: state.testState,
         accountPublicKey: state.accountPublicKey,
         accountProfile: state.accountProfile,
       }),

@@ -60,15 +60,11 @@ export const createAccountSlice: StateCreator<
 
         if(!publicKey) return;
 
-        console.log("Fetching profile for", publicKey);
-        console.log("Fetching profile for", relays);
-
         pool.get(relays, {
             kinds: [0],
             limit: 1,
             authors: [publicKey]
         }).then((profileEvent)=>{
-            console.log("Got profile event", profileEvent);
             if(!profileEvent) return;
 
             set({
@@ -76,8 +72,6 @@ export const createAccountSlice: StateCreator<
             });
         }).catch((err)=>{
             console.log("Failed to get profile event", err);
-        }).finally(()=>{
-            console.log("Finished profile event");
         })
     }
 

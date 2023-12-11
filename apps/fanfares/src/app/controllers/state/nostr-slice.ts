@@ -1,31 +1,18 @@
 import { StateCreator } from 'zustand';
 import { CombinedState } from './use-app-state';
 import { SimplePool } from 'nostr-tools';
-
-const NOSTR_RELAYS = [
-    'wss://dev.nostrplayground.com',
-    'wss://relay.damus.io',
-    'wss://relay.primal.net',
-    'wss://nos.lol',
-    'wss://nostr.wine',
-    'wss://eden.nostr.land'
-];
+import { NOSTR_RELAYS } from '../nostr/nostr-defines';
 
 export interface NostrSlice {
     nostrRelays: string[];
     nostrPool: SimplePool;
     nostrDisconnect: () => void;
-
-    nostrTest: string;
-    nostrSetTest: (test: string) => void;
 }
 
 const DEFAULT_STATE: NostrSlice = {
     nostrRelays: NOSTR_RELAYS,
     nostrPool: new SimplePool(),
     nostrDisconnect: () => {},
-    nostrTest: 'testing...',
-    nostrSetTest: (state: string) => {},
 };
 
 export const createNostrSlice: StateCreator<
@@ -44,13 +31,8 @@ export const createNostrSlice: StateCreator<
         pool.close(relays);
     }
 
-    const nostrSetTest = (state: string) => {
-        set({ nostrTest: state });
-    }
-
     return {
         ...DEFAULT_STATE,
         nostrDisconnect,
-        nostrSetTest,
     };
 };

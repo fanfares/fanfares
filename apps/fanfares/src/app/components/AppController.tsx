@@ -9,9 +9,16 @@ export interface AppControllerProps {
   children: React.ReactNode;
 }
 
+/**
+ * Controls the main lifecycle of the app. Will start connections with Nostr, Primal, and Webln.
+ * At the end of the app, will disconnect from all of them.
+ * 
+ * @param props 
+ * @returns 
+ */
 export function AppController(props: AppControllerProps) {
   const { children } = props;
-  const {nostrDisconnect, accountSetNostr, accountSetWebln, accountFetchProfile} = useAppState();
+  const {nostrDisconnect, accountSetNostr, accountSetWebln, accountFetchProfile, primalConnect, primalDisconnect} = useAppState();
 
   useEffect(() => {
     // Fixes the Local storage rehydration issue
@@ -38,9 +45,13 @@ export function AppController(props: AppControllerProps) {
       alert("Nostr not found");
     }
 
+    // PRIMAL
+    primalConnect();
+
     return () => {
         // Cleans up connections at the end of the app
         nostrDisconnect();
+        primalDisconnect();
     };
   }, []);
 
