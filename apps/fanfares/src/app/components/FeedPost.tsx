@@ -1,4 +1,6 @@
 import Image from "next/image"
+import Link from "next/link"
+import Button from "./Button"
 
 interface FeedPostProps {
   user?: string
@@ -21,7 +23,12 @@ export function FeedPost({ user, userPfp, content, onClick }: FeedPostProps) {
       </div>
       <div className="flex-grow overflow-hidden space-y-1">
         <p className="text-sm font-bold">
-          User name <span className="text-white/50 font-medium">@username</span>
+          User name{" "}
+          <Link
+            href="#"
+            className="text-white/50 font-medium hover:text-buttonAccentHover">
+            @username
+          </Link>
         </p>
         <h3 className="break-words text-sm font-normal">
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Est,
@@ -30,10 +37,12 @@ export function FeedPost({ user, userPfp, content, onClick }: FeedPostProps) {
           excepturi quis doloribus libero.
         </h3>
       </div>
-      <div>
-        <button className="" id="e2e-feed-post-fanfare-button">
-          🎪
-        </button>
+      <div className="mt-2 mx-auto">
+        <Button
+          className="px-2"
+          id="e2e-feed-post-fanfare-button"
+          label={"Fanfare 🎪"}
+        />
       </div>
     </div>
   )
