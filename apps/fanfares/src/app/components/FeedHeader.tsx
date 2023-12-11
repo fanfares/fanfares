@@ -7,7 +7,9 @@ export function FeedHeader() {
   const [following, setFollowing] = useState(false)
 
   return (
-    <div className="border border-buttonAccent rounded-md space-y-5">
+    <div
+      id="e2e-feed-header-container"
+      className="border border-buttonAccent rounded-md space-y-5">
       <div className="pl-16 pr-4 py-2 rounded-md flex flex-col relative w-full">
         <div className="w-8 h-8 rounded-full overflow-hidden absolute left-2 top-2">
           <img
@@ -17,8 +19,8 @@ export function FeedHeader() {
           />
         </div>
         <div className="flex justify-between items-center">
-          <p className="font-bold">Home</p>
-          <button className="text-2xl">⛭</button>
+          <p className="font-bold hidden md:block">Home</p>
+          <button className="text-2xl ml-auto md:ml-0">⛭</button>
         </div>
         <p className="absolute top-1 left-1/2 -translate-x-1/2 text-2xl cursor-default">
           🎪
@@ -26,6 +28,7 @@ export function FeedHeader() {
       </div>
       <div className="mx-auto flex justify-between w-full">
         <button
+          id="e2e-feed-header-live-button"
           onClick={() => setLive(!live)}
           className={clsx(
             "relative hover:bg-skin-fill w-1/2 p-4 rounded-bl-md",
@@ -37,6 +40,7 @@ export function FeedHeader() {
           Live
         </button>
         <button
+          id="e2e-feed-header-following-button"
           onClick={() => setFollowing(!following)}
           className={clsx(
             "relative hover:bg-skin-fill w-1/2 p-4 rounded-br-md",

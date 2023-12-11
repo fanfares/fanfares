@@ -9,7 +9,9 @@ interface FeedPostProps {
 
 export function FeedPost({ user, userPfp, content, onClick }: FeedPostProps) {
   return (
-    <div className="border-buttonAccent w-full rounded-md flex relative border pl-16 pr-4 py-2 flex-col">
+    <div
+      id="e2e-feed-post-container"
+      className="border-buttonAccent w-full rounded-md flex relative border pl-16 pr-4 py-2 flex-col">
       <div className="w-11 h-11 rounded-full overflow-hidden absolute left-2 top-2">
         <img
           src="http://placebeard.it/640/480.jpg"
@@ -29,7 +31,9 @@ export function FeedPost({ user, userPfp, content, onClick }: FeedPostProps) {
         </h3>
       </div>
       <div>
-        <button>🎪</button>
+        <button className="" id="e2e-feed-post-fanfare-button">
+          🎪
+        </button>
       </div>
     </div>
   )
