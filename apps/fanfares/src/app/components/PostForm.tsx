@@ -12,7 +12,7 @@ export function PostForm() {
   }
   return (
     <div className="flex items-center justify-center w-full my-4 ">
-      <div className="w-full p-5 text-white border rounded-lg shadow-lg border-white/20">
+      <div className="w-full p-5 text-white border rounded shadow-lg border-buttonAccent">
         <div className="hidden mt-1 mb-2">
           <label className="block mb-2">Unlock Cost ( sats )</label>
           <input
@@ -23,7 +23,7 @@ export function PostForm() {
             // onChange={e =>
             //   setFormData({ ...formData, cost: +e.target.value })
             // }
-            className="w-full p-2 text-white border rounded border-white/20"
+            className="w-full p-2 text-white border rounded border-buttonAccent"
           />
         </div>
         {isChecked ? (
@@ -39,7 +39,7 @@ export function PostForm() {
                 // onChange={e =>
                 //   setFormData({ ...formData, preview: e.target.value })
                 // }
-                className="w-full p-2 text-white bg-transparent border rounded border-white/20"
+                className="w-full p-2 text-white bg-transparent border rounded border-buttonAccent"
               />
             </div>
             <div className="mt-1 mb-2">
@@ -52,7 +52,7 @@ export function PostForm() {
                 // onChange={e =>
                 //   setFormData({ ...formData, cost: +e.target.value })
                 // }
-                className="w-full p-2 text-white bg-transparent border rounded border-white/20"
+                className="w-full p-2 text-white bg-transparent border rounded border-buttonAccent"
               />
             </div>
           </>
@@ -65,12 +65,12 @@ export function PostForm() {
             // onChange={e =>
             //   setFormData({ ...formData, content: e.target.value })
             // }
-            className="w-full h-full p-2 text-white bg-transparent border rounded resize-none border-white/20"></textarea>
+            className="w-full h-full p-2 text-white bg-transparent border rounded resize-none border-buttonAccent"></textarea>
         </div>
         <div className="flex items-center justify-between mt-12">
           <label
             htmlFor="setAsGatedContentCheckbox"
-            className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer border-white/20">
+            className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer border-buttonAccent">
             <input
               checked={isChecked}
               onChange={handleCheckboxChange}
@@ -87,7 +87,7 @@ export function PostForm() {
           </label>
 
           <Button
-            className="font-bold border border-white/20"
+            className="font-bold border border-buttonAccent"
             onClick={() => {}}
             label="Submit"
           />

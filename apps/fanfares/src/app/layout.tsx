@@ -6,8 +6,6 @@ import { ContainerGrid } from "@/app/components/ContainerGrid"
 import { Providers } from "./components/Providers"
 import { DebugOverlay } from "./components/DebugOverlay"
 
-import "@fortawesome/fontawesome-svg-core/styles.css"
-// Prevent fontawesome from adding its CSS since we did it manually above:
 import { config } from "@fortawesome/fontawesome-svg-core"
 config.autoAddCss = false /* eslint-disable import/first */
 
