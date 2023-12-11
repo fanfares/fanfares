@@ -4,8 +4,11 @@ import { SimplePool } from 'nostr-tools';
 
 const NOSTR_RELAYS = [
     'wss://dev.nostrplayground.com',
-    // 'wss://relay.damus.io',
-    // 'wss://relay.primal.net',
+    'wss://relay.damus.io',
+    'wss://relay.primal.net',
+    'wss://nos.lol',
+    'wss://nostr.wine',
+    'wss://eden.nostr.land'
 ];
 
 export interface NostrSlice {

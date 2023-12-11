@@ -20,8 +20,9 @@ export const useAppState = create<CombinedState>()(
 
       // WHAT TO PERSIST
       partialize: (state) => ({
-        // What
         nostrTest: state.nostrTest,
+        accountPublicKey: state.accountPublicKey,
+        accountProfile: state.accountProfile,
       }),
 
       // REHYDRATE
