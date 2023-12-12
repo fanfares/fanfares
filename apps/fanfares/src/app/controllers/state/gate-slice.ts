@@ -2,6 +2,8 @@ import { StateCreator } from 'zustand';
 import { CombinedState } from './use-app-state';
 import { GatedNote, AnnouncementNote, KeyNote, NIP_108_KINDS, eventToKeyNote, eventToGatedNote } from 'nip108';
 
+// First, let's create the ability to see all of the gated posts you have purchased
+// So we will fetch by the gate key, and then we will fetch the gated posts
 export interface GateSlice {
 
     gateFetch: () => void,
