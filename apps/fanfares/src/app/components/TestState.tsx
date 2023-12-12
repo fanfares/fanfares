@@ -25,7 +25,7 @@ export default function TestState(){
     }
 
     const onPrimalClick = () => {
-        primalGet();
+        // primalGet();
     }
 
     const renderKey = () => {
