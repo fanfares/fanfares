@@ -1,5 +1,6 @@
 "use client"
 import Button from "@/app/components/Button"
+import { MediaAudioUploadField } from "@/app/components/MediaAudioUploadField"
 import { MediaCreatorForm } from "@/app/components/MediaCreatorForm"
 import { MediaThumbnailUploadField } from "@/app/components/MediaThumbnailUploadField"
 import Link from "next/link"
@@ -53,7 +54,7 @@ export default function Upload() {
               </div>
             </div>
           </div>
-          {/* <MediaAudioUploadField /> */}
+          <MediaAudioUploadField />
 
           <div className="flex flex-col w-full">
             {/* <MediaParameterForm /> */}
