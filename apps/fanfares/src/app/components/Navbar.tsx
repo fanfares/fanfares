@@ -213,8 +213,14 @@ export function Navbar() {
           {renderDesktopNavLink("/feed", "Feed", faComment)}
 
           {renderDesktopNavLink(
-            "/test",
+            "/upload",
             "Upload Audio",
+            faCloudArrowUp,
+            "click-to-upload"
+          )}
+          {renderDesktopNavLink(
+            "/test",
+            "TEST",
             faCloudArrowUp,
             "click-to-upload"
           )}
