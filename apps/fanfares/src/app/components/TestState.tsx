@@ -16,17 +16,8 @@ function getRandomAnimalEmoji(exceptEmoji: string): string {
   }
 
 export default function TestState(){
-    const { testState, testSetState, accountPublicKey, accountProfile, primalSocket, primalGet } = useAppState();
+    const { testState, testSetState, accountPublicKey, accountProfile, primalSocket, primalNotes, gateKeys, gateFetch } = useAppState();
 
-
-
-    const onTestClick = () => {
-        testSetState(getRandomAnimalEmoji(testState))
-    }
-
-    const onPrimalClick = () => {
-        // primalGet();
-    }
 
     const renderKey = () => {
         let key = accountPublicKey;
@@ -45,11 +36,21 @@ export default function TestState(){
 
     const renderStateTest = () => {
 
-        return <p onClick={onTestClick}>{testState}</p>
+        const onClick = () => {
+            testSetState(getRandomAnimalEmoji(testState))
+        }
+        return <p onClick={onClick}>{testState}</p>
     }
 
     const renderPrimalTest = () => {
-        return <p onClick={onPrimalClick}>Primal Test {primalSocket?.readyState ?? -1}</p>
+        return <p>Primal Test {primalSocket?.readyState ?? -1} {primalNotes.length}</p>
+    }
+
+    const renderGateTest = () => {
+        const onClick = () => {
+            gateFetch();
+        }
+        return <p onClick={onClick}>Gate Test {Object.keys(gateKeys).length}</p>
     }
 
     return <div>
@@ -57,5 +58,6 @@ export default function TestState(){
         {renderProfile()}
         {renderStateTest()}
         {renderPrimalTest()}
+        {renderGateTest()}
     </div>
 }
