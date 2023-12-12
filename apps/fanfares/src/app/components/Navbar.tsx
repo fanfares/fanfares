@@ -239,6 +239,7 @@ export function Navbar() {
                 FAProSolid.faUser
               )
             : null} */}
+          {renderDesktopNavLink("/wallet", "Wallet", faWallet)}
           {renderDesktopNavLink("/support/", "Support", faQuestionCircle)}
         </div>
 

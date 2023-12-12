@@ -5,8 +5,9 @@ import { useEffect } from "react";
 import { AccountSlice, createAccountSlice } from "./account-slice";
 import { TestSlice, createTestSlice } from "./test-slice";
 import { PrimalSlice, createPrimalSlice } from "./primal-slice";
+import { GateSlice, createGateSlice } from "./gate-slice";
 
-export type CombinedState = TestSlice & NostrSlice & AccountSlice & PrimalSlice;
+export type CombinedState = TestSlice & NostrSlice & AccountSlice & PrimalSlice & GateSlice;
 
 export const useAppState = create<CombinedState>()(
   persist(
@@ -16,6 +17,7 @@ export const useAppState = create<CombinedState>()(
         ...createNostrSlice(set, get, slice),
         ...createAccountSlice(set, get, slice),
         ...createPrimalSlice(set, get, slice),
+        ...createGateSlice(set, get, slice),
       };
     },
     {
