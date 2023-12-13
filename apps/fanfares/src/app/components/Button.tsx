@@ -13,7 +13,7 @@ const Button = ({ label, onClick, className, icon, id }: ButtonProps) => {
     <button
       id={id}
       onClick={onClick}
-      className={`px-1 flex items-center border border-white/20 justify-center py-2 rounded-full transition-all duration-300 ease-in-out transform text-sm font-semibold hover:bg-slate-900 ${className}`}>
+      className={`px-1 flex items-center border border-white/20 justify-center py-2 rounded-full transition-all duration-300 ease-in-out transform text-sm font-semibold hover:bg-skin-fill ${className}`}>
       <span className="">{label}</span>
       <span className={`${icon ? "ml-2" : ""}`}>{icon}</span>
     </button>

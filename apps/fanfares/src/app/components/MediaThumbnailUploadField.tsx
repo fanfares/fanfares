@@ -4,7 +4,7 @@ export function MediaThumbnailUploadField() {
       <p className="mt-2 text-sm">Upload Cover Image</p>
       <label
         htmlFor="thumbnailUpload"
-        className={`mx-auto bg-slate-900 px-2 py-1 rounded-md ${
+        className={`mx-auto bg-buttonAccentHover hover:bg-opacity-70 px-2 py-1 rounded-md ${
           "fileURL" ? "opacity-80" : ""
         }`}>
         <input

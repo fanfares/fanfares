@@ -157,7 +157,7 @@ function CarrouselEpisodes() {
   //       {isThumbnailMounted && (
   //         <Suspense
   //           fallback={
-  //             <div className="h-[100px] w-[100px] bg-slate-900 md:h-[200px] md:w-[200px]">
+  //             <div className="h-[100px] w-[100px] bg-skin-fill md:h-[200px] md:w-[200px]">
   //               <FontAwesomeIcon className="animate-spin text-4xl" icon={FAProSolid.faSpinnerThird} />
   //             </div>
   //           }>
