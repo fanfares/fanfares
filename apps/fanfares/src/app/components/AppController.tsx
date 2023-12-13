@@ -18,7 +18,7 @@ export interface AppControllerProps {
  */
 export function AppController(props: AppControllerProps) {
   const { children } = props;
-  const {nostrDisconnect, accountSetNostr, accountSetWebln, accountFetchProfile, primalConnect, primalDisconnect} = useAppState();
+  const {nostrDisconnect, accountSetNostr, accountSetWebln, accountFetchProfile, primalConnect, primalDisconnect, gateFetch} = useAppState();
 
   useEffect(() => {
     // Fixes the Local storage rehydration issue
@@ -38,6 +38,7 @@ export function AppController(props: AppControllerProps) {
       nip07.getPublicKey().then((publicKey: string)=>{
         accountSetNostr(nip07, publicKey);
         accountFetchProfile();
+        gateFetch();
       }).catch((e: any) => {
         alert("Nostr not found - error getting public key");
       })
