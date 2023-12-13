@@ -32,6 +32,7 @@ export interface KeyNote {
     note: NostrEvent<number>;
     iv: string,
     gate: string,
+    announcement: string,
     unlockedSecret?: string,
 }
 
@@ -61,12 +62,14 @@ export function eventToKeyNote(event: NostrEvent<number>): KeyNote {
     // Extract tags
     const ivTag = event.tags.find(tag => tag[0] === "iv");
     const gateTag = event.tags.find(tag => tag[0] === "e" || tag[0] === "g");
+    const announcementTag = event.tags.find(tag => tag[0] === "announcement");
 
     // Construct GatedNote
     const keyNote: KeyNote = {
         note: event,
         iv: ivTag ? ivTag[1] : "",
-        gate: gateTag ? gateTag[1] : ""
+        gate: gateTag ? gateTag[1] : "",
+        announcement: announcementTag ? announcementTag[1] : "",
     };
 
     return keyNote;
@@ -133,7 +136,8 @@ export function createGatedNote(
 export function createKeyNoteUnsigned(
   publicKey: string,
   encryptedSecret: string,
-  gatedNote: NostrEvent<number>
+  gatedNote: NostrEvent<number>,
+  announcementNote: NostrEvent<number>,
   ): EventTemplate<number> {
 
   const event = {
@@ -142,6 +146,7 @@ export function createKeyNoteUnsigned(
     created_at: Math.floor(Date.now() / 1000),
     tags: [
       ["e", gatedNote.id],
+      ["announcement", announcementNote.id],
     ],
     content: encryptedSecret,
   };
@@ -152,11 +157,12 @@ export function createKeyNoteUnsigned(
 export async function createKeyNote(
   privateKey: string,
   secret: string,
-  gatedNote: NostrEvent<number>
+  gatedNote: NostrEvent<number>,
+  announcementNote: NostrEvent<number>,
 ): Promise<NostrEvent<number>> {
   const encryptedSecret = await nip04.encrypt(privateKey, gatedNote.pubkey, secret);
 
-  const event = createKeyNoteUnsigned(getPublicKey(privateKey), encryptedSecret, gatedNote)
+  const event = createKeyNoteUnsigned(getPublicKey(privateKey), encryptedSecret, gatedNote, announcementNote)
 
   return finishEvent(event, privateKey);
 }
