@@ -5,6 +5,7 @@
 // } from "react-hook-form"
 
 import { faLacrosseStickBall } from "@fortawesome/pro-solid-svg-icons"
+import FormLabelCreators from "./LabelForm"
 
 export interface MediaCreatorFormProps {
   onConnectDialog?: () => void
@@ -82,54 +83,54 @@ export function MediaCreatorForm(props: MediaCreatorFormProps) {
       return (
         <div
           key={"field.id"}
-          className="flex flex-col w-full gap-4 mt-4 md:flex-row md:items-center md:justify-start">
-          <label className="w-full p-2 text-sm font-bold text-center text-white rounded-lg md:max-w-md min-w-fit md:w-1/2 bg-skin-fill">
-            Creator Name {/* THIS P SHOULD BE A POPOVER */}
-            <p className="text-xs text-center w-80 md:text-sm">
+          className="flex flex-col w-full md:gap-4 md:flex-row md:items-center md:justify-start mt-4 space-y-4 md:space-y-0">
+          <FormLabelCreators>
+            <p> Creator Name:</p> {/* THIS P SHOULD BE A POPOVER */}
+            {/* <p className="text-xs text-center w-80 md:text-sm hidden">
               "The name of the creator of the episode. This can be a person, a
               group, or a brand."
-            </p>
+            </p> */}
             <input
               id={"`${E2EID.uploadCreatorNameInputX}${index}`"}
               autoComplete="off"
-              className="left-[36px] mt-4 block w-full border-b-2 border-buttonAccent bg-transparent  text-sm font-thin outline-none placeholder:text-sm placeholder:font-bold placeholder:text-skin-muted/40 text-center "
+              className="border-b-2 border-buttonAccent bg-transparent text-sm font-thin outline-none placeholder:text-sm placeholder:font-semibold mt-2 placeholder:text-skin-muted/40 text-start"
               placeholder="Enter Creator Name"
               name={"`creators.${index}.name`"}
               maxLength={999}
             />
-          </label>
-          <label className="w-full p-2 text-sm font-bold text-center text-white rounded-lg md:max-w-md bg-skin-fill">
+          </FormLabelCreators>
+          <FormLabelCreators>
             {" "}
-            Wallet Creator Address{" "}
-            <span className="text-skin-muted">(Solana) </span>
-            {/* THIS P SHOULD BE A POPOVER */}
-            <p className="text-xs text-center w-80 md:text-sm">
+            <p>
+              Wallet Creator Address {/* THIS P SHOULD BE A POPOVER */}
+              <span className="text-skin-muted">(Solana) </span>
+            </p>{" "}
+            {/* <p className="text-xs text-center w-80 md:text-sm hidden">
               "The Solana wallet address of the creator of the episode."
-            </p>
+            </p> */}
             <input
               id={"`${E2EID.uploadCreatorWalletInputX}${index}`"}
               autoComplete="off"
-              className="left-[36px] mt-4 block w-full border-b-2 border-buttonAccent bg-transparent text-sm  font-thin outline-none placeholder:text-sm placeholder:font-bold placeholder:text-skin-muted/40 md:text-center placeholder:text-center text-center"
+              className="border-b-2 border-buttonAccent bg-transparent text-sm font-thin outline-none placeholder:text-sm placeholder:font-semibold mt-2 placeholder:text-skin-muted/40 text-start"
               placeholder="Enter Creator Wallet Address"
               name={"`creators.${index}.wallet`"}
               maxLength={48} // 44 seems to be the max
             />
-          </label>
-          <div className="flex flex-col items-center justify-center md:w-48 md:min-w-[160px] gap-y-3 bg-skin-fill rounded-lg p-2">
-            <label className="w-full text-sm font-bold text-center text-white md:max-w-md md:text-center ">
-              Revenue Share % {/* THIS P SHOULD BE A POPOVER */}
-              <p className="text-xs text-center w-80 md:text-sm">
+          </FormLabelCreators>
+          {/* <div className="flex flex-col items-center justify-center md:w-48 md:min-w-[160px] gap-y-3 bg-skin-fill rounded-lg p-2"> */}
+          <FormLabelCreators>
+            Revenue Share %{/* THIS P SHOULD BE A POPOVER */}
+            {/* <p className="text-xs text-center w-80 md:text-sm">
                 text="The percentage of revenue that will be shared with this
                 creator."
-              </p>
-            </label>
+              </p> */}
             <input
               id={"`${E2EID.uploadCreatorSplitInputX}${index}`"}
               defaultValue={100}
               max={100}
               min={1}
               type="number"
-              className="w-full text-sm font-thin text-center bg-transparent border-b-2 outline-none border-buttonAccent"
+              className="border-b-2 border-buttonAccent bg-transparent text-sm font-thin outline-none placeholder:text-sm placeholder:font-semibold mt-2 placeholder:text-skin-muted/40 text-start"
               // {...register(`creators.${index}.percentage`, {
               //   valueAsNumber: true,
               // }
@@ -159,7 +160,8 @@ export function MediaCreatorForm(props: MediaCreatorFormProps) {
               <textarea />
             </option> */}
             </input>
-          </div>
+          </FormLabelCreators>
+          {/* </div> */}
 
           <button
             id={"`${E2EID.uploadCreatorRemoveButtonX}${index}`"}
@@ -179,19 +181,19 @@ export function MediaCreatorForm(props: MediaCreatorFormProps) {
     }
 
   return (
-    <>
-      <div className="relative flex items-center w-full mt-4">
+    <div className="relative flex flex-col w-full mt-4">
+      <div className="flex justify-between w-full">
         <p className="text-2xl">Co-Creators</p>
         <button
           disabled={false}
           id={"E2EID.uploadCreatorAddButton"}
           type="button"
-          className="flex items-center gap-2 px-4 mt-auto  ml-auto cursor-pointer md:w-[78px]  md:flex-col md:h-full btn"
+          className="flex items-center md:px-4 mt-auto text-xs bg-slate-900 rounded-md px-2 py-1"
           onClick={() => {}}>
           Add Creator
         </button>
-        {creatorLine()}
       </div>
-    </>
+      <div className="w-full">{creatorLine()}</div>
+    </div>
   )
 }

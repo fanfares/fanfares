@@ -31,7 +31,7 @@ export function FeedHeader() {
           id="e2e-feed-header-live-button"
           onClick={() => setLive(!live)}
           className={clsx(
-            "relative hover:bg-skin-fill w-1/2 p-4 rounded-bl-md",
+            "relative hover:bg-slate-900 w-1/2 p-4 rounded-bl-md",
             {
               "content-[''] after:w-10 after:border-2 after:absolute after:-bottom-0 after:border-buttonAccentHover after:rounded-full after:left-1/2 after:-translate-x-1/2 font-bold":
                 live,
@@ -43,7 +43,7 @@ export function FeedHeader() {
           id="e2e-feed-header-following-button"
           onClick={() => setFollowing(!following)}
           className={clsx(
-            "relative hover:bg-skin-fill w-1/2 p-4 rounded-br-md",
+            "relative hover:bg-slate-900 w-1/2 p-4 rounded-br-md",
             {
               "content-[''] after:w-20 after:border-2 after:absolute after:-bottom-0 after:border-buttonAccentHover after:rounded-full after:left-1/2 after:-translate-x-1/2 font-bold":
                 following,

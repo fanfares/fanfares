@@ -9,8 +9,8 @@ export default function Upload() {
   return (
     <section className="">
       <form onSubmit={() => {}}>
-        <div className="relative flex flex-col items-center justify-center w-full h-full pb-40 mt-8 ">
-          <div className="flex flex-col w-full gap-4 md:flex-row">
+        <div className="relative flex flex-col items-center justify-center w-full h-full">
+          <div className="upperSectionForm flex flex-col w-full gap-4 md:flex-row">
             <div className="flex mx-auto">
               <MediaThumbnailUploadField />
             </div>

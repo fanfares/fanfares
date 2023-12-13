@@ -37,7 +37,7 @@ const Button: React.FC<ButtonProps> = ({
           " bg-skin-button-default hover:bg-red-400 active:bg-red-300":
             buttonType === "cancel",
           "gap-2": icon,
-          "cursor-not-allowed active:scale-100 disabled:bg-skin-fill/50 disabled:text-skin-muted/30":
+          "cursor-not-allowed active:scale-100 disabled:bg-slate-900/50 disabled:text-skin-muted/30":
             disabled,
           " hover:bg-green-400 active:bg-green-300": buttonType === "submit",
         }

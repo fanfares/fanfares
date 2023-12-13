@@ -1,13 +1,12 @@
 // import { FAProSolid, FontAwesomeIcon } from '@excalibur/config/fontawesome';
-import clsx from 'clsx';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Suspense, useEffect, useState } from 'react';
-import LazyEpisodeThumbnail from './LazyEpisodeThumbnail';
-import SectionTitle from './SectionTitle';
+import clsx from "clsx"
+import Image from "next/image"
+import Link from "next/link"
+import { Suspense, useEffect, useState } from "react"
+import LazyEpisodeThumbnail from "./LazyEpisodeThumbnail"
+import SectionTitle from "./SectionTitle"
 
 function CarrouselEpisodes() {
-
   return <></>
   // const [activeCarrousel, setActiveCarrousel] = useState(0);
   // const [transitioning, setTransitioning] = useState(false);
@@ -158,7 +157,7 @@ function CarrouselEpisodes() {
   //       {isThumbnailMounted && (
   //         <Suspense
   //           fallback={
-  //             <div className="h-[100px] w-[100px] bg-skin-fill md:h-[200px] md:w-[200px]">
+  //             <div className="h-[100px] w-[100px] bg-slate-900 md:h-[200px] md:w-[200px]">
   //               <FontAwesomeIcon className="animate-spin text-4xl" icon={FAProSolid.faSpinnerThird} />
   //             </div>
   //           }>
@@ -236,7 +235,7 @@ function CarrouselEpisodes() {
   //     <SectionTitle title="Featuring now !" />
   //     <div className="md:px8 mx-auto mt-12 flex w-full flex-col items-center justify-center px-4 md:max-w-2xl lg:max-w-4xl">
   //       <div
-  //         className="flex h-fit max-h-[18rem] rounded-lg 
+  //         className="flex h-fit max-h-[18rem] rounded-lg
   //       border border-gray-50/10 bg-white/[2%] p-4 text-center drop-shadow-2xl filter backdrop-blur-md">
   //         {renderLeftContent()}
   //         {renderRightContent()}
@@ -251,4 +250,4 @@ function CarrouselEpisodes() {
   // );
 }
 
-export default CarrouselEpisodes;
+export default CarrouselEpisodes

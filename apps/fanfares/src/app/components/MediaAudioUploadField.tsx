@@ -3,8 +3,8 @@ export function MediaAudioUploadField() {
     <div
       id={"E2EID.uploadAudioInput"}
       // {...getRootProps({ style })}
-      className="relative flex items-center w-full h-20 gap-4 mt-8 rounded-xl bg-skin-fill/80 md:justify-center">
-      {"filename" ? (
+      className="relative flex items-center w-full mt-8 bg-slate-900/20 px-2 py-3 rounded-lg">
+      {/* {"filename" ? (
         <div className="absolute left-0">
           <p className="w-32 ml-4 text-xs font-thin text-left truncate md:w-1/6 ">
             {"filename"}
@@ -21,23 +21,26 @@ export function MediaAudioUploadField() {
           </p>
           <p className="mr-auto">or</p>
         </div>
-      )}
-
-      <label className="btn absolute left-1/2 mx-auto w-[80px] -translate-x-1/2 cursor-pointer px-2 ">
+      )} */}
+      <p className="text-xs md:text-base font-semibold">Select Audio File</p>
+      <label
+        htmlFor="audioUpload"
+        className="mx-auto py-1 rounded-lg cursor-pointer px-2 bg-buttonDefault">
         <input
           type="file"
-          //  {...getInputProps({ className: "" })}
+          id="audioUpload" //  {...getInputProps({ className: "" })}
+          className="hidden"
         />
         {"filename" ? "Change" : "Browse"}
       </label>
-      <input
+      {/* <input
         className="hidden"
         //  {...register("duration")}
-      />
-      <div className="absolute right-4">
-        {/* THIS HOULD BE A POPOVER */}
-        <p className="text-xs">text="Formats allowed: AAC / M4A / MP3"</p>
-      </div>
+      /> */}
+
+      {/* THIS HOULD BE A POPOVER */}
+      <p className="text-xs w-24">Formats allowed: AAC / M4A / MP3</p>
+
       {/* <p className="absolute right-0 w-1/3 mr-2 text-xs font-thin text-right text-skin-muted md:w-1/4">
           Formats allowed: AAC / M4A / MP3
         </p> */}
