@@ -1,5 +1,4 @@
-
-// Naming  
+// Naming
 // First Part: Page or Component Name
 // Second Part: Element Name
 
@@ -7,6 +6,7 @@
 // page-element-name
 
 export enum E2E {
-    NavbarLink = 'navbar-link-',
+  NavbarLink = "navbar-link-",
 
+  LabelForm = "label-form-",
 }

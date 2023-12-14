@@ -7,7 +7,7 @@ export default function FeedPage() {
     <section className="flex flex-col space-y-2">
       <FeedHeader />
       <PostForm />
-      <Feed />
+      {/* <Feed /> */}
     </section>
   )
 }

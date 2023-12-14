@@ -4,8 +4,19 @@ import { MediaAudioUploadField } from "@/app/components/MediaAudioUploadField"
 import { MediaCreatorForm } from "@/app/components/MediaCreatorForm"
 import { MediaThumbnailUploadField } from "@/app/components/MediaThumbnailUploadField"
 import Link from "next/link"
+import { useState } from "react"
 
-export default function Upload() {
+interface UploadProps {
+  onClick: () => void
+}
+
+export default function Upload({ onClick }: UploadProps) {
+  const [text, setText] = useState("")
+
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(event.target.value)
+  }
+
   return (
     <section className="">
       <form onSubmit={() => {}}>
@@ -14,7 +25,7 @@ export default function Upload() {
             <div className="flex mx-auto">
               <MediaThumbnailUploadField />
             </div>
-            <div className="w-full gap-4 mx-auto space-y-4">
+            <div className="w-full mx-auto space-y-4 py-2">
               {/* <MediaNameField maxLength={MAX_TITLE_LENGTH} /> */}
               <div className="relative">
                 <label>
@@ -38,12 +49,14 @@ export default function Upload() {
 
               {/* <MediaDescriptionField maxLength={MAX_DESCRIPTION_LENGTH} /> */}
               <div className="relative">
-                <input
+                <textarea
                   id={"E2EID.uploadDescriptionInput"}
                   placeholder="Description"
-                  className="w-full h-40 bg-transparent border-b-2 outline-none resize-none notes active border-buttonAccent placeholder:text-xl placeholder:font-thin placeholder:text-skin-muted"
-                  maxLength={1}
+                  className="w-full h-40 min-h-[40px] max-h-[200px] bg-transparent border-b-2 outline-none resize-none notes active border-buttonAccent placeholder:text-xl placeholder:font-thin placeholder:text-skin-muted overflow-y-auto"
+                  maxLength={9999}
                   name="description"
+                  value={text}
+                  onChange={handleChange}
                 />
                 <p
                   className={`absolute -bottom-4 right-0 text-sm font-bold  ${
@@ -55,7 +68,6 @@ export default function Upload() {
             </div>
           </div>
           <MediaAudioUploadField />
-
           <div className="flex flex-col w-full">
             {/* <MediaParameterForm /> */}
             <MediaCreatorForm
@@ -63,16 +75,13 @@ export default function Upload() {
             // onConnectDialog={setShowWalletStateModal}
             />
           </div>
-
           <p className="mt-8 text-red-600" id={"E2EID.uploadErrorMessage"}>
             {/* {validationError?.error ?? ""} */}
           </p>
           <p className="hidden" id={"E2EID.uploadErrorType"}>
             {/* {validationError?.type ?? ""} */}
           </p>
-
           {/* <UploadCosts costChangeCallback={interceptSetSolanaCost} /> */}
-
           <div className="flex flex-col gap-2 mt-8">
             <label htmlFor="TermsAndConditionCheckbox">
               <input
@@ -93,6 +102,12 @@ export default function Upload() {
               id={"E2EID.uploadPublishButton"}
               className="w-full px-5 mx-auto"
             />
+            <Button
+              onClick={onClick}
+              label="Cancel"
+              id={"E2EID.uploadPublishButton"}
+              className="w-full px-5 mx-auto"
+            />{" "}
           </div>
           {/* <div className="mb-[]" /> */}
         </div>

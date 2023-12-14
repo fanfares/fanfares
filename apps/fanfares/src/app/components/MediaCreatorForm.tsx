@@ -188,7 +188,7 @@ export function MediaCreatorForm(props: MediaCreatorFormProps) {
           disabled={false}
           id={"E2EID.uploadCreatorAddButton"}
           type="button"
-          className="flex items-center md:px-4 mt-auto text-xs bg-skin-fill rounded-md px-2 py-1"
+          className="flex items-center md:px-4 mt-auto text-xs bg-buttonDefault rounded-md px-2 py-1"
           onClick={() => {}}>
           Add Creator
         </button>
