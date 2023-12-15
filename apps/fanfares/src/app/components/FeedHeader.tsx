@@ -3,6 +3,8 @@ import clsx from "clsx"
 import { useState } from "react"
 import { useAppState } from "../controllers/state/use-app-state"
 
+//TODO -> Replace the ID's with the test ids enums.
+
 export function FeedHeader() {
   const { accountProfile } = useAppState()
 
@@ -22,7 +24,9 @@ export function FeedHeader() {
           />
         </div>
         <div className="flex justify-between items-center">
-          <p className="font-bold hidden md:block">Home</p>
+          <p className="font-bold hidden md:block">
+            {accountProfile?.display_name}
+          </p>
           <button className="text-2xl ml-auto md:ml-0">⛭</button>
         </div>
         <p className="absolute top-1 left-1/2 -translate-x-1/2 text-2xl cursor-default">

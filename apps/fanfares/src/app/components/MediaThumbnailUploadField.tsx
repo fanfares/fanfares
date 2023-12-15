@@ -1,6 +1,6 @@
 export function MediaThumbnailUploadField() {
   return (
-    <div className="flex flex-col border border-buttonAccent px-2 py-1 rounded-md items-center justify-around w-full space-y-4 ">
+    <div className="flex flex-col border border-buttonAccent px-2 py-1 rounded items-center justify-around w-full space-y-4 ">
       <p className="mt-2 text-sm">Upload Cover Image</p>
       <label
         htmlFor="thumbnailUpload"

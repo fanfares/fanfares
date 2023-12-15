@@ -3,7 +3,7 @@ export function MediaAudioUploadField() {
     <div
       id={"E2EID.uploadAudioInput"}
       // {...getRootProps({ style })}
-      className="relative flex items-center w-full mt-8 bg-skin-fill/20 px-2 py-3 rounded-lg">
+      className="relative flex items-center w-full mt-8 border border-buttonAccent px-2 py-3 rounded">
       {/* {"filename" ? (
         <div className="absolute left-0">
           <p className="w-32 ml-4 text-xs font-thin text-left truncate md:w-1/6 ">
