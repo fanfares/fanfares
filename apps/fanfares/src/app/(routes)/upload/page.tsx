@@ -18,31 +18,31 @@ export default function Upload({ onClick }: UploadProps) {
   }
 
   return (
-    <section className="">
+    <section className="w-full">
       <form onSubmit={() => {}}>
         <div className="relative flex flex-col items-center justify-center w-full h-full">
           <div className="upperSectionForm flex flex-col w-full gap-4 md:flex-row">
             <div className="flex mx-auto">
               <MediaThumbnailUploadField />
             </div>
-            <div className="w-full mx-auto space-y-4 py-2">
+            <div className="w-full mx-auto space-y-4 pt-2">
               {/* <MediaNameField maxLength={MAX_TITLE_LENGTH} /> */}
               <div className="relative">
                 <label>
                   <input
                     id={"E2EID.uploadTitleInput"}
                     placeholder="Title"
-                    className="left-[36px] w-full  border-b-2 border-buttonAccent  bg-transparent outline-none placeholder:text-xl placeholder:font-thin placeholder:text-skin-muted"
+                    className="w-full border-b-2 border-buttonAccent bg-transparent outline-none font-thin text-xl placeholder:text-xl placeholder:font-thin placeholder:text-skin-muted"
                     // requiredMessage="Please enter the Episode name"
-                    maxLength={1}
+                    maxLength={100}
                     name="name"
                   />
                   <p
-                    className={`absolute right-0 top-8 text-sm font-bold  ${
+                    className={`absolute right-0 top-8 text-xs ${
                       "charsLeft < 8" ? "text-red-500" : "text-skin-inverted"
                     }`}>
                     {" "}
-                    {"charsLeft"}
+                    {"100"}
                   </p>
                 </label>
               </div>
@@ -59,16 +59,16 @@ export default function Upload({ onClick }: UploadProps) {
                   onChange={handleChange}
                 />
                 <p
-                  className={`absolute -bottom-4 right-0 text-sm font-bold  ${
+                  className={`absolute -bottom-4 right-0 text-xs ${
                     "charsLeft < 8" ? "text-red-500" : "text-skin-inverted"
                   }`}>
-                  {"charsLeft"}
+                  {"100"}
                 </p>
               </div>
             </div>
           </div>
           <MediaAudioUploadField />
-          <div className="flex flex-col w-full">
+          <div className="flex-col w-full hidden">
             {/* <MediaParameterForm /> */}
             <MediaCreatorForm
             // shouldOpenConnectDialog={shouldOpenWalletStateModal}

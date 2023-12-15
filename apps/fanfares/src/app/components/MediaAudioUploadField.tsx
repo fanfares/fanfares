@@ -22,7 +22,7 @@ export function MediaAudioUploadField() {
           <p className="mr-auto">or</p>
         </div>
       )} */}
-      <p className="text-xs md:text-base font-semibold">Select Audio File</p>
+      <p className="text-xs">Select Audio File</p>
       <label
         htmlFor="audioUpload"
         className="mx-auto py-1 rounded-lg cursor-pointer px-2 bg-buttonDefault">

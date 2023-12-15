@@ -129,6 +129,11 @@ const config: Config = {
           opacityValue: 100,
         }),
       },
+      maxWidth: {
+        "modal-mobile": "27rem",
+        "modal-tablet": "48rem",
+        "modal-desktop": "",
+      },
     },
   },
   plugins: [],
