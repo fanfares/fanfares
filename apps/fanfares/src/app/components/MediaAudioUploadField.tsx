@@ -25,7 +25,7 @@ export function MediaAudioUploadField() {
       <p className="text-xs">Select Audio File</p>
       <label
         htmlFor="audioUpload"
-        className="mx-auto py-1 rounded-lg cursor-pointer px-2 bg-buttonDefault">
+        className="mx-auto py-1 rounded-full cursor-pointer px-3 bg-buttonDefault">
         <input
           type="file"
           id="audioUpload" //  {...getInputProps({ className: "" })}

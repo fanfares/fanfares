@@ -1,8 +1,11 @@
 "use client"
 import clsx from "clsx"
 import { useState } from "react"
+import { useAppState } from "../controllers/state/use-app-state"
 
 export function FeedHeader() {
+  const { accountProfile } = useAppState()
+
   const [live, setLive] = useState(false)
   const [following, setFollowing] = useState(false)
 
@@ -13,7 +16,7 @@ export function FeedHeader() {
       <div className="pl-16 pr-4 py-2 rounded-md flex flex-col relative w-full">
         <div className="w-8 h-8 rounded-full overflow-hidden absolute left-2 top-2">
           <img
-            src="http://placebeard.it/640/480.jpg"
+            src={accountProfile?.picture}
             className="w-full h-full border-2 border-buttonAccent"
             alt="Profile Image"
           />
