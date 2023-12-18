@@ -14,6 +14,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import TestState from "./TestState"
 import { E2E } from "../controllers/testing/e2e"
+import { ProfileBuble } from "./ProfileBubble"
 // import { useAppState } from 'src/controllers/state/use-app-state';
 // import { E2EID } from 'src/controllers/utils/e2e-ids';
 // import LoginLogoutButton from "src/views/components/LoginLogoutButton"
@@ -258,6 +259,7 @@ export function Navbar() {
           </p>
         </div>
         {/* <div className={`static left-5 h-10 ${publicKey ? "mt-3" : ""}`}> */}
+        <ProfileBuble />
         <div className={`static left-5 h-10 `}>
           <p
             // onClick={needHelp}
