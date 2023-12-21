@@ -6,7 +6,7 @@ import crypto from 'crypto';
 
 // https://docs.shdwdrive.com/build/the-api
 export const SHDW_STORAGE_ACCOUNT = process.env.SDHW_STORAGE as string;
-export const SHDW_DRIVE_ENDPOINT = "https://shadow-storage.genesysgo.net";
+export const SHDW_DRIVE_ENDPOINT = "https://us.shadow.cloud";
 export const SHDW_TEMP_HASH = "[TEMP_HASH]";
 export const SHDW_MESSAGE_BASE = `ShdwDrive Signed Message:\nStorage Account: ${SHDW_STORAGE_ACCOUNT}\nUpload files with hash: ${SHDW_TEMP_HASH}`;
 
