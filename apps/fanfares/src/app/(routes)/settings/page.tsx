@@ -42,47 +42,55 @@ function Settings() {
       <div>
         <img src="" alt="" />
       </div>
-
-      {inputs.map(input => (
-        <LabelForm className="relative gap-2 group" key={input.id}>
-          <p
-            className={`text-xs font-thin absolute transition-all duration-300 ease-in-out w-full group-focus-within:-top-4 group-focus-within:text-buttonAccentHover 
-          ${input.value.length !== 0 ? "-top-4" : ""}`}>
-            {input.label}
-          </p>
-          <input
-            className={`bg-transparent focus:outline-none w-full group-focus-within:text-left group-focus-within:placeholder:text-left transition-all duration-300 ease-linear
+      <form action=" " className="space-y-5 w-full">
+        {inputs.map(input => (
+          <LabelForm className="relative gap-2 group" key={input.id}>
+            <p
+              className={`text-xs font-thin absolute transition-all duration-300 ease-in-out w-full group-focus-within:-top-4 group-focus-within:text-buttonAccentHover group-focus-within:-translate-y-0
+            ${
+              input.value == ""
+                ? "top-1/2 -translate-y-1/2"
+                : "-top-4 -translate-y-0"
+            }`}>
+              {input.label}
+            </p>
+            <input
+              className={`bg-transparent focus:outline-none w-full group-focus-within:text-left group-focus-within:placeholder:text-left transition-all duration-300 ease-linear
             ${
               input.value.length !== 0
                 ? "placeholder:text-left text-left"
                 : "placeholder:text-right text-right"
             }`}
-            type="text"
-            value={input.value}
-            placeholder={input.placeholder}
-            onChange={e => handleInputChange(input.id, e.target.value)}
+              type="text"
+              value={input.value}
+              placeholder={input.placeholder}
+              onChange={e => handleInputChange(input.id, e.target.value)}
+            />
+          </LabelForm>
+        ))}
+        <LabelForm className="relative gap-2 group">
+          <p
+            className={`text-xs font-thin absolute transition-all duration-300 ease-in-out w-full group-focus-within:-top-4 group-focus-within:text-buttonAccentHover group-focus-within:-translate-y-0
+          ${
+            textAreaInput.trim() == ""
+              ? "top-4 -translate-y-1/2"
+              : "-top-4 -translate-y-0"
+          }`}>
+            About Me
+          </p>
+          <textarea
+            rows={12}
+            value={textAreaInput}
+            onChange={e => setTextAreaInput(e.target.value)}
+            className={`bg-transparent group-focus:outline-dashed focus:outline-none w-full placeholder:text-right resize-none`}
           />
         </LabelForm>
-      ))}
 
-      <LabelForm className="relative gap-2 group">
-        <p
-          className={`text-xs font-thin absolute group-focus-within:-top-4 group-focus-within:text-buttonAccentHover transition-all duration-300 ease-in-out w-full
-            ${textAreaInput.length !== 0 ? "-top-4" : ""}`}>
-          About Me
-        </p>
-        <textarea
-          rows={12}
-          value={textAreaInput}
-          onChange={e => setTextAreaInput(e.target.value)}
-          className={`bg-transparent group-focus:outline-dashed focus:outline-none w-full placeholder:text-right resize-none`}
-        />
-      </LabelForm>
-
-      <div className="flex gap-2">
-        <Button label="Save" className="w-40" />
-        <Button label="Cancel" className="w-40" />
-      </div>
+        <div className="flex gap-2">
+          <Button label="Save" className="w-40" />
+          <Button label="Cancel" className="w-40" />
+        </div>
+      </form>
     </div>
   )
 }
