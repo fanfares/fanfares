@@ -2,6 +2,8 @@
 import clsx from "clsx"
 import { useState } from "react"
 import { useAppState } from "../controllers/state/use-app-state"
+import { Modal } from "./Modal"
+import Link from "next/link"
 
 //TODO -> Replace the ID's with the test ids enums.
 
@@ -10,6 +12,7 @@ export function FeedHeader() {
 
   const [live, setLive] = useState(false)
   const [following, setFollowing] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
     <div
@@ -23,11 +26,14 @@ export function FeedHeader() {
             alt="Profile Image"
           />
         </div>
+
         <div className="flex justify-between items-center">
           <p className="font-bold hidden md:block">
             {accountProfile?.display_name}
           </p>
-          <button className="text-2xl ml-auto md:ml-0">⛭</button>
+          <Link href="/settings" className="text-2xl ml-auto md:ml-0">
+            ⛭
+          </Link>
         </div>
         <p className="absolute top-1 left-1/2 -translate-x-1/2 text-2xl cursor-default">
           🎪
