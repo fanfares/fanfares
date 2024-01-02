@@ -11,14 +11,21 @@ export interface MessageSignRequest {
     fileNamesHashed: string;
   }
 
-export function formatFileNames(fileNames: string[]): string {
+function formatFileNames(fileNames: string[]): string {
     return fileNames.join(",");
 }
 
-export async function uploadToShdwDrive(files: File[]){
+function formatFilePrefixedName(file: File, fileNamePrefix?: string): string {
+
+    if(!fileNamePrefix) return file.name;
+
+    return `${fileNamePrefix}_${file.name}`
+}
+
+export async function uploadToShdwDrive(files: File[], fileNamePrefix?: string): Promise<string[]> {
 
     // Format File Names
-    const fileNameArray = files.map(file => file.name);
+    const fileNameArray = files.map(file => formatFilePrefixedName(file, fileNamePrefix));
     const fileNames = formatFileNames(fileNameArray);
     
     // Create Form Data
@@ -26,7 +33,7 @@ export async function uploadToShdwDrive(files: File[]){
 
     // Add Files
     for (let i = 0; i < files.length; i++) {
-        formData.append("file", files[i], files[i].name);
+        formData.append("file", files[i], formatFilePrefixedName(files[i], fileNamePrefix));
     }
 
     // Sign Message
@@ -62,17 +69,10 @@ export async function uploadToShdwDrive(files: File[]){
     // Check Upload
     if(!uploadResponse.ok) throw new Error("Failed to upload files");
 
-    console.log("Upload response", uploadResponse);
+    // Grab final urls
+    const finalUrls = (await uploadResponse.json()).finalized_locations;
 
+    if(!finalUrls) throw new Error("Failed to retrieve final urls");
+
+    return finalUrls;
 }
-
-
-// const listResponse = await fetch('https://shadow-storage.genesysgo.net/list-objects', {
-//     method: "POST",
-//     headers: {
-//         "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify({ storageAccount }),
-// });
-
-// console.log(await listResponse.json());

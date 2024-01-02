@@ -6,8 +6,9 @@ import { AccountSlice, createAccountSlice } from "./account-slice";
 import { TestSlice, createTestSlice } from "./test-slice";
 import { PrimalSlice, createPrimalSlice } from "./primal-slice";
 import { GateSlice, createGateSlice } from "./gate-slice";
+import { UploadSlice, createUploadSlice } from "./upload-slice";
 
-export type CombinedState = TestSlice & NostrSlice & AccountSlice & PrimalSlice & GateSlice;
+export type CombinedState = TestSlice & NostrSlice & AccountSlice & PrimalSlice & GateSlice & UploadSlice;
 
 export const useAppState = create<CombinedState>()(
   persist(
@@ -18,6 +19,7 @@ export const useAppState = create<CombinedState>()(
         ...createAccountSlice(set, get, slice),
         ...createPrimalSlice(set, get, slice),
         ...createGateSlice(set, get, slice),
+        ...createUploadSlice(set, get, slice),
       };
     },
     {

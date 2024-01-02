@@ -1,46 +1,48 @@
-'use client'
+"use client";
 
-import { uploadToShdwDrive } from '@/app/controllers/shdw/upload';
-import React, { useState } from 'react';
+import { useAppState } from "@/app/controllers/state/use-app-state";
+import React from "react";
 
 export default function TestPage() {
-    const [isLoading, setIsLoading] = useState(false);
-    const [files, setFiles] = useState<File[]>([]);
+const formRef = React.useRef<HTMLFormElement>(null);
+  const {
+    uploadHandleFileChange,
+    uploadIsUploading,
+    uploadSubmit,
+    uploadUrls,
+  } = useAppState();
 
-    const handleFileChange = (event: any) => {
-        const fileList = event.target.files as FileList;
-        const newFiles = [];
-
-        for (let i = 0; i < fileList.length; i++) {
-            const file = fileList.item(i);
-            if (!file) continue;
-
-            newFiles.push(file);
+  const handleSubmit = (event: any) => {
+    event.preventDefault();
+    uploadSubmit({
+        onSuccess(uploadUrls) {
+            console.log(uploadUrls);
+            formRef.current?.reset();
+        },
+        onError(error) {
+            console.error(error);
         }
+    });
+  };
 
-        setFiles(newFiles);
-    };
-
-    const handleSubmit = (event: any) => {
-        event.preventDefault();
-
-        if(isLoading) return;
-        setIsLoading(true);
-
-        uploadToShdwDrive(files).then(() => {
-            alert('success');
-        }).catch((e) => {
-            alert(e);
-            console.log(e);
-        }).finally(() => {
-            setIsLoading(false);
-        });
-    };
-
-    return (
-        <form onSubmit={handleSubmit}>
-            <input multiple type="file" className="border-2 border-black" onChange={handleFileChange} />
-            <button type="submit" className="border-2 border-black">Submit</button>
-        </form>
-    );
+  return (
+    <div>
+      <form onSubmit={handleSubmit} ref={formRef}>
+        <input
+          multiple
+          type="file"
+          className="border-2 border-black"
+          onChange={uploadHandleFileChange}
+        />
+        <button type="submit" className="border-2 border-black">
+          Submit
+        </button>
+      </form>
+      <p>{uploadIsUploading ? 'Uploading...' : 'Idle'}</p>
+      {uploadIsUploading }
+      {uploadUrls.map((url, index) => (
+        <p key={index}>{url}</p>
+      ))}
+    </div>
+  );
 }

@@ -1,14 +1,13 @@
 import { StateCreator } from 'zustand';
 import { CombinedState } from './use-app-state';
-import { Event as NostrEvent } from 'nostr-tools';
+import { Event as NostrEvent, generatePrivateKey } from 'nostr-tools';
 import { GatedNote, AnnouncementNote, KeyNote, NIP_108_KINDS, eventToKeyNote, eventToGatedNote, eventToAnnouncementNote, unlockGatedNote } from 'nip108';
 
 // First, let's create the ability to see all of the gated posts you have purchased
 // So we will fetch by the gate key, and then we will fetch the gated posts
+
 export interface GateSlice {
-
     gateFetch: () => void,
-
     gatePurchasedNotes: NostrEvent<number>[],
     gateNotes: GatedNote[],
     gateAnnouncements: {[key: string]: AnnouncementNote},
@@ -29,7 +28,6 @@ export const createGateSlice: StateCreator<
   [],
   GateSlice
 > = (set, get) => {
-    
     const gateFetch = () => {
         const pool = get().nostrPool;
         const relays = get().nostrRelays;
@@ -53,8 +51,6 @@ export const createGateSlice: StateCreator<
 
             const keyMap: {[key: string]: KeyNote} = {};
             const gates: string[] = [];
-
-
             
             for (const key of keys) {
                 try {
