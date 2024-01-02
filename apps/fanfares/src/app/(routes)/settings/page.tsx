@@ -55,12 +55,8 @@ function Settings() {
               {input.label}
             </p>
             <input
-              className={`bg-transparent focus:outline-none w-full group-focus-within:text-left group-focus-within:placeholder:text-left transition-all duration-300 ease-linear
-            ${
-              input.value.length !== 0
-                ? "placeholder:text-left text-left"
-                : "placeholder:text-right text-right"
-            }`}
+              className={`bg-transparent focus:outline-none w-full group-focus-within:text-left placeholder:text-right outline-none group-focus-within:placeholder:text-left group-focus-within:placeholder:ml-0 transition-all duration-1000 ease-linear
+          `}
               type="text"
               value={input.value}
               placeholder={input.placeholder}
