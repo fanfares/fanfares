@@ -1,18 +1,27 @@
 import { StateCreator } from 'zustand';
 import { CombinedState } from './use-app-state';
 
+
+export interface UploadPodcastState {
+    IDLE: 'IDLE',
+    UPLOADING_PODCAST: 'UPLOADING_PODCAST',
+    POSTING_PODCAST: 'POSTING_PODCAST',
+}
 export interface UploadPodcastSubmitCallbacks {
     onSuccess?: () => void;
     onError?: () => void;
     clearForm?: () => void;
-  }
+}
   
-
 export interface UploadPodcastSlice {
     uploadPodcastTitle: string,
     uploadPodcastDescription: string,
     uploadPodcastAnnouncement: string,
 
+    uploadPodcastAudioFilepath: string,
+    uploadPodcastNoteKeys: string[],
+
+    uploadPodcastClear: () => void,
     uploadPodcastSubmit: (callbacks: UploadPodcastSubmitCallbacks) => void,
 
     uploadPodcastHandleAnnouncement: (announcement: string) => void,
@@ -22,16 +31,22 @@ export interface UploadPodcastSlice {
 }
 
 const DEFAULT_STATE: UploadPodcastSlice = {
+
     uploadPodcastTitle: '',
     uploadPodcastDescription: '',
     uploadPodcastAnnouncement: '',
 
+    uploadPodcastAudioFilepath: '',
+    uploadPodcastNoteKeys: [],
+
+    uploadPodcastClear: () => {},
     uploadPodcastSubmit: (callbacks: UploadPodcastSubmitCallbacks) => {},
 
     uploadPodcastHandleAnnouncement: (announcement: string) => {},
     uploadPodcastHandleTitle: (title: string) => {},
     uploadPodcastHandleDescription: (description: string) => {},
     uploadPodcastHandleFileChange: (event: any) => {},
+
 };
 
 export const createUploadPodcastSlice: StateCreator<
@@ -40,6 +55,16 @@ export const createUploadPodcastSlice: StateCreator<
   [],
   UploadPodcastSlice
 > = (set, get) => {
+
+    const uploadPodcastClear = () => {
+        set({
+            uploadPodcastTitle: '',
+            uploadPodcastDescription: '',
+            uploadPodcastAnnouncement: '',
+            uploadPodcastAudioFilepath: '',
+            uploadPodcastNoteKeys: [],
+        });
+    }
 
     const uploadPodcastHandleTitle = (title: string) => {
         set({ uploadPodcastTitle: title });
@@ -67,16 +92,17 @@ export const createUploadPodcastSlice: StateCreator<
         const files = get().uploadFiles;
         const isUploading = get().uploadIsUploading;
 
-
         // Upload the files
 
         // Construct the gated post
 
         // Post the gated post
+
     }
 
     return {
         ...DEFAULT_STATE,
+        uploadPodcastClear,
         uploadPodcastSubmit,
         uploadPodcastHandleTitle,
         uploadPodcastHandleAnnouncement,

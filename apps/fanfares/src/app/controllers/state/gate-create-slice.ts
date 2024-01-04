@@ -1,78 +1,73 @@
 import { StateCreator } from "zustand";
 import { CombinedState } from "./use-app-state";
-import { Event as NostrEvent, generatePrivateKey } from "nostr-tools";
+import { EventTemplate, Event as NostrEvent, generatePrivateKey } from "nostr-tools";
 import {
-  GatedNote,
-  AnnouncementNote,
-  KeyNote,
   NIP_108_KINDS,
-  eventToKeyNote,
-  eventToGatedNote,
-  eventToAnnouncementNote,
-  unlockGatedNote,
   createGatedNoteUnsigned,
   CreateNotePostBody,
   createAnnouncementNoteUnsigned,
 } from "nip108";
 import { GATE_SERVER } from "../nostr/nostr-defines";
 
-// First, let's create the ability to see all of the gated posts you have purchased
-// So we will fetch by the gate key, and then we will fetch the gated posts
-
-export interface CreateGateContentInput {
-  lockedContent: NostrEvent<number>;
+export interface GateCreateContentInput {
+  noteToGate: EventTemplate<number>;
   announcementContent: string;
   unlockCost: number;
 }
 
-export enum CreateGateState {
+export enum GateCreateState {
   IDLE = "IDLE",
-  SIGNING_LOCKED_CONTENT = "SIGNING_LOCKED_CONTENT",
-  SIGNING_GATED_CONTENT = "SIGNING_GATED_CONTENT",
+  SIGNING_GATED_CONTENT = "SIGNING_LOCKED_CONTENT",
+  SIGNING_GATE = "SIGNING_GATED_CONTENT",
   UPLOADING_GATE = "UPLOADING_GATE",
   PUBLISH_GATE = "PUBLISH_GATE",
-  SIGNING_ANNOUNCEMENT_CONTENT = "SIGNING_ANNOUNCEMENT_CONTENT",
+  SIGNING_ANNOUNCEMENT = "SIGNING_ANNOUNCEMENT_CONTENT",
   PUBLISH_ANNOUNCEMENT = "PUBLISH_ANNOUNCEMENT",
 }
 
-export interface CreateGateSlice {
-  gateCreate: (input: CreateGateContentInput) => Promise<void>;
+export interface GateCreateSlice {
+  gateCreateSubmit: (input: GateCreateContentInput) => Promise<string[]>;
   gateCreateClear: () => void;
-  gateCreateState: CreateGateState;
-  gateCreateSignedLockedContent: NostrEvent<number> | null;
+  gateCreateState: GateCreateState;
+  gateCreateSignedGatedContent: NostrEvent<number> | null;
   gateCreateSecret: string | null;
-  gateCreateSignedGatedContent: NostrEvent<NIP_108_KINDS.gate> | null;
-  gateCreateSignedAnnouncementContent: NostrEvent<NIP_108_KINDS.announcement> | null;
+  gateCreateSignedGate: NostrEvent<NIP_108_KINDS.gate> | null;
+  gateCreateSignedAnnouncement: NostrEvent<NIP_108_KINDS.announcement> | null;
+  
+
+  gateCreateNoteKeys: string[];
 }
 
-const DEFAULT_STATE: CreateGateSlice = {
-  gateCreate: async (input: CreateGateContentInput) => {},
+const DEFAULT_STATE: GateCreateSlice = {
+  gateCreateSubmit: async (input: GateCreateContentInput) => {return []},
   gateCreateClear: () => {},
-  gateCreateState: CreateGateState.IDLE,
+  gateCreateState: GateCreateState.IDLE,
   gateCreateSecret: null,
-  gateCreateSignedLockedContent: null,
   gateCreateSignedGatedContent: null,
-  gateCreateSignedAnnouncementContent: null,
+  gateCreateSignedGate: null,
+  gateCreateSignedAnnouncement: null,
+  gateCreateNoteKeys: [],
 };
 
 export const createGateCreateSlice: StateCreator<
-  CombinedState & CreateGateSlice,
+  CombinedState & GateCreateSlice,
   [],
   [],
-  CreateGateSlice
+  GateCreateSlice
 > = (set, get) => {
   const gateCreateClear = () => {
     set({
-      gateCreateState: CreateGateState.IDLE,
-      gateCreateSignedLockedContent: null,
+      gateCreateState: GateCreateState.IDLE,
       gateCreateSignedGatedContent: null,
+      gateCreateSignedGate: null,
       gateCreateSecret: null,
-      gateCreateSignedAnnouncementContent: null,
+      gateCreateSignedAnnouncement: null,
+      gateCreateNoteKeys: [],
     });
   };
 
-  const gateCreate = async (input: CreateGateContentInput) => {
-    const { lockedContent, unlockCost, announcementContent } = input;
+  const gateCreate = async (input: GateCreateContentInput): Promise<string[]> => {
+    const { noteToGate, unlockCost, announcementContent } = input;
 
     const pool = get().nostrPool;
     const relays = get().nostrRelays;
@@ -81,49 +76,53 @@ export const createGateCreateSlice: StateCreator<
     const gateState = get().gateCreateState;
     const lud16 = get().accountProfile?.lud16;
 
-    if (!pool || !relays || !publicKey || !lockedContent || !nip07 || !lud16) {
-      alert("No pool, relays, public key, locked content, nip07, or lud16");
-      return;
+    if (!pool || !relays || !publicKey || !noteToGate || !nip07 || !lud16) {
+      throw new Error("No pool, relays, public key, locked content, nip07, or lud16");
     }
 
-    let gateCreateSignedLockedContent = get().gateCreateSignedLockedContent;
-    let gateCreateSecret = get().gateCreateSecret;
     let gateCreateSignedGatedContent = get().gateCreateSignedGatedContent;
-    let gateCreateSignedAnnouncementContent =
-      get().gateCreateSignedAnnouncementContent;
+    let gateCreateSecret = get().gateCreateSecret;
+    let gateCreateSignedGate = get().gateCreateSignedGate;
+    let gateCreateSignedAnnouncement =
+      get().gateCreateSignedAnnouncement;
 
     switch (gateState) {
-      case CreateGateState.IDLE:
-        set({ gateCreateState: CreateGateState.SIGNING_LOCKED_CONTENT });
+      case GateCreateState.IDLE:
 
-      case CreateGateState.SIGNING_LOCKED_CONTENT:
-        gateCreateSignedLockedContent = await nip07.signEvent(lockedContent);
+        gateCreateClear();
+        set({ gateCreateState: GateCreateState.SIGNING_GATED_CONTENT });
+
+      case GateCreateState.SIGNING_GATED_CONTENT:
+        gateCreateSignedGatedContent = await nip07.signEvent(noteToGate);
         set({
-          gateCreateSignedLockedContent,
-          gateCreateState: CreateGateState.SIGNING_GATED_CONTENT,
+          gateCreateSignedGatedContent,
+          gateCreateState: GateCreateState.SIGNING_GATE,
+          gateCreateNoteKeys: [gateCreateSignedGatedContent.id],
         });
 
-      case CreateGateState.SIGNING_GATED_CONTENT:
+      case GateCreateState.SIGNING_GATE:
         gateCreateSecret = generatePrivateKey();
         const gatedNote = createGatedNoteUnsigned(
           publicKey,
           gateCreateSecret,
           unlockCost,
           GATE_SERVER,
-          gateCreateSignedLockedContent as NostrEvent<number>
+          gateCreateSignedGatedContent as NostrEvent<number>,
+          true,
         );
 
-        gateCreateSignedGatedContent = await nip07.signEvent(gatedNote);
+        gateCreateSignedGate = await nip07.signEvent(gatedNote);
         set({
-          gateCreateSignedGatedContent,
+          gateCreateSignedGate,
           gateCreateSecret,
-          gateCreateState: CreateGateState.UPLOADING_GATE,
+          gateCreateState: GateCreateState.UPLOADING_GATE,
+          gateCreateNoteKeys: [gateCreateSignedGate.id, gateCreateSignedGate.id]
         });
 
-      case CreateGateState.UPLOADING_GATE:
+      case GateCreateState.UPLOADING_GATE:
         const postBody: CreateNotePostBody = {
           gateEvent:
-            gateCreateSignedGatedContent as NostrEvent<NIP_108_KINDS.gate>,
+            gateCreateSignedGate as NostrEvent<NIP_108_KINDS.gate>,
           lud16: lud16,
           secret: gateCreateSecret as string,
           cost: unlockCost,
@@ -139,46 +138,54 @@ export const createGateCreateSlice: StateCreator<
 
         if (!response.ok) throw new Error("Failed to upload gate");
 
-        set({ gateCreateState: CreateGateState.PUBLISH_GATE });
+        set({ gateCreateState: GateCreateState.PUBLISH_GATE });
 
-      case CreateGateState.PUBLISH_GATE:
+      case GateCreateState.PUBLISH_GATE:
         await pool.publish(
           relays,
-          gateCreateSignedGatedContent as NostrEvent<NIP_108_KINDS.gate>
+          gateCreateSignedGate as NostrEvent<NIP_108_KINDS.gate>
         );
         set({
-          gateCreateState: CreateGateState.SIGNING_ANNOUNCEMENT_CONTENT,
+          gateCreateState: GateCreateState.SIGNING_ANNOUNCEMENT,
         });
 
-      case CreateGateState.SIGNING_ANNOUNCEMENT_CONTENT:
+      case GateCreateState.SIGNING_ANNOUNCEMENT:
         const announcementNote = createAnnouncementNoteUnsigned(
           publicKey,
           announcementContent,
-          gateCreateSignedGatedContent as NostrEvent<NIP_108_KINDS.gate>
+          gateCreateSignedGate as NostrEvent<NIP_108_KINDS.gate>,
+          true,
         );
 
-        gateCreateSignedAnnouncementContent = await nip07.signEvent(
+        gateCreateSignedAnnouncement = await nip07.signEvent(
           announcementNote
         );
 
         set({
-          gateCreateSignedAnnouncementContent,
-          gateCreateState: CreateGateState.PUBLISH_ANNOUNCEMENT,
+          gateCreateSignedAnnouncement: gateCreateSignedAnnouncement,
+          gateCreateState: GateCreateState.PUBLISH_ANNOUNCEMENT,
+          gateCreateNoteKeys: [
+            gateCreateSignedAnnouncement.id,
+            (gateCreateSignedGate as NostrEvent).id,
+            (gateCreateSignedGatedContent as NostrEvent).id,
+          ],
         });
 
-      case CreateGateState.PUBLISH_ANNOUNCEMENT:
+      case GateCreateState.PUBLISH_ANNOUNCEMENT:
         await pool.publish(
           relays,
-          gateCreateSignedAnnouncementContent as NostrEvent<NIP_108_KINDS.announcement>
+          gateCreateSignedAnnouncement as NostrEvent<NIP_108_KINDS.announcement>
         );
-        set({ gateCreateState: CreateGateState.IDLE });
+        set({ gateCreateState: GateCreateState.IDLE });
     }
+
+    return get().gateCreateNoteKeys;
   };
 
   return {
     ...DEFAULT_STATE,
     gateCreateClear,
-    gateCreate,
+    gateCreateSubmit: gateCreate,
   };
 };
 

@@ -1,7 +1,9 @@
 "use client";
 
+import { GateCreateState } from "@/app/controllers/state/gate-create-slice";
 import { useAppState } from "@/app/controllers/state/use-app-state";
-import React from "react";
+import { createNoteUnsigned } from "nip108";
+import React, { useEffect } from "react";
 
 export default function TestPage() {
 const formRef = React.useRef<HTMLFormElement>(null);
@@ -10,9 +12,37 @@ const formRef = React.useRef<HTMLFormElement>(null);
     uploadIsUploading,
     uploadSubmit,
     uploadUrls,
+    gateCreateNoteKeys,
+    gateCreateState,
+    gateCreateSubmit: gateCreate,
+    accountProfile,
+    nostrPool,
+    nostrRelays,
   } = useAppState();
 
-  const handleSubmit = (event: any) => {
+  const handleCreateSubmit = (event: any) => {
+    event.preventDefault();
+
+    const pubkey = accountProfile?.pubkey;
+    if (!pubkey) {
+      alert("You must be logged in to create a gated note");
+      return;
+    }
+
+    const noteToGate = createNoteUnsigned(
+      pubkey,
+      "Hi there!",
+    );
+
+    gateCreate({
+      noteToGate,
+      announcementContent: "Hi there!",
+      unlockCost: 1000
+    })
+
+  }
+
+  const handleFileSubmit = (event: any) => {
     event.preventDefault();
     uploadSubmit({
         onSuccess(uploadUrls) {
@@ -25,9 +55,34 @@ const formRef = React.useRef<HTMLFormElement>(null);
     });
   };
 
+  useEffect(() => {
+      if(gateCreateState === GateCreateState.IDLE && gateCreateNoteKeys.length > 0) {
+
+        nostrPool.list(nostrRelays, [
+          {
+            ids: gateCreateNoteKeys,
+          }
+        ]).then((result) => {
+          console.log(result);
+        })
+
+      }
+  }, [gateCreateNoteKeys, gateCreateState])
+
+
+
   return (
     <div>
-      <form onSubmit={handleSubmit} ref={formRef}>
+      <form onSubmit={handleCreateSubmit} ref={formRef}>
+        <p>{gateCreateState}</p>
+        {gateCreateNoteKeys.map((key, index) => (
+          <p key={index}>{key}</p>
+      ))}
+        <button type="submit" >
+          Create Gated Note
+        </button>
+      </form>
+      <form onSubmit={handleFileSubmit} ref={formRef}>
         <input
           multiple
           type="file"

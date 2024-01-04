@@ -26,6 +26,7 @@ export interface GatedNote {
     iv: string,
     cost: number,
     endpoint: string
+    debug?: boolean,
 }
 
 export interface KeyNote {
@@ -34,11 +35,13 @@ export interface KeyNote {
     gate: string,
     announcement: string,
     unlockedSecret?: string,
+    debug?: boolean,
 }
 
 export interface AnnouncementNote {
   note: NostrEvent<number>;
   gate: string,
+  debug?: boolean,
 }
 
 export function eventToGatedNote(event: NostrEvent<number>): GatedNote {
@@ -46,13 +49,15 @@ export function eventToGatedNote(event: NostrEvent<number>): GatedNote {
     const ivTag = event.tags.find(tag => tag[0] === "iv");
     const costTag = event.tags.find(tag => tag[0] === "cost");
     const endpointTag = event.tags.find(tag => tag[0] === "endpoint");
+    const debugTag = event.tags.find(tag => tag[0] === "debug");
 
     // Construct GatedNote
     const gatedNote: GatedNote = {
         note: event,
         iv: ivTag ? ivTag[1] : "",   // Assuming an empty string as default value
         cost: costTag ? parseInt(costTag[1]) : 0,   // Assuming a default value of 0
-        endpoint: endpointTag ? endpointTag[1] : ""   // Assuming an empty string as default value
+        endpoint: endpointTag ? endpointTag[1] : "",   // Assuming an empty string as default value
+        debug: debugTag ? debugTag[1] === "true" : false,
     };
 
     return gatedNote;
@@ -63,6 +68,7 @@ export function eventToKeyNote(event: NostrEvent<number>): KeyNote {
     const ivTag = event.tags.find(tag => tag[0] === "iv");
     const gateTag = event.tags.find(tag => tag[0] === "e" || tag[0] === "g");
     const announcementTag = event.tags.find(tag => tag[0] === "announcement");
+    const debugTag = event.tags.find(tag => tag[0] === "debug");
 
     // Construct GatedNote
     const keyNote: KeyNote = {
@@ -70,6 +76,7 @@ export function eventToKeyNote(event: NostrEvent<number>): KeyNote {
         iv: ivTag ? ivTag[1] : "",
         gate: gateTag ? gateTag[1] : "",
         announcement: announcementTag ? announcementTag[1] : "",
+        debug: debugTag ? debugTag[1] === "true" : false,
     };
 
     return keyNote;
@@ -78,11 +85,13 @@ export function eventToKeyNote(event: NostrEvent<number>): KeyNote {
 export function eventToAnnouncementNote(event: NostrEvent<number>): AnnouncementNote {
   // Extract tags
   const gateTag = event.tags.find(tag => tag[0] === "e" || tag[0] === "g");
+  const debugTag = event.tags.find(tag => tag[0] === "debug");
 
   // Construct GatedNote
   const announcementNote: AnnouncementNote = {
       note: event,
-      gate: gateTag ? gateTag[1] : ""
+      gate: gateTag ? gateTag[1] : "",
+      debug: debugTag ? debugTag[1] === "true" : false,
   };
 
   return announcementNote;
@@ -94,6 +103,7 @@ export function createGatedNoteUnsigned(
   cost: number,
   endpoint: string,
   payload: NostrEvent<number>,
+  debug?: boolean
 ): EventTemplate<number> {
   const noteToEncrypt = JSON.stringify(payload);
   const noteSecretKey = hashToKey(secret);
@@ -107,8 +117,50 @@ export function createGatedNoteUnsigned(
       ["iv", encryptedNote.iv],
       ["cost", cost.toString()],
       ["endpoint", endpoint],
+      ...(debug ? [["debug", "true"]] : [])
     ],
     content: encryptedNote.content,
+  };
+
+  return event;
+}
+
+export function createNote(
+  privateKey: string,
+  content: string,
+  kind: number = 1,
+  tags: string[][] = [],
+  debug: boolean = false,
+): NostrEvent<number> {
+
+  const event = createNoteUnsigned(
+    getPublicKey(privateKey),
+    content,
+    kind,
+    tags,
+    debug
+  )
+
+  return finishEvent(event, privateKey);
+}
+
+export function createNoteUnsigned(
+  publicKey: string,
+  content: string,
+  kind: number = 1,
+  tags: string[][] = [],
+  debug: boolean = false,
+): EventTemplate<number> {
+
+  const event = {
+    kind,
+    pubkey: publicKey,
+    created_at: Math.floor(Date.now() / 1000),
+    tags: [
+      ...tags,
+      ...(debug ? [["debug", "true"]] : []),
+    ],
+    content: content,
   };
 
   return event;
@@ -138,6 +190,7 @@ export function createKeyNoteUnsigned(
   encryptedSecret: string,
   gatedNote: NostrEvent<number>,
   announcementNote: NostrEvent<number>,
+  debug?: boolean
   ): EventTemplate<number> {
 
   const event = {
@@ -147,6 +200,7 @@ export function createKeyNoteUnsigned(
     tags: [
       ["e", gatedNote.id],
       ["announcement", announcementNote.id],
+      ...(debug ? [["debug", "true"]] : [])
     ],
     content: encryptedSecret,
   };
@@ -170,7 +224,8 @@ export async function createKeyNote(
 export function createAnnouncementNoteUnsigned(
   publicKey: string,
   content: string,
-  gatedNote: NostrEvent<number>
+  gatedNote: NostrEvent<number>,
+  debug?: boolean
 ): EventTemplate<number> {
 
   const event = {
@@ -179,6 +234,7 @@ export function createAnnouncementNoteUnsigned(
     created_at: Math.floor(Date.now() / 1000),
     tags: [
       ["e", gatedNote.id],
+      ...(debug ? [["debug", "true"]] : [])
     ],
     content: content,
   };
