@@ -1,4 +1,5 @@
 "use client"
+import { AudioPlayer } from "@/app/components/AudioPlayer"
 import Button from "@/app/components/Button"
 import { MediaThumbnailUploadField } from "@/app/components/MediaThumbnailUploadField"
 import {
@@ -131,6 +132,7 @@ export default function PlayerPage() {
         </div>
       </div>
       <hr className="w-full mt-4 mb-4 border-buttonDisabled/40 " />
+      <AudioPlayer />
       {/* {renderChat()} */}
     </section>
   )
