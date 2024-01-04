@@ -18,6 +18,7 @@ const formRef = React.useRef<HTMLFormElement>(null);
     accountProfile,
     nostrPool,
     nostrRelays,
+    postNoteState,
   } = useAppState();
 
   const handleCreateSubmit = (event: any) => {
@@ -73,6 +74,7 @@ const formRef = React.useRef<HTMLFormElement>(null);
 
   return (
     <div>
+    	<p>{postNoteState}</p>
       <form onSubmit={handleCreateSubmit} ref={formRef}>
         <p>{gateCreateState}</p>
         {gateCreateNoteKeys.map((key, index) => (
