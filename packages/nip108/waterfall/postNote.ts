@@ -1,18 +1,11 @@
 import { SimplePool, Event as NostrEvent } from "nostr-tools";
 import { NIP07 } from "utils";
-import { createNoteUnsigned } from "./nip108";
+import { createNoteUnsigned } from "../nip108";
 
 export interface WaterfallRequirements {
     nip07: NIP07,
     publish: (note: NostrEvent) => Promise<void>,
 }
-
-// const pool = get().nostrPool;
-// const relays = get().nostrRelays;
-// const publicKey = get().accountPublicKey;
-// const nip07 = get().accountNIP07;
-// const gateState = get().gateCreateState;
-// const lud16 = get().accountProfile?.lud16;
 
 export enum PostNoteState {
     IDLE = "IDLE",
@@ -38,13 +31,14 @@ export interface PostNoteInput extends WaterfallRequirements {
     debug?: boolean,
 }
 
-export async function postNote(input: PostNoteInput): Promise<String> {
+export async function postNote(input: PostNoteInput): Promise<string> {
     const { nip07, publish, content, tags, kind, debug } = input;
     const { _setState, _setPublicKey, _setSignedNote } = input;
     let { _state, _publicKey, _signedNote } = input;
 
-    if( !nip07 || !publish || !content || !tags || kind == null ) throw new Error("Missing required input");
-
+    if( !nip07 ) throw new Error("Missing NIP07");
+    if( !publish ) throw new Error("Missing publish");
+    if( !content ) throw new Error("Missing content");
 
     switch(_state){
         case PostNoteState.IDLE: {
@@ -84,11 +78,9 @@ export async function postNote(input: PostNoteInput): Promise<String> {
             await publish(_signedNote);
             _setState(PostNoteState.IDLE);
             return _signedNote.id;
-
         }
         default: {
             throw new Error("Invalid state");
         }
     }
-
 }

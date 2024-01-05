@@ -8,8 +8,8 @@ export interface UploadPodcastState {
     POSTING_PODCAST: 'POSTING_PODCAST',
 }
 export interface UploadPodcastSubmitCallbacks {
-    onSuccess?: () => void;
-    onError?: () => void;
+    onSuccess?: (id: string) => void;
+    onError?: (error: string) => void;
     clearForm?: () => void;
 }
   
