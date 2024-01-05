@@ -1,7 +1,7 @@
 import { Event as NostrEvent } from 'nostr-tools';
 import { StateCreator } from 'zustand';
 import { CombinedState } from './use-app-state';
-import { PostGatedNoteState, postGatedNote } from 'nip108';
+import { PostNoteState, postNote } from 'nip108';
 
 
 export interface PostNoteCallbacks {
@@ -21,13 +21,13 @@ export interface PostNoteSlice {
     postNoteContent: string,
     postNoteHandleContentChange: (event: any) => void,
 
-    postNoteState: PostGatedNoteState,
+    postNoteState: PostNoteState,
     postNotePublicKey?: string | undefined,
     postNoteSignedNote?: NostrEvent, 
 }
 
 const DEFAULT_STATE: PostNoteSlice = {
-    postNoteState: PostGatedNoteState.IDLE,
+    postNoteState: PostNoteState.IDLE,
     postNoteIsRunning: false,
     postNoteContent: '',
 
@@ -49,7 +49,7 @@ export const createPostNoteSlice: StateCreator<
 
     const postNoteClear = () => {
         set({
-            postNoteState: PostGatedNoteState.IDLE,
+            postNoteState: PostNoteState.IDLE,
             postNoteContent: '',
             postNotePublicKey: undefined,
             postNoteSignedNote: undefined,
@@ -75,14 +75,14 @@ export const createPostNoteSlice: StateCreator<
 
             set({ postNoteIsRunning: true });
 
-            const id = await postGatedNote({
+            const id = await postNote({
                 content: postNoteContent,
                 nip07: accountNIP07,
                 publish: async function (note: NostrEvent<number>): Promise<void> {
                     await nostrPool.publish(nostrRelays, note);
                 },
                 _state: postNoteState,
-                _setState: function (state: PostGatedNoteState): void {
+                _setState: function (state: PostNoteState): void {
                     set({ postNoteState: state });
                 },
                 _publicKey: postNotePublicKey,
@@ -90,7 +90,7 @@ export const createPostNoteSlice: StateCreator<
                     set({ postNotePublicKey: publicKey });
                 },
                 _signedNote: postNoteSignedNote,
-                _setSignedGatesNote: function (signedNote: NostrEvent<number>): void {
+                _setSignedNote: function (signedNote: NostrEvent<number>): void {
                     set({ postNoteSignedNote: signedNote });
                 },
             })
