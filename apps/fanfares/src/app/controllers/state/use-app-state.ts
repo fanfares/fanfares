@@ -9,9 +9,10 @@ import { GateSlice, createGateSlice } from "./gate-slice";
 import { UploadSlice, createUploadSlice } from "./upload-slice";
 import { GateCreateSlice, createGateCreateSlice } from "./gate-create-slice";
 import { PostNoteSlice, createPostNoteSlice } from "./post-note-slice"
+import { PostGatedNoteSlice, createPostGatedNoteSlice} from "./post-gated-note-slice";
 
 
-export type CombinedState = TestSlice & NostrSlice & AccountSlice & PrimalSlice & GateSlice & UploadSlice & GateCreateSlice & PostNoteSlice;
+export type CombinedState = TestSlice & NostrSlice & AccountSlice & PrimalSlice & GateSlice & UploadSlice & GateCreateSlice & PostNoteSlice & PostGatedNoteSlice;
 
 export const useAppState = create<CombinedState>()(
   persist(
@@ -24,7 +25,8 @@ export const useAppState = create<CombinedState>()(
         ...createGateSlice(set, get, slice),
         ...createUploadSlice(set, get, slice),
         ...createGateCreateSlice(set, get, slice),
-	...createPostNoteSlice(set, get, slice),
+	      ...createPostNoteSlice(set, get, slice),
+        ...createPostGatedNoteSlice(set, get, slice),
       };
     },
     {

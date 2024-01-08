@@ -93,6 +93,7 @@ export const createPostNoteSlice: StateCreator<
                 _setSignedNote: function (signedNote: NostrEvent<number>): void {
                     set({ postNoteSignedNote: signedNote });
                 },
+                debug: true,
             })
 
             // Clear the form

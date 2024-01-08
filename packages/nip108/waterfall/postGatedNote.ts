@@ -104,14 +104,18 @@ export async function postGatedNote(
 
   switch (_state) {
     case PostGatedNoteState.IDLE: {
+
+
       _setState(PostGatedNoteState.GETTING_PUBLIC_KEY);
     }
     case PostGatedNoteState.GETTING_PUBLIC_KEY: {
+
       _publicKey = await nip07.getPublicKey();
       _setPublicKey(_publicKey);
       _setState(PostGatedNoteState.SIGNING_GATED_CONTENT);
     }
     case PostGatedNoteState.SIGNING_GATED_CONTENT: {
+
       if (!_publicKey) {
         _setState(PostGatedNoteState.GETTING_PUBLIC_KEY);
         throw new Error("Missing public key");
@@ -126,10 +130,12 @@ export async function postGatedNote(
       );
       _signedGatedNote = await nip07.signEvent(gatedNote);
 
+
       _setSignedGatedNote(_signedGatedNote);
       _setState(PostGatedNoteState.SIGNING_GATE);
     }
     case PostGatedNoteState.SIGNING_GATE: {
+
       if (!_publicKey) {
         _setState(PostGatedNoteState.GETTING_PUBLIC_KEY);
         throw new Error("Missing public key");
@@ -150,12 +156,14 @@ export async function postGatedNote(
         debug
       );
 
-      _signedGatedNote = await nip07.signEvent(gatedNote);
+      _signedGate = await nip07.signEvent(gatedNote);
 
-      _setSignedGate(_signedGatedNote, _secret);
+
+      _setSignedGate(_signedGate, _secret);
       _setState(PostGatedNoteState.UPLOADING_GATE);
     }
     case PostGatedNoteState.UPLOADING_GATE: {
+
 
         if(!_signedGate){
             _setState(PostGatedNoteState.SIGNING_GATE);
@@ -192,6 +200,8 @@ export async function postGatedNote(
   
     }
     case PostGatedNoteState.PUBLISH_GATE: {
+
+
       if(!_signedGate){
             _setState(PostGatedNoteState.SIGNING_GATE);
             throw new Error("Missing signed gate");
@@ -204,11 +214,14 @@ export async function postGatedNote(
       }
 
       await publish(_signedGate);
-        _setDidPublishGate(true);
+
+      _didPublishGate = true;
+      _setDidPublishGate(_didPublishGate);
       _setState(PostGatedNoteState.SIGNING_ANNOUNCEMENT);
 
     }
     case PostGatedNoteState.SIGNING_ANNOUNCEMENT: {
+
         if(!_publicKey){
             _setState(PostGatedNoteState.GETTING_PUBLIC_KEY);
             throw new Error("Missing public key");

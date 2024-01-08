@@ -6,7 +6,96 @@ import { createNoteUnsigned } from "nip108";
 import React, { useEffect } from "react";
 
 export default function TestPage() {
-const formRef = React.useRef<HTMLFormElement>(null);
+  return (
+    <div>
+      {TestPostGatedNote()}
+      {TestPostNote()}
+    </div>
+  );
+}
+
+export function TestPostGatedNote() {
+  const formRef = React.useRef<HTMLFormElement>(null);
+  const {
+    postGatedNoteClear,
+    postGatedNoteState,
+    postGatedNoteLud16,
+    postGatedNoteSetLud16,
+    postGatedNoteHandleLud16Change,
+    postGatedNoteHandleAnnouncementContentChange,
+    postGatedNoteAnnouncementContent,
+    postGatedNoteHandleContentChange,
+    postGatedNoteContent,
+    postGatedNoteSubmit,
+    postGatedNoteHandleUnlockCostChange,
+    postGatedNoteUnlockCost,
+    accountProfile
+  } = useAppState();
+
+  useEffect(() => {
+    if(accountProfile && accountProfile.lud16) {
+      postGatedNoteSetLud16(accountProfile.lud16);
+    }
+  }, [accountProfile])
+
+  useEffect(() => {
+    postGatedNoteClear();
+  }, [postGatedNoteClear])
+
+  const handlePostSubmit = (event: any) => {
+    event.preventDefault();
+    postGatedNoteSubmit({
+      onSuccess(ids) {
+        console.log(ids);
+        alert(`Note posted with id ${ids}`);
+      },
+      onError(error) {
+        alert(`Error posting note: ${error}`);
+      },
+      onClear() {
+        formRef.current?.reset();
+      }
+    })
+  }
+
+  return (
+    <div className="flex">
+      <form onSubmit={handlePostSubmit} ref={formRef}>
+        <p>{postGatedNoteState}</p>
+        <input
+          className="bg-black"
+          type="text"
+          onChange={postGatedNoteHandleLud16Change}
+          value={postGatedNoteLud16}
+        />
+        <input
+          className="bg-black"
+          type="text"
+          onChange={postGatedNoteHandleAnnouncementContentChange}
+          value={postGatedNoteAnnouncementContent}
+        />
+        <input
+          className="bg-black"
+          type="text"
+          onChange={postGatedNoteHandleContentChange}
+          value={postGatedNoteContent}
+        />
+        <input
+          className="bg-black"
+          type="number"
+          onChange={postGatedNoteHandleUnlockCostChange}
+          value={postGatedNoteUnlockCost}
+        />
+        <button type="submit" >
+          Create Note
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export function TestPostNote() {
+  const formRef = React.useRef<HTMLFormElement>(null);
   const {
     postNoteClear,
     postNoteState,
