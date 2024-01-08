@@ -19,6 +19,10 @@ export interface PostGatedNoteSlice {
   postPodcastSubmit: (callbacks: PostPodcastCallbacks) => void;
   postPodcastClear: () => void;
 
+  postPodcastUploadHandleFileChange: (event: any) => void;
+  postPodcastUploadFiles: File[];
+  postPodcastUploadUrls: string[];
+
   postPodcastIsRunning: boolean;
   postGatesNoteError?: string;
 
@@ -54,6 +58,10 @@ const DEFAULT_STATE: PostGatedNoteSlice = {
   postPodcastLud16: "",
   postPodcastUnlockCost: 0,
 
+  postPodcastUploadFiles: [],
+  postPodcastUploadUrls: [],
+
+  postPodcastUploadHandleFileChange: (event: any) => {},
   postPodcastSetLud16: () => {},
   postPodcastHandleLud16Change: () => {},
   postPodcastHandleContentChange: () => {},
@@ -71,8 +79,21 @@ export const createPostGatedNoteSlice: StateCreator<
   PostGatedNoteSlice
 > = (set, get) => {
 
+  const postPodcastHandleFileChange = (event: any) => {
+    const fileList = event.target.files as FileList;
+    const uploadFiles = [];
+
+    for (let i = 0; i < fileList.length; i++) {
+      const file = fileList.item(i);
+      if (!file) continue;
+
+      uploadFiles.push(file);
+    }
+
+    set({ postPodcastUploadFiles: uploadFiles });
+  };
+
   const postPodcastSetLud16 = (lud16: string) => {
-    console.log("postPodcastSetLud16Change", lud16);
     set({ postPodcastLud16: lud16 });
   };
 
@@ -149,6 +170,20 @@ export const createPostGatedNoteSlice: StateCreator<
       set({ postNoteIsRunning: true });
 
     //TODO handle file uploads
+    // uploadToShdwDrive(files, prefix)
+    //   .then((finalUrls) => {
+    //     set({ uploadUrls: finalUrls, uploadFiles: [] });
+
+    //     runClearForm();
+    //     runOnSuccess(finalUrls);
+    //   })
+    //   .catch((e) => {
+    //     runOnError(`${e}`);
+    //   })
+    //   .finally(() => {
+    //     set({ uploadIsUploading: false });
+    //   });
+
 
     const ids = await postGatedNote({
         gatedNoteContent: postPodcastContent,
@@ -215,6 +250,7 @@ export const createPostGatedNoteSlice: StateCreator<
   return {
     ...DEFAULT_STATE,
     postPodcastClear,
+    postPodcastHandleFileChange,
     postPodcastHandleLud16Change,
     postPodcastHandleContentChange,
     postPodcastSetLud16,

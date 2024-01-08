@@ -67,7 +67,6 @@ export const createPostGatedNoteSlice: StateCreator<
 > = (set, get) => {
 
   const postGatedNoteSetLud16 = (lud16: string) => {
-    console.log("postGatedNoteSetLud16Change", lud16);
     set({ postGatedNoteLud16: lud16 });
   };
 
