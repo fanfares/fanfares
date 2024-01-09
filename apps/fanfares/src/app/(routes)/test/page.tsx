@@ -8,8 +8,95 @@ import React, { useEffect } from "react";
 export default function TestPage() {
   return (
     <div>
+      {TestPostPodcast()}
       {TestPostGatedNote()}
       {TestPostNote()}
+    </div>
+  );
+}
+
+export function TestPostPodcast() {
+  const formRef = React.useRef<HTMLFormElement>(null);
+  const {
+    postPodcastClear,
+    postPodcastState,
+    postPodcastSubmit,
+    postPodcastHandleContentChange,
+    postPodcastContent,
+    accountProfile,
+    postPodcastAnnouncementContent,
+    postPodcastLud16,
+    postPodcastUnlockCost,
+    postPodcastHandleUnlockCostChange,
+    postPodcastHandleFileChange,
+    postPodcastHandleLud16Change,
+    postPodcastHandleAnnouncementContentChange,
+    postPodcastSetLud16
+  } = useAppState();
+
+  useEffect(() => {
+    if(accountProfile && accountProfile.lud16) {
+      postPodcastSetLud16(accountProfile.lud16);
+    }
+  }, [accountProfile])
+
+  useEffect(() => {
+    postPodcastClear();
+  }, [postPodcastClear])
+
+  const handlePostSubmit = (event: any) => {
+    event.preventDefault();
+    postPodcastSubmit({
+      onSuccess(ids) {
+        console.log(ids);
+        alert(`Note posted with id ${ids}`);
+      },
+      onError(error) {
+        alert(`Error posting note: ${error}`);
+      },
+      onClear() {
+        formRef.current?.reset();
+      }
+    })
+  }
+
+  return (
+    <div className="flex">
+      <form onSubmit={handlePostSubmit} ref={formRef}>
+        <p>{postPodcastState}</p>
+        <input 
+          type="file"
+          onChange={postPodcastHandleFileChange}
+          multiple
+        />
+        <input
+          className="bg-black"
+          type="text"
+          onChange={postPodcastHandleLud16Change}
+          value={postPodcastLud16}
+        />
+        <input
+          className="bg-black"
+          type="text"
+          onChange={postPodcastHandleContentChange}
+          value={postPodcastContent}
+        />
+        <input
+          className="bg-black"
+          type="text"
+          onChange={postPodcastHandleAnnouncementContentChange}
+          value={postPodcastAnnouncementContent}
+        />
+        <input
+          className="bg-black"
+          type="number"
+          onChange={postPodcastHandleUnlockCostChange}
+          value={postPodcastUnlockCost}
+        />
+        <button type="submit" >
+          Create Podcast
+        </button>
+      </form>
     </div>
   );
 }

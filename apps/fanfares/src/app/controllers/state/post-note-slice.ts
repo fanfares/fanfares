@@ -27,7 +27,7 @@ export interface PostNoteSlice {
 }
 
 const DEFAULT_STATE: PostNoteSlice = {
-    postNoteState: PostNoteState.IDLE,
+    postNoteState: "IDLE",
     postNoteIsRunning: false,
     postNoteContent: '',
 
@@ -49,7 +49,7 @@ export const createPostNoteSlice: StateCreator<
 
     const postNoteClear = () => {
         set({
-            postNoteState: PostNoteState.IDLE,
+            postNoteState: "IDLE",
             postNoteContent: '',
             postNotePublicKey: undefined,
             postNoteSignedNote: undefined,

@@ -1,8 +1,11 @@
-import { Event as NostrEvent } from "nostr-tools";
+import { Event as NostrEvent, generatePrivateKey } from "nostr-tools";
 import { StateCreator } from "zustand";
 import { CombinedState } from "./use-app-state";
 import { PostGatedNoteIds, PostGatedNoteState, postGatedNote } from "nip108";
 import { GATE_SERVER } from "../nostr/nostr-defines";
+import { uploadToShdwDrive } from "../shdw/upload";
+
+export type PostPodcastState = PostGatedNoteState | "UPLOADING_FILES";
 
 export interface PostPodcastValues {
   ids: PostGatedNoteIds,
@@ -15,11 +18,11 @@ export interface PostPodcastCallbacks {
   onClear?: () => void;
 }
 
-export interface PostGatedNoteSlice {
+export interface PostPodcastSlice {
   postPodcastSubmit: (callbacks: PostPodcastCallbacks) => void;
   postPodcastClear: () => void;
 
-  postPodcastUploadHandleFileChange: (event: any) => void;
+  postPodcastHandleFileChange: (event: any) => void;
   postPodcastUploadFiles: File[];
   postPodcastUploadUrls: string[];
 
@@ -39,7 +42,7 @@ export interface PostGatedNoteSlice {
   postPodcastUnlockCost: number;
   postPodcastHandleUnlockCostChange: (event: any) => void;
 
-  postPodcastState: PostGatedNoteState;
+  postPodcastState: PostPodcastState;
   postPodcastPublicKey?: string | undefined;
   postPodcastSignedGatedNote?: NostrEvent;
   postPodcastSecret?: string;
@@ -50,8 +53,8 @@ export interface PostGatedNoteSlice {
   postPodcastSignedAnnouncement?: NostrEvent;
 }
 
-const DEFAULT_STATE: PostGatedNoteSlice = {
-  postPodcastState: PostGatedNoteState.IDLE,
+const DEFAULT_STATE: PostPodcastSlice = {
+  postPodcastState: "IDLE",
   postPodcastIsRunning: false,
   postPodcastContent: "",
   postPodcastAnnouncementContent: "",
@@ -61,7 +64,7 @@ const DEFAULT_STATE: PostGatedNoteSlice = {
   postPodcastUploadFiles: [],
   postPodcastUploadUrls: [],
 
-  postPodcastUploadHandleFileChange: (event: any) => {},
+  postPodcastHandleFileChange: (event: any) => {},
   postPodcastSetLud16: () => {},
   postPodcastHandleLud16Change: () => {},
   postPodcastHandleContentChange: () => {},
@@ -72,14 +75,15 @@ const DEFAULT_STATE: PostGatedNoteSlice = {
   postPodcastClear: () => {},
 };
 
-export const createPostGatedNoteSlice: StateCreator<
-  CombinedState & PostGatedNoteSlice,
+export const createPostPodcastSlice: StateCreator<
+  CombinedState & PostPodcastSlice,
   [],
   [],
-  PostGatedNoteSlice
+  PostPodcastSlice
 > = (set, get) => {
 
   const postPodcastHandleFileChange = (event: any) => {
+    console.log("postPodcastHandleFileChange");
     const fileList = event.target.files as FileList;
     const uploadFiles = [];
 
@@ -89,6 +93,8 @@ export const createPostGatedNoteSlice: StateCreator<
 
       uploadFiles.push(file);
     }
+
+    console.log(uploadFiles);
 
     set({ postPodcastUploadFiles: uploadFiles });
   };
@@ -116,7 +122,7 @@ export const createPostGatedNoteSlice: StateCreator<
   const postPodcastClear = () => {
 
     set({
-      postPodcastState: PostGatedNoteState.IDLE,
+      postPodcastState: "IDLE",
       postPodcastContent: "",
       postPodcastAnnouncementContent: "",
       // Don't clear lud16
@@ -135,9 +141,10 @@ export const createPostGatedNoteSlice: StateCreator<
 
   const postPodcastSubmit = async (callbacks: PostPodcastCallbacks) => {
     const {
+      postPodcastUploadFiles,
       postPodcastIsRunning,
       postPodcastContent,
-      postPodcastAnnouncementContent: postGatesNoteAnnouncementContent,
+      postPodcastAnnouncementContent,
       postPodcastLud16,
       postPodcastState,
       postPodcastPublicKey,
@@ -148,7 +155,7 @@ export const createPostGatedNoteSlice: StateCreator<
       postPodcastGateResponse,
       postPodcastDidPublishGate,
       postPodcastSignedAnnouncement,
-      postPodcastUnlockCost: postGatesNoteUnlockCost,
+      postPodcastUnlockCost,
       accountNIP07,
       nostrPool,
       nostrRelays,
@@ -162,6 +169,10 @@ export const createPostGatedNoteSlice: StateCreator<
     const runOnClear = onClear ? onClear : () => {};
 
     try {
+      if (!postPodcastLud16) throw new Error("Missing lud16");
+      if (!postPodcastUnlockCost) throw new Error("Missing unlock cost");
+      if (!postPodcastAnnouncementContent) throw new Error("Missing announcement");
+      if (!postPodcastUploadFiles || postPodcastUploadFiles.length === 0) throw new Error("Missing files");
       if (!postPodcastContent) throw new Error("Missing content");
       if (!accountNIP07) throw new Error("Missing NIP07");
       if (!nostrPool) throw new Error("Missing pool");
@@ -169,33 +180,34 @@ export const createPostGatedNoteSlice: StateCreator<
 
       set({ postNoteIsRunning: true });
 
-    //TODO handle file uploads
-    // uploadToShdwDrive(files, prefix)
-    //   .then((finalUrls) => {
-    //     set({ uploadUrls: finalUrls, uploadFiles: [] });
+    // Upload Files
+    if( postPodcastState === "UPLOADING_FILES" || postPodcastState === "IDLE"){
+      set({ postPodcastState: "UPLOADING_FILES" });
 
-    //     runClearForm();
-    //     runOnSuccess(finalUrls);
-    //   })
-    //   .catch((e) => {
-    //     runOnError(`${e}`);
-    //   })
-    //   .finally(() => {
-    //     set({ uploadIsUploading: false });
-    //   });
+      console.log(postPodcastUploadFiles);
 
+      const prefix = generatePrivateKey();
+      const fileUrls = await uploadToShdwDrive(postPodcastUploadFiles, prefix);
+
+      if( fileUrls.length !== postPodcastUploadFiles.length ) throw new Error(`Failed to upload files, ${fileUrls} !== ${postPodcastUploadFiles}`);
+
+      set({ postPodcastState: "GETTING_PUBLIC_KEY", postPodcastUploadUrls: fileUrls });
+    }
+
+
+    //TODO construct gated note.
 
     const ids = await postGatedNote({
         gatedNoteContent: postPodcastContent,
-        announcementNoteContent: postGatesNoteAnnouncementContent,
+        announcementNoteContent: postPodcastAnnouncementContent,
         gateServer: GATE_SERVER,
-        cost: postGatesNoteUnlockCost,
+        cost: postPodcastUnlockCost,
         lud16: postPodcastLud16,
         nip07: accountNIP07,
         publish: async (note: NostrEvent) => {
           await nostrPool.publish(nostrRelays, note);
         },
-        _state: postPodcastState,
+        _state: postPodcastState as PostGatedNoteState,
         _setState: (state: PostGatedNoteState) => {
           set({ postPodcastState: state });
         },

@@ -10,16 +10,7 @@ export interface PostGatedNoteIds {
     announcementNoteId: string,
 }
 
-export enum PostGatedNoteState {
-  IDLE = "IDLE",
-  GETTING_PUBLIC_KEY = "GETTING_PUBLIC_KEY",
-  SIGNING_GATED_CONTENT = "SIGNING_GATED_CONTENT",
-  SIGNING_GATE = "SIGNING_GATED_CONTENT",
-  UPLOADING_GATE = "UPLOADING_GATE",
-  PUBLISH_GATE = "PUBLISH_GATE",
-  SIGNING_ANNOUNCEMENT = "SIGNING_ANNOUNCEMENT",
-  PUBLISH_ANNOUNCEMENT = "PUBLISH_ANNOUNCEMENT",
-}
+export type PostGatedNoteState = "IDLE" | "GETTING_PUBLIC_KEY" | "SIGNING_GATED_CONTENT" | "SIGNING_GATE" | "UPLOADING_GATE" | "PUBLISH_GATE" | "SIGNING_ANNOUNCEMENT" | "PUBLISH_ANNOUNCEMENT";
 
 export interface PostGatedNoteInput extends WaterfallRequirements {
   gatedNoteContent: string;
@@ -103,21 +94,21 @@ export async function postGatedNote(
   if (!lud16) throw new Error("Missing lud16");
 
   switch (_state) {
-    case PostGatedNoteState.IDLE: {
+    case "IDLE": {
 
 
-      _setState(PostGatedNoteState.GETTING_PUBLIC_KEY);
+      _setState("GETTING_PUBLIC_KEY");
     }
-    case PostGatedNoteState.GETTING_PUBLIC_KEY: {
+    case "GETTING_PUBLIC_KEY": {
 
       _publicKey = await nip07.getPublicKey();
       _setPublicKey(_publicKey);
-      _setState(PostGatedNoteState.SIGNING_GATED_CONTENT);
+      _setState("SIGNING_GATED_CONTENT");
     }
-    case PostGatedNoteState.SIGNING_GATED_CONTENT: {
+    case "SIGNING_GATED_CONTENT": {
 
       if (!_publicKey) {
-        _setState(PostGatedNoteState.GETTING_PUBLIC_KEY);
+        _setState("GETTING_PUBLIC_KEY");
         throw new Error("Missing public key");
       }
 
@@ -132,17 +123,17 @@ export async function postGatedNote(
 
 
       _setSignedGatedNote(_signedGatedNote);
-      _setState(PostGatedNoteState.SIGNING_GATE);
+      _setState("SIGNING_GATE");
     }
-    case PostGatedNoteState.SIGNING_GATE: {
+    case "SIGNING_GATE": {
 
       if (!_publicKey) {
-        _setState(PostGatedNoteState.GETTING_PUBLIC_KEY);
+        _setState("GETTING_PUBLIC_KEY");
         throw new Error("Missing public key");
       }
 
       if (!_signedGatedNote) {
-        _setState(PostGatedNoteState.SIGNING_GATED_CONTENT);
+        _setState("SIGNING_GATED_CONTENT");
         throw new Error("Missing signed gated note");
       }
 
@@ -160,18 +151,18 @@ export async function postGatedNote(
 
 
       _setSignedGate(_signedGate, _secret);
-      _setState(PostGatedNoteState.UPLOADING_GATE);
+      _setState("UPLOADING_GATE");
     }
-    case PostGatedNoteState.UPLOADING_GATE: {
+    case "UPLOADING_GATE": {
 
 
         if(!_signedGate){
-            _setState(PostGatedNoteState.SIGNING_GATE);
+            _setState("SIGNING_GATE");
             throw new Error("Missing signed gate");
         }
 
         if(!_secret){
-            _setState(PostGatedNoteState.SIGNING_GATE);
+            _setState("SIGNING_GATE");
             throw new Error("Missing secret");
         }
 
@@ -196,20 +187,20 @@ export async function postGatedNote(
           _didUploadGate = true; // Flag we look for
 
           _setGateResponse(_gateResponse, _didUploadGate);
-          _setState(PostGatedNoteState.PUBLISH_GATE);
+          _setState("PUBLISH_GATE");
   
     }
-    case PostGatedNoteState.PUBLISH_GATE: {
+    case "PUBLISH_GATE": {
 
 
       if(!_signedGate){
-            _setState(PostGatedNoteState.SIGNING_GATE);
+            _setState("SIGNING_GATE");
             throw new Error("Missing signed gate");
       }
 
       if (!_didUploadGate) 
       {
-        _setState(PostGatedNoteState.UPLOADING_GATE);
+        _setState("UPLOADING_GATE");
         throw new Error("Did not upload gate");
       }
 
@@ -217,28 +208,28 @@ export async function postGatedNote(
 
       _didPublishGate = true;
       _setDidPublishGate(_didPublishGate);
-      _setState(PostGatedNoteState.SIGNING_ANNOUNCEMENT);
+      _setState("SIGNING_ANNOUNCEMENT");
 
     }
-    case PostGatedNoteState.SIGNING_ANNOUNCEMENT: {
+    case "SIGNING_ANNOUNCEMENT": {
 
         if(!_publicKey){
-            _setState(PostGatedNoteState.GETTING_PUBLIC_KEY);
+            _setState("GETTING_PUBLIC_KEY");
             throw new Error("Missing public key");
         }
 
         if(!_signedGate){
-            _setState(PostGatedNoteState.SIGNING_GATE);
+            _setState("SIGNING_GATE");
             throw new Error("Missing signed gate");
         }
 
         if(!_didUploadGate){
-            _setState(PostGatedNoteState.UPLOADING_GATE);
+            _setState("UPLOADING_GATE");
             throw new Error("Did not upload gate");
         }
 
         if(!_didPublishGate){
-            _setState(PostGatedNoteState.PUBLISH_GATE);
+            _setState("PUBLISH_GATE");
             throw new Error("Did not publish gate");
         }
 
@@ -251,23 +242,23 @@ export async function postGatedNote(
 
         _signedAnnouncement = await nip07.signEvent(announcementNote);
         _setSignedAnnouncement(_signedAnnouncement);
-        _setState(PostGatedNoteState.PUBLISH_ANNOUNCEMENT);
+        _setState("PUBLISH_ANNOUNCEMENT");
 
     }
-    case PostGatedNoteState.PUBLISH_ANNOUNCEMENT: {
+    case "PUBLISH_ANNOUNCEMENT": {
 
         if(!_signedGate){
-            _setState(PostGatedNoteState.SIGNING_GATE);
+            _setState("SIGNING_GATE");
             throw new Error("Missing signed gate");
         }
 
         if(!_signedAnnouncement){
-            _setState(PostGatedNoteState.SIGNING_ANNOUNCEMENT);
+            _setState("SIGNING_ANNOUNCEMENT");
             throw new Error("Missing signed announcement");
         }
 
         await publish(_signedAnnouncement);
-        _setState(PostGatedNoteState.IDLE);
+        _setState("IDLE");
 
         return {
             gateNote: _signedGate.id,

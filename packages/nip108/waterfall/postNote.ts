@@ -2,12 +2,8 @@ import { Event as NostrEvent } from "nostr-tools";
 import { createNoteUnsigned } from "../nip108";
 import { WaterfallRequirements } from "./waterfall";
 
-export enum PostNoteState {
-    IDLE = "IDLE",
-    GETTING_PUBLIC_KEY = "GETTING_PUBLIC_KEY",
-    SIGNING = "SIGNING",
-    POSTING = "POSTING",
-}
+export type PostNoteState = "IDLE" | "GETTING_PUBLIC_KEY" | "SIGNING" | "POSTING";
+
 export interface PostNoteInput extends WaterfallRequirements {
     content: string,
     kind?: number,
@@ -35,17 +31,17 @@ export async function postNote(input: PostNoteInput): Promise<string> {
     if( !content ) throw new Error("Missing content");
 
     switch(_state){
-        case PostNoteState.IDLE: {
-            _setState(PostNoteState.GETTING_PUBLIC_KEY);
+        case 'IDLE': {
+            _setState("GETTING_PUBLIC_KEY");
         }
-        case PostNoteState.GETTING_PUBLIC_KEY: {
+        case "GETTING_PUBLIC_KEY": {
             _publicKey = await nip07.getPublicKey();
             _setPublicKey(_publicKey);
-            _setState(PostNoteState.SIGNING);
+            _setState("SIGNING");
         }
-        case PostNoteState.SIGNING: {
+        case "SIGNING": {
             if(!_publicKey){
-                _setState(PostNoteState.GETTING_PUBLIC_KEY);
+                _setState("GETTING_PUBLIC_KEY");
                 throw new Error("Missing public key");
             }
 
@@ -60,17 +56,17 @@ export async function postNote(input: PostNoteInput): Promise<string> {
             _signedNote = await nip07.signEvent(noteToPost);
 
             _setSignedNote(_signedNote);
-            _setState(PostNoteState.POSTING);
+            _setState("POSTING");
 
         }
-        case PostNoteState.POSTING: {
+        case "POSTING": {
             if(!_signedNote){
-                _setState(PostNoteState.SIGNING);
+                _setState("SIGNING");
                 throw new Error("Missing signed note");
             }
 
             await publish(_signedNote);
-            _setState(PostNoteState.IDLE);
+            _setState("IDLE");
             return _signedNote.id;
         }
         default: {

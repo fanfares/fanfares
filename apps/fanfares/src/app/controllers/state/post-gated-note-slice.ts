@@ -42,7 +42,7 @@ export interface PostGatedNoteSlice {
 }
 
 const DEFAULT_STATE: PostGatedNoteSlice = {
-  postGatedNoteState: PostGatedNoteState.IDLE,
+  postGatedNoteState: "IDLE",
   postGatedNoteIsRunning: false,
   postGatedNoteContent: "",
   postGatedNoteAnnouncementContent: "",
@@ -89,7 +89,7 @@ export const createPostGatedNoteSlice: StateCreator<
   const postGatedNoteClear = () => {
 
     set({
-      postGatedNoteState: PostGatedNoteState.IDLE,
+      postGatedNoteState: "IDLE",
       postGatedNoteContent: "",
       postGatedNoteAnnouncementContent: "",
       // Don't clear lud16

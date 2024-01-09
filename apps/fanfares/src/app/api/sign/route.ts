@@ -12,6 +12,9 @@ export const SHDW_MESSAGE_BASE = `Shadow Drive Signed Message:\nStorage Account:
 
 export async function POST(request: Request) {
 
+  console.log("POSTING");
+  console.log("POSTING");
+
   try {
     // Gather Request Data
     const postEndpoint = `${SHDW_DRIVE_ENDPOINT}/upload`;
@@ -22,6 +25,7 @@ export async function POST(request: Request) {
     // Parse Request
     const requestJSON = await request.json() as MessageSignRequest;
     const { fileNames } = requestJSON;
+    console.log(requestJSON);
 
     // Validate Request
     if(!fileNames) throw new Error("Missing file names");
