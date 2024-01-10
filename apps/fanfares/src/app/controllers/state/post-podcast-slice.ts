@@ -101,7 +101,7 @@ export const createPostPodcastSlice: StateCreator<
     const fileList = event.target.files as FileList;
     const file = fileList.item(0);
 
-    set({ postPodcastAudioFile: file });
+    set({ postPodcastImageFile: file });
   };
 
   const postPodcastSetLud16 = (lud16: string) => {
@@ -112,11 +112,11 @@ export const createPostPodcastSlice: StateCreator<
     set({ postPodcastLud16: event.target.value });
   };
 
-  const postPodcastHandleContentChange = (event: any) => {
+  const postPodcastHandleTitleChange = (event: any) => {
     set({ postPodcastTitle: event.target.value });
   };
 
-  const postPodcastHandleAnnouncementContentChange = (event: any) => {
+  const postPodcastHandleDescriptionChange = (event: any) => {
     set({ postPodcastDescription: event.target.value });
   };
 
@@ -304,9 +304,9 @@ export const createPostPodcastSlice: StateCreator<
     postPodcastHandleAudioChange,
     postPodcastHandleImageChange,
     postPodcastHandleLud16Change,
-    postPodcastHandleTitleChange: postPodcastHandleContentChange,
+    postPodcastHandleTitleChange,
     postPodcastSetLud16,
-    postPodcastHandleDescriptionChange: postPodcastHandleAnnouncementContentChange,
+    postPodcastHandleDescriptionChange,
     postPodcastHandleUnlockCostChange,
     postPodcastSubmit,
   };

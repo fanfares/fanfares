@@ -10,6 +10,8 @@ import Image from "next/image"
 
 import Link from "next/link"
 import Searchbar from "./Searchbar"
+import { useAppState } from "../controllers/state/use-app-state"
+import { NIP_108_KINDS, eventToAnnouncementNote, eventToGatedNote } from "nip108"
 
 export interface DiscoveryMediaInfo extends Metadata {
   media_key: string
@@ -22,6 +24,36 @@ function DiscoverPageContent() {
 
   const [media, setMedia] = useState<DiscoveryMediaInfo[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { nostrPool, nostrRelays } = useAppState();
+
+  useEffect(() => {
+    if(!nostrPool || !nostrRelays) return;
+
+    nostrPool.list(nostrRelays, [
+      {
+        kinds: [NIP_108_KINDS.announcement],
+        limit: 10,
+      }
+    ]).then((rawAnnouncements) => {
+      const announcements = rawAnnouncements.map(eventToAnnouncementNote);
+      const gatesToGet = announcements.map((a) => a.gate);
+      
+      nostrPool.list(nostrRelays, [
+        {
+          ids: gatesToGet,
+        }
+      ]).then((rawGates) => {
+        const gates = rawGates.map(eventToGatedNote);
+        console.log(gates);
+      })
+    })
+
+  }, [
+    nostrPool,
+    nostrRelays,
+  ]);
+
+
 
   // const loadMedias = useCallback(async () => {
   //   setIsLoading(true);

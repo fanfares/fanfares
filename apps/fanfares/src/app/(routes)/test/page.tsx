@@ -21,16 +21,17 @@ export function TestPostPodcast() {
     postPodcastClear,
     postPodcastState,
     postPodcastSubmit,
-    postPodcastHandleTitleChange: postPodcastHandleContentChange,
-    postPodcastTitle: postPodcastContent,
+    postPodcastHandleTitleChange,
+    postPodcastTitle,
     accountProfile,
-    postPodcastDescription: postPodcastAnnouncementContent,
+    postPodcastDescription,
     postPodcastLud16,
     postPodcastUnlockCost,
     postPodcastHandleUnlockCostChange,
-    postPodcastHandleFileChange,
+    postPodcastHandleAudioChange,
+    postPodcastHandleImageChange,
     postPodcastHandleLud16Change,
-    postPodcastHandleDescriptionChange: postPodcastHandleAnnouncementContentChange,
+    postPodcastHandleDescriptionChange,
     postPodcastSetLud16
   } = useAppState();
 
@@ -66,8 +67,13 @@ export function TestPostPodcast() {
         <p>{postPodcastState}</p>
         <input 
           type="file"
-          onChange={postPodcastHandleFileChange}
-          multiple
+          onChange={postPodcastHandleImageChange}
+          accept="image/*"
+        />
+        <input 
+          type="file"
+          onChange={postPodcastHandleAudioChange}
+          accept="audio/*"
         />
         <input
           className="bg-black"
@@ -78,14 +84,14 @@ export function TestPostPodcast() {
         <input
           className="bg-black"
           type="text"
-          onChange={postPodcastHandleContentChange}
-          value={postPodcastContent}
+          onChange={postPodcastHandleTitleChange}
+          value={postPodcastTitle}
         />
         <input
           className="bg-black"
           type="text"
-          onChange={postPodcastHandleAnnouncementContentChange}
-          value={postPodcastAnnouncementContent}
+          onChange={postPodcastHandleDescriptionChange}
+          value={postPodcastDescription}
         />
         <input
           className="bg-black"
