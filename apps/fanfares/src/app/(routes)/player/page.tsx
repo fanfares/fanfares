@@ -2,13 +2,10 @@
 import { AudioPlayer } from "@/app/components/AudioPlayer"
 import Button from "@/app/components/Button"
 import { MediaThumbnailUploadField } from "@/app/components/MediaThumbnailUploadField"
-import {
-  faAlignLeft,
-  faPlayCircle,
-  faSocks,
-} from "@fortawesome/pro-solid-svg-icons"
+import { faAlignLeft, faPlayCircle } from "@fortawesome/pro-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-
+import { config } from "@fortawesome/fontawesome-svg-core"
+config.autoAddCss = false /* eslint-disable import/first */
 export default function PlayerPage() {
   const renderThumbnail = () => {
     // if (editModeOn) {
@@ -58,10 +55,7 @@ export default function PlayerPage() {
           aria-label="Play"
           id={"E2EID.playerPlayButton"}
           onClick={() => {}}>
-          <FontAwesomeIcon
-            className="text-6xl md:text-5xl "
-            icon={faPlayCircle}
-          />
+          <FontAwesomeIcon className="w-10 md:w-14" icon={faPlayCircle} />
         </button>
         <div className="flex flex-row items-center justify-center gap-2 my-auto md:gap-2">
           <div className="flex items-center gap-2">
@@ -114,7 +108,7 @@ export default function PlayerPage() {
                   aria-label="Expand description"
                   className="mr-2"
                   type="button">
-                  <FontAwesomeIcon icon={faAlignLeft} />
+                  <FontAwesomeIcon icon={faAlignLeft} className="w-4" />
                 </button>
                 <p className="">Description</p>
               </div>

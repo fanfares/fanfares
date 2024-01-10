@@ -1,9 +1,11 @@
 import {
   faArrowRotateLeft,
   faArrowRotateRight,
+  faPauseCircle,
   faPlayCircle,
 } from "@fortawesome/pro-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { Truculenta } from "next/font/google"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
@@ -39,7 +41,7 @@ export function AudioPlayer() {
   const [volume, setVolume] = useState<number>(80)
 
   // --------------- REFERENCES---------------
-  const audioPlayer = useRef<HTMLAudioElement>()
+  const audioPlayer = useRef<HTMLAudioElement>(null)
   const audioBar = useRef<HTMLInputElement>()
   const progressBar = useRef<HTMLInputElement>()
   const animationRef = useRef<number>()
@@ -409,26 +411,46 @@ export function AudioPlayer() {
     )
   }
 
+  const [isPlaying, setIsPlaying] = useState(false)
+  function playerTogglePlaying() {
+    if (!isPlaying) {
+      audioPlayer.current?.play()
+      setIsPlaying(!isPlaying)
+    } else {
+      audioPlayer.current?.pause()
+      setIsPlaying(!isPlaying)
+    }
+  }
+
   const renderPlayerControlButtons = () => {
     return (
       <>
         {/* CONTROL BUTTONS */}
-        <div className="absolute inset-y-0 bottom-0 right-14 flex w-28 items-center justify-center gap-x-2 md:bottom-0">
+        <div className="absolute inset-y-0 bottom-0 right-4 flex w-40 items-center justify-center gap-x-2 md:bottom-0">
           <FontAwesomeIcon
             aria-label="Back 15 seconds"
-            className="text- text-2xl hover:text-buttonAccentHover md:text-xl"
+            className="hover:text-buttonAccentHover w-4 md:w-6"
             icon={faArrowRotateLeft}
             onClick={() => {}}
           />
+
           <FontAwesomeIcon
             aria-label="Play/Pause"
-            className="text-2xl hover:text-buttonAccentHover md:text-4xl"
-            icon={faPlayCircle}
-            onClick={() => {}}
+            className="hover:text-buttonAccentHover w-8 md:w-10"
+            icon={isPlaying ? faPauseCircle : faPlayCircle}
+            onClick={playerTogglePlaying}
           />
+          {/* <FontAwesomeIcon
+            aria-label="Play/Pause"
+            className="text-2xl hover:text-buttonAccentHover md:text-4xl"
+            icon={faPauseCircle}
+            onClick={() => {
+              audioPlayer.current?.pause()
+            }}
+          /> */}
           <FontAwesomeIcon
             aria-label="Forward 15 seconds"
-            className="text-2xl hover:text-buttonAccentHover md:text-xl"
+            className="text-xl hover:text-buttonAccentHover w-4 md:w-6"
             icon={faArrowRotateRight}
             onClick={() => {}}
           />
@@ -440,10 +462,10 @@ export function AudioPlayer() {
   const renderAudioPlayerBigScreen = () => {
     return (
       <div className="fixed left-0 z-50 justify-center w-full h-10 -bottom-1 ">
-        {/* <audio
+        <audio
           ref={audioPlayer}
-          src={playerAudioUrl}
-          preload="metadata"></audio> */}
+          src={"./assets/audio.mp3"}
+          preload="metadata"></audio>
         <div
           className={`absolute bottom-3 w-full max-w-7xl rounded-2xl border-t-2 border-buttonAccentHover transition-transform duration-300 ease-linear md:bottom-5 md:left-60 md:w-[70%] 
          `}>
