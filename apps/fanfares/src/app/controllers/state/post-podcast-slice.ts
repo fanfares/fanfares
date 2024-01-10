@@ -22,9 +22,15 @@ export interface PostPodcastSlice {
   postPodcastSubmit: (callbacks: PostPodcastCallbacks) => void;
   postPodcastClear: () => void;
 
-  postPodcastHandleFileChange: (event: any) => void;
-  postPodcastUploadFiles: File[];
-  postPodcastUploadUrls: string[];
+
+
+  postPodcastHandleImageChange: (event: any) => void;
+  postPodcastImageFile: File | null;
+  postPodcastImageUrl?: string;
+
+  postPodcastHandleAudioChange: (event: any) => void;
+  postPodcastAudioFile: File | null;
+  postPodcastAudioUrl?: string;
 
   postPodcastIsRunning: boolean;
   postGatesNoteError?: string;
@@ -33,11 +39,11 @@ export interface PostPodcastSlice {
   postPodcastSetLud16: (event: any) => void;
   postPodcastHandleLud16Change: (event: any) => void;
 
-  postPodcastContent: string;
-  postPodcastHandleContentChange: (event: any) => void;
+  postPodcastTitle: string;
+  postPodcastHandleTitleChange: (event: any) => void;
 
-  postPodcastAnnouncementContent: string;
-  postPodcastHandleAnnouncementContentChange: (event: any) => void;
+  postPodcastDescription: string;
+  postPodcastHandleDescriptionChange: (event: any) => void;
 
   postPodcastUnlockCost: number;
   postPodcastHandleUnlockCostChange: (event: any) => void;
@@ -56,19 +62,21 @@ export interface PostPodcastSlice {
 const DEFAULT_STATE: PostPodcastSlice = {
   postPodcastState: "IDLE",
   postPodcastIsRunning: false,
-  postPodcastContent: "",
-  postPodcastAnnouncementContent: "",
+  postPodcastTitle: "",
+  postPodcastDescription: "",
   postPodcastLud16: "",
   postPodcastUnlockCost: 0,
 
-  postPodcastUploadFiles: [],
-  postPodcastUploadUrls: [],
+  postPodcastAudioFile: null,
+  postPodcastImageFile: null,
 
-  postPodcastHandleFileChange: (event: any) => {},
+  postPodcastHandleAudioChange: () => {},
+  postPodcastHandleImageChange: () => {},
+
   postPodcastSetLud16: () => {},
   postPodcastHandleLud16Change: () => {},
-  postPodcastHandleContentChange: () => {},
-  postPodcastHandleAnnouncementContentChange: () => {},
+  postPodcastHandleTitleChange: () => {},
+  postPodcastHandleDescriptionChange: () => {},
   postPodcastHandleUnlockCostChange: () => {},
 
   postPodcastSubmit: () => {},
@@ -82,21 +90,18 @@ export const createPostPodcastSlice: StateCreator<
   PostPodcastSlice
 > = (set, get) => {
 
-  const postPodcastHandleFileChange = (event: any) => {
-    console.log("postPodcastHandleFileChange");
+  const postPodcastHandleAudioChange = (event: any) => {
     const fileList = event.target.files as FileList;
-    const uploadFiles = [];
+    const file = fileList.item(0);
 
-    for (let i = 0; i < fileList.length; i++) {
-      const file = fileList.item(i);
-      if (!file) continue;
+    set({ postPodcastAudioFile: file });
+  };
 
-      uploadFiles.push(file);
-    }
+  const postPodcastHandleImageChange = (event: any) => {
+    const fileList = event.target.files as FileList;
+    const file = fileList.item(0);
 
-    console.log(uploadFiles);
-
-    set({ postPodcastUploadFiles: uploadFiles });
+    set({ postPodcastAudioFile: file });
   };
 
   const postPodcastSetLud16 = (lud16: string) => {
@@ -108,11 +113,11 @@ export const createPostPodcastSlice: StateCreator<
   };
 
   const postPodcastHandleContentChange = (event: any) => {
-    set({ postPodcastContent: event.target.value });
+    set({ postPodcastTitle: event.target.value });
   };
 
   const postPodcastHandleAnnouncementContentChange = (event: any) => {
-    set({ postPodcastAnnouncementContent: event.target.value });
+    set({ postPodcastDescription: event.target.value });
   };
 
   const postPodcastHandleUnlockCostChange = (event: any) => {
@@ -123,11 +128,15 @@ export const createPostPodcastSlice: StateCreator<
 
     set({
       postPodcastState: "IDLE",
-      postPodcastContent: "",
-      postPodcastAnnouncementContent: "",
+      postPodcastTitle: "",
+      postPodcastDescription: "",
       // Don't clear lud16
     //   postPodcastLud16: accountProfile?.lud16 || "",
       postPodcastUnlockCost: 10000,
+      postPodcastAudioFile: null,
+      postPodcastAudioUrl: undefined,
+      postPodcastImageFile: null,
+      postPodcastImageUrl: undefined,
       postPodcastPublicKey: undefined,
       postPodcastSignedGatedNote: undefined,
       postPodcastSecret: undefined,
@@ -141,10 +150,11 @@ export const createPostPodcastSlice: StateCreator<
 
   const postPodcastSubmit = async (callbacks: PostPodcastCallbacks) => {
     const {
-      postPodcastUploadFiles,
+      postPodcastAudioFile,
+      postPodcastImageFile,
       postPodcastIsRunning,
-      postPodcastContent,
-      postPodcastAnnouncementContent,
+      postPodcastTitle,
+      postPodcastDescription,
       postPodcastLud16,
       postPodcastState,
       postPodcastPublicKey,
@@ -171,9 +181,10 @@ export const createPostPodcastSlice: StateCreator<
     try {
       if (!postPodcastLud16) throw new Error("Missing lud16");
       if (!postPodcastUnlockCost) throw new Error("Missing unlock cost");
-      if (!postPodcastAnnouncementContent) throw new Error("Missing announcement");
-      if (!postPodcastUploadFiles || postPodcastUploadFiles.length === 0) throw new Error("Missing files");
-      if (!postPodcastContent) throw new Error("Missing content");
+      if (!postPodcastTitle) throw new Error("Missing announcement");
+      if (!postPodcastDescription) throw new Error("Missing content");
+      if (!postPodcastAudioFile) throw new Error("Missing audio file");
+      if (!postPodcastImageFile) throw new Error("Missing image file");
       if (!accountNIP07) throw new Error("Missing NIP07");
       if (!nostrPool) throw new Error("Missing pool");
       if (!nostrRelays) throw new Error("Missing relays");
@@ -184,22 +195,50 @@ export const createPostPodcastSlice: StateCreator<
     if( postPodcastState === "UPLOADING_FILES" || postPodcastState === "IDLE"){
       set({ postPodcastState: "UPLOADING_FILES" });
 
-      console.log(postPodcastUploadFiles);
+      // const prefix = generatePrivateKey();
+      const uploadFiles = [
+        postPodcastAudioFile,
+        postPodcastImageFile,
+      ];
+      const prefix = 'debug';
+      const fileUrls = await uploadToShdwDrive(uploadFiles, prefix);
 
-      const prefix = generatePrivateKey();
-      const fileUrls = await uploadToShdwDrive(postPodcastUploadFiles, prefix);
+      const audioUrl = fileUrls.find((url)=>url.includes(postPodcastAudioFile.name));
+      const imageUrl = fileUrls.find((url)=>url.includes(postPodcastImageFile.name));
 
-      if( fileUrls.length !== postPodcastUploadFiles.length ) throw new Error(`Failed to upload files, ${fileUrls} !== ${postPodcastUploadFiles}`);
+      if(!audioUrl) throw new Error("Missing audio url");
+      if(!imageUrl) throw new Error("Missing image url");
 
-      set({ postPodcastState: "GETTING_PUBLIC_KEY", postPodcastUploadUrls: fileUrls });
+      set({ 
+        postPodcastState: "GETTING_PUBLIC_KEY", 
+        postPodcastAudioUrl: audioUrl,
+        postPodcastImageUrl: imageUrl, 
+      });
     }
 
+    // Creating notes
+    const {postPodcastAudioUrl, postPodcastImageUrl} = get();
+    if(!postPodcastAudioUrl) throw new Error("Missing audio url after upload");
+    if(!postPodcastImageUrl) throw new Error("Missing image url after upload");
 
-    //TODO construct gated note.
+    // Creating gated note
+    const gatedNoteTags = [
+      ['r', postPodcastAudioUrl],
+    ]
+    const gatedNoteContent = postPodcastAudioUrl;
+
+    // Creating announcement note
+    const announcementNoteTags = [
+      ['r', postPodcastImageUrl],
+    ]
+
+    const announcementNoteContent = `${postPodcastTitle}\n${postPodcastDescription}`
 
     const ids = await postGatedNote({
-        gatedNoteContent: postPodcastContent,
-        announcementNoteContent: postPodcastAnnouncementContent,
+        gatedNoteContent,
+        gatedNoteTags,
+        announcementNoteContent,
+        announcementNoteTags,
         gateServer: GATE_SERVER,
         cost: postPodcastUnlockCost,
         lud16: postPodcastLud16,
@@ -262,11 +301,12 @@ export const createPostPodcastSlice: StateCreator<
   return {
     ...DEFAULT_STATE,
     postPodcastClear,
-    postPodcastHandleFileChange,
+    postPodcastHandleAudioChange,
+    postPodcastHandleImageChange,
     postPodcastHandleLud16Change,
-    postPodcastHandleContentChange,
+    postPodcastHandleTitleChange: postPodcastHandleContentChange,
     postPodcastSetLud16,
-    postPodcastHandleAnnouncementContentChange,
+    postPodcastHandleDescriptionChange: postPodcastHandleAnnouncementContentChange,
     postPodcastHandleUnlockCostChange,
     postPodcastSubmit,
   };

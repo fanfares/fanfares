@@ -18,6 +18,9 @@ export interface PostGatedNoteInput extends WaterfallRequirements {
   gatedNoteTags?: string[][];
 
   announcementNoteContent: string;
+  announcementNoteKind?: number;
+  announcementNoteTags?: string[][];
+
   gateServer: string;
   cost: number;
   lud16: string;
@@ -59,6 +62,8 @@ export async function postGatedNote(
     gatedNoteKind,
     gatedNoteTags,
     announcementNoteContent,
+    announcementNoteKind,
+    announcementNoteTags,
     cost,
     lud16,
     debug,
@@ -95,8 +100,6 @@ export async function postGatedNote(
 
   switch (_state) {
     case "IDLE": {
-
-
       _setState("GETTING_PUBLIC_KEY");
     }
     case "GETTING_PUBLIC_KEY": {
@@ -237,6 +240,8 @@ export async function postGatedNote(
             _publicKey,
             announcementNoteContent,
             _signedGate,
+            announcementNoteKind,
+            announcementNoteTags,
             debug
         );
 

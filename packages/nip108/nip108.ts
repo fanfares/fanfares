@@ -225,15 +225,18 @@ export function createAnnouncementNoteUnsigned(
   publicKey: string,
   content: string,
   gatedNote: NostrEvent<number>,
+  kind?: number,
+  tags?: string[][],
   debug?: boolean
 ): EventTemplate<number> {
 
   const event = {
-    kind: NIP_108_KINDS.announcement,
+    kind: kind ?? NIP_108_KINDS.announcement,
     pubkey: publicKey,
     created_at: Math.floor(Date.now() / 1000),
     tags: [
       ["e", gatedNote.id],
+      ...(tags ?? []),
       ...(debug ? [["debug", "true"]] : [])
     ],
     content: content,

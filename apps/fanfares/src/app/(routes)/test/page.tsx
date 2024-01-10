@@ -21,16 +21,16 @@ export function TestPostPodcast() {
     postPodcastClear,
     postPodcastState,
     postPodcastSubmit,
-    postPodcastHandleContentChange,
-    postPodcastContent,
+    postPodcastHandleTitleChange: postPodcastHandleContentChange,
+    postPodcastTitle: postPodcastContent,
     accountProfile,
-    postPodcastAnnouncementContent,
+    postPodcastDescription: postPodcastAnnouncementContent,
     postPodcastLud16,
     postPodcastUnlockCost,
     postPodcastHandleUnlockCostChange,
     postPodcastHandleFileChange,
     postPodcastHandleLud16Change,
-    postPodcastHandleAnnouncementContentChange,
+    postPodcastHandleDescriptionChange: postPodcastHandleAnnouncementContentChange,
     postPodcastSetLud16
   } = useAppState();
 

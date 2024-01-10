@@ -1,8 +1,10 @@
 import Image from "next/image"
 import Link from "next/link"
+import { Event as NostrEvent } from "nostr-tools"
 import Button from "./Button"
 
 interface FeedPostProps {
+  note: NostrEvent<1>,
   user?: string
   userPfp?: string
   content?: string
@@ -11,7 +13,7 @@ interface FeedPostProps {
 }
 
 export function FeedPost(props: FeedPostProps) {
-  const { user, userPfp, content, userProfile, onClick } = props
+  const { user, userPfp, content, userProfile, note, onClick } = props
 
   return (
     <div
@@ -34,6 +36,8 @@ export function FeedPost(props: FeedPostProps) {
           </Link>
         </p>
         <h3 className="break-words text-sm font-normal">{content}</h3>
+        <h3 className="break-words text-sm font-normal">{JSON.stringify(note)}</h3>
+
       </div>
       <div className="mt-5 mx-auto flex gap-4">
         <Button

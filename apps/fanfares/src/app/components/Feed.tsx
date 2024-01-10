@@ -1,4 +1,5 @@
 "use client"
+import { generatePrivateKey } from "nostr-tools"
 import { useAppState } from "../controllers/state/use-app-state"
 import { FeedPost } from "./FeedPost"
 
@@ -12,11 +13,13 @@ export function Feed() {
     if (!profile) {
       return null
     }
-    console.log(stats)
+
+    console.log(`Render ${note.id}`)
 
     return (
       <FeedPost
-        key={note.id}
+        key={generatePrivateKey()}
+        note={note}
         user={profile.name}
         content={note.content}
         userPfp={profile.picture}

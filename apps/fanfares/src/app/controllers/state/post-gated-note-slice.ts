@@ -145,6 +145,7 @@ export const createPostGatedNoteSlice: StateCreator<
     const ids = await postGatedNote({
         gatedNoteContent: postGatedNoteContent,
         announcementNoteContent: postGatesNoteAnnouncementContent,
+        announcementNoteTags: [],
         gateServer: GATE_SERVER,
         cost: postGatesNoteUnlockCost,
         lud16: postGatedNoteLud16,
