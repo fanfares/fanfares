@@ -39,6 +39,8 @@ export function AudioPlayer() {
   const [duration, setDuration] = useState<number>(0)
   const [currentTime, setCurrentTime] = useState<number>(0)
   const [volume, setVolume] = useState<number>(80)
+  const [playerIsGlobalPlayerShowing, setPlayerIsGlobalPlayerShowing] =
+    useState<boolean>(true)
 
   // --------------- REFERENCES---------------
   const audioPlayer = useRef<HTMLAudioElement>(null)
@@ -63,13 +65,14 @@ export function AudioPlayer() {
   //   await router.push(`/player/${playerMediaKey.toString()}`)
   // }
 
-  // const toggleShowing = () => {
-  //   if (playerIsGlobalPlayerShowing) {
-  //     playerHideGlobalPlayer()
-  //   } else {
-  //     playerShowGlobalPlayer()
-  //   }
-  // }
+  const toggleShowing = () => {
+    setPlayerIsGlobalPlayerShowing(!playerIsGlobalPlayerShowing)
+    // if (playerIsGlobalPlayerShowing) {
+    //   playerHideGlobalPlayer()
+    // } else {
+    //   playerShowGlobalPlayer()
+    // }
+  }
 
   //--------------- FUNCTIONS ---------------
 
@@ -468,11 +471,13 @@ export function AudioPlayer() {
           preload="metadata"></audio>
         <div
           className={`absolute bottom-3 w-full max-w-7xl rounded-2xl border-t-2 border-buttonAccentHover transition-transform duration-300 ease-linear md:bottom-5 md:left-60 md:w-[70%] 
+          ${
+            playerIsGlobalPlayerShowing
+              ? " md:translate-y-2"
+              : "translate-y-[6.5rem] transform md:translate-y-[7rem]"
+          }
+          ${isPlaying ? "translate-y-0" : null}
          `}>
-          {/* {playerIsGlobalPlayerShowing
-            ? " md:translate-y-2"
-            : "translate-y-[6.5rem] transform md:translate-y-[7rem]"}{" "}
-          ${playerIsPlaying ? "translate-y-0" : null} */}
           <div className="relative grid items-center float-left w-full p-4 rounded-lg bg-fill/50 h-28 gap-x-2 drop-shadow-md backdrop-blur-md ">
             {renderPodcastPFP()}
             {renderPodcastInfo()}
@@ -482,10 +487,10 @@ export function AudioPlayer() {
           {renderRightMenuButtons()}
           <button
             aria-label="Hide/Show player"
-            onClick={() => {}}
+            onClick={toggleShowing}
             className="absolute block w-32 p-1 text-xs border-2 border-b-0 outline-none 2xl -top-7 left-5 rounded-t-2xl border-buttonAccentHover text-skin-muted backdrop-blur-md">
-            {/* {playerIsGlobalPlayerShowing ? "Hide" : "Show"} */}
-            Hide Player
+            {playerIsGlobalPlayerShowing ? "Hide " : "Show "}
+            Player
           </button>
         </div>
       </div>
