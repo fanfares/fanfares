@@ -18,7 +18,7 @@ export interface AppControllerProps {
  */
 export function AppController(props: AppControllerProps) {
   const { children } = props;
-  const {nostrDisconnect, accountSetNostr, accountSetWebln, accountFetchProfile, primalConnect, primalDisconnect, gateFetch} = useAppState();
+  const {nostrDisconnect, accountSetNostr, accountSetWebln, accountFetchProfile, primalConnect, primalDisconnect, gateFetch, podcastFetch, podcastFetching, podcastEpisodes, podcastUnlockAll} = useAppState();
 
   useEffect(() => {
     // Fixes the Local storage rehydration issue
@@ -39,6 +39,7 @@ export function AppController(props: AppControllerProps) {
         accountSetNostr(nip07, publicKey);
         accountFetchProfile();
         gateFetch();
+
       }).catch((e: any) => {
         alert("Nostr not found - error getting public key");
       })
@@ -49,12 +50,21 @@ export function AppController(props: AppControllerProps) {
     // PRIMAL
     primalConnect();
 
+    // PODCASTS
+    podcastFetch();
+
     return () => {
         // Cleans up connections at the end of the app
         nostrDisconnect();
         primalDisconnect();
     };
   }, []);
+
+  useEffect(() => {
+    if (!podcastFetching && Object.keys(podcastEpisodes).length > 0) {
+      podcastUnlockAll();
+    }
+  }, [podcastEpisodes, podcastFetching]);
 
   return children;
 }

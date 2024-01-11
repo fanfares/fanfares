@@ -1,63 +1,47 @@
-"use client"
+"use client";
 // import { Metadata } from '@excalibur/metadata';
 // import { getPlayerUrl } from '@utils';
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react";
 // import { queryLatestMediaMetadata } from 'src/controllers/firebase/firebase-functions';
 // import { isMediaBlacklisted } from 'src/controllers/firebase/media-blacklist';
 // import { useAppState } from 'src/controllers/state/use-app-state';
 // import LazyLoad from '../../components/LazyLoad';
-import Image from "next/image"
+import Image from "next/image";
 
-import Link from "next/link"
-import Searchbar from "./Searchbar"
-import EpisodeCard from "./EpisodeCard"
+import Link from "next/link";
+import Searchbar from "./Searchbar";
+import EpisodeCard from "./EpisodeCard";
 
-import { config } from "@fortawesome/fontawesome-svg-core"
-config.autoAddCss = false /* eslint-disable import/first */
-import { useAppState } from "../controllers/state/use-app-state"
-import { NIP_108_KINDS, eventToAnnouncementNote, eventToGatedNote } from "nip108"
+import { config } from "@fortawesome/fontawesome-svg-core";
+config.autoAddCss = false; /* eslint-disable import/first */
+import { useAppState } from "../controllers/state/use-app-state";
+import {
+  NIP_108_KINDS,
+  eventToAnnouncementNote,
+  eventToGatedNote,
+} from "nip108";
 
 export interface DiscoveryMediaInfo extends Metadata {
-  media_key: string
-  owner_key: string
-  creator_name: string
+  media_key: string;
+  owner_key: string;
+  creator_name: string;
+}
+
+export interface DiscoveryTileInfo {
+  imgUrl: string;
+  title: string;
+  description: string;
+  audioUrl?: string;
 }
 
 function DiscoverPageContent() {
   // const { program, drmApi } = useAppState();
-
-  const [media, setMedia] = useState<DiscoveryMediaInfo[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { nostrPool, nostrRelays } = useAppState();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { podcastFetch, podcastEpisodes, podcastUnlock } = useAppState();
 
   useEffect(() => {
-    if(!nostrPool || !nostrRelays) return;
-
-    nostrPool.list(nostrRelays, [
-      {
-        kinds: [NIP_108_KINDS.announcement],
-        limit: 10,
-      }
-    ]).then((rawAnnouncements) => {
-      const announcements = rawAnnouncements.map(eventToAnnouncementNote);
-      const gatesToGet = announcements.map((a) => a.gate);
-      
-      nostrPool.list(nostrRelays, [
-        {
-          ids: gatesToGet,
-        }
-      ]).then((rawGates) => {
-        const gates = rawGates.map(eventToGatedNote);
-        console.log(gates);
-      })
-    })
-
-  }, [
-    nostrPool,
-    nostrRelays,
-  ]);
-
-
+    podcastFetch();
+  }, [podcastFetch]);
 
   // const loadMedias = useCallback(async () => {
   //   setIsLoading(true);
@@ -94,47 +78,46 @@ function DiscoverPageContent() {
   // }, [loadMedias]);
 
   const renderLoading = () => {
-    if (!isLoading) return null
+    if (!isLoading) return null;
 
     return (
       <div className="flex items-center justify-center w-full h-screen">
         <svg
           className="... mr-3 h-5 w-5 animate-spin"
-          viewBox="0 0 24 24"></svg>
+          viewBox="0 0 24 24"
+        ></svg>
         <p className="animate-pulse">Loading...</p>
       </div>
-    )
-  }
+    );
+  };
 
   const renderContent = () => {
-    if (isLoading) return null
+    if (isLoading) return null;
     return (
       // <div className="flex items-center justify-center w-full pb-10 mx-auto rounded lg:justify-start">
       <div className="container flex">
         <div className="flex flex-wrap gap-3 ">
-          <EpisodeCard
-            imgUrl="https://www.partnershipprojectsuk.com/wp-content/uploads/2020/08/Neon-podcast-logo.jpg"
-            title="Episode 1"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore nisi magni ab voluptas veniam rem, asperiores optio harum necessitatibus nam repellendus nihil minima est quam excepturi fugit. Tenetur, voluptas nemo."
-            audioUrl="asd"
-          />
-          <EpisodeCard
-            imgUrl="https://www.partnershipprojectsuk.com/wp-content/uploads/2020/08/Neon-podcast-logo.jpg"
-            title="Episode 1"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore nisi magni ab voluptas veniam rem, asperiores optio harum necessitatibus nam repellendus nihil minima est quam excepturi fugit. Tenetur, voluptas nemo."
-            audioUrl="asd"
-          />
-          <EpisodeCard
-            imgUrl="https://www.partnershipprojectsuk.com/wp-content/uploads/2020/08/Neon-podcast-logo.jpg"
-            title="Episode 1"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore nisi magni ab voluptas veniam rem, asperiores optio harum necessitatibus nam repellendus nihil minima est quam excepturi fugit. Tenetur, voluptas nemo."
-          />
+          {Object.values(podcastEpisodes).map((podcast) => {
+            return (
+              <EpisodeCard
+                onClick={()=>{
+                  if(!podcast.audioFilepath){
+                    podcastUnlock(podcast.gate.note.id)
+                  }
+                }}
+                imgUrl={podcast.imageFilepath}
+                title={podcast.title}
+                description={podcast.description}
+                audioUrl={podcast.audioFilepath}
+              />
+            );
+          })}
         </div>
       </div>
 
       // </div>
-    )
-  }
+    );
+  };
 
   //T-32 Make into a grid
   // const renderPodcastTileGrid = () => {
@@ -184,7 +167,7 @@ function DiscoverPageContent() {
       {renderLoading()}
       {renderContent()}
     </div>
-  )
+  );
 }
 
-export default DiscoverPageContent
+export default DiscoverPageContent;

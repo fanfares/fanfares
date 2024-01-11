@@ -22,8 +22,6 @@ export interface PostPodcastSlice {
   postPodcastSubmit: (callbacks: PostPodcastCallbacks) => void;
   postPodcastClear: () => void;
 
-
-
   postPodcastHandleImageChange: (event: any) => void;
   postPodcastImageFile: File | null;
   postPodcastImageUrl?: string;
@@ -34,6 +32,9 @@ export interface PostPodcastSlice {
 
   postPodcastIsRunning: boolean;
   postGatesNoteError?: string;
+
+  postPodcastCheckTC: boolean;
+  postPodcastHandleCheckTCChange: (event: any) => void;
 
   postPodcastLud16: string;
   postPodcastSetLud16: (event: any) => void;
@@ -66,6 +67,7 @@ const DEFAULT_STATE: PostPodcastSlice = {
   postPodcastDescription: "",
   postPodcastLud16: "",
   postPodcastUnlockCost: 0,
+  postPodcastCheckTC: false,
 
   postPodcastAudioFile: null,
   postPodcastImageFile: null,
@@ -74,6 +76,7 @@ const DEFAULT_STATE: PostPodcastSlice = {
   postPodcastHandleImageChange: () => {},
 
   postPodcastSetLud16: () => {},
+  postPodcastHandleCheckTCChange: () => {},
   postPodcastHandleLud16Change: () => {},
   postPodcastHandleTitleChange: () => {},
   postPodcastHandleDescriptionChange: () => {},
@@ -89,6 +92,10 @@ export const createPostPodcastSlice: StateCreator<
   [],
   PostPodcastSlice
 > = (set, get) => {
+
+  const postPodcastHandleCheckTCChange = (event: any) => {
+    set({ postPodcastCheckTC: event.target.checked });
+  }
 
   const postPodcastHandleAudioChange = (event: any) => {
     const fileList = event.target.files as FileList;
@@ -130,6 +137,7 @@ export const createPostPodcastSlice: StateCreator<
       postPodcastState: "IDLE",
       postPodcastTitle: "",
       postPodcastDescription: "",
+      postPodcastCheckTC: false,
       // Don't clear lud16
     //   postPodcastLud16: accountProfile?.lud16 || "",
       postPodcastUnlockCost: 10000,
@@ -159,6 +167,7 @@ export const createPostPodcastSlice: StateCreator<
       postPodcastState,
       postPodcastPublicKey,
       postPodcastSignedGatedNote,
+      postPodcastCheckTC,
       postPodcastSecret,
       postPodcastSignedGate,
       postPodcastDidUploadGate,
@@ -179,6 +188,7 @@ export const createPostPodcastSlice: StateCreator<
     const runOnClear = onClear ? onClear : () => {};
 
     try {
+      if (!postPodcastCheckTC) throw new Error("User has not agreed to to the terms and conditions");
       if (!postPodcastLud16) throw new Error("Missing lud16");
       if (!postPodcastUnlockCost) throw new Error("Missing unlock cost");
       if (!postPodcastTitle) throw new Error("Missing announcement");
@@ -230,6 +240,7 @@ export const createPostPodcastSlice: StateCreator<
     // Creating announcement note
     const announcementNoteTags = [
       ['r', postPodcastImageUrl],
+      ['t', 'podcast']
     ]
 
     const announcementNoteContent = `${postPodcastTitle}\n${postPodcastDescription}`
@@ -301,6 +312,7 @@ export const createPostPodcastSlice: StateCreator<
   return {
     ...DEFAULT_STATE,
     postPodcastClear,
+    postPodcastHandleCheckTCChange,
     postPodcastHandleAudioChange,
     postPodcastHandleImageChange,
     postPodcastHandleLud16Change,

@@ -198,7 +198,7 @@ export function createKeyNoteUnsigned(
     pubkey: publicKey,
     created_at: Math.floor(Date.now() / 1000),
     tags: [
-      ["g", gatedNote.id],
+      ["e", gatedNote.id],
       ["announcement", announcementNote.id],
       ...(debug ? [["debug", "true"]] : [])
     ],
@@ -235,7 +235,7 @@ export function createAnnouncementNoteUnsigned(
     pubkey: publicKey,
     created_at: Math.floor(Date.now() / 1000),
     tags: [
-      ["g", gatedNote.id],
+      ["e", gatedNote.id],
       ...(tags ?? []),
       ...(debug ? [["debug", "true"]] : [])
     ],

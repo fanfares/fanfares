@@ -12,11 +12,13 @@ interface EpisodeCardProps {
   imgUrl: string
   title: string
   description: string
+  onClick?: () => void,
   episodeUrl?: string
   audioUrl?: string
 }
 
 function EpisodeCard(props: EpisodeCardProps) {
+  const { imgUrl, title, description, onClick, episodeUrl, audioUrl } = props
   const audioPlayer = useRef<HTMLAudioElement>(null)
 
   const [isPlaying, setIsPlaying] = useState(false)
@@ -31,6 +33,7 @@ function EpisodeCard(props: EpisodeCardProps) {
   }
 
   return (
+    <section onClick={onClick}>
     <Link
       href={props.episodeUrl || " "}
       className="e2e-podcast-tile group md:w-48 lg:w-40 w-full cursor-pointer flex md:flex-col  md:items-center justify-start rounded-lg border border-buttonAccent p-2 transition duration-300 ease-linear md:hover:scale-105 md:hover:bg-black/[10%] md:h-64 gap-2">
@@ -48,14 +51,17 @@ function EpisodeCard(props: EpisodeCardProps) {
             className="object-cover w-full h-full rounded-md"
           />
           {props.audioUrl ? (
-            <div className="absolute inset-0 z-10 hover:bg-black/40 bg-skin-fill/40 flex items-center justify-center rounded-lg">
-              <FontAwesomeIcon
-                aria-label="Play/Pause"
-                className="text- border-2 border-buttonAccentHover rounded-full w-8 md:w-10"
-                icon={isPlaying ? faPauseCircle : faPlayCircle}
-                onClick={playerTogglePlaying}
-              />
-            </div>
+            <section>
+              <div className="absolute inset-0 z-10 hover:bg-black/40 bg-skin-fill/40 flex items-center justify-center rounded-lg">
+                <FontAwesomeIcon
+                  aria-label="Play/Pause"
+                  className="text- border-2 border-buttonAccentHover rounded-full w-8 md:w-10"
+                  icon={isPlaying ? faPauseCircle : faPlayCircle}
+                  onClick={playerTogglePlaying}
+                />
+              </div>
+              <audio ref={audioPlayer} src={props.audioUrl} className="hidden"/>
+            </section>
           ) : null}
         </div>
       </div>
@@ -74,6 +80,7 @@ function EpisodeCard(props: EpisodeCardProps) {
         {/* {renderDateAndTime()} */}
       </div>
     </Link>
+    </section>
   )
 }
 
