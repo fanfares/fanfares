@@ -13,11 +13,6 @@ export enum NIP_108_KINDS {
   gate = 55,
   key = 56,
 }
-
-export enum NIP_108_TYPES {
-  podcast = 'podcast',
-}
-
 export interface CreateNotePostBody {
   gateEvent: NostrEvent<number>;
   lud16: string;
@@ -232,7 +227,6 @@ export function createAnnouncementNoteUnsigned(
   gatedNote: NostrEvent<number>,
   kind?: number,
   tags?: string[][],
-  type?: NIP_108_TYPES,
   debug?: boolean
 ): EventTemplate<number> {
 
@@ -242,7 +236,6 @@ export function createAnnouncementNoteUnsigned(
     created_at: Math.floor(Date.now() / 1000),
     tags: [
       ["g", gatedNote.id],
-      ...(type ? [["type", type]] : []),
       ...(tags ?? []),
       ...(debug ? [["debug", "true"]] : [])
     ],
@@ -258,11 +251,17 @@ export function createAnnouncementNote(
   gatedNote: NostrEvent<number>,
   kind?: number,
   tags?: string[][],
-  type?: NIP_108_TYPES,
   debug?: boolean
 ): NostrEvent<number> {
 
-  const event = createAnnouncementNoteUnsigned(getPublicKey(privateKey), content, gatedNote, kind, tags, type, debug)
+  const event = createAnnouncementNoteUnsigned(
+    getPublicKey(privateKey), 
+    content, 
+    gatedNote, 
+    kind, 
+    tags, 
+    debug
+  )
 
   return finishEvent(event, privateKey);
 }
@@ -290,6 +289,7 @@ export function unlockGatedNote(
   // 4. Parse the decrypted content into a VerifiedEvent<number> object
   return JSON.parse(decryptedContent) as NostrEvent<number>;
 }
+
 
 
 export async function unlockGatedNoteFromKeyNote(
