@@ -10,6 +10,10 @@ import Image from "next/image"
 
 import Link from "next/link"
 import Searchbar from "./Searchbar"
+import EpisodeCard from "./EpisodeCard"
+
+import { config } from "@fortawesome/fontawesome-svg-core"
+config.autoAddCss = false /* eslint-disable import/first */
 import { useAppState } from "../controllers/state/use-app-state"
 import { NIP_108_KINDS, eventToAnnouncementNote, eventToGatedNote } from "nip108"
 
@@ -106,18 +110,25 @@ function DiscoverPageContent() {
     if (isLoading) return null
     return (
       // <div className="flex items-center justify-center w-full pb-10 mx-auto rounded lg:justify-start">
-      <div className="container flex justify-center ">
+      <div className="container flex">
         <div className="flex flex-wrap gap-3 ">
-          {renderEpisodeCard()}
-          {renderEpisodeCard()}
-          {renderEpisodeCard()}
-          {renderEpisodeCard()}
-          {renderEpisodeCard()}
-          {renderEpisodeCard()}
-          {renderEpisodeCard()}
-          {renderEpisodeCard()}
-          {renderEpisodeCard()}
-          {renderEpisodeCard()}
+          <EpisodeCard
+            imgUrl="https://www.partnershipprojectsuk.com/wp-content/uploads/2020/08/Neon-podcast-logo.jpg"
+            title="Episode 1"
+            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore nisi magni ab voluptas veniam rem, asperiores optio harum necessitatibus nam repellendus nihil minima est quam excepturi fugit. Tenetur, voluptas nemo."
+            audioUrl="asd"
+          />
+          <EpisodeCard
+            imgUrl="https://www.partnershipprojectsuk.com/wp-content/uploads/2020/08/Neon-podcast-logo.jpg"
+            title="Episode 1"
+            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore nisi magni ab voluptas veniam rem, asperiores optio harum necessitatibus nam repellendus nihil minima est quam excepturi fugit. Tenetur, voluptas nemo."
+            audioUrl="asd"
+          />
+          <EpisodeCard
+            imgUrl="https://www.partnershipprojectsuk.com/wp-content/uploads/2020/08/Neon-podcast-logo.jpg"
+            title="Episode 1"
+            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore nisi magni ab voluptas veniam rem, asperiores optio harum necessitatibus nam repellendus nihil minima est quam excepturi fugit. Tenetur, voluptas nemo."
+          />
         </div>
       </div>
 
@@ -148,49 +159,6 @@ function DiscoverPageContent() {
   //     </div>
   //   )
   // }
-
-  const renderEpisodeCard = () => {
-    return (
-      <Link
-        href={""}
-        className="e2e-podcast-tile group md:w-48 lg:w-40 w-full cursor-pointer flex md:flex-col  md:items-center justify-start rounded-lg border border-buttonAccent p-2 transition duration-300 ease-linear md:hover:scale-105 md:hover:bg-black/[10%] md:h-64 gap-2">
-        <div className="relative flex items-center w-20 rounded-lg md:transition md:duration-300 md:w-full group/playButton md:h-36 md:group-hover:brightness-110">
-          {/* //should be IMAGE, this is just mocking */}
-          <img
-            // priority
-            // loader={contentfulLoader}
-            src={
-              "https://www.partnershipprojectsuk.com/wp-content/uploads/2020/08/Neon-podcast-logo.jpg"
-            }
-            alt={" thumbnail"}
-            // layout="fill"
-            // objectFit="cover"
-            className="object-cover w-20 h-20 border rounded-md md:w-full md:h-full drop-shadow-2xl border-buttonAccent"
-          />
-        </div>
-        {/* <div className="mt-2 h-full flex w-full flex-col items-start border-white/[10%] justify-start truncate line-clamp-2"></div> */}
-        <div className="flex-col flex-1 w-40 mt-2 space-y-2 md:px-2">
-          <p className="e2e-podcast-title text-xs font-bold uppercase md:leading-[18px] md:text-sm md:w-11/12 truncate mr-auto ">
-            {/* {metadataNameSlicer()} */}
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Porro
-            totam iure obcaecati quisquam saepe molestiae laborum veritatis,
-            quod at accusamus odio reiciendis enim sit dignissimos tempore omnis
-            id ipsam consequuntur.
-          </p>
-          <p className="tracking-tight text-xs/4 line-clamp-2 md:text-base/4 ">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore
-            nisi magni ab voluptas veniam rem, asperiores optio harum
-            necessitatibus nam repellendus nihil minima est quam excepturi
-            fugit. Tenetur, voluptas nemo.
-          </p>
-          <p className="ml-auto text-xs font-thin text-right md:text-start ">
-            D 01/01/01 H 01:01:00
-          </p>{" "}
-          {/* {renderDateAndTime()} */}
-        </div>
-      </Link>
-    )
-  }
 
   // const renderPodcastTile = (props: DiscoveryMediaTileProps) => {
   //   const id = `e2e-${props.tileKey}`

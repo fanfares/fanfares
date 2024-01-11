@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSearch } from "@fortawesome/pro-solid-svg-icons"
+import { config } from "@fortawesome/fontawesome-svg-core"
+config.autoAddCss = false /* eslint-disable import/first */
 // import { faSearch } from "@fortawesome/pro-duotone-svg-icons"
 
 export default function Searchbar() {
@@ -22,7 +24,7 @@ export default function Searchbar() {
       />
       <FontAwesomeIcon
         icon={faSearch}
-        className={`text-xl font-bold text-skin-base`}
+        className={`w-5 font-bold text-skin-base`}
       />
     </div>
   )
