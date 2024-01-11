@@ -85,7 +85,7 @@ export function MediaCreatorForm(props: MediaCreatorFormProps) {
           key={"field.id"}
           className="flex flex-col w-full md:gap-4 md:flex-row md:items-center md:justify-start mt-4 space-y-4 md:space-y-0">
           <FormLabelCreators>
-            <p> Creator Name:</p> {/* THIS P SHOULD BE A POPOVER */}
+            <p> Creator Name</p> {/* THIS P SHOULD BE A POPOVER */}
             {/* <p className="text-xs text-center w-80 md:text-sm hidden">
               "The name of the creator of the episode. This can be a person, a
               group, or a brand."
@@ -102,8 +102,8 @@ export function MediaCreatorForm(props: MediaCreatorFormProps) {
           <FormLabelCreators>
             {" "}
             <p>
-              Wallet Creator Address {/* THIS P SHOULD BE A POPOVER */}
-              <span className="text-skin-muted">(Solana) </span>
+              LUD16 Address {/* THIS SHOULD BE A POPOVER */}
+              <span className="text-skin-muted hidden">() </span>
             </p>{" "}
             {/* <p className="text-xs text-center w-80 md:text-sm hidden">
               "The Solana wallet address of the creator of the episode."
@@ -112,13 +112,34 @@ export function MediaCreatorForm(props: MediaCreatorFormProps) {
               id={"`${E2EID.uploadCreatorWalletInputX}${index}`"}
               autoComplete="off"
               className="border-b-2 border-buttonAccent bg-transparent text-sm font-thin outline-none placeholder:text-sm placeholder:font-semibold mt-2 placeholder:text-skin-muted/40 text-start"
-              placeholder="Enter Creator Wallet Address"
+              placeholder="Enter Creator LUD16 Address"
               name={"`creators.${index}.wallet`"}
               maxLength={48} // 44 seems to be the max
             />
           </FormLabelCreators>
           {/* <div className="flex flex-col items-center justify-center md:w-48 md:min-w-[160px] gap-y-3 bg-skin-fill rounded-lg p-2"> */}
+
           <FormLabelCreators>
+            {" "}
+            <p>
+              Unlock cost {/* THIS SHOULD BE A POPOVER */}
+              <span className="text-skin-muted">( in Sats )</span>
+            </p>{" "}
+            {/* <p className="text-xs text-center w-80 md:text-sm hidden">
+              "The Solana wallet address of the creator of the episode."
+            </p> */}
+            <input
+              type="number"
+              id={"`${E2EID.uploadCreatorWalletInputX}${index}`"}
+              autoComplete="off"
+              className="border-b-2 border-buttonAccent bg-transparent text-sm font-thin outline-none placeholder:text-sm placeholder:font-semibold mt-2 placeholder:text-skin-muted/40 text-start"
+              placeholder="Unlock cost"
+              name={"`creators.${index}.wallet`"}
+              maxLength={48} // 44 seems to be the max
+            />
+          </FormLabelCreators>
+
+          <FormLabelCreators className="hidden">
             Revenue Share %{/* THIS P SHOULD BE A POPOVER */}
             {/* <p className="text-xs text-center w-80 md:text-sm">
                 text="The percentage of revenue that will be shared with this
@@ -161,8 +182,9 @@ export function MediaCreatorForm(props: MediaCreatorFormProps) {
             </option> */}
             </input>
           </FormLabelCreators>
-          {/* </div> */}
 
+          {/* </div> */}
+          {/* 
           <button
             id={"`${E2EID.uploadCreatorRemoveButtonX}${index}`"}
             type="button"
@@ -170,12 +192,12 @@ export function MediaCreatorForm(props: MediaCreatorFormProps) {
             className={`flex items-center h-16 gap-2 px-4 cursor-pointer md:ml-auto md:w-20 btn
           ${"fields.length === 1" && "hidden"}`}
             onClick={() => {}}>
-            {/* <FontAwesomeIcon
+            <FontAwesomeIcon
               className="text-xl"
               icon={FAProSolid.faMinusCircle}
-            /> */}
-            {/* <p>Remove</p> */}
-          </button>
+            />
+            <p>Remove</p>
+          </button> */}
         </div>
       )
     }
@@ -188,7 +210,7 @@ export function MediaCreatorForm(props: MediaCreatorFormProps) {
           disabled={false}
           id={"E2EID.uploadCreatorAddButton"}
           type="button"
-          className="flex items-center md:px-4 mt-auto text-xs bg-buttonDefault rounded-md px-2 py-1"
+          className="hidden items-center md:px-4 mt-auto text-xs bg-buttonDefault rounded-md px-2 py-1"
           onClick={() => {}}>
           Add Creator
         </button>

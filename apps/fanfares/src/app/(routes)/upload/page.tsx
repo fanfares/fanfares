@@ -3,6 +3,7 @@ import Button from "@/app/components/Button"
 import { MediaAudioUploadField } from "@/app/components/MediaAudioUploadField"
 import { MediaCreatorForm } from "@/app/components/MediaCreatorForm"
 import { MediaThumbnailUploadField } from "@/app/components/MediaThumbnailUploadField"
+import { Modal } from "@/app/components/Modal"
 import Link from "next/link"
 import { useState } from "react"
 
@@ -12,6 +13,7 @@ interface UploadProps {
 
 export default function Upload({ onClick }: UploadProps) {
   const [text, setText] = useState("")
+  const [publishModal, setPublishModal] = useState(false)
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(event.target.value)
@@ -68,7 +70,7 @@ export default function Upload({ onClick }: UploadProps) {
             </div>
           </div>
           <MediaAudioUploadField />
-          <div className="flex-col w-full hidden">
+          <div className="flex-col w-full ">
             {/* <MediaParameterForm /> */}
             <MediaCreatorForm
             // shouldOpenConnectDialog={shouldOpenWalletStateModal}
@@ -82,8 +84,8 @@ export default function Upload({ onClick }: UploadProps) {
             {/* {validationError?.type ?? ""} */}
           </p>
           {/* <UploadCosts costChangeCallback={interceptSetSolanaCost} /> */}
-          <div className="flex flex-col gap-2 mt-8">
-            <label htmlFor="TermsAndConditionCheckbox">
+          <div className="flex flex-row gap-2 mt-8">
+            <label htmlFor="TermsAndConditionCheckbox" className="hidden">
               <input
                 required
                 id={"E2EID.uploadTermsCheckbox"}
@@ -92,12 +94,13 @@ export default function Upload({ onClick }: UploadProps) {
               />
               I agree to the{" "}
               <Link
-                href="https://docs.excalibur.fm/docs/Terms"
+                href=""
                 className="underline text-buttonMuted hover:text-buttonAccentHover">
                 Terms and Conditions
               </Link>
             </label>
             <Button
+              onClick={() => setPublishModal(!publishModal)}
               label="Publish"
               id={"E2EID.uploadPublishButton"}
               className="w-full px-5 mx-auto"
@@ -112,6 +115,12 @@ export default function Upload({ onClick }: UploadProps) {
           {/* <div className="mb-[]" /> */}
         </div>
       </form>
+      <Modal isOpen={publishModal}>
+        Modal still need content fill
+        <button onClick={() => setPublishModal(!publishModal)}>
+          ❌ BUTTON CLOSE TEST
+        </button>
+      </Modal>
     </section>
   )
 }
