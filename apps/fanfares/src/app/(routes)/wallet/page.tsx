@@ -6,7 +6,6 @@ export default function WalletPage(){
     const { gatePurchasedNotes } = useAppState();
 
     const renderGateNote = (note: NostrEvent<number>) => {
-
         return <p key={note.id}>{note.content}</p>
     }
 

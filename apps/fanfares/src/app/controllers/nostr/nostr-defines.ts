@@ -8,3 +8,5 @@ export const NOSTR_RELAYS = [
 ];
 
 export const PRIMAL_CACHE = 'wss://cache2.primal.net/v1';
+
+export const GATE_SERVER = process.env.NEXT_PUBLIC_GATE_SERVER as string;
