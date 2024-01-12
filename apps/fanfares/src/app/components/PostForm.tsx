@@ -7,10 +7,16 @@ import Upload from "../(routes)/upload/page"
 
 export function PostForm() {
   const [isChecked, setIsChecked] = useState<boolean>(false)
+  const [isCheckedAudio, setIsCheckedAudio] = useState<boolean>(false)
+
   // todo make it as a component to be reused both by pressing the Left post button and on Top header.
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { checked } = event.target
     setIsChecked(checked)
+  }
+  const handleCheckboxChangeAudio = (event: ChangeEvent<HTMLInputElement>) => {
+    const { checked } = event.target
+    setIsCheckedAudio(checked)
   }
   return (
     <form
@@ -72,8 +78,8 @@ export function PostForm() {
             className="w-full h-full p-2 text-white bg-transparent border rounded resize-none border-buttonAccent"></textarea>
         </div>
         <div className="flex items-center w-full mt-12 gap-4">
-          <Modal isOpen={isChecked}>
-            {<Upload onClick={() => setIsChecked(!isChecked)} />}
+          <Modal isOpen={isCheckedAudio}>
+            {<Upload onClick={() => setIsChecked(!isCheckedAudio)} />}
           </Modal>
 
           <label
@@ -97,8 +103,8 @@ export function PostForm() {
             htmlFor="setAsGatedContentCheckbox"
             className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer w-44 border-buttonAccent">
             <input
-              checked={isChecked}
-              onChange={handleCheckboxChange}
+              checked={isCheckedAudio}
+              onChange={handleCheckboxChangeAudio}
               type="checkbox"
               value=""
               name="setAsGatedContentCheckbox"
