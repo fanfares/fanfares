@@ -4,6 +4,7 @@ import { ChangeEvent, useState } from "react"
 import Button from "./Button"
 import { Modal } from "./Modal"
 import Upload from "../(routes)/upload/page"
+import { BiPodcast } from "react-icons/bi"
 
 export function PostForm() {
   const [isChecked, setIsChecked] = useState<boolean>(false)
@@ -86,6 +87,7 @@ export function PostForm() {
             htmlFor="setAsGatedContentCheckbox"
             className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer w-44 border-buttonAccent">
             <input
+              checked={isChecked}
               onChange={handleCheckboxChange}
               type="checkbox"
               value=""
@@ -100,15 +102,15 @@ export function PostForm() {
           </label>
 
           <label
-            htmlFor="setAsGatedContentCheckbox"
+            htmlFor="setAsGatedContentCheckboxAudio"
             className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer w-44 border-buttonAccent">
             <input
               checked={isCheckedAudio}
               onChange={handleCheckboxChangeAudio}
               type="checkbox"
               value=""
-              name="setAsGatedContentCheckbox"
-              id="setAsGatedContentCheckbox"
+              name="setAsGatedContentCheckboxAudio"
+              id="setAsGatedContentCheckboxAudio"
               className="sr-only peer"
             />
             <div className="w-12 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-buttonAccent rounded-full peer dark:bg-skin-fill peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-4 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-buttonAccentHover"></div>
