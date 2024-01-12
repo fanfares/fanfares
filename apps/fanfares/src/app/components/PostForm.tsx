@@ -71,10 +71,27 @@ export function PostForm() {
             // }
             className="w-full h-full p-2 text-white bg-transparent border rounded resize-none border-buttonAccent"></textarea>
         </div>
-        <div className="flex items-center w-full mt-12">
+        <div className="flex items-center w-full mt-12 gap-4">
           <Modal isOpen={isChecked}>
             {<Upload onClick={() => setIsChecked(!isChecked)} />}
           </Modal>
+
+          <label
+            htmlFor="setAsGatedContentCheckbox"
+            className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer w-44 border-buttonAccent">
+            <input
+              onChange={handleCheckboxChange}
+              type="checkbox"
+              value=""
+              name="setAsGatedContentCheckbox"
+              id="setAsGatedContentCheckbox"
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-buttonAccent rounded-full peer dark:bg-skin-fill peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-4 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-buttonAccentHover"></div>
+            <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+              Paid content?
+            </span>
+          </label>
 
           <label
             htmlFor="setAsGatedContentCheckbox"
@@ -88,9 +105,9 @@ export function PostForm() {
               id="setAsGatedContentCheckbox"
               className="sr-only peer"
             />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-buttonAccent rounded-full peer dark:bg-skin-fill peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-4 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-buttonAccentHover"></div>
-            <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-              Paid content?
+            <div className="w-12 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-buttonAccent rounded-full peer dark:bg-skin-fill peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-4 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-buttonAccentHover"></div>
+            <span className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+              Podcast?
             </span>
           </label>
 
