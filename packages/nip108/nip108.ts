@@ -7,6 +7,7 @@ import {
 } from "nostr-tools";
 import { decrypt, encrypt, hashToKey } from "../utils/crypto";
 import { getLud16Url, isValidLud16 } from "../utils/lightning";
+import { NIP07 } from "utils";
 
 export enum NIP_108_KINDS {
   announcement = 54,
@@ -290,7 +291,20 @@ export function unlockGatedNote(
   return JSON.parse(decryptedContent) as NostrEvent<number>;
 }
 
+export async function unlockGatedNoteFromKeyNoteNIP07(
+  nip07: NIP07,
+  keyNote: NostrEvent<number>,
+  gatedNote: NostrEvent<number>
+): Promise<NostrEvent<number>> {
 
+  if(!nip07.nip04) throw new Error('NIP04 not found in NIP07');
+
+  // 1. Decrypt key using nip04
+  const decryptedSecret = await nip07.nip04.decrypt(gatedNote.pubkey, keyNote.content);
+  
+  // 2. Use the decrypted secret to decrypt the gatedNote
+  return unlockGatedNote(gatedNote, decryptedSecret);
+}
 
 export async function unlockGatedNoteFromKeyNote(
   privateKey: string,
