@@ -12,9 +12,9 @@ import { PostNoteSlice, createPostNoteSlice } from "./post-note-slice"
 import { PostGatedNoteSlice, createPostGatedNoteSlice} from "./post-gated-note-slice";
 import { PostPodcastSlice, createPostPodcastSlice } from "./post-podcast-slice";
 import { PodcastSlice, createPodcastSlice } from "./podcast-slice";
+import { UserPageSlice, createUserPageSlice } from "./user-page-slice";
 
-
-export type CombinedState = TestSlice & NostrSlice & AccountSlice & PrimalSlice & GateSlice & UploadSlice & GateCreateSlice & PostNoteSlice & PostGatedNoteSlice & PostPodcastSlice & PodcastSlice;
+export type CombinedState = TestSlice & NostrSlice & AccountSlice & PrimalSlice & GateSlice & UploadSlice & GateCreateSlice & PostNoteSlice & PostGatedNoteSlice & PostPodcastSlice & PodcastSlice & UserPageSlice;
 
 export const useAppState = create<CombinedState>()(
   persist(
@@ -31,6 +31,7 @@ export const useAppState = create<CombinedState>()(
         ...createPostGatedNoteSlice(set, get, slice),
         ...createPostPodcastSlice(set, get, slice),
         ...createPodcastSlice(set, get, slice),
+        ...createUserPageSlice(set, get, slice),
       };
     },
     {
