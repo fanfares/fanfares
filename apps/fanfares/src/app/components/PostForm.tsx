@@ -79,10 +79,12 @@ export function PostForm() {
             className="w-full h-full p-2 text-white bg-transparent border rounded resize-none border-buttonAccent"></textarea>
         </div>
         <div className="flex items-center w-full mt-12 gap-4">
-          <Modal isOpen={isCheckedAudio}>
-            {<Upload onClick={() => setIsChecked(!isCheckedAudio)} />}
-          </Modal>
+          {/* <Modal isOpen={isCheckedAudio}>
+            {<Upload onClick={() => setIsCheckedAudio(!isCheckedAudio)} />}
+          </Modal> */}
 
+          {/* ----- Toggle Paid Content Main Feed Page ----- */}
+          {/* 
           <label
             htmlFor="setAsGatedContentCheckbox"
             className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer w-44 border-buttonAccent">
@@ -99,9 +101,11 @@ export function PostForm() {
             <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
               Paid content?
             </span>
-          </label>
+          </label> */}
 
-          <label
+          {/* ----- Toggle Paid Audio Main Feed Page ----- */}
+
+          {/* <label
             htmlFor="setAsGatedContentCheckboxAudio"
             className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer w-44 border-buttonAccent">
             <input
@@ -117,7 +121,7 @@ export function PostForm() {
             <span className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
               Podcast?
             </span>
-          </label>
+          </label> */}
 
           <Button
             className="font-bold border border-buttonAccent ml-auto w-20"
