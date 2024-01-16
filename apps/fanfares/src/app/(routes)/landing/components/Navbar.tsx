@@ -1,4 +1,4 @@
-import AnimatedMenuButton from "@/components/AnimatedButton"
+// import AnimatedMenuButton from "@/components/AnimatedButton"
 import clsx from "clsx"
 import Image from "next/image"
 import Link from "next/link"
@@ -22,10 +22,10 @@ const Navbar = () => {
         className={clsx(
           "ml-auto drop-shadow-2xl bg-white rounded-full md:text-sm"
         )}>
-        <AnimatedMenuButton
+        {/* <AnimatedMenuButton
           className=" text-black hover:text-white"
           label="Start Listening"
-        />
+        /> */}
       </Link>
     </nav>
   )

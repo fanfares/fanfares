@@ -186,7 +186,7 @@ export async function postGatedNote(
           });
   
           if (!response.ok) throw new Error("Failed to upload gate");
-          _gateResponse = await response.json() ?? ''; // More for debugging
+          _gateResponse = JSON.stringify(await response.json() ?? ''); // More for debugging
           _didUploadGate = true; // Flag we look for
 
           _setGateResponse(_gateResponse, _didUploadGate);

@@ -1,7 +1,7 @@
-import ButtonDefault from "@/components/Button"
+// import ButtonDefault from "@/components/Button"
 import Script from "next/script"
 import Button from "./Button"
-import AnimatedMenuButton from "@/components/AnimatedButton"
+// import AnimatedMenuButton from "@/components/AnimatedButton"
 
 function EmailSubscription() {
   return (
@@ -25,7 +25,7 @@ function EmailSubscription() {
           />
 
           <div className="text-sm font-medium bg-white hover:text-white rounded-full text-black">
-            <AnimatedMenuButton label="Submit" />
+            {/* <AnimatedMenuButton label="Submit" /> */}
           </div>
         </form>
         <Script src="https://sendfox.com/js/form.js"></Script>
