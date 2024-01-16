@@ -5,6 +5,8 @@ import Button from "./Button"
 import { Modal } from "./Modal"
 import { PostForm } from "./PostForm"
 import Upload from "../(routes)/upload/page"
+import { PostFormOnModal } from "./PostFormOnModal"
+import { ModalPosting } from "./ModalPosting"
 
 export function ActionButtonsPost() {
   // Refactor this section to use Enums?
@@ -17,7 +19,7 @@ export function ActionButtonsPost() {
     setNoteModal(false)
     setGatedNoteModal(false)
     setGatedPodModal(false)
-    setGenericNoteModal(true)
+    setGenericNoteModal(false)
   }
 
   const renderGatedNoteContent = () => {
@@ -108,42 +110,45 @@ export function ActionButtonsPost() {
             label="Gated Pod"
           />
           <Button
+            className={`${genericNoteModal ? "" : "hidden"}`}
             onClick={() => setGenericNoteModal(!genericNoteModal)}
             label="Generic"
           />
         </div>
-        {!noteModal && !gatedNoteModal && !gatedPodModal && <PostForm />}
+        {!noteModal && !gatedNoteModal && !gatedPodModal && <PostFormOnModal />}
       </div>
     )
   }
 
   return (
     <div className="bg-black rounded mb-4 flex flex-col py-4 px-2 gap-2">
-      <Modal
+      <ModalPosting
         isOpen={
           noteModal || gatedNoteModal || gatedPodModal || genericNoteModal
         }>
         <div>
-          {noteModal && <PostForm />}
+          {noteModal && (
+            <PostFormOnModal onCancel={() => setNoteModal(!noteModal)} />
+          )}
           {gatedNoteModal && renderGatedNoteContent()}
           {gatedPodModal && <Upload />}
           {genericNoteModal && renderGenericContent()}
-          <Button onClick={setModalOff} label="Close" />
+          {/* <Button onClick={setModalOff} label="Close" /> */}
         </div>
-      </Modal>
-      <Button onClick={() => setNoteModal(!noteModal)} label="Note" />
+      </ModalPosting>
+      <Button onClick={() => setNoteModal(!noteModal)} label="Post Note" />
       <Button
         onClick={() => setGatedNoteModal(!gatedNoteModal)}
-        label="Gated Note"
+        label="Paid Post"
       />
       <Button
         onClick={() => setGatedPodModal(!gatedPodModal)}
-        label="Gated Pod"
+        label="Post a Pod"
       />
-      <Button
+      {/* <Button
         onClick={() => setGenericNoteModal(!genericNoteModal)}
         label="Post Something"
-      />
+      /> */}
     </div>
   )
 }
