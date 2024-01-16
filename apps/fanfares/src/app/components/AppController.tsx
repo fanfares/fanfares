@@ -38,8 +38,7 @@ export function AppController(props: AppControllerProps) {
       nip07.getPublicKey().then((publicKey: string)=>{
         accountSetNostr(nip07, publicKey);
         accountFetchProfile();
-        gateFetch();
-
+        // gateFetch();
       }).catch((e: any) => {
         alert("Nostr not found - error getting public key");
       })
