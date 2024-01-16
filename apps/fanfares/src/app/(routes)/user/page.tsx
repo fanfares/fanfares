@@ -10,19 +10,19 @@ export function UserNote(event: UserPageNote) {
 
     let content = <p>{event.event.content}</p>
 
+    if(event.announcement){
+        content = (
+            <div>
+                <p>🔓{event.announcement.note.content}🔓</p>
+            </div>
+        )
+    }
+
     if(event.unlockedContent && event.announcement){
         content = (
             <div>
                 <p>🔓{event.announcement.note.content}🔓</p>
                 <p>🔑{event.unlockedContent.content}🔑</p>
-            </div>
-        )
-    }
-
-    if(event.announcement){
-        content = (
-            <div>
-                <p>🔓{event.announcement.note.content}🔓</p>
             </div>
         )
     }

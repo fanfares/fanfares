@@ -299,8 +299,14 @@ export async function unlockGatedNoteFromKeyNoteNIP07(
 
   if(!nip07.nip04) throw new Error('NIP04 not found in NIP07');
 
+  let decryptedSecret = ''
   // 1. Decrypt key using nip04
-  const decryptedSecret = await nip07.nip04.decrypt(gatedNote.pubkey, keyNote.content);
+  try {
+    decryptedSecret = await nip07.nip04.decrypt(gatedNote.pubkey, keyNote.content);
+
+  } catch (error) {
+    throw new Error(`Failed to decrypt the key: ${error}`);
+  }
   
   // 2. Use the decrypted secret to decrypt the gatedNote
   return unlockGatedNote(gatedNote, decryptedSecret);

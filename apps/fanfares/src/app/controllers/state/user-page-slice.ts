@@ -84,11 +84,12 @@ export const createUserPageSlice: StateCreator<
             set({ userPageNotes: notes });
 
             console.log('gates to fetch', gatesToFetch);
-
+            console.log('key filters', keyFilters);
+            const littleGates = gatesToFetch.splice(0, 30);
             nostrPool.list(nostrRelays, [
-                // {
-                //     ids: gatesToFetch,
-                // },
+                {
+                    ids: littleGates,
+                },
                 ...keyFilters,
             ]).then((gatesAndKeys) => {
                 const oldNotes = get().userPageNotes;
@@ -126,39 +127,35 @@ export const createUserPageSlice: StateCreator<
                 const nip07 = get().accountNIP07;
 
                 if(nip07 && nip07.nip04){
-
-                    console.log('unlocking', gatesToUnlock);
-                    const promises = [];
-
                     for(const gateToUnlock of gatesToUnlock) {
                         const gate = newNotes[gateToUnlock].gate;
                         const key = newNotes[gateToUnlock].key;
 
                         if(!gate || !key) continue;
 
-                        promises.push(unlockGatedNoteFromKeyNoteNIP07(
+                        unlockGatedNoteFromKeyNoteNIP07(
                             nip07,
                             key.note,
                             gate.note
-                        ));
-                    }
+                        ).then((unlockedNote) => {
+                            const oldNotes = get().userPageNotes;
+                            const newNotes: UserPageNotes = {};
 
-                    Promise.all(promises).then((unlockedNotes) => {
-                        const oldNotes = get().userPageNotes;
-                        const newNotes: UserPageNotes = {};
-
-                        for(const unlockedNote of unlockedNotes) {
-                            newNotes[unlockedNote.id] = {
-                                ...oldNotes[unlockedNote.id],
+                            newNotes[gate.note.id] = {
+                                ...oldNotes[gate.note.id],
                                 unlockedContent: unlockedNote,
                             }
-                        }
 
-                        set({ userPageNotes: {
-                            ...oldNotes,
-                            ...newNotes,
-                        } });
-                    })
+                            set({ userPageNotes: {
+                                ...oldNotes,
+                                ...newNotes,
+                            } });
+
+                            console.log('unlocked note', unlockedNote);
+                        }).catch((error) => {
+                            console.error(error);
+                        });
+                    }
                 
                 }
 
