@@ -1,47 +1,47 @@
-"use client";
+"use client"
 // import { Metadata } from '@excalibur/metadata';
 // import { getPlayerUrl } from '@utils';
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react"
 // import { queryLatestMediaMetadata } from 'src/controllers/firebase/firebase-functions';
 // import { isMediaBlacklisted } from 'src/controllers/firebase/media-blacklist';
 // import { useAppState } from 'src/controllers/state/use-app-state';
 // import LazyLoad from '../../components/LazyLoad';
-import Image from "next/image";
+import Image from "next/image"
 
-import Link from "next/link";
-import Searchbar from "./Searchbar";
-import EpisodeCard from "./EpisodeCard";
+import Link from "next/link"
+import Searchbar from "./Searchbar"
+import EpisodeCard from "./EpisodeCard"
 
-import { config } from "@fortawesome/fontawesome-svg-core";
-config.autoAddCss = false; /* eslint-disable import/first */
-import { useAppState } from "../controllers/state/use-app-state";
+import { config } from "@fortawesome/fontawesome-svg-core"
+config.autoAddCss = false /* eslint-disable import/first */
+import { useAppState } from "../controllers/state/use-app-state"
 import {
   NIP_108_KINDS,
   eventToAnnouncementNote,
   eventToGatedNote,
-} from "nip108";
+} from "nip108"
 
 export interface DiscoveryMediaInfo extends Metadata {
-  media_key: string;
-  owner_key: string;
-  creator_name: string;
+  media_key: string
+  owner_key: string
+  creator_name: string
 }
 
 export interface DiscoveryTileInfo {
-  imgUrl: string;
-  title: string;
-  description: string;
-  audioUrl?: string;
+  imgUrl: string
+  title: string
+  description: string
+  audioUrl?: string
 }
 
 function DiscoverPageContent() {
   // const { program, drmApi } = useAppState();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { podcastFetch, podcastEpisodes, podcastUnlock } = useAppState();
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { podcastFetch, podcastEpisodes, podcastUnlock } = useAppState()
 
   useEffect(() => {
-    podcastFetch();
-  }, [podcastFetch]);
+    podcastFetch()
+  }, [podcastFetch])
 
   // const loadMedias = useCallback(async () => {
   //   setIsLoading(true);
@@ -78,30 +78,29 @@ function DiscoverPageContent() {
   // }, [loadMedias]);
 
   const renderLoading = () => {
-    if (!isLoading) return null;
+    if (!isLoading) return null
 
     return (
       <div className="flex items-center justify-center w-full h-screen">
         <svg
           className="... mr-3 h-5 w-5 animate-spin"
-          viewBox="0 0 24 24"
-        ></svg>
+          viewBox="0 0 24 24"></svg>
         <p className="animate-pulse">Loading...</p>
       </div>
-    );
-  };
+    )
+  }
 
   const renderContent = () => {
-    if (isLoading) return null;
+    if (isLoading) return null
     return (
       // <div className="flex items-center justify-center w-full pb-10 mx-auto rounded lg:justify-start">
       <div className="container flex">
         <div className="flex flex-wrap gap-3 ">
-          {Object.values(podcastEpisodes).map((podcast) => {
+          {Object.values(podcastEpisodes).map(podcast => {
             return (
               <EpisodeCard
-                onClick={()=>{
-                  if(!podcast.audioFilepath){
+                onClick={() => {
+                  if (!podcast.audioFilepath) {
                     podcastUnlock(podcast.gate.note.id)
                   }
                 }}
@@ -110,14 +109,14 @@ function DiscoverPageContent() {
                 description={podcast.description}
                 audioUrl={podcast.audioFilepath}
               />
-            );
+            )
           })}
         </div>
       </div>
 
       // </div>
-    );
-  };
+    )
+  }
 
   //T-32 Make into a grid
   // const renderPodcastTileGrid = () => {
@@ -160,14 +159,14 @@ function DiscoverPageContent() {
 
   return (
     <div className="space-y-4">
-      <h1 className="font-black text-center text-gray-100 uppercase text-xl/4 md:mt-4 md:text-start md:text-4xl">
-        This Week on Excalibur
+      <h1 className="font-black text-center text-gray-100 text-xl/4 md:mt-4 md:text-start md:text-4xl">
+        This Week on FanFares
       </h1>
       <Searchbar />
       {renderLoading()}
       {renderContent()}
     </div>
-  );
+  )
 }
 
-export default DiscoverPageContent;
+export default DiscoverPageContent
