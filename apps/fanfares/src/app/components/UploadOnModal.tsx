@@ -9,7 +9,12 @@ import { useAppState } from "@/app/controllers/state/use-app-state"
 import Link from "next/link"
 import { ChangeEvent, useEffect, useRef, useState } from "react"
 
-export default function UploadOnModal() {
+interface UploadOnModalProps {
+  onCancel?: () => void
+}
+
+export default function UploadOnModal(props: UploadOnModalProps) {
+  const { onCancel } = props
   const [publishModal, setPublishModal] = useState<boolean>(false)
   const [isCheckedAudio, setIsCheckedAudio] = useState<boolean>(false)
 
@@ -292,7 +297,7 @@ export default function UploadOnModal() {
             {/* {validationError?.type ?? ""} */}
           </p>
 
-          <div className="flex flex-col gap-2 mt-8">
+          <div className="flex flex-col gap-2 mt-8 w-full items-center">
             <label htmlFor="TermsAndConditionCheckbox">
               <input
                 required
@@ -309,13 +314,23 @@ export default function UploadOnModal() {
                 Terms and Conditions
               </Link>
             </label>
-            <Button
-              onClick={() => handlePostSubmit(null)}
-              type="button"
-              label="Submit"
-              id={"E2EID.uploadPublishButton"}
-              className="px-5 mx-auto"
-            />
+            <div className="flex w-full gap-4 justify-center mt-4 my-2">
+              {" "}
+              <Button
+                onClick={onCancel}
+                type="button"
+                label="Cancel"
+                id={"E2EID.uploadPublishButton"}
+                className="px-5 text-xs"
+              />
+              <Button
+                onClick={() => handlePostSubmit(null)}
+                type="button"
+                label="Submit"
+                id={"E2EID.uploadPublishButton"}
+                className="px-5 text-xs"
+              />
+            </div>
           </div>
         </div>
       </form>

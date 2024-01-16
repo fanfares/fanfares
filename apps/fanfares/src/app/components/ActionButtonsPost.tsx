@@ -137,16 +137,18 @@ export function ActionButtonsPost() {
             <PostFormOnModal onCancel={() => setNoteModal(!noteModal)} />
           )}
           {gatedNoteModal && renderGatedNoteContent()}
-          {gatedPodModal && <UploadOnModal />}
+          {gatedPodModal && (
+            <UploadOnModal onCancel={() => setGatedPodModal(!gatedPodModal)} />
+          )}
           {genericNoteModal && renderGenericContent()}
           {/* <Button onClick={setModalOff} label="Close" /> */}
         </div>
       </ModalPosting>
       <Button onClick={() => setNoteModal(!noteModal)} label="Post Note" />
-      <Button
+      {/* <Button
         onClick={() => setGatedNoteModal(!gatedNoteModal)}
         label="Paid Post"
-      />
+      /> */}
       <Button
         onClick={() => setGatedPodModal(!gatedPodModal)}
         label="Post a Pod"
