@@ -200,10 +200,10 @@ export function Navbar() {
     return (
       <div
         className={`desktop-sidebar fixed z-40 hidden h-full flex-col px-4 transition-all duration-100 ease-linear md:flex md:mx-auto `}>
-        <div className="flex items-center justify-center mx-auto bg-transparent rounded w-fit">
-          <Link href="/" className="flex flex-col gap-1 items-center">
-            <p className="text-7xl mt-8">🎪</p>
-            <span className="uppercase text-xl bold">Fanfares</span>
+        <div className="flex mx-auto bg-transparent">
+          <Link href="/" className="flex flex-col items-center mb-4">
+            <p className="text-[7rem] relative">🎪</p>
+            <span className="text-2xl bold relative -top-6">FanFares</span>
             {/* <Image
               // loader={contentfulLoader}
               className="cursor-pointer"
