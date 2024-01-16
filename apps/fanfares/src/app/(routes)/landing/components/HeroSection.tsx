@@ -1,4 +1,4 @@
-import AnimatedMenuButton from "@/components/AnimatedButton"
+// import AnimatedMenuButton from "@/components/AnimatedButton"
 import Link from "next/link"
 import { BiLogoLinkedinSquare } from "react-icons/bi"
 
@@ -34,7 +34,7 @@ const HeroSection = () => {
         href="/upload"
         passHref
         className="mt-10 text-sm font-medium bg-white hover:text-white rounded-full text-black">
-        <AnimatedMenuButton label="Get Started" />
+        {/* <AnimatedMenuButton label="Get Started" /> */}
       </Link>
     </div>
   )

@@ -6,21 +6,14 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 // import { isMediaBlacklisted } from 'src/controllers/firebase/media-blacklist';
 // import { useAppState } from 'src/controllers/state/use-app-state';
 // import LazyLoad from '../../components/LazyLoad';
-import Image from "next/image"
 
-import Link from "next/link"
 import Searchbar from "./Searchbar"
 import EpisodeCard from "./EpisodeCard"
 
 import { config } from "@fortawesome/fontawesome-svg-core"
-config.autoAddCss = false /* eslint-disable import/first */
 import { useAppState } from "../controllers/state/use-app-state"
-import {
-  NIP_108_KINDS,
-  eventToAnnouncementNote,
-  eventToGatedNote,
-} from "nip108"
 
+config.autoAddCss = false /* eslint-disable import/first */
 export interface DiscoveryMediaInfo extends Metadata {
   media_key: string
   owner_key: string

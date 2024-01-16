@@ -6,7 +6,7 @@ import { UserPageNote } from "@/app/controllers/state/user-page-slice";
 import { createNoteUnsigned } from "nip108";
 import React, { useEffect } from "react";
 
-export function UserNote(event: UserPageNote) {
+function UserNote(event: UserPageNote) {
 
     let content = <p>{event.event.content}</p>
 

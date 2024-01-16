@@ -8,14 +8,14 @@ import React, { useEffect } from "react";
 export default function TestPage() {
   return (
     <div>
-      {TestPostPodcast()}
+      {/* {TestPostPodcast()}
       {TestPostGatedNote()}
-      {TestPostNote()}
+      {TestPostNote()} */}
     </div>
   );
 }
 
-export function TestPostPodcast() {
+function TestPostPodcast() {
   const formRef = React.useRef<HTMLFormElement>(null);
   const {
     postPodcastClear,
@@ -107,7 +107,7 @@ export function TestPostPodcast() {
   );
 }
 
-export function TestPostGatedNote() {
+function TestPostGatedNote() {
   const formRef = React.useRef<HTMLFormElement>(null);
   const {
     postGatedNoteClear,
@@ -187,7 +187,7 @@ export function TestPostGatedNote() {
   );
 }
 
-export function TestPostNote() {
+function TestPostNote() {
   const formRef = React.useRef<HTMLFormElement>(null);
   const {
     postNoteClear,
