@@ -8,6 +8,9 @@ import { BiPodcast } from "react-icons/bi"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faGif, faImage } from "@fortawesome/pro-solid-svg-icons"
 
+import { config } from "@fortawesome/fontawesome-svg-core"
+config.autoAddCss = false /* eslint-disable import/first */
+
 interface PostFormOnModalProps {
   onCancel?: () => void
 }
@@ -112,10 +115,10 @@ export function PostFormOnModal(props: PostFormOnModalProps) {
         </div>
       </div>
       <div className="flex items-center justify-start w-full px-2 my-2 gap-4">
-        <button>
-          <FontAwesomeIcon icon={faImage} />{" "}
+        <button type="button">
+          <FontAwesomeIcon icon={faImage} className="w-5 " />{" "}
         </button>
-        <FontAwesomeIcon icon={faGif} />
+        <FontAwesomeIcon icon={faGif} className="w-5" />
         <Button
           className="font-bold border border-buttonAccent ml-auto text-xs px-4"
           onClick={() => {}}

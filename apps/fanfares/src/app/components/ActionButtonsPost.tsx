@@ -7,6 +7,7 @@ import { PostForm } from "./PostForm"
 import Upload from "../(routes)/upload/page"
 import { PostFormOnModal } from "./PostFormOnModal"
 import { ModalPosting } from "./ModalPosting"
+import UploadOnModal from "./UploadOnModal"
 
 export function ActionButtonsPost() {
   // Refactor this section to use Enums?
@@ -27,8 +28,8 @@ export function ActionButtonsPost() {
       <>
         <form
           id="e2e-post-form-container"
-          className="flex items-center justify-center w-[380px] my-4 ">
-          <div className="w-full p-5 text-white border rounded shadow-lg border-buttonAccent">
+          className="flex items-center justify-center w-[380px]">
+          <div className="w-full p-5 text-white rounded shadow-lg">
             <div className="hidden mt-1 mb-2">
               <label className="block mb-2">Unlock Cost ( sats )</label>
               <input
@@ -85,7 +86,12 @@ export function ActionButtonsPost() {
             </div>
             <div className="flex items-center w-full mt-12 gap-4">
               <Button
-                className="font-bold border border-buttonAccent ml-auto w-20"
+                className="font-bold border border-buttonAccent ml-auto w-20 text-xs"
+                onClick={() => setGatedNoteModal(!gatedNoteModal)}
+                label="Cancel"
+              />
+              <Button
+                className="font-bold border border-buttonAccent w-20 text-xs"
                 onClick={() => {}}
                 label="Submit"
               />
@@ -131,7 +137,7 @@ export function ActionButtonsPost() {
             <PostFormOnModal onCancel={() => setNoteModal(!noteModal)} />
           )}
           {gatedNoteModal && renderGatedNoteContent()}
-          {gatedPodModal && <Upload />}
+          {gatedPodModal && <UploadOnModal />}
           {genericNoteModal && renderGenericContent()}
           {/* <Button onClick={setModalOff} label="Close" /> */}
         </div>
