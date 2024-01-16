@@ -283,7 +283,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
               />
               <div className="w-10 h-6 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-red-300 dark:peer-focus:ring-buttonAccent rounded-full peer dark:bg-skin-fill peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-2 after:bg-white after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-buttonAccentHover"></div>
               <span className="ml-3 text-xs font-medium text-gray-900 dark:text-gray-300">
-                Gated Post?
+                Paid Podcast?
               </span>
             </label>
           </div>

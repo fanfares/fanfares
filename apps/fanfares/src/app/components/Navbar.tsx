@@ -6,6 +6,8 @@ import {
   faCompass,
   faWallet,
   faComment,
+  faGlobe,
+  faPodcast,
 } from "@fortawesome/pro-solid-svg-icons"
 
 // import { Keypair } from '@solana/web3.js';
@@ -199,8 +201,10 @@ export function Navbar() {
       <div
         className={`desktop-sidebar fixed z-40 hidden h-full flex-col px-4 transition-all duration-100 ease-linear md:flex md:mx-auto `}>
         <div className="flex items-center justify-center mx-auto bg-transparent rounded w-fit">
-          <Link href="/">
-            <Image
+          <Link href="/" className="flex flex-col gap-1 items-center">
+            <p className="text-7xl mt-8">🎪</p>
+            <span className="uppercase text-xl bold">Fanfares</span>
+            {/* <Image
               // loader={contentfulLoader}
               className="cursor-pointer"
               src={"/assets/excalibur.png"}
@@ -208,25 +212,25 @@ export function Navbar() {
               layout="intrinsic"
               width={100}
               height={100}
-            />
+            /> */}
           </Link>
         </div>
         <div className="flex flex-col mx-auto mt-5 mb-20 space-y-4 ">
-          {renderDesktopNavLink("/discover", "Discover", faCompass)}
-          {renderDesktopNavLink("/feed", "Feed", faComment)}
+          {renderDesktopNavLink("/discover", "Nostr Podcasts", faPodcast)}
+          {renderDesktopNavLink("/feed", "Nostr Universe", faGlobe)}
 
-          {renderDesktopNavLink(
+          {/* {renderDesktopNavLink(
             "/upload",
             "Upload Audio",
             faCloudArrowUp,
             "click-to-upload"
-          )}
-          {renderDesktopNavLink(
+          )} */}
+          {/* {renderDesktopNavLink(
             "/test",
             "TEST",
             faCloudArrowUp,
             "click-to-upload"
-          )}
+          )} */}
           {/* {renderDesktopNavLink(
             `/player/${playerMediaKey?.toString() ?? "demo"}`,
             "Player",
@@ -242,7 +246,7 @@ export function Navbar() {
                 FAProSolid.faUser
               )
             : null} */}
-          {renderDesktopNavLink("/wallet", "Wallet", faWallet)}
+          {/* {renderDesktopNavLink("/wallet", "Wallet", faWallet)} */}
           {renderDesktopNavLink("/support/", "Support", faQuestionCircle)}
         </div>
         {/* <LoginLogoutButton /> */}

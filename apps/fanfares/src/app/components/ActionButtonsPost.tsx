@@ -127,7 +127,7 @@ export function ActionButtonsPost() {
   }
 
   return (
-    <div className="bg-black rounded mb-4 flex flex-col py-4 px-2 gap-2">
+    <div className="rounded mb-4 flex flex-col py-4 px-2 gap-2">
       <ModalPosting
         isOpen={
           noteModal || gatedNoteModal || gatedPodModal || genericNoteModal
@@ -151,7 +151,7 @@ export function ActionButtonsPost() {
       /> */}
       <Button
         onClick={() => setGatedPodModal(!gatedPodModal)}
-        label="Post a Pod"
+        label="Post Podcast"
       />
       {/* <Button
         onClick={() => setGenericNoteModal(!genericNoteModal)}
