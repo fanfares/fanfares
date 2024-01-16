@@ -154,6 +154,8 @@ export const createGateCreateSlice: StateCreator<
           publicKey,
           announcementContent,
           gateCreateSignedGate as NostrEvent<NIP_108_KINDS.gate>,
+          undefined,
+          undefined,
           true,
         );
 

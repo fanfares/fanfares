@@ -6,6 +6,8 @@ import {
   faCompass,
   faWallet,
   faComment,
+  faGlobe,
+  faPodcast,
 } from "@fortawesome/pro-solid-svg-icons"
 
 // import { Keypair } from '@solana/web3.js';
@@ -15,6 +17,8 @@ import { useRouter } from "next/navigation"
 import TestState from "./TestState"
 import { E2E } from "../controllers/testing/e2e"
 import { ProfileBuble } from "./ProfileBubble"
+import Button from "./Button"
+import { ActionButtonsPost } from "./ActionButtonsPost"
 // import { useAppState } from 'src/controllers/state/use-app-state';
 // import { E2EID } from 'src/controllers/utils/e2e-ids';
 // import LoginLogoutButton from "src/views/components/LoginLogoutButton"
@@ -196,9 +200,11 @@ export function Navbar() {
     return (
       <div
         className={`desktop-sidebar fixed z-40 hidden h-full flex-col px-4 transition-all duration-100 ease-linear md:flex md:mx-auto `}>
-        <div className="flex items-center justify-center mx-auto bg-transparent rounded w-fit">
-          <Link href="/">
-            <Image
+        <div className="flex mx-auto bg-transparent">
+          <Link href="/" className="flex flex-col items-center mb-4">
+            <p className="text-[7rem] relative">🎪</p>
+            <span className="text-2xl bold relative -top-6">FanFares</span>
+            {/* <Image
               // loader={contentfulLoader}
               className="cursor-pointer"
               src={"/assets/excalibur.png"}
@@ -206,25 +212,25 @@ export function Navbar() {
               layout="intrinsic"
               width={100}
               height={100}
-            />
+            /> */}
           </Link>
         </div>
         <div className="flex flex-col mx-auto mt-5 mb-20 space-y-4 ">
-          {renderDesktopNavLink("/discover", "Discover", faCompass)}
-          {renderDesktopNavLink("/feed", "Feed", faComment)}
+          {renderDesktopNavLink("/discover", "Nostr Podcasts", faPodcast)}
+          {renderDesktopNavLink("/feed", "Nostr Universe", faGlobe)}
 
-          {renderDesktopNavLink(
+          {/* {renderDesktopNavLink(
             "/upload",
             "Upload Audio",
             faCloudArrowUp,
             "click-to-upload"
-          )}
-          {renderDesktopNavLink(
+          )} */}
+          {/* {renderDesktopNavLink(
             "/test",
             "TEST",
             faCloudArrowUp,
             "click-to-upload"
-          )}
+          )} */}
           {/* {renderDesktopNavLink(
             `/player/${playerMediaKey?.toString() ?? "demo"}`,
             "Player",
@@ -240,12 +246,10 @@ export function Navbar() {
                 FAProSolid.faUser
               )
             : null} */}
-          {renderDesktopNavLink("/wallet", "Wallet", faWallet)}
+          {/* {renderDesktopNavLink("/wallet", "Wallet", faWallet)} */}
           {renderDesktopNavLink("/support/", "Support", faQuestionCircle)}
         </div>
-
         {/* <LoginLogoutButton /> */}
-
         <div className="mt-auto left-5">
           {/* <HexagonPFP /> */}
           <p className="flex flex-col mt-2 text-sm font-black">
@@ -259,6 +263,7 @@ export function Navbar() {
           </p>
         </div>
         {/* <div className={`static left-5 h-10 ${publicKey ? "mt-3" : ""}`}> */}
+        <ActionButtonsPost />
         <ProfileBuble />
         <div className={`static left-5 h-10 `}>
           <p

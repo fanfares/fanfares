@@ -1,27 +1,19 @@
-import { ReactNode } from "react"
+import { ButtonHTMLAttributes, ReactNode } from "react"
 
-interface ButtonProps {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>  {
   label: string | ReactNode
-  icon?: ReactNode
-  onClick?: () => void
-  id?: string
   className?: string
+  icon?: ReactNode
 }
 
-const Button = ({
-  label,
-  onClick,
-  className,
-  icon,
-  id,
-  ...rest
-}: ButtonProps) => {
+export function Button(props: ButtonProps){
+  const { label, className, icon, ...rest } = props;
+
   return (
     <button
       {...rest}
-      id={id}
-      onClick={onClick}
-      className={`px-1 flex items-center border border-white/20 justify-center py-2 rounded-full transition-all duration-300 ease-in-out transform text-sm font-semibold hover:bg-skin-fill ${className}`}>
+      className={`px-1 flex items-center border border-white/20 justify-center py-2 rounded-full transition-all duration-300 ease-in-out transform text-sm font-semibold hover:bg-skin-fill ${className}`}
+    >
       <span className="">{label}</span>
       <span className={`${icon ? "ml-2" : ""}`}>{icon}</span>
     </button>

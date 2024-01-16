@@ -5,8 +5,18 @@ import Button from "./Button"
 import { Modal } from "./Modal"
 import Upload from "../(routes)/upload/page"
 import { BiPodcast } from "react-icons/bi"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faGif, faImage } from "@fortawesome/pro-solid-svg-icons"
 
-export function PostForm() {
+import { config } from "@fortawesome/fontawesome-svg-core"
+config.autoAddCss = false /* eslint-disable import/first */
+
+interface PostFormOnModalProps {
+  onCancel?: () => void
+}
+
+export function PostFormOnModal(props: PostFormOnModalProps) {
+  const { onCancel } = props
   const [isChecked, setIsChecked] = useState<boolean>(false)
   const [isCheckedAudio, setIsCheckedAudio] = useState<boolean>(false)
 
@@ -22,8 +32,8 @@ export function PostForm() {
   return (
     <form
       id="e2e-post-form-container"
-      className="flex items-center justify-center w-full my-4 ">
-      <div className="w-full p-5 text-white border rounded shadow-lg border-buttonAccent">
+      className="flex items-center flex-col justify-center w-80  px-3 py-2">
+      <div className="w-full text-white rounded ">
         <div className="hidden mt-1 mb-2">
           <label className="block mb-2">Unlock Cost ( sats )</label>
           <input
@@ -68,26 +78,26 @@ export function PostForm() {
             </div>
           </>
         ) : null}
-        <div className="h-20 mt-1 mb-2">
+        <div className="h-20 mt-1">
           <label className="hidden mb-2">Content</label>
           <textarea
             maxLength={213123}
-            placeholder={`What is going on?`}
+            placeholder={`Write your note here...`}
             // onChange={e =>
             //   setFormData({ ...formData, content: e.target.value })
             // }
             className="w-full h-full p-2 text-white bg-transparent border rounded resize-none border-buttonAccent"></textarea>
         </div>
-        <div className="flex items-center w-full mt-12 gap-4">
+        <div className="flex items-center w-full mt-4">
           {/* <Modal isOpen={isCheckedAudio}>
             {<Upload onClick={() => setIsCheckedAudio(!isCheckedAudio)} />}
           </Modal> */}
 
           {/* ----- Toggle Paid Content Main Feed Page ----- */}
-          {/* 
+
           <label
             htmlFor="setAsGatedContentCheckbox"
-            className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer w-44 border-buttonAccent">
+            className="relative inline-flex items-center px-2 py-1 border rounded-full cursor-pointer border-buttonAccent">
             <input
               checked={isChecked}
               onChange={handleCheckboxChange}
@@ -97,38 +107,28 @@ export function PostForm() {
               id="setAsGatedContentCheckbox"
               className="sr-only peer"
             />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-buttonAccent rounded-full peer dark:bg-skin-fill peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-4 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-buttonAccentHover"></div>
-            <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-              Paid content?
+            <div className="w-10 h-6 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-red-300 dark:peer-focus:ring-buttonAccent rounded-full peer dark:bg-skin-fill peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-2 after:bg-white after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-buttonAccentHover"></div>
+            <span className="ml-3 text-xs font-medium text-gray-900 dark:text-gray-300">
+              Paid note?
             </span>
-          </label> */}
-
-          {/* ----- Toggle Paid Audio Main Feed Page ----- */}
-
-          {/* <label
-            htmlFor="setAsGatedContentCheckboxAudio"
-            className="relative inline-flex items-center px-4 py-2 border rounded-full cursor-pointer w-44 border-buttonAccent">
-            <input
-              checked={isCheckedAudio}
-              onChange={handleCheckboxChangeAudio}
-              type="checkbox"
-              value=""
-              name="setAsGatedContentCheckboxAudio"
-              id="setAsGatedContentCheckboxAudio"
-              className="sr-only peer"
-            />
-            <div className="w-12 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-buttonAccent rounded-full peer dark:bg-skin-fill peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-4 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-buttonAccentHover"></div>
-            <span className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-              Podcast?
-            </span>
-          </label> */}
-
-          <Button
-            className="font-bold border border-buttonAccent ml-auto w-20"
-            onClick={() => {}}
-            label="Submit"
-          />
+          </label>
         </div>
+      </div>
+      <div className="flex items-center justify-start w-full px-2 my-2 gap-4">
+        <button type="button">
+          <FontAwesomeIcon icon={faImage} className="w-5 " />{" "}
+        </button>
+        <FontAwesomeIcon icon={faGif} className="w-5" />
+        <Button
+          className="font-bold border border-buttonAccent ml-auto text-xs px-4"
+          onClick={() => {}}
+          label="Cancel"
+        />
+        <Button
+          className="font-bold border border-buttonAccent text-xs px-4"
+          onClick={onCancel}
+          label="Post"
+        />
       </div>
     </form>
   )

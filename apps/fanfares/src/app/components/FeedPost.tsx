@@ -15,6 +15,7 @@ interface FeedPostProps {
 export function FeedPost(props: FeedPostProps) {
   const { user, userPfp, content, userProfile, note, onClick } = props
 
+
   return (
     <div
       id="e2e-feed-post-container"
@@ -36,7 +37,7 @@ export function FeedPost(props: FeedPostProps) {
           </Link>
         </p>
         <h3 className="break-words text-sm font-normal">{content}</h3>
-        <h3 className="break-words text-sm font-normal">{JSON.stringify(note)}</h3>
+        {/* <h3 className="break-words text-sm font-normal">{JSON.stringify(note)}</h3> */}
 
       </div>
       <div className="mt-5 mx-auto flex gap-4">

@@ -15,7 +15,11 @@ import EpisodeCard from "./EpisodeCard"
 import { config } from "@fortawesome/fontawesome-svg-core"
 config.autoAddCss = false /* eslint-disable import/first */
 import { useAppState } from "../controllers/state/use-app-state"
-import { NIP_108_KINDS, eventToAnnouncementNote, eventToGatedNote } from "nip108"
+import {
+  NIP_108_KINDS,
+  eventToAnnouncementNote,
+  eventToGatedNote,
+} from "nip108"
 
 export interface DiscoveryMediaInfo extends Metadata {
   media_key: string
@@ -23,41 +27,21 @@ export interface DiscoveryMediaInfo extends Metadata {
   creator_name: string
 }
 
+export interface DiscoveryTileInfo {
+  imgUrl: string
+  title: string
+  description: string
+  audioUrl?: string
+}
+
 function DiscoverPageContent() {
   // const { program, drmApi } = useAppState();
-
-  const [media, setMedia] = useState<DiscoveryMediaInfo[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { nostrPool, nostrRelays } = useAppState();
+  const { podcastFetch, podcastEpisodes, podcastUnlock } = useAppState()
 
   useEffect(() => {
-    if(!nostrPool || !nostrRelays) return;
-
-    nostrPool.list(nostrRelays, [
-      {
-        kinds: [NIP_108_KINDS.announcement],
-        limit: 10,
-      }
-    ]).then((rawAnnouncements) => {
-      const announcements = rawAnnouncements.map(eventToAnnouncementNote);
-      const gatesToGet = announcements.map((a) => a.gate);
-      
-      nostrPool.list(nostrRelays, [
-        {
-          ids: gatesToGet,
-        }
-      ]).then((rawGates) => {
-        const gates = rawGates.map(eventToGatedNote);
-        console.log(gates);
-      })
-    })
-
-  }, [
-    nostrPool,
-    nostrRelays,
-  ]);
-
-
+    podcastFetch()
+  }, [podcastFetch])
 
   // const loadMedias = useCallback(async () => {
   //   setIsLoading(true);
@@ -112,23 +96,21 @@ function DiscoverPageContent() {
       // <div className="flex items-center justify-center w-full pb-10 mx-auto rounded lg:justify-start">
       <div className="container flex">
         <div className="flex flex-wrap gap-3 ">
-          <EpisodeCard
-            imgUrl="https://www.partnershipprojectsuk.com/wp-content/uploads/2020/08/Neon-podcast-logo.jpg"
-            title="Episode 1"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore nisi magni ab voluptas veniam rem, asperiores optio harum necessitatibus nam repellendus nihil minima est quam excepturi fugit. Tenetur, voluptas nemo."
-            audioUrl="asd"
-          />
-          <EpisodeCard
-            imgUrl="https://www.partnershipprojectsuk.com/wp-content/uploads/2020/08/Neon-podcast-logo.jpg"
-            title="Episode 1"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore nisi magni ab voluptas veniam rem, asperiores optio harum necessitatibus nam repellendus nihil minima est quam excepturi fugit. Tenetur, voluptas nemo."
-            audioUrl="asd"
-          />
-          <EpisodeCard
-            imgUrl="https://www.partnershipprojectsuk.com/wp-content/uploads/2020/08/Neon-podcast-logo.jpg"
-            title="Episode 1"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore nisi magni ab voluptas veniam rem, asperiores optio harum necessitatibus nam repellendus nihil minima est quam excepturi fugit. Tenetur, voluptas nemo."
-          />
+          {Object.values(podcastEpisodes).map(podcast => {
+            return (
+              <EpisodeCard
+                onClick={() => {
+                  if (!podcast.audioFilepath) {
+                    podcastUnlock(podcast.gate.note.id)
+                  }
+                }}
+                imgUrl={podcast.imageFilepath}
+                title={podcast.title}
+                description={podcast.description}
+                audioUrl={podcast.audioFilepath}
+              />
+            )
+          })}
         </div>
       </div>
 
@@ -177,8 +159,8 @@ function DiscoverPageContent() {
 
   return (
     <div className="space-y-4">
-      <h1 className="font-black text-center text-gray-100 uppercase text-xl/4 md:mt-4 md:text-start md:text-4xl">
-        This Week on Excalibur
+      <h1 className="font-black text-center text-gray-100 text-xl/4 md:mt-4 md:text-start md:text-4xl">
+        This Week on FanFares
       </h1>
       <Searchbar />
       {renderLoading()}

@@ -40,7 +40,7 @@ export default function RootLayout({
       <body className="md:flex">
         <Providers>
           {/* Debug Overlay */}
-          <DebugOverlay />
+          {/* <DebugOverlay /> */}
           <header className="">
             <Navbar />
           </header>
