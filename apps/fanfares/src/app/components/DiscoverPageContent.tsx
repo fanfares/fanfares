@@ -32,7 +32,10 @@ function DiscoverPageContent() {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { podcastFetch, podcastEpisodes, podcastUnlock } = useAppState()
 
+  console.log("Render Podcasts -- " + Object.values(podcastEpisodes).length);
+
   useEffect(() => {
+    console.log("Podcast Fetch")
     podcastFetch()
   }, [podcastFetch])
 
