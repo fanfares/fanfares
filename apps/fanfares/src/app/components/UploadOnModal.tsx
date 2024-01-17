@@ -98,13 +98,14 @@ export default function UploadOnModal(props: UploadOnModalProps) {
                 <p className="mt-2 text-sm">Upload Cover Image</p>
                 <label
                   htmlFor="thumbnailUpload"
-                  className={`mx-auto bg-buttonAccentHover hover:bg-opacity-70 px-3 py-1 rounded-full ${
+                  className={`mx-auto bg-buttonDefault hover:bg-buttonAccentHover px-3 py-1 rounded-full text-sm cursor-pointer ${
                     postPodcastImageFile ? "opacity-80" : ""
                   }`}>
                   <input
                     className="hidden"
                     type="file"
                     id="thumbnailUpload"
+                    accept="image/*"
                     aria-label="Thumbnail Upload"
                     onChange={postPodcastHandleImageChange}
                   />
@@ -128,7 +129,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
                     id={"E2EID.uploadTitleInput"}
                     autoComplete="false"
                     placeholder="Title"
-                    className="w-full border-b-2 border-buttonAccent bg-transparent outline-none font-thin text-xl placeholder:text-xl placeholder:font-thin placeholder:text-skin-muted"
+                    className="w-full border-b-2 border-buttonAccent bg-transparent outline-none font-thin text-lg placeholder:text-lg placeholder:font-thin placeholder:text-skin-muted"
                     // requiredMessage="Please enter the Episode name"
                     maxLength={100}
                     name="name"
@@ -150,7 +151,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
                 <textarea
                   id={"E2EID.uploadDescriptionInput"}
                   placeholder="Description"
-                  className="w-full h-40 min-h-[40px] max-h-[200px] bg-transparent border-b-2 outline-none resize-none notes active border-buttonAccent placeholder:text-xl placeholder:font-thin placeholder:text-skin-muted overflow-y-auto"
+                  className="w-full h-40 min-h-[40px] max-h-[200px] bg-transparent border-b-2 outline-none resize-none notes active border-buttonAccent placeholder:text-lg placeholder:font-thin placeholder:text-skin-muted overflow-y-auto text-lg"
                   maxLength={9999}
                   name="description"
                   onChange={postPodcastHandleDescriptionChange}
@@ -175,11 +176,12 @@ export default function UploadOnModal(props: UploadOnModalProps) {
             </p>
             <label
               htmlFor="audioUpload"
-              className="mx-auto py-1 rounded-full cursor-pointer px-3 bg-buttonDefault">
+              className="mx-auto py-1 rounded-full cursor-pointer px-3 bg-buttonDefault hover:bg-buttonAccentHover text-sm">
               <input
                 type="file"
                 id="audioUpload"
                 className="hidden"
+                accept="audio/*"
                 onChange={postPodcastHandleAudioChange}
               />
               {postPodcastAudioFile ? "Change" : "Browse"}
