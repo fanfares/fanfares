@@ -5,7 +5,7 @@ import { PostForm } from "@/app/components/PostForm"
 export default function FeedPage() {
   return (
     <section className="flex flex-col space-y-2">
-      <FeedHeader />
+      {/* <FeedHeader /> */}
       {/* <PostForm /> */}
       <Feed />
     </section>

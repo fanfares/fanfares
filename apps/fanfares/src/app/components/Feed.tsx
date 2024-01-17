@@ -6,6 +6,8 @@ import { FeedPost } from "./FeedPost"
 export function Feed() {
   const { primalNotes, primalProfiles, primalNoteStats } = useAppState()
 
+  console.log("Render Feed -- " + primalNotes.length);
+
   return primalNotes.map(note => {
     const profile = primalProfiles[note.pubkey]
     const stats = primalNoteStats[note.id]
@@ -13,8 +15,6 @@ export function Feed() {
     if (!profile) {
       return null
     }
-
-    console.log(`Render ${note.id}`)
 
     return (
       <FeedPost
