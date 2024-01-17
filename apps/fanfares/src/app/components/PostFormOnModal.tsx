@@ -32,63 +32,49 @@ export function PostFormOnModal(props: PostFormOnModalProps) {
   return (
     <form
       id="e2e-post-form-container"
-      className="flex items-center flex-col justify-center w-80  px-3 py-2">
+      className="flex items-center flex-col justify-center w-96  px-3 py-2">
       <div className="w-full text-white rounded ">
-        <div className="hidden mt-1 mb-2">
-          <label className="block mb-2">Unlock Cost ( sats )</label>
-          <input
-            type="number"
-            min={`1`}
-            max={`1`}
-            value={""}
-            // onChange={e =>
-            //   setFormData({ ...formData, cost: +e.target.value })
-            // }
-            className="w-full p-2 text-white border rounded border-buttonAccent"
-          />
-        </div>
         {isChecked ? (
           <>
-            {" "}
             <div className="mt-1 mb-2">
-              <label className="block mb-2">Post preview</label>
+              <label className="block mb-2">Note preview</label>
               <input
                 type="text"
                 placeholder={`Hey unlock my post for 123 sats!`}
-                maxLength={1}
-                value={""}
+                // maxLength={1}
+                // value={""}
                 // onChange={e =>
                 //   setFormData({ ...formData, preview: e.target.value })
                 // }
-                className="w-full p-2 text-white bg-transparent border rounded border-buttonAccent"
+                className="w-full p-2 text-white bg-transparent border rounded border-buttonAccent text-sm"
               />
             </div>
             <div className="mt-1 mb-2">
               <label className="block mb-2">Unlock Cost ( sats )</label>
               <input
                 type="number"
-                min={``}
-                max={``}
-                value={""}
+                // value={""}
                 // onChange={e =>
                 //   setFormData({ ...formData, cost: +e.target.value })
                 // }
-                className="w-full p-2 text-white bg-transparent border rounded border-buttonAccent"
+                className="w-full p-2 text-white bg-transparent border rounded border-buttonAccent text-sm"
               />
             </div>
           </>
         ) : null}
-        <div className="h-20 mt-1">
-          <label className="hidden mb-2">Content</label>
-          <textarea
-            maxLength={213123}
-            placeholder={`Write your note here...`}
-            // onChange={e =>
-            //   setFormData({ ...formData, content: e.target.value })
-            // }
-            className="w-full h-full p-2 text-white bg-transparent border rounded resize-none border-buttonAccent"></textarea>
+        <div className="h-20 mt-1 mb-2">
+          <label className="mb-2">
+            {isChecked ? "Paid note content" : ""}
+            <textarea
+              maxLength={213123}
+              placeholder={`Write your note here...`}
+              // onChange={e =>
+              //   setFormData({ ...formData, content: e.target.value })
+              // }
+              className="w-full h-full p-2 text-white bg-transparent border rounded resize-none text-sm border-buttonAccent mt-2"></textarea>
+          </label>
         </div>
-        <div className="flex items-center w-full mt-4">
+        <div className="flex items-center w-full mt-10">
           {/* <Modal isOpen={isCheckedAudio}>
             {<Upload onClick={() => setIsCheckedAudio(!isCheckedAudio)} />}
           </Modal> */}
@@ -115,10 +101,12 @@ export function PostFormOnModal(props: PostFormOnModalProps) {
         </div>
       </div>
       <div className="flex items-center justify-start w-full px-2 my-2 gap-4">
-        <button type="button">
+        <button type="button" className="hidden">
           <FontAwesomeIcon icon={faImage} className="w-5 " />{" "}
         </button>
-        <FontAwesomeIcon icon={faGif} className="w-5" />
+        <button type="button" className="hidden">
+          <FontAwesomeIcon icon={faGif} className="w-5" />
+        </button>
         <Button
           className="font-bold border border-buttonAccent ml-auto text-xs px-4"
           onClick={() => {}}
