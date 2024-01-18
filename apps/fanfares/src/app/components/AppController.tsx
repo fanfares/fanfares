@@ -3,8 +3,9 @@
 import { useEffect } from "react";
 import { useAppState } from "../controllers/state/use-app-state";
 import { requestProvider } from "webln";
-import { NIP07 } from "utils";
+import { NIP04, NIP07 } from "utils";
 import { usePrimalActions } from "../controllers/state/primal-slice";
+import { useAccountActions } from "../controllers/state/account-slice";
 
 export interface AppControllerProps {
   children: React.ReactNode;
@@ -20,7 +21,8 @@ export interface AppControllerProps {
 export function AppController(props: AppControllerProps) {
   const { children } = props;
   const { primalConnect, primalDisconnect, primalGet } = usePrimalActions();
-  const {nostrDisconnect, accountSetNostr, accountSetWebln, accountFetchProfile, gateFetch, podcastFetch, podcastFetching, podcastEpisodes, podcastUnlockAll} = useAppState();
+  const { accountSetWebln, accountFetchProfile, accountSetNostr } = useAccountActions()
+  const {nostrDisconnect, gateFetch, nostrPool, nostrRelays, podcastFetching, podcastEpisodes, podcastUnlockAll} = useAppState();
 
   useEffect(() => {
     // Fixes the Local storage rehydration issue
@@ -34,16 +36,33 @@ export function AppController(props: AppControllerProps) {
       alert("Please download Alby or ZBD to use this app.");
     });
 
-    // // NOSTR ACCOUNT
+    // Nostr Account
     if ((window as any).nostr) {
-      const nip07: NIP07 = (window as any).nostr;
-      nip07.getPublicKey().then((publicKey: string)=>{
-        accountSetNostr(nip07, publicKey);
-        accountFetchProfile();
-        // gateFetch();
-      }).catch((e: any) => {
+      try {
+        const nip07: NIP07 = (window as any).nostr;
+        if(!nip07 || !nip07.nip04 || !nip07.getPublicKey) throw new Error('Bad NIP07')
+
+        nip07.getPublicKey().then((publicKey: string)=>{
+
+          accountSetNostr({
+            accountPublicKey: publicKey,
+            accountNIP07: nip07,
+            accountNIP04: nip07.nip04 as NIP04
+          });
+          accountFetchProfile(
+            publicKey,
+            nostrPool,
+            nostrRelays
+          );
+
+          // gateFetch();
+        }).catch((e: any) => {
+          alert("Nostr not found - error getting public key");
+        })
+
+      } catch (e){
         alert("Nostr not found - error getting public key");
-      })
+      }
     } else {
       alert("Nostr not found");
     }
@@ -57,7 +76,7 @@ export function AppController(props: AppControllerProps) {
 
     return () => {
         // // Cleans up connections at the end of the app
-        // nostrDisconnect();
+        nostrDisconnect();
         primalDisconnect();
     };
   }, []);
