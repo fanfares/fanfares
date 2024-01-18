@@ -1,13 +1,20 @@
 "use client";
 
 import { GateCreateState } from "@/app/controllers/state/gate-create-slice";
-import { useAppState } from "@/app/controllers/state/use-app-state";
+import { useAppState, useTestState } from "@/app/controllers/state/use-app-state";
 import { createNoteUnsigned } from "nip108";
 import React, { useEffect } from "react";
 
 export default function TestPage() {
+
+  // const testState = useTestState();
+  const { testState } = useAppState();
+
+  console.log("Render Test Page");
+
   return (
     <div>
+        <p>{testState}</p>
       {/* {TestPostPodcast()}
       {TestPostGatedNote()}
       {TestPostNote()} */}

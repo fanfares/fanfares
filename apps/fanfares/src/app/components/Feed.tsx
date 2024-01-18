@@ -2,11 +2,15 @@
 import { generatePrivateKey } from "nostr-tools"
 import { useAppState } from "../controllers/state/use-app-state"
 import { FeedPost } from "./FeedPost"
+import { usePrimalNotes, usePrimalProfiles, usePrimalNoteStats } from "../controllers/state/primal-slice";
 
 export function Feed() {
-  const { primalNotes, primalProfiles, primalNoteStats } = useAppState()
+  const primalNotes = usePrimalNotes();
+  const primalProfiles = usePrimalProfiles();
+  const primalNoteStats = usePrimalNoteStats();
 
-  console.log("Render Feed -- " + primalNotes.length);
+  //TODO fix renders
+  // console.log("Render Feed -- " + primalNotes.length);
 
   return primalNotes.map(note => {
     const profile = primalProfiles[note.pubkey]

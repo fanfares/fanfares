@@ -11,17 +11,18 @@ interface FeedPostProps {
   userPfp?: string
   content?: string
   userProfile?: string
-  onClick?: () => {}
 }
 
 export function FeedPost(props: FeedPostProps) {
-  const { user, userPfp, content, userProfile, note, onClick } = props
-  const [zapModalOn, setZapModalOn] = useState(true)
+  const { user, userPfp, content, userProfile } = props
+  const [zapModalOn, setZapModalOn] = useState(false)
 
   return (
     <div
       id="e2e-feed-post-container"
       className="border-buttonAccent w-full rounded-md flex relative border pl-16 pr-4 py-3 flex-col">
+
+        {/* TODO Move to a different file */}
       <Modal isOpen={zapModalOn}>
         <div className="flex flex-col px-2 py-1 w-96 gap-y-5">
           <p className="font-bold text-lg"> Select Sats</p>
