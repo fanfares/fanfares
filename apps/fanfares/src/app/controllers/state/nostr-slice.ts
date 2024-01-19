@@ -16,7 +16,7 @@ const DEFAULT_STATE: NostrSlice = {
 };
 
 export const createNostrSlice: StateCreator<
-  CombinedState & NostrSlice,
+  NostrSlice,
   [],
   [],
   NostrSlice

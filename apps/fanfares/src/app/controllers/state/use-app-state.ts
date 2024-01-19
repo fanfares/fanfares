@@ -1,9 +1,7 @@
 import { create } from "zustand";
-import { NostrSlice, createNostrSlice } from "./nostr-slice";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { useEffect } from "react";
 import { TestSlice, createTestSlice } from "./test-slice";
-import { GateSlice, createGateSlice } from "./gate-slice";
 import { UploadSlice, createUploadSlice } from "./upload-slice";
 import { GateCreateSlice, createGateCreateSlice } from "./gate-create-slice";
 import { PostNoteSlice, createPostNoteSlice } from "./post-note-slice"
@@ -12,15 +10,13 @@ import { PostPodcastSlice, createPostPodcastSlice } from "./post-podcast-slice";
 import { PodcastSlice, createPodcastSlice } from "./podcast-slice";
 import { UserPageSlice, createUserPageSlice } from "./user-page-slice";
 
-export type CombinedState = TestSlice & NostrSlice & GateSlice & UploadSlice & GateCreateSlice & PostNoteSlice & PostGatedNoteSlice & PostPodcastSlice & PodcastSlice & UserPageSlice;
+export type CombinedState = TestSlice & UploadSlice & GateCreateSlice & PostNoteSlice & PostGatedNoteSlice & PostPodcastSlice & PodcastSlice & UserPageSlice;
 
 export const useAppState = create<CombinedState>()(
   persist(
     (set, get, slice) => {
       return {
         ...createTestSlice(set, get, slice),
-        ...createNostrSlice(set, get, slice),
-        ...createGateSlice(set, get, slice),
         ...createUploadSlice(set, get, slice),
         ...createGateCreateSlice(set, get, slice),
 	      ...createPostNoteSlice(set, get, slice),
