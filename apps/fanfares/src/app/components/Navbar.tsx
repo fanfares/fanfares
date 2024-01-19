@@ -265,7 +265,7 @@ export function Navbar() {
         {/* <div className={`static left-5 h-10 ${publicKey ? "mt-3" : ""}`}> */}
         <ActionButtonsPost />
         <ProfileBuble />
-        <div className={`mx-auto left-5 h-10 `}>
+        <div className={`mx-auto left-5 h-10 mb-8`}>
           <Link
             id="e2e-balance-status"
             className=""
