@@ -14,7 +14,7 @@ export function ProfileBuble() {
       </div>
       <div className="flex flex-col items-start w-40">
         <p className="text-xs truncate">{accountProfile.name}</p>
-        <p className="text-xs text-skin-muted truncate">
+        <p className="text-xs text-skin-muted truncate w-2/3">
           {accountProfile.lud16}
         </p>
       </div>
