@@ -266,16 +266,12 @@ export function Navbar() {
         <ActionButtonsPost />
         <ProfileBuble />
         <div className={`mx-auto left-5 h-10 mb-8`}>
-          <Link
+          <a
             id="e2e-balance-status"
-            className=""
-            passHref
-            legacyBehavior
+            className="font-thin underline cursor-pointer text-skin-muted flex flex-col text-sm"
             href="mailto:support@fanfares.io">
-            <p className="font-thin underline cursor-pointer text-skin-muted flex flex-col text-sm">
-              Need help?
-            </p>
-          </Link>
+            Need help?
+          </a>
         </div>
       </div>
     )
