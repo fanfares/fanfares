@@ -12,8 +12,8 @@ export function ProfileBuble() {
       <div className="w-8 bg-red-500 h-8 rounded-full">
         <img src={accountProfile.picture} alt="" />
       </div>
-      <div className="flex flex-col items-start">
-        <p className="text-sm">{accountProfile.name}</p>
+      <div className="flex flex-col items-start w-40">
+        <p className="text-xs truncate">{accountProfile.name}</p>
         <p className="text-xs text-skin-muted truncate">
           {accountProfile.lud16}
         </p>
