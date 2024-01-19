@@ -6,6 +6,7 @@ import { requestProvider } from "webln";
 import { NIP04, NIP07 } from "utils";
 import { usePrimalActions } from "../controllers/state/primal-slice";
 import { useAccountActions } from "../controllers/state/account-slice";
+import { useNostrSlice } from "../controllers/state/nostr-slice";
 
 export interface AppControllerProps {
   children: React.ReactNode;
@@ -22,7 +23,8 @@ export function AppController(props: AppControllerProps) {
   const { children } = props;
   const { primalConnect, primalDisconnect, primalGet } = usePrimalActions();
   const { accountSetWebln, accountFetchProfile, accountSetNostr } = useAccountActions()
-  const {nostrDisconnect, gateFetch, nostrPool, nostrRelays, podcastFetching, podcastEpisodes, podcastUnlockAll} = useAppState();
+  const { nostrDisconnect, nostrPool, nostrRelays} =useNostrSlice();
+  const { podcastFetching, podcastEpisodes, podcastUnlockAll} = useAppState();
 
   useEffect(() => {
     // Fixes the Local storage rehydration issue
