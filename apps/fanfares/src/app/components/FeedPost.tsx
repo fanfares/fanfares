@@ -16,7 +16,9 @@ interface FeedPostProps {
 
 export function FeedPost(props: FeedPostProps) {
   const { user, userPfp, content, userProfile, note, onClick } = props
-  const [zapModalOn, setZapModalOn] = useState(true)
+  const [zapModalOn, setZapModalOn] = useState(false)
+  const [fanfaresButtonMessage, setFanfaresButtonMessage] = useState(false)
+  const [zapButtonMessage, setZapButtonMessage] = useState(false)
 
   return (
     <div
@@ -75,6 +77,21 @@ export function FeedPost(props: FeedPostProps) {
           <Button label="Confirm" className="mb-4" />
         </div>
       </Modal>
+      <Modal isOpen={fanfaresButtonMessage}>
+        <div className="w-80 flex flex-col gap-4 p-2 ">
+          <div className="w-full flex justify-between items-center">
+            <p>Coming Soon</p>
+            <button
+              onClick={() => setFanfaresButtonMessage(!fanfaresButtonMessage)}>
+              X
+            </button>
+          </div>
+          <p className="text-sm text-center">
+            Thanks for showing interest in our platform, this feature is not
+            working yet, but it's coming soon!
+          </p>
+        </div>
+      </Modal>
       <div className="w-12 h-12 absolute left-2 top-2 group">
         <img
           src={userPfp ?? "http://placebeard.it/640/480.jpg"}
@@ -99,12 +116,15 @@ export function FeedPost(props: FeedPostProps) {
           className="px-2 w-28"
           id="e2e-feed-post-fanfare-button"
           label={"Fanfare 🎪"}
+          onClick={() => setFanfaresButtonMessage(!fanfaresButtonMessage)}
         />
         <Button
           className="px-2 w-28"
           id="e2e-feed-post-zap-button"
           label={"Zap ⚡️"}
-          onClick={() => setZapModalOn(!zapModalOn)}
+          onClick={() => setZapButtonMessage(!zapButtonMessage)}
+
+          // onClick={() => setZapModalOn(!zapModalOn)}
         />
       </div>
     </div>

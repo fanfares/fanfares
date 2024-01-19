@@ -265,16 +265,17 @@ export function Navbar() {
         {/* <div className={`static left-5 h-10 ${publicKey ? "mt-3" : ""}`}> */}
         <ActionButtonsPost />
         <ProfileBuble />
-        <div className={`static left-5 h-10 `}>
-          <p
-            // onClick={needHelp}
-            className="flex flex-col mt-2 text-sm font-black">
-            <span
-              id="e2e-balance-status"
-              className="font-thin underline cursor-pointer text-skin-muted">
-              Need Help?
-            </span>
-          </p>
+        <div className={`mx-auto left-5 h-10 `}>
+          <Link
+            id="e2e-balance-status"
+            className=""
+            passHref
+            legacyBehavior
+            href="mailto:support@fanfares.io">
+            <p className="font-thin underline cursor-pointer text-skin-muted flex flex-col text-sm">
+              Need help?
+            </p>
+          </Link>
         </div>
       </div>
     )
