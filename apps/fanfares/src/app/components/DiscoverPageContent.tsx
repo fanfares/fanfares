@@ -32,7 +32,7 @@ function DiscoverPageContent() {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { podcastFetch, podcastEpisodes, podcastUnlock } = useAppState()
 
-  console.log("Render Podcasts -- " + Object.values(podcastEpisodes).length);
+  console.log("Render Podcasts -- " + Object.values(podcastEpisodes).length)
 
   useEffect(() => {
     console.log("Podcast Fetch")
@@ -158,7 +158,7 @@ function DiscoverPageContent() {
       <h1 className="font-black text-center text-gray-100 text-xl/4 md:mt-4 md:text-start md:text-4xl">
         This Week on FanFares
       </h1>
-      <Searchbar />
+      {/* <Searchbar /> */}
       {renderLoading()}
       {renderContent()}
     </div>

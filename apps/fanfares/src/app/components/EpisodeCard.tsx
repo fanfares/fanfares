@@ -12,7 +12,7 @@ interface EpisodeCardProps {
   imgUrl: string
   title: string
   description: string
-  onClick?: () => void,
+  onClick?: () => void
   episodeUrl?: string
   audioUrl?: string
 }
@@ -34,23 +34,23 @@ function EpisodeCard(props: EpisodeCardProps) {
 
   return (
     <section onClick={onClick}>
-    <Link
-      href={props.episodeUrl || " "}
-      className="e2e-podcast-tile group md:w-48 lg:w-40 w-full cursor-pointer flex md:flex-col  md:items-center justify-start rounded-lg border border-buttonAccent p-2 transition duration-300 ease-linear md:hover:scale-105 md:hover:bg-black/[10%] md:h-64 gap-2">
-      <div className="flex items-center w-20 rounded-lg md:transition md:duration-300 md:w-full group/playButton md:h-36 md:group-hover:brightness-110">
-        {/* //should be IMAGE, this is just mocking */}
+      <Link
+        href={props.episodeUrl || "/player"}
+        className="e2e-podcast-tile group md:w-48 lg:w-40 w-full cursor-pointer flex md:flex-col  md:items-center justify-start rounded-lg border border-buttonAccent p-2 transition duration-300 ease-linear md:hover:scale-105 md:hover:bg-black/[10%] md:h-64 gap-2">
+        <div className="flex items-center w-20 rounded-lg md:transition md:duration-300 md:w-full group/playButton md:h-36 md:group-hover:brightness-110">
+          {/* //should be IMAGE, this is just mocking */}
 
-        <div className="w-full h-full flex items-center justify-center relative border rounded-md border-buttonAccent drop-shadow-2xl">
-          <img
-            // priority
-            // loader={contentfulLoader}
-            src={props.imgUrl}
-            alt={" thumbnail"}
-            // layout="fill"
-            // objectFit="cover"
-            className="object-cover w-full h-full rounded-md"
-          />
-          {props.audioUrl ? (
+          <div className="w-full h-full flex items-center justify-center relative border rounded-md border-buttonAccent drop-shadow-2xl">
+            <img
+              // priority
+              // loader={contentfulLoader}
+              src={props.imgUrl}
+              alt={" thumbnail"}
+              // layout="fill"
+              // objectFit="cover"
+              className="object-cover w-full h-full rounded-md"
+            />
+            {/* {props.audioUrl ? (
             <section>
               <div className="absolute inset-0 z-10 hover:bg-black/40 bg-skin-fill/40 flex items-center justify-center rounded-lg">
                 <FontAwesomeIcon
@@ -62,24 +62,24 @@ function EpisodeCard(props: EpisodeCardProps) {
               </div>
               <audio ref={audioPlayer} src={props.audioUrl} className="hidden"/>
             </section>
-          ) : null}
+          ) : null} */}
+          </div>
         </div>
-      </div>
-      {/* <div className="mt-2 h-full flex w-full flex-col items-start border-white/[10%] justify-start truncate line-clamp-2"></div> */}
-      <div className="flex-col flex-1 w-40 mt-2 space-y-2 md:px-2 relative">
-        <p className="e2e-podcast-title text-xs font-bold uppercase md:leading-[18px] md:text-sm md:w-11/12 truncate mr-auto ">
-          {/* {metadataNameSlicer()} */}
-          {props.title}
-        </p>
-        <p className="tracking-tight text-xs/4 line-clamp-2 md:text-sm/4">
-          {props.description}
-        </p>
-        <p className="ml-auto text-xs font-thin text-right md:text-start absolute bottom-0">
-          D 01/01/01 H 01:01:00
-        </p>{" "}
-        {/* {renderDateAndTime()} */}
-      </div>
-    </Link>
+        {/* <div className="mt-2 h-full flex w-full flex-col items-start border-white/[10%] justify-start truncate line-clamp-2"></div> */}
+        <div className="flex-col flex-1 w-40 mt-2 space-y-2 md:px-2 relative">
+          <p className="e2e-podcast-title text-xs font-bold uppercase md:leading-[18px] md:text-sm md:w-11/12 truncate mr-auto ">
+            {/* {metadataNameSlicer()} */}
+            {props.title}
+          </p>
+          <p className="tracking-tight text-xs/4 line-clamp-2 md:text-sm/4">
+            {props.description}
+          </p>
+          <p className="ml-auto text-xs font-thin text-right md:text-start absolute bottom-0">
+            D 01/01/01 H 01:01:00
+          </p>{" "}
+          {/* {renderDateAndTime()} */}
+        </div>
+      </Link>
     </section>
   )
 }
