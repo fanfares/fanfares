@@ -144,7 +144,7 @@ export function ActionButtonsPost() {
           {/* <Button onClick={setModalOff} label="Close" /> */}
         </div>
       </Modal>
-      <Button onClick={() => setNoteModal(!noteModal)} label="Post Note" />
+      {/* <Button onClick={() => setNoteModal(!noteModal)} label="Post Note" /> */}
       {/* <Button
         onClick={() => setGatedNoteModal(!gatedNoteModal)}
         label="Paid Post"
