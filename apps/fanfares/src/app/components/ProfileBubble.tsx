@@ -5,7 +5,7 @@ import { useAppState } from "../controllers/state/use-app-state"
 export function ProfileBuble() {
   const { accountProfile } = useAppState()
 
-  // if (!accountProfile) return null
+  if (!accountProfile) return null
 
   return (
     <div className="flex bg-skin-fill rounded-full items-center w-36 mx-auto p-1 h-10 hover:bg-skin-fill/70 transition-colors ease-linear mb-4 gap-1">
@@ -14,7 +14,7 @@ export function ProfileBuble() {
           <img
             src={accountProfile?.picture}
             alt=""
-            className="w-full object-cover"
+            className="w-full rounded-full object-cover object-center"
           />
         ) : (
           "🎪"
@@ -27,11 +27,9 @@ export function ProfileBuble() {
         /> */}
       </div>
       <div className="flex flex-col items-start w-[100px] font-thin">
-        <p className="text-[0.7rem] truncate">
-          {accountProfile?.name || "Wemerson"}
-        </p>
+        <p className="text-[0.7rem] truncate">{accountProfile.name}</p>
         <p className="text-[0.6rem] font-  text-skin-muted truncate w-4/5 line-clamp-2">
-          {accountProfile?.lud16 || "wemerson@getalby.com"}
+          {accountProfile.lud16}
         </p>
       </div>
     </div>
