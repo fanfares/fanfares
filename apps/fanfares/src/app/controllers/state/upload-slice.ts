@@ -54,7 +54,8 @@ export const createUploadSlice: StateCreator<
 
     const files = get().uploadFiles;
     const isUploading = get().uploadIsUploading;
-    const prefix = get().accountProfile?.pubkey;
+    // const prefix = get().accountProfile?.pubkey;
+    const prefix = 'test';
 
     if (!prefix){ runOnError("You must have a NIP-04 account to upload"); return; }
     if (isUploading){ runOnError("Already uploading"); return; }

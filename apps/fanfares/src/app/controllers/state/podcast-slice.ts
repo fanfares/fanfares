@@ -1,18 +1,9 @@
-import { StateCreator } from "zustand"
-import { CombinedState } from "./use-app-state"
-import {
-  AnnouncementNote,
-  GatedNote,
-  NIP_108_KINDS,
-  PREntry,
-  createKeyNoteUnsigned,
-  eventToAnnouncementNote,
-  eventToGatedNote,
-  eventToKeyNote,
-  unlockGatedNote,
-  unlockGatedNoteFromKeyNote,
-} from "nip108"
-import { Event as NostrEvent } from "nostr-tools"
+import { StateCreator, create } from 'zustand';
+import { CombinedState } from './use-app-state';
+import { AnnouncementNote, GatedNote, NIP_108_KINDS, PREntry, createKeyNoteUnsigned, eventToAnnouncementNote, eventToGatedNote, eventToKeyNote, unlockGatedNote, unlockGatedNoteFromKeyNote } from 'nip108';
+import { Event as NostrEvent, SimplePool } from 'nostr-tools';
+import { WebLNProvider } from 'webln';
+import { NIP04, NIP07 } from 'utils';
 
 export interface Podcast {
   title: string
@@ -26,87 +17,115 @@ export interface Podcast {
 }
 
 export interface PodcastSlice {
-  podcastFetching: boolean
-  podcastFetch: () => void
-  podcastUnlock: (gateId: string) => void
-  podcastUnlockAll: () => void
-  podcastEpisodes: {
-    [key: string]: Podcast // Indexed by gateID
-  }
+    podcastsUnlocked: boolean;
+    podcastFetching: boolean;
+    podcastEpisodes: {
+        [key: string]: Podcast // Indexed by gateID
+    };
+    actions: {
+        podcastFetch: (
+            pool: SimplePool,
+            relays: string[],
+        )=>void;
+        podcastUnlock: (
+            gateId: string,
+            webln: WebLNProvider,
+            pool: SimplePool,
+            relays: string[],
+            publicKey: string,
+            nip04: NIP04,
+            nip07: NIP07,
+        )=>void;
+        podcastUnlockAll: (
+            pool: SimplePool,
+            relays: string[],
+            publicKey: string,
+            nip04: NIP04,
+        )=>void;
+    }
 }
 
 const DEFAULT_STATE: PodcastSlice = {
-  podcastFetching: false,
-  podcastFetch: () => {},
-  podcastUnlock: () => {},
-  podcastUnlockAll: () => {},
-  podcastEpisodes: {},
-}
+    podcastsUnlocked: false,
+    podcastFetching: false,
+    podcastEpisodes: {},
+    actions: {
+        podcastFetch: () => {},
+        podcastUnlock: () => {},
+        podcastUnlockAll: () => {},
+    },
+};
 
 export const createPodcastSlice: StateCreator<
-  CombinedState & PodcastSlice,
+  PodcastSlice,
   [],
   [],
   PodcastSlice
 > = (set, get) => {
-  const podcastUnlock = async (gateId: string) => {
-    const webln = get().accountWebln
-    const pool = get().nostrPool
-    const relays = get().nostrRelays
-    const podcastEpisodes = get().podcastEpisodes
-    const publicKey = get().accountPublicKey
-    const nip04 = get().accountNIP07?.nip04
-    const nip07 = get().accountNIP07
 
-    try {
-      if (!webln) throw new Error("No webln provider")
-      if (!pool) throw new Error("No pool")
-      if (!relays) throw new Error("No relays")
-      if (!podcastEpisodes) throw new Error("No podcast episodes")
-      if (!publicKey) throw new Error("No public key")
-      if (!nip04) throw new Error("No NIP-04")
-      if (!nip07) throw new Error("No NIP-07")
+    const podcastUnlock = async (
+        gateId: string,
+        webln: WebLNProvider,
+        pool: SimplePool,
+        relays: string[],
+        publicKey: string,
+        nip04: NIP04,
+        nip07: NIP07,
+    ) => {
 
-      const newPodcastEpisodes = { ...podcastEpisodes }
-      const podcast = newPodcastEpisodes[gateId]
+        const podcastEpisodes = get().podcastEpisodes;
 
-      const uri = `${podcast.gate.endpoint}/${podcast.gate.note.id}`
-      const invoiceResponse = await fetch(uri)
-      const invoiceResponseJson = (await invoiceResponse.json()) as PREntry
+        try {
+            if(!webln) throw new Error("No webln provider");
+            if(!pool) throw new Error("No pool");
+            if(!relays) throw new Error("No relays");
+            if(!podcastEpisodes) throw new Error("No podcast episodes");
+            if(!publicKey) throw new Error("No public key");
+            if(!nip04) throw new Error("No NIP-04");
+            if(!nip07) throw new Error("No NIP-07");
+    
+            const newPodcastEpisodes = {...podcastEpisodes};
+            const podcast = newPodcastEpisodes[gateId];
+    
+            const uri = `${podcast.gate.endpoint}/${podcast.gate.note.id}`;
+            const invoiceResponse = await fetch(uri);
+            const invoiceResponseJson = (await invoiceResponse.json()) as PREntry;
+    
+            await webln.sendPayment(invoiceResponseJson.pr);
+    
+            const resultResponse = await fetch(invoiceResponseJson.successAction.url);
+            const resultResponseJson = await resultResponse.json();
+            const secret = resultResponseJson.secret;
+    
+            const encryptedKey = await nip04.encrypt(podcast.gate.note.pubkey, secret);
+    
+            const key = createKeyNoteUnsigned(
+                publicKey, 
+                encryptedKey,
+                podcast.gate.note,
+                podcast.announcement.note,
+                true
+            );
+    
+            const keySigned = await nip07.signEvent(key);
+            await pool.publish(relays, keySigned);
+    
+            const content = unlockGatedNote(podcast.gate.note, secret);
+            newPodcastEpisodes[podcast.gate.note.id] = {
+                ...podcast,
+                content,
+                audioFilepath: content.tags?.find((tag) => tag[0] === "r")?.[1],
+            };
+    
+            set({
+                podcastEpisodes: newPodcastEpisodes
+            })
+        } catch (error) {
+            alert(error);
+        }
 
-      await webln.sendPayment(invoiceResponseJson.pr)
-
-      const resultResponse = await fetch(invoiceResponseJson.successAction.url)
-      const resultResponseJson = await resultResponse.json()
-      const secret = resultResponseJson.secret
-
-      const encryptedKey = await nip04.encrypt(podcast.gate.note.pubkey, secret)
-
-      const key = createKeyNoteUnsigned(
-        publicKey,
-        encryptedKey,
-        podcast.gate.note,
-        podcast.announcement.note,
-        true
-      )
-
-      const keySigned = await nip07.signEvent(key)
-      await pool.publish(relays, keySigned)
-
-      const content = unlockGatedNote(podcast.gate.note, secret)
-      newPodcastEpisodes[podcast.gate.note.id] = {
-        ...podcast,
-        content,
-        audioFilepath: content.tags?.find(tag => tag[0] === "r")?.[1],
-      }
-
-      set({
-        podcastEpisodes: newPodcastEpisodes,
-      })
-    } catch (error) {
-      alert(error)
+  
     }
-  }
 
   // const handleBuy = async (gatedNote: GatedNote) => {
   //     if (gateLoading) return;
@@ -155,121 +174,137 @@ export const createPodcastSlice: StateCreator<
   //     setGateLoading(null);
   //   };
 
-  const podcastUnlockAll = async () => {
-    const pool = get().nostrPool
-    const relays = get().nostrRelays
-    const podcastEpisodes = get().podcastEpisodes
-    const publicKey = get().accountPublicKey
-    const nip04 = get().accountNIP07?.nip04
+    const podcastUnlockAll = async (
+        pool: SimplePool,
+        relays: string[],
+        publicKey: string,
+        nip04: NIP04,
+    ) => {
 
-    if (!pool) throw new Error("No pool")
-    if (!relays) throw new Error("No relays")
-    if (!podcastEpisodes) throw new Error("No podcast episodes")
-    if (!publicKey) throw new Error("No public key")
-    if (!nip04) throw new Error("No NIP-04")
 
-    const newPodcastEpisodes = { ...podcastEpisodes }
 
-    const filters = Object.values(podcastEpisodes).map(episode => {
-      return {
-        kinds: [NIP_108_KINDS.key],
-        authors: [publicKey],
-        "#e": [episode.gate.note.id],
-      }
-    })
+        const podcastEpisodes = get().podcastEpisodes;
 
-    const rawKeys = await pool.list(relays, filters)
-    const keys = rawKeys.map(eventToKeyNote)
+        if(!pool) throw new Error("No pool");
+        if(!relays) throw new Error("No relays");
+        if(!podcastEpisodes) throw new Error("No podcast episodes");
+        if(!publicKey) throw new Error("No public key");
+        if(!nip04) throw new Error("No NIP-04");
 
-    for (const key of keys) {
-      const podcast = newPodcastEpisodes[key.gate]
+        const newPodcastEpisodes = {...podcastEpisodes};
 
-      if (!podcast) continue
+        const filters = Object.values(podcastEpisodes).map((episode) => {
+            return {
+                kinds: [NIP_108_KINDS.key],
+                authors: [publicKey],
+                '#e': [episode.gate.note.id],
+            }
+        });
 
-      const decryptedSecret = await nip04.decrypt(
-        podcast.gate.note.pubkey,
-        key.note.content
-      )
-      const content = unlockGatedNote(podcast.gate.note, decryptedSecret)
-      newPodcastEpisodes[key.gate] = {
-        ...podcast,
-        content,
-        audioFilepath: content.tags?.find(tag => tag[0] === "r")?.[1],
-      }
-    }
+        const rawKeys = await pool.list(relays, filters);
+        const keys = rawKeys.map(eventToKeyNote);
 
-    set({ podcastEpisodes: newPodcastEpisodes })
-  }
+        for(const key of keys) {
+            const podcast = newPodcastEpisodes[key.gate];
 
-  const podcastFetch = async () => {
-    const pool = get().nostrPool
-    const relays = get().nostrRelays
-    const podcastFetching = get().podcastFetching
+            if(!podcast) continue;
 
-    try {
-      if (podcastFetching) return
-      if (!pool) throw new Error("No pool")
-      if (!relays) throw new Error("No relays")
-
-      set({ podcastFetching: true })
-
-      const podcasts: {
-        [key: string]: Podcast // Indexed by gateID
-      } = {}
-
-      const rawAnnouncements = await pool.list(relays, [
-        {
-          "#t": ["podcast"],
-          kinds: [NIP_108_KINDS.announcement],
-          limit: 10,
-        },
-      ])
-
-      const announcements = rawAnnouncements.map(eventToAnnouncementNote)
-      const gatesToGet = announcements.map(a => a.gate)
-
-      const rawGates = await pool.list(relays, [
-        {
-          ids: gatesToGet,
-        },
-      ])
-      const gates = rawGates.map(eventToGatedNote)
-
-      for (const gate of gates) {
-        const announcement = announcements.find(a => a.gate === gate.note.id)
-
-        if (!announcement) continue
-
-        const contentSplit = announcement.note.content.split("\n")
-        const title = contentSplit[0]
-        const description = contentSplit[1]
-
-        let imageFilepath = "https://placehold.co/400"
-        const imageTag = announcement.note.tags?.find(tag => tag[0] === "r")
-        if (imageTag && imageTag[1]) {
-          imageFilepath = imageTag[1]
+            const decryptedSecret = await nip04.decrypt(podcast.gate.note.pubkey, key.note.content);
+            const content = unlockGatedNote(podcast.gate.note, decryptedSecret);
+            newPodcastEpisodes[key.gate] = {
+                ...podcast,
+                content,
+                audioFilepath: content.tags?.find((tag) => tag[0] === "r")?.[1],
+            };
         }
 
-        podcasts[gate.note.id] = {
-          title,
-          description,
-          imageFilepath,
-          gate,
-          announcement,
-        }
-      }
-
-      set({ podcastEpisodes: podcasts })
-    } catch (error) {
-    } finally {
-      set({ podcastFetching: false })
+        set({ podcastEpisodes: newPodcastEpisodes, podcastsUnlocked: true });
     }
-  }
+    
+    const podcastFetch = async (
+        pool: SimplePool,
+        relays: string[],
+    ) => {
+    
 
-  return {
-    ...DEFAULT_STATE,
-    podcastFetch,
-    podcastUnlock,
-    podcastUnlockAll,
-  }
-}
+        const podcastFetching = get().podcastFetching;
+
+        try {
+            if(podcastFetching) return;
+            if(!pool) throw new Error("No pool");
+            if(!relays) throw new Error("No relays");
+
+            set({ podcastFetching: true });
+    
+            const podcasts: {
+                [key: string]: Podcast // Indexed by gateID
+            } = {};
+    
+            const rawAnnouncements = await pool.list(relays, [
+                {
+                  "#t": ["podcast"],
+                  kinds: [NIP_108_KINDS.announcement],
+                  limit: 10,
+                }
+            ]);
+    
+            const announcements = rawAnnouncements.map(eventToAnnouncementNote);
+            const gatesToGet = announcements.map((a) => a.gate);
+    
+            const rawGates = await pool.list(relays, [
+                {
+                    ids: gatesToGet,
+                }
+            ]);
+            const gates = rawGates.map(eventToGatedNote);
+    
+            for (const gate of gates) {
+                const announcement = announcements.find((a) => a.gate === gate.note.id);
+    
+                if(!announcement) continue;
+    
+                const contentSplit = announcement.note.content.split("\n");
+                const title = contentSplit[0];
+                const description = contentSplit[1];
+        
+                let imageFilepath = "https://placehold.co/400";
+                const imageTag = announcement.note.tags?.find((tag) => tag[0] === "r");
+                if(imageTag && imageTag[1]) {
+                    imageFilepath = imageTag[1];
+                }
+    
+                podcasts[gate.note.id] = {
+                    title,
+                    description,
+                    imageFilepath,
+                    gate,
+                    announcement,
+                }
+            }
+    
+            set({ podcastEpisodes: podcasts });
+        } catch (error) {
+
+        } finally {
+            set({ podcastFetching: false});
+        }
+
+    }
+
+    return {
+        ...DEFAULT_STATE,
+        actions: {
+            podcastFetch,
+            podcastUnlock,
+            podcastUnlockAll,
+        },
+    };
+};
+
+
+const usePodcastSlice = create<PodcastSlice>()(createPodcastSlice);
+
+export const usePodcastsUnlocked = () => usePodcastSlice((state) => state.podcastsUnlocked);
+export const usePodcastFetching = () => usePodcastSlice((state) => state.podcastFetching);
+export const usePodcastEpisodes = () => usePodcastSlice((state) => state.podcastEpisodes);
+export const usePodcastActions = () => usePodcastSlice((state) => state.actions);

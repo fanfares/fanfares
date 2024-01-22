@@ -11,11 +11,10 @@ interface FeedPostProps {
   userPfp?: string
   content?: string
   userProfile?: string
-  onClick?: () => {}
 }
 
 export function FeedPost(props: FeedPostProps) {
-  const { user, userPfp, content, userProfile, note, onClick } = props
+  const { user, userPfp, content, userProfile } = props
   const [fanfaresButtonMessage, setFanfaresButtonMessage] = useState(false)
   const [zapButtonMessage, setZapButtonMessage] = useState(false)
 

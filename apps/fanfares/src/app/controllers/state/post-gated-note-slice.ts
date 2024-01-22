@@ -1,8 +1,9 @@
-import { Event as NostrEvent } from "nostr-tools";
+import { Event as NostrEvent, SimplePool } from "nostr-tools";
 import { StateCreator } from "zustand";
 import { CombinedState } from "./use-app-state";
 import { PostGatedNoteIds, PostGatedNoteState, postGatedNote } from "nip108";
 import { GATE_SERVER } from "../nostr/nostr-defines";
+import { NIP07 } from "utils";
 
 export interface PostGatedNoteCallbacks {
   onSuccess?: (ids: PostGatedNoteIds) => void;
@@ -11,7 +12,12 @@ export interface PostGatedNoteCallbacks {
 }
 
 export interface PostGatedNoteSlice {
-  postGatedNoteSubmit: (callbacks: PostGatedNoteCallbacks) => void;
+  postGatedNoteSubmit: (
+    nostrPool: SimplePool,
+    nostrRelays: string[],
+    accountNIP07: NIP07,
+    callbacks: PostGatedNoteCallbacks
+  ) => void;
   postGatedNoteClear: () => void;
 
   postGatedNoteIsRunning: boolean;
@@ -60,7 +66,7 @@ const DEFAULT_STATE: PostGatedNoteSlice = {
 };
 
 export const createPostGatedNoteSlice: StateCreator<
-  CombinedState & PostGatedNoteSlice,
+  PostGatedNoteSlice,
   [],
   [],
   PostGatedNoteSlice
@@ -106,11 +112,16 @@ export const createPostGatedNoteSlice: StateCreator<
     });
   };
 
-  const postGatedNoteSubmit = async (callbacks: PostGatedNoteCallbacks) => {
+  const postGatedNoteSubmit = async (
+    nostrPool: SimplePool,
+    nostrRelays: string[],
+    accountNIP07: NIP07,
+    callbacks: PostGatedNoteCallbacks
+  ) => {
     const {
       postGatedNoteIsRunning,
       postGatedNoteContent,
-      postGatedNoteAnnouncementContent: postGatesNoteAnnouncementContent,
+      postGatedNoteAnnouncementContent,
       postGatedNoteLud16,
       postGatedNoteState,
       postGatedNotePublicKey,
@@ -121,10 +132,7 @@ export const createPostGatedNoteSlice: StateCreator<
       postGatedNoteGateResponse,
       postGatedNoteDidPublishGate,
       postGatedNoteSignedAnnouncement,
-      postGatedNoteUnlockCost: postGatesNoteUnlockCost,
-      accountNIP07,
-      nostrPool,
-      nostrRelays,
+      postGatedNoteUnlockCost,
     } = get();
 
     if (postGatedNoteIsRunning) return;
@@ -140,14 +148,14 @@ export const createPostGatedNoteSlice: StateCreator<
       if (!nostrPool) throw new Error("Missing pool");
       if (!nostrRelays) throw new Error("Missing relays");
 
-      set({ postNoteIsRunning: true });
+      set({ postGatedNoteIsRunning: true });
 
     const ids = await postGatedNote({
         gatedNoteContent: postGatedNoteContent,
-        announcementNoteContent: postGatesNoteAnnouncementContent,
+        announcementNoteContent: postGatedNoteAnnouncementContent,
         announcementNoteTags: [],
         gateServer: GATE_SERVER,
-        cost: postGatesNoteUnlockCost,
+        cost: postGatedNoteUnlockCost,
         lud16: postGatedNoteLud16,
         nip07: accountNIP07,
         publish: async (note: NostrEvent) => {
@@ -201,7 +209,7 @@ export const createPostGatedNoteSlice: StateCreator<
     } catch (error) {
       runOnError(`${error}`);
     } finally {
-      set({ postNoteIsRunning: false });
+      set({ postGatedNoteIsRunning: false });
     }
   };
 

@@ -1,7 +1,8 @@
-import { Event as NostrEvent } from 'nostr-tools';
-import { StateCreator } from 'zustand';
+import { Event as NostrEvent, SimplePool } from 'nostr-tools';
+import { StateCreator, create } from 'zustand';
 import { CombinedState } from './use-app-state';
 import { PostNoteState, postNote } from 'nip108';
+import { NIP07 } from 'utils';
 
 
 export interface PostNoteCallbacks {
@@ -12,7 +13,12 @@ export interface PostNoteCallbacks {
   
 export interface PostNoteSlice {
 
-    postNoteSubmit: (callbacks: PostNoteCallbacks) => void,
+    postNoteSubmit: (
+        nostrRelays: string[],
+        nostrPool: SimplePool,
+        accountNIP07: NIP07,
+        callbacks: PostNoteCallbacks
+    ) => void,
     postNoteClear: () => void,
 
     postNoteIsRunning: boolean,
@@ -37,7 +43,7 @@ const DEFAULT_STATE: PostNoteSlice = {
 };
 
 export const createPostNoteSlice: StateCreator<
-  CombinedState & PostNoteSlice,
+  PostNoteSlice,
   [],
   [],
   PostNoteSlice
@@ -56,8 +62,13 @@ export const createPostNoteSlice: StateCreator<
         });
     }
 
-    const postNoteSubmit = async (callbacks: PostNoteCallbacks) => {
-        const { postNoteIsRunning, postNoteContent, postNoteState, postNotePublicKey, postNoteSignedNote, accountNIP07, nostrPool, nostrRelays } = get();
+    const postNoteSubmit = async (
+        nostrRelays: string[],
+        nostrPool: SimplePool,
+        accountNIP07: NIP07,
+        callbacks: PostNoteCallbacks
+    ) => {
+        const { postNoteIsRunning, postNoteContent, postNoteState, postNotePublicKey, postNoteSignedNote } = get();
 
         if( postNoteIsRunning ) return;
 
@@ -118,3 +129,5 @@ export const createPostNoteSlice: StateCreator<
         postNoteHandleContentChange,
     };
 };
+
+export const usePostNote = create<PostNoteSlice>(createPostNoteSlice)
