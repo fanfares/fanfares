@@ -19,7 +19,7 @@ interface UploadOnModalProps {
 export default function UploadOnModal(props: UploadOnModalProps) {
   const { onCancel } = props
   const [publishModal, setPublishModal] = useState<boolean>(false)
-  const [isCheckedAudio, setIsCheckedAudio] = useState<boolean>(false)
+  const [isCheckedAudio, setIsCheckedAudio] = useState<boolean>(true)
   const {nostrPool, nostrRelays} = useNostr();
   const accountProfile = useAccountProfile();
   const accountNostr = useAccountNostr();
@@ -287,7 +287,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
 
             {/* ----- Toggle Paid Content Main Feed Page ----- */}
 
-            <label
+            {/* <label
               htmlFor="setAsGatedPodcast"
               className="relative inline-flex items-center px-2 py-1 border rounded-full cursor-pointer border-buttonAccent">
               <input
@@ -303,7 +303,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
               <span className="ml-3 text-xs font-medium text-buttonMuted">
                 Paid Podcast?
               </span>
-            </label>
+            </label> */}
           </div>
           {/* Debugging / User Validation */}
           <p
