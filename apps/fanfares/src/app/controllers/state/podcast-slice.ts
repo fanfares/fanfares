@@ -1,7 +1,9 @@
-import { StateCreator } from 'zustand';
+import { StateCreator, create } from 'zustand';
 import { CombinedState } from './use-app-state';
 import { AnnouncementNote, GatedNote, NIP_108_KINDS, PREntry, createKeyNoteUnsigned, eventToAnnouncementNote, eventToGatedNote, eventToKeyNote, unlockGatedNote, unlockGatedNoteFromKeyNote } from 'nip108';
-import { Event as NostrEvent } from 'nostr-tools';
+import { Event as NostrEvent, SimplePool } from 'nostr-tools';
+import { WebLNProvider } from 'webln';
+import { NIP04, NIP07 } from 'utils';
 
 export interface Podcast {
     title: string,
@@ -15,39 +17,63 @@ export interface Podcast {
 }
 
 export interface PodcastSlice {
+    podcastsUnlocked: boolean;
     podcastFetching: boolean;
-    podcastFetch: ()=>void;
-    podcastUnlock: (gateId: string)=>void;
-    podcastUnlockAll: ()=>void;
     podcastEpisodes: {
         [key: string]: Podcast // Indexed by gateID
     };
+    actions: {
+        podcastFetch: (
+            pool: SimplePool,
+            relays: string[],
+        )=>void;
+        podcastUnlock: (
+            gateId: string,
+            webln: WebLNProvider,
+            pool: SimplePool,
+            relays: string[],
+            publicKey: string,
+            nip04: NIP04,
+            nip07: NIP07,
+        )=>void;
+        podcastUnlockAll: (
+            pool: SimplePool,
+            relays: string[],
+            publicKey: string,
+            nip04: NIP04,
+        )=>void;
+    }
 }
 
 const DEFAULT_STATE: PodcastSlice = {
+    podcastsUnlocked: false,
     podcastFetching: false,
-    podcastFetch: () => {},
-    podcastUnlock: () => {},
-    podcastUnlockAll: () => {},
     podcastEpisodes: {},
+    actions: {
+        podcastFetch: () => {},
+        podcastUnlock: () => {},
+        podcastUnlockAll: () => {},
+    },
 };
 
 export const createPodcastSlice: StateCreator<
-  CombinedState & PodcastSlice,
+  PodcastSlice,
   [],
   [],
   PodcastSlice
 > = (set, get) => {
 
-    const podcastUnlock = async (gateId: string) => {
+    const podcastUnlock = async (
+        gateId: string,
+        webln: WebLNProvider,
+        pool: SimplePool,
+        relays: string[],
+        publicKey: string,
+        nip04: NIP04,
+        nip07: NIP07,
+    ) => {
 
-        const webln = get().accountWebln;
-        const pool = get().nostrPool;
-        const relays = get().nostrRelays;
         const podcastEpisodes = get().podcastEpisodes;
-        const publicKey = get().accountPublicKey;
-        const nip04 = get().accountNIP07?.nip04;
-        const nip07 = get().accountNIP07;
 
         try {
             if(!webln) throw new Error("No webln provider");
@@ -148,13 +174,16 @@ export const createPodcastSlice: StateCreator<
     //     setGateLoading(null);
     //   };
 
-    const podcastUnlockAll = async () => {
+    const podcastUnlockAll = async (
+        pool: SimplePool,
+        relays: string[],
+        publicKey: string,
+        nip04: NIP04,
+    ) => {
 
-        const pool = get().nostrPool;
-        const relays = get().nostrRelays;
+
+
         const podcastEpisodes = get().podcastEpisodes;
-        const publicKey = get().accountPublicKey;
-        const nip04 = get().accountNIP07?.nip04;
 
         if(!pool) throw new Error("No pool");
         if(!relays) throw new Error("No relays");
@@ -189,13 +218,15 @@ export const createPodcastSlice: StateCreator<
             };
         }
 
-        set({ podcastEpisodes: newPodcastEpisodes });
+        set({ podcastEpisodes: newPodcastEpisodes, podcastsUnlocked: true });
     }
     
-    const podcastFetch = async () => {
+    const podcastFetch = async (
+        pool: SimplePool,
+        relays: string[],
+    ) => {
     
-        const pool = get().nostrPool;
-        const relays = get().nostrRelays;
+
         const podcastFetching = get().podcastFetching;
 
         try {
@@ -262,8 +293,18 @@ export const createPodcastSlice: StateCreator<
 
     return {
         ...DEFAULT_STATE,
-        podcastFetch,
-        podcastUnlock,
-        podcastUnlockAll,
+        actions: {
+            podcastFetch,
+            podcastUnlock,
+            podcastUnlockAll,
+        },
     };
 };
+
+
+const usePodcastSlice = create<PodcastSlice>()(createPodcastSlice);
+
+export const usePodcastsUnlocked = () => usePodcastSlice((state) => state.podcastsUnlocked);
+export const usePodcastFetching = () => usePodcastSlice((state) => state.podcastFetching);
+export const usePodcastEpisodes = () => usePodcastSlice((state) => state.podcastEpisodes);
+export const usePodcastActions = () => usePodcastSlice((state) => state.actions);

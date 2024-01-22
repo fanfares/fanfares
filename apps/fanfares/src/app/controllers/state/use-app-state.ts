@@ -4,13 +4,8 @@ import { useEffect } from "react";
 import { TestSlice, createTestSlice } from "./test-slice";
 import { UploadSlice, createUploadSlice } from "./upload-slice";
 import { GateCreateSlice, createGateCreateSlice } from "./gate-create-slice";
-import { PostNoteSlice, createPostNoteSlice } from "./post-note-slice"
-import { PostGatedNoteSlice, createPostGatedNoteSlice} from "./post-gated-note-slice";
-import { PostPodcastSlice, createPostPodcastSlice } from "./post-podcast-slice";
-import { PodcastSlice, createPodcastSlice } from "./podcast-slice";
-import { UserPageSlice, createUserPageSlice } from "./user-page-slice";
 
-export type CombinedState = TestSlice & UploadSlice & GateCreateSlice & PostNoteSlice & PostGatedNoteSlice & PostPodcastSlice & PodcastSlice & UserPageSlice;
+export type CombinedState = TestSlice & UploadSlice & GateCreateSlice;
 
 export const useAppState = create<CombinedState>()(
   persist(
@@ -19,11 +14,6 @@ export const useAppState = create<CombinedState>()(
         ...createTestSlice(set, get, slice),
         ...createUploadSlice(set, get, slice),
         ...createGateCreateSlice(set, get, slice),
-	      ...createPostNoteSlice(set, get, slice),
-        ...createPostGatedNoteSlice(set, get, slice),
-        ...createPostPodcastSlice(set, get, slice),
-        ...createPodcastSlice(set, get, slice),
-        ...createUserPageSlice(set, get, slice),
       };
     },
     {

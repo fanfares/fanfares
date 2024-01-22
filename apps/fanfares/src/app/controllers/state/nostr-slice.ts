@@ -37,5 +37,5 @@ export const createNostrSlice: StateCreator<
     };
 };
 
-export const useNostrSlice = create<NostrSlice>()(createNostrSlice);
+export const useNostr = create<NostrSlice>()(createNostrSlice);
 
