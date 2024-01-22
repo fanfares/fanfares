@@ -5,10 +5,10 @@ import { useAppState } from "../controllers/state/use-app-state"
 export function ProfileBuble() {
   const { accountProfile } = useAppState()
 
-  if (!accountProfile) return null
+  // if (!accountProfile) return null
 
   return (
-    <div className="flex bg-skin-fill rounded-full items-center w-36 mx-auto p-1 h-10 gap-1 hover:bg-skin-fill/70 transition-colors ease-linear cursor-pointer mb-4">
+    <div className="flex bg-skin-fill rounded-full items-center w-36 mx-auto p-1 h-10 gap-1 hover:bg-skin-fill/70 transition-colors ease-linear mb-4">
       <div className="w-8 bg-skin-fill h-8 rounded-full flex items-center justify-center">
         {accountProfile?.picture ? (
           <img src={accountProfile?.picture} alt="" />
