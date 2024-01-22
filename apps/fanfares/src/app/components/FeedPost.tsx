@@ -11,7 +11,6 @@ interface FeedPostProps {
   userPfp?: string
   content?: string
   userProfile?: string
-  onClick?: () => {}
 }
 
 export function FeedPost(props: FeedPostProps) {

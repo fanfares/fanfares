@@ -1,4 +1,4 @@
-import { StateCreator } from 'zustand';
+import { StateCreator, create } from 'zustand';
 import { CombinedState } from './use-app-state';
 import { SimplePool } from 'nostr-tools';
 import { NOSTR_RELAYS } from '../nostr/nostr-defines';
@@ -16,7 +16,7 @@ const DEFAULT_STATE: NostrSlice = {
 };
 
 export const createNostrSlice: StateCreator<
-  CombinedState & NostrSlice,
+  NostrSlice,
   [],
   [],
   NostrSlice
@@ -36,3 +36,6 @@ export const createNostrSlice: StateCreator<
         nostrDisconnect,
     };
 };
+
+export const useNostr = create<NostrSlice>()(createNostrSlice);
+
