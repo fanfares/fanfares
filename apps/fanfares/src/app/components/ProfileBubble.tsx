@@ -14,7 +14,7 @@ export function ProfileBuble() {
           <img
             src={accountProfile?.picture}
             alt=""
-            className="w-8 h-8 object-cover"
+            className="w-full object-cover"
           />
         ) : (
           "🎪"
