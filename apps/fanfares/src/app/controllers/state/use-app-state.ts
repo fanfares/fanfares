@@ -3,9 +3,8 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { useEffect } from "react";
 import { TestSlice, createTestSlice } from "./test-slice";
 import { UploadSlice, createUploadSlice } from "./upload-slice";
-import { GateCreateSlice, createGateCreateSlice } from "./gate-create-slice";
 
-export type CombinedState = TestSlice & UploadSlice & GateCreateSlice;
+export type CombinedState = TestSlice & UploadSlice;
 
 export const useAppState = create<CombinedState>()(
   persist(
@@ -13,7 +12,6 @@ export const useAppState = create<CombinedState>()(
       return {
         ...createTestSlice(set, get, slice),
         ...createUploadSlice(set, get, slice),
-        ...createGateCreateSlice(set, get, slice),
       };
     },
     {

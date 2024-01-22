@@ -4,11 +4,12 @@ import { useState } from "react"
 import { useAppState } from "../controllers/state/use-app-state"
 import { Modal } from "./Modal"
 import Link from "next/link"
+import { useAccountProfile } from "../controllers/state/account-slice"
 
 //TODO -> Replace the ID's with the test ids enums.
 
 export function FeedHeader() {
-  const { accountProfile } = useAppState()
+  const accountProfile = useAccountProfile();
 
   const [live, setLive] = useState(false)
   const [following, setFollowing] = useState(false)
