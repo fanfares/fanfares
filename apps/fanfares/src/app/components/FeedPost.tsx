@@ -121,7 +121,7 @@ export function FeedPost(props: FeedPostProps) {
           className="px-2 w-28"
           id="e2e-feed-post-zap-button"
           label={"Zap ⚡️"}
-          onClick={() => setZapButtonMessage(!zapButtonMessage)}
+          onClick={() => setFanfaresButtonMessage(!fanfaresButtonMessage)}
 
           // onClick={() => setZapModalOn(!zapModalOn)}
         />
