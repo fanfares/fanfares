@@ -3,7 +3,7 @@ import { CombinedState } from "./use-app-state";
 
 export interface PlayerPageSlice {
   playerPageGateId: string;
-
+    
   actions: {
     setPlayerPageGateId: (id: string) => void;
   };

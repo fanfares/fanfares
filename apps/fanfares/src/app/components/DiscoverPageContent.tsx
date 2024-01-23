@@ -14,6 +14,7 @@ import { config } from "@fortawesome/fontawesome-svg-core"
 import { useAppState } from "../controllers/state/use-app-state"
 import { usePodcastActions, usePodcastEpisodes, usePodcastFetching } from "../controllers/state/podcast-slice"
 import { useNostr } from "../controllers/state/nostr-slice"
+import { useRouter } from "next/navigation"
 
 config.autoAddCss = false /* eslint-disable import/first */
 export interface DiscoveryMediaInfo extends Metadata {
@@ -31,6 +32,7 @@ export interface DiscoveryTileInfo {
 
 function DiscoverPageContent() {
   // const { program, drmApi } = useAppState();
+  const router = useRouter();
   const { nostrPool, nostrRelays } = useNostr();
   const { podcastFetch, podcastUnlock } = usePodcastActions();
   const podcastEpisodes = usePodcastEpisodes();
@@ -41,6 +43,7 @@ function DiscoverPageContent() {
   useEffect(() => {
     if(nostrPool && nostrRelays){
       console.log("Fetching Podcasts");
+
       podcastFetch(
         nostrPool,
         nostrRelays,
@@ -105,6 +108,7 @@ function DiscoverPageContent() {
             return (
               <EpisodeCard
                 onClick={() => {
+                  router.push(`/player/${podcast.gate.note.id}`);
                   // if (!podcast.audioFilepath) {
                   //   podcastUnlock(
                   //     podcast.gate.note.id
