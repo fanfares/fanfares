@@ -5,11 +5,14 @@ import { MediaCreatorForm } from "@/app/components/MediaCreatorForm"
 import { MediaThumbnailUploadField } from "@/app/components/MediaThumbnailUploadField"
 import { FormLabelCreators } from "@/app/components/LabelForm"
 import { Modal } from "@/app/components/Modal"
-import { usePostPodcast } from "@/app/controllers/state/post-podcast-slice"; 
+import { usePostPodcast } from "@/app/controllers/state/post-podcast-slice"
 import { useAppState } from "@/app/controllers/state/use-app-state"
 import Link from "next/link"
 import { ChangeEvent, useEffect, useRef, useState } from "react"
-import { useAccountNostr, useAccountProfile } from "../controllers/state/account-slice"
+import {
+  useAccountNostr,
+  useAccountProfile,
+} from "../controllers/state/account-slice"
 import { useNostr } from "../controllers/state/nostr-slice"
 
 interface UploadOnModalProps {
@@ -20,10 +23,9 @@ export default function UploadOnModal(props: UploadOnModalProps) {
   const { onCancel } = props
   const [publishModal, setPublishModal] = useState<boolean>(false)
   const [isCheckedAudio, setIsCheckedAudio] = useState<boolean>(true)
-  const {nostrPool, nostrRelays} = useNostr();
-  const accountProfile = useAccountProfile();
-  const accountNostr = useAccountNostr();
-
+  const { nostrPool, nostrRelays } = useNostr()
+  const accountProfile = useAccountProfile()
+  const accountNostr = useAccountNostr()
 
   const handleCheckboxChangeAudio = (event: ChangeEvent<HTMLInputElement>) => {
     const { checked } = event.target
@@ -63,7 +65,6 @@ export default function UploadOnModal(props: UploadOnModalProps) {
   }, [postPodcastClear])
 
   const handlePostSubmit = (event: any) => {
-
     if (!accountNostr?.accountNIP07) {
       alert("Please connect your Nostr account")
       return
@@ -71,11 +72,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
 
     // event.preventDefault();
     setPublishModal(true)
-    postPodcastSubmit(
-      nostrPool,
-      nostrRelays,
-      accountNostr?.accountNIP07,
-      {
+    postPodcastSubmit(nostrPool, nostrRelays, accountNostr?.accountNIP07, {
       onSuccess(ids) {
         console.log(ids)
         alert(`Note posted with id ${ids}`)
@@ -93,15 +90,15 @@ export default function UploadOnModal(props: UploadOnModalProps) {
   return (
     <section className="w-full">
       {/* MODAL */}
-      <Modal isOpen={publishModal}>
+      {/* <Modal isOpen={publishModal}>
         State {postPodcastState}
         <button onClick={() => setPublishModal(!publishModal)}>
           ❌ BUTTON CLOSE TEST
         </button>
-      </Modal>
+      </Modal> */}
 
       {/* FORM SECTION */}
-      <form onSubmit={handlePostSubmit} ref={formRef}>
+      <form className="w-full" onSubmit={handlePostSubmit} ref={formRef}>
         <div className="relative flex flex-col items-center justify-center w-full h-full px-4 py-2">
           <div className="upperSectionForm flex flex-col w-full gap-4 md:flex-row">
             <div className="flex mx-auto">

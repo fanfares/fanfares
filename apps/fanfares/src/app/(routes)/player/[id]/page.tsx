@@ -147,7 +147,7 @@ export default function PlayerPage() {
         >
           <FontAwesomeIcon className="w-10 md:w-14" icon={faPlayCircle} />
         </button>
-        <div className="flex flex-row items-center justify-center gap-2 my-auto md:gap-2">
+        {/* <div className="flex flex-row items-center justify-center gap-2 my-auto md:gap-2">
           <div className="flex items-center gap-2">
             <Button
               aria-label="Make a donation"
@@ -164,7 +164,7 @@ export default function PlayerPage() {
               label="Share"
             />
           </div>
-        </div>
+        </div> */}
       </div>
     );
   };
