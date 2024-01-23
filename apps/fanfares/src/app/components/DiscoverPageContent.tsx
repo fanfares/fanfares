@@ -43,7 +43,6 @@ function DiscoverPageContent() {
 
   useEffect(() => {
     if(nostrPool && nostrRelays){
-      alert(GATE_SERVER);
       console.log("Fetching Podcasts");
 
       podcastFetch(
