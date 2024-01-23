@@ -127,53 +127,6 @@ export const createPodcastSlice: StateCreator<
   
     }
 
-  // const handleBuy = async (gatedNote: GatedNote) => {
-  //     if (gateLoading) return;
-
-  //     setGateLoading(gatedNote.note.id);
-
-  //     try {
-  //       if (!webln) throw new Error("No webln provider");
-  //       if (!nostr) throw new Error("No nostr provider");
-  //       if (!publicKey) throw new Error("No Public Key");
-  //       if (!relay) throw new Error("No relay");
-
-  //       const uri = `${gatedNote.endpoint}/${gatedNote.note.id}`;
-  //       const invoiceResponse = await fetch(uri);
-  //       const invoiceResponseJson = (await invoiceResponse.json()) as PREntry;
-
-  //       await webln.sendPayment(invoiceResponseJson.pr);
-
-  //       const resultResponse = await fetch(invoiceResponseJson.successAction.url);
-  //       const resultResponseJson = await resultResponse.json();
-  //       const secret = resultResponseJson.secret;
-
-  //       const content = await nostr.nip04.encrypt(gatedNote.note.pubkey, secret);
-
-  //       const keyEvent = {
-  //         kind: NIP_108_KINDS.key,
-  //         pubkey: publicKey,
-  //         created_at: Math.floor(Date.now() / 1000),
-  //         tags: [["g", gatedNote.note.id]],
-  //         content: content,
-  //       };
-
-  //       const keyEventVerified = await nostr.signEvent(keyEvent);
-
-  //       await relay.publish(keyEventVerified);
-
-  //       const keyNoteUnlocked = {
-  //         ...eventToKeyNote(keyEventVerified),
-  //         unlockedSecret: secret,
-  //       } as KeyNote;
-  //       setKeyNotes([...keyNotes, keyNoteUnlocked]);
-  //     } catch (e) {
-  //       alert(e);
-  //     }
-
-  //     setGateLoading(null);
-  //   };
-
     const podcastUnlockAll = async (
         pool: SimplePool,
         relays: string[],

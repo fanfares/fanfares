@@ -11,7 +11,14 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { Fragment, useCallback, useEffect, useRef, useState } from "react"
 
-export function AudioPlayer() {
+export interface AudioPlayerProps {
+  audioUrl?: string
+}
+
+export function AudioPlayer(props: AudioPlayerProps) {
+  const { audioUrl } = props;
+
+
   // const router = useRouter()
   // const playThreshold = getConfig().playedThreshold
 
@@ -40,7 +47,7 @@ export function AudioPlayer() {
   const [currentTime, setCurrentTime] = useState<number>(0)
   const [volume, setVolume] = useState<number>(80)
   const [playerIsGlobalPlayerShowing, setPlayerIsGlobalPlayerShowing] =
-    useState<boolean>(true)
+    useState<boolean>(false)
 
   // --------------- REFERENCES---------------
   const audioPlayer = useRef<HTMLAudioElement>(null)
@@ -467,7 +474,7 @@ export function AudioPlayer() {
       <div className="fixed left-0 z-50 justify-center w-full h-10 -bottom-1 ">
         <audio
           ref={audioPlayer}
-          src={"./assets/audio.mp3"}
+          src={audioUrl}
           preload="metadata"></audio>
         <div
           className={`absolute bottom-3 w-full max-w-7xl rounded-2xl border-t-2 border-buttonAccentHover transition-transform duration-300 ease-linear md:bottom-5 md:left-60 md:w-[70%] 
