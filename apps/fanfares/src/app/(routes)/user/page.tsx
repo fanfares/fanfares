@@ -1,6 +1,5 @@
 "use client";
 
-import { GateCreateState } from "@/app/controllers/state/gate-create-slice";
 import { useAppState } from "@/app/controllers/state/use-app-state";
 import { UserPageNote } from "@/app/controllers/state/user-page-slice";
 import { createNoteUnsigned } from "nip108";
@@ -35,25 +34,29 @@ function UserNote(event: UserPageNote) {
 }
 
 export default function UserPage() {
-    const { userPageFetch, userPageIsFetching, userPageNotes, accountPublicKey, } = useAppState();
 
-    useEffect(() => {
-        if(accountPublicKey)
-            userPageFetch(accountPublicKey);
-    }, [accountPublicKey]);
+    return null;
 
+    //TODO Christian Fix User Slice
+//     const { userPageFetch, userPageIsFetching, userPageNotes, accountPublicKey, } = useAppState();
 
-
-    if(userPageIsFetching)
-        return <div>Loading...</div>
-
+//     useEffect(() => {
+//         if(accountPublicKey)
+//             userPageFetch(accountPublicKey);
+//     }, [accountPublicKey]);
 
 
-  return (
-    <div>
-        {Object.values(userPageNotes).sort((a, b)=>{
-            return b.event.created_at - a.event.created_at;
-        }).map(UserNote)}
-    </div>
-  );
+
+//     if(userPageIsFetching)
+//         return <div>Loading...</div>
+
+
+
+//   return (
+//     <div>
+//         {Object.values(userPageNotes).sort((a, b)=>{
+//             return b.event.created_at - a.event.created_at;
+//         }).map(UserNote)}
+//     </div>
+//   );
 }

@@ -1,7 +1,8 @@
 import { StateCreator } from 'zustand';
 import { CombinedState } from './use-app-state';
-import { Event as NostrEvent } from 'nostr-tools';
+import { Event as NostrEvent, SimplePool } from 'nostr-tools';
 import { AnnouncementNote, GatedNote, KeyNote, NIP_108_KINDS, eventToAnnouncementNote, eventToGatedNote, eventToKeyNote, unlockGatedNote, unlockGatedNoteFromKeyNoteNIP07 } from 'nip108';
+import { NIP04, NIP07 } from 'utils';
 
 
 export interface UserPageNote {
@@ -17,7 +18,7 @@ export interface UserPageNotes {
 }
 export interface UserPageSlice {
     userPageIsFetching: boolean,
-    userPageFetch: (publicKey: string) => void,
+    userPageFetch: (publicKey: string, nip07: NIP07, nip04: NIP04, nostrPool: SimplePool, nostrRelays: string[]) => void,
     userPageNotes: UserPageNotes
 }
 
@@ -28,15 +29,15 @@ const DEFAULT_STATE: UserPageSlice = {
 };
 
 export const createUserPageSlice: StateCreator<
-  CombinedState & UserPageSlice,
+UserPageSlice,
   [],
   [],
   UserPageSlice
 > = (set, get) => {
 
-    const userPageFetch = (publicKey: string) => {
+    const userPageFetch = (publicKey: string, nip07: NIP07, nip04: NIP04, nostrPool: SimplePool, nostrRelays: string[]) => {
 
-        const { nostrPool, nostrRelays, userPageIsFetching } = get();
+        const { userPageIsFetching } = get();
 
         if(userPageIsFetching) throw new Error('userPageIsFetching is true');
         if(!publicKey) throw new Error('pubkey is undefined');
@@ -124,7 +125,6 @@ export const createUserPageSlice: StateCreator<
                     ...newNotes,
                 } });
 
-                const nip07 = get().accountNIP07;
 
                 if(nip07 && nip07.nip04){
                     for(const gateToUnlock of gatesToUnlock) {

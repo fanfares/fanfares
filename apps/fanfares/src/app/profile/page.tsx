@@ -3,9 +3,12 @@ import { generatePrivateKey } from "nostr-tools"
 import Button from "../components/Button"
 import { useAppState } from "../controllers/state/use-app-state"
 import { FeedPost } from "../components/FeedPost"
+import { usePrimalNoteStats, usePrimalNotes, usePrimalProfiles } from "../controllers/state/primal-slice"
 
 function Profile() {
-  const { primalNotes, primalProfiles, primalNoteStats } = useAppState()
+  const primalNotes = usePrimalNotes();
+  const primalProfiles = usePrimalProfiles();
+  const primalNoteStats = usePrimalNoteStats();
 
   return (
     <section className="container flex flex-col max-w-xl">

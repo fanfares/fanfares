@@ -12,6 +12,9 @@ import EpisodeCard from "./EpisodeCard"
 
 import { config } from "@fortawesome/fontawesome-svg-core"
 import { useAppState } from "../controllers/state/use-app-state"
+import { usePodcastActions, usePodcastEpisodes, usePodcastFetching } from "../controllers/state/podcast-slice"
+import { useNostr } from "../controllers/state/nostr-slice"
+import { useRouter } from "next/navigation"
 
 config.autoAddCss = false /* eslint-disable import/first */
 export interface DiscoveryMediaInfo extends Metadata {
@@ -29,15 +32,24 @@ export interface DiscoveryTileInfo {
 
 function DiscoverPageContent() {
   // const { program, drmApi } = useAppState();
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { podcastFetch, podcastEpisodes, podcastUnlock } = useAppState()
+  const router = useRouter();
+  const { nostrPool, nostrRelays } = useNostr();
+  const { podcastFetch, podcastUnlock } = usePodcastActions();
+  const podcastEpisodes = usePodcastEpisodes();
+  const podcastFetching = usePodcastFetching();
 
   console.log("Render Podcasts -- " + Object.values(podcastEpisodes).length)
 
   useEffect(() => {
-    console.log("Podcast Fetch")
-    podcastFetch()
-  }, [podcastFetch])
+    if(nostrPool && nostrRelays){
+      console.log("Fetching Podcasts");
+
+      podcastFetch(
+        nostrPool,
+        nostrRelays,
+      );
+    }
+  }, [podcastFetch, nostrPool, nostrRelays])
 
   // const loadMedias = useCallback(async () => {
   //   setIsLoading(true);
@@ -74,7 +86,7 @@ function DiscoverPageContent() {
   // }, [loadMedias]);
 
   const renderLoading = () => {
-    if (!isLoading) return null
+    if (!podcastFetching) return null
 
     return (
       <div className="flex items-center justify-center w-full h-screen">
@@ -87,7 +99,7 @@ function DiscoverPageContent() {
   }
 
   const renderContent = () => {
-    if (isLoading) return null
+    if (podcastFetching) return null
     return (
       // <div className="flex items-center justify-center w-full pb-10 mx-auto rounded lg:justify-start">
       <div className="container flex">
@@ -96,9 +108,12 @@ function DiscoverPageContent() {
             return (
               <EpisodeCard
                 onClick={() => {
-                  if (!podcast.audioFilepath) {
-                    podcastUnlock(podcast.gate.note.id)
-                  }
+                  router.push(`/player/${podcast.gate.note.id}`);
+                  // if (!podcast.audioFilepath) {
+                  //   podcastUnlock(
+                  //     podcast.gate.note.id
+                  //   )
+                  // }
                 }}
                 imgUrl={podcast.imageFilepath}
                 title={podcast.title}
@@ -166,3 +181,4 @@ function DiscoverPageContent() {
 }
 
 export default DiscoverPageContent
+

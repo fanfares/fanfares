@@ -1,109 +1,89 @@
+import { create } from "zustand";
 import { StateCreator } from "zustand";
-import { CombinedState } from "./use-app-state";
 import {
   generatePrivateKey,
   Event as NostrEvent,
 } from "nostr-tools";
 import { PRIMAL_CACHE } from "../nostr/nostr-defines";
 import { NostrProfile } from "utils";
+import { getExploreFeed, MediaEvent, NostrPostStats, PrimalScope, PrimalSort } from "../primal/primalHelpers";
 
-export enum PrimalScope {
-  global = "global",
-  network = "network",
-  tribe = "tribe",
-  follows = "follows",
-}
-
-// AKA 'timeframe'
-export enum PrimalSort {
-  trending = "trending",
-  mostzapped = "mostzapped",
-  mostzapped4h = "mostzapped4h",
-  popular = "popular",
-  latest = "latest",
-}
-
-export type NostrPostStats = {
-    event_id: string
-    likes: number;
-    mentions: number;
-    reposts: number;
-    replies: number;
-    zaps: number;
-    satszapped: number;
-    score: number;
-    score24h: number;
-};
-
-export type ExploreFeedPayload = {
-  timeframe: string;
-  scope: string;
-  limit: number;
-  user_pubkey?: string;
-  since?: number;
-  until?: number;
-  created_after?: number;
-};
-
-export type MediaSize = "o" | "s" | "m" | "l";
-
-export type MediaVariant = {
-  s: MediaSize;
-  a: 0 | 1;
-  w: number;
-  h: number;
-  mt: string;
-  media_url: string;
-};
-
-export type MediaEvent = {
-  event_id: string;
-  resources: { url: string; variants: MediaVariant[] }[];
-};
-
-export const second = 1000;
-export const minute = 60 * second;
-export const hour = 60 * minute;
-export const day = 24 * hour;
-export const week = 7 * day;
 
 export interface PrimalSlice {
   primalSocket: WebSocket | null;
   primalAppID: string;
-  primalConnect: () => void;
-  primalDisconnect: () => void;
-
-  primalSend: (data: string) => void;
-  primalGet: () => void;
 
   primalNotes: NostrEvent<1>[];
   primalProfiles: { [key: string]: NostrProfile }; // Keyed by Pubkey
   primalNoteStats: { [key: string]: NostrPostStats }; // Keyed by Event ID
   primalMediaEvents:{ [key: string]: MediaEvent }; // Keyed by Event ID
+
+  actions: {
+    primalConnect: () => void;
+    primalDisconnect: () => void;
+    primalSend: (data: string) => void;
+    primalGet: (publicKey: string) => void;
+  };
 }
 
 const DEFAULT_STATE: PrimalSlice = {
   primalSocket: null,
   primalAppID: "nostr",
-  primalConnect: () => {},
-  primalDisconnect: () => {},
-
-  primalSend: (data: string) => {},
-  primalGet: () => {},
-
   primalNotes: [],
   primalProfiles: {},
   primalNoteStats: {},
   primalMediaEvents: {},
+
+  actions: {
+    primalConnect: () => {},
+    primalDisconnect: () => {},
+    primalSend: (data: string) => {},
+    primalGet: (pubkey: string) => {},
+  },
 };
 
 export const createPrimalSlice: StateCreator<
-  CombinedState & PrimalSlice,
+  PrimalSlice,
   [],
   [],
   PrimalSlice
 > = (set, get) => {
 
+  // -------------- PRIMAL SEND ----------------
+  const primalSend = (message: string) => {
+    const ws = get().primalSocket;
+
+    if (!ws) return;
+
+    const event = new CustomEvent("send", { detail: { message, ws } });
+    ws.send(message);
+    ws.dispatchEvent(event);
+  };
+
+  // -------------- PRIMAL GET ----------------
+  const primalGet = (
+    publicKey: string
+  ) => {
+    const id = get().primalAppID;
+
+    //  network
+    //scope: global, timeframe: trending, until: 0, limit: 20
+    //scope: global, timeframe: mostzapped, until: 0, limit: 20
+    //scope: global, timeframe: popular, until: 0, limit: 20
+    //scope: global, timeframe: latest, until: 0, limit: 20
+
+    getExploreFeed(
+      publicKey ?? "",
+      `explore_${id}`,
+      PrimalScope.global, //scope
+      PrimalSort.mostzapped, //timeframe
+      0,
+      50,
+      primalSend
+    );
+  };
+
+  // -------------- PARSE PRIMAL SEND ----------------
   const parsePrimalEvent = (event: any) => {
     try {
       const rawData = JSON.parse(event.data);
@@ -168,7 +148,7 @@ export const createPrimalSlice: StateCreator<
     }
   }
 
-
+  // -------------- PRIMAL CONNECT ----------------
   const primalConnect = () => {
     const socket = new WebSocket(PRIMAL_CACHE);
     socket.readyState;
@@ -177,7 +157,7 @@ export const createPrimalSlice: StateCreator<
       set({ primalSocket: socket });
 
       // First round of Data
-      get().primalGet();
+      primalGet("");
     };
     socket.onclose = () => {
       console.log("Primal disconnected");
@@ -196,98 +176,28 @@ export const createPrimalSlice: StateCreator<
     socket.close();
   };
 
-  const primalSend = (message: string) => {
-    const ws = get().primalSocket;
-
-    if (!ws) return;
-
-    const event = new CustomEvent("send", { detail: { message, ws } });
-    ws.send(message);
-    ws.dispatchEvent(event);
-  };
-
-  const primalGet = () => {
-    const key = get().accountPublicKey;
-    const id = get().primalAppID;
-
-    // getExploreFeed(
-    //     account?.publicKey || '',
-    //     `explore_${APP_ID}`,
-    //     scope,
-    //     timeframe,
-    //     until,
-    //     limit,
-    //   );
-
-    //  network
-    //scope: global, timeframe: trending, until: 0, limit: 20
-    //scope: global, timeframe: mostzapped, until: 0, limit: 20
-    //scope: global, timeframe: popular, until: 0, limit: 20
-    //scope: global, timeframe: latest, until: 0, limit: 20
-
-    getExploreFeed(
-      key ?? "",
-      `explore_${id}`,
-      PrimalScope.global, //scope
-      PrimalSort.mostzapped, //timeframe
-      0,
-      50,
-      get().primalSend
-    );
-  };
-
   const primalAppID = generatePrivateKey();
 
   return {
     ...DEFAULT_STATE,
     primalAppID,
-    primalConnect,
-    primalDisconnect,
-    primalSend,
-    primalGet,
+    actions: {
+      primalConnect,
+      primalDisconnect,
+      primalSend,
+      primalGet,
+    }
   };
 };
 
-function getExploreFeed(
-  pubkey: string | undefined,
-  subid: string,
-  scope: string,
-  timeframe: string,
-  until = 0,
-  limit = 20,
-  primalSend: (data: string) => void
-) {
-  let payload: ExploreFeedPayload = { timeframe, scope, limit };
+const usePrimalSlice = create<PrimalSlice>()(createPrimalSlice);
 
-  if (pubkey) {
-    payload.user_pubkey = pubkey;
-  }
+export const usePrimalActions = () => usePrimalSlice((state) => state.actions);
+export const usePrimalState = () => usePrimalSlice((state) => state);
+export const usePrimalSocket = () => usePrimalSlice((state) => state.primalSocket);
+export const usePrimalAppID = () => usePrimalSlice((state) => state.primalAppID);
+export const usePrimalNotes = () => usePrimalSlice((state) => state.primalNotes);
+export const usePrimalProfiles = () => usePrimalSlice((state) => state.primalProfiles);
+export const usePrimalNoteStats = () => usePrimalSlice((state) => state.primalNoteStats);
+export const usePrimalMediaEvents = () => usePrimalSlice((state) => state.primalMediaEvents);
 
-  if (until > 0) {
-    payload.until = until;
-  }
-
-  if (timeframe === "trending") {
-    const yesterday = Math.floor((new Date().getTime() - day) / 1000);
-
-    payload.created_after = yesterday;
-  }
-
-  if (timeframe === "mostzapped4h") {
-    const fourHAgo = Math.floor((new Date().getTime() - 4 * hour) / 1000);
-
-    payload.timeframe = "mostzapped";
-    payload.created_after = fourHAgo;
-  }
-
-  // primalSend(JSON.stringify([
-  //     "REQ",
-  //     subid,
-  //     {cache: [
-  //       "explore_global_mostzapped_4h",
-  //       { user_pubkey: pubkey },
-  //     ]},
-  //   ]));
-
-  primalSend(JSON.stringify(["REQ", subid, { cache: ["explore", payload] }]));
-}

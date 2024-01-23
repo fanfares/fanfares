@@ -5,9 +5,12 @@ import { MediaCreatorForm } from "@/app/components/MediaCreatorForm"
 import { MediaThumbnailUploadField } from "@/app/components/MediaThumbnailUploadField"
 import { FormLabelCreators } from "@/app/components/LabelForm"
 import { Modal } from "@/app/components/Modal"
+import { usePostPodcast } from "@/app/controllers/state/post-podcast-slice"; 
 import { useAppState } from "@/app/controllers/state/use-app-state"
 import Link from "next/link"
 import { ChangeEvent, useEffect, useRef, useState } from "react"
+import { useAccountNostr, useAccountProfile } from "../controllers/state/account-slice"
+import { useNostr } from "../controllers/state/nostr-slice"
 
 interface UploadOnModalProps {
   onCancel?: () => void
@@ -16,7 +19,11 @@ interface UploadOnModalProps {
 export default function UploadOnModal(props: UploadOnModalProps) {
   const { onCancel } = props
   const [publishModal, setPublishModal] = useState<boolean>(false)
-  const [isCheckedAudio, setIsCheckedAudio] = useState<boolean>(false)
+  const [isCheckedAudio, setIsCheckedAudio] = useState<boolean>(true)
+  const {nostrPool, nostrRelays} = useNostr();
+  const accountProfile = useAccountProfile();
+  const accountNostr = useAccountNostr();
+
 
   const handleCheckboxChangeAudio = (event: ChangeEvent<HTMLInputElement>) => {
     const { checked } = event.target
@@ -31,7 +38,6 @@ export default function UploadOnModal(props: UploadOnModalProps) {
     postPodcastSubmit,
     postPodcastHandleTitleChange,
     postPodcastTitle,
-    accountProfile,
     postPodcastDescription,
     postPodcastLud16,
     postPodcastUnlockCost,
@@ -44,7 +50,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
     postPodcastHandleLud16Change,
     postPodcastHandleDescriptionChange,
     postPodcastSetLud16,
-  } = useAppState()
+  } = usePostPodcast()
 
   useEffect(() => {
     if (accountProfile && accountProfile.lud16) {
@@ -57,9 +63,19 @@ export default function UploadOnModal(props: UploadOnModalProps) {
   }, [postPodcastClear])
 
   const handlePostSubmit = (event: any) => {
+
+    if (!accountNostr?.accountNIP07) {
+      alert("Please connect your Nostr account")
+      return
+    }
+
     // event.preventDefault();
     setPublishModal(true)
-    postPodcastSubmit({
+    postPodcastSubmit(
+      nostrPool,
+      nostrRelays,
+      accountNostr?.accountNIP07,
+      {
       onSuccess(ids) {
         console.log(ids)
         alert(`Note posted with id ${ids}`)
@@ -271,7 +287,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
 
             {/* ----- Toggle Paid Content Main Feed Page ----- */}
 
-            <label
+            {/* <label
               htmlFor="setAsGatedPodcast"
               className="relative inline-flex items-center px-2 py-1 border rounded-full cursor-pointer border-buttonAccent">
               <input
@@ -287,7 +303,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
               <span className="ml-3 text-xs font-medium text-white">
                 Paid Podcast?
               </span>
-            </label>
+            </label> */}
           </div>
           {/* Debugging / User Validation */}
           <p

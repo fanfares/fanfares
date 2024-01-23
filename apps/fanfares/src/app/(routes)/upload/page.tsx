@@ -8,11 +8,16 @@ import { Modal } from "@/app/components/Modal";
 import { useAppState } from "@/app/controllers/state/use-app-state";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { usePostPodcast } from "@/app/controllers/state/post-podcast-slice";
+import { useAccountNostr, useAccountProfile } from "@/app/controllers/state/account-slice";
+import { useNostr } from "@/app/controllers/state/nostr-slice";
 
 export default function Upload() {
   const [publishModal, setPublishModal] = useState<boolean>(false);
+  const accountProfile = useAccountProfile();
+  const accountNostr = useAccountNostr();
+  const { nostrPool, nostrRelays } = useNostr();
 
-  const formRef = useRef<HTMLFormElement>(null);
   const {
     postPodcastCheckTC,
     postPodcastClear,
@@ -20,7 +25,6 @@ export default function Upload() {
     postPodcastSubmit,
     postPodcastHandleTitleChange,
     postPodcastTitle,
-    accountProfile,
     postPodcastDescription,
     postPodcastLud16,
     postPodcastUnlockCost,
@@ -33,7 +37,10 @@ export default function Upload() {
     postPodcastHandleLud16Change,
     postPodcastHandleDescriptionChange,
     postPodcastSetLud16,
-  } = useAppState();
+  } = usePostPodcast();
+
+  const formRef = useRef<HTMLFormElement>(null);
+
 
   useEffect(() => {
     if (accountProfile && accountProfile.lud16) {
@@ -46,9 +53,19 @@ export default function Upload() {
   }, [postPodcastClear]);
 
   const handlePostSubmit = (event: any) => {
+
+    if(!accountNostr?.accountNIP07){
+      alert("Please connect your Nostr account");
+      return;
+    }
+
     // event.preventDefault();
     setPublishModal(true);
-    postPodcastSubmit({
+    postPodcastSubmit(
+      nostrPool,
+      nostrRelays,
+      accountNostr.accountNIP07,
+      {
       onSuccess(ids) {
         console.log(ids);
         alert(`Note posted with id ${ids}`);
