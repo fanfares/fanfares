@@ -15,6 +15,7 @@ import { useAppState } from "../controllers/state/use-app-state"
 import { usePodcastActions, usePodcastEpisodes, usePodcastFetching } from "../controllers/state/podcast-slice"
 import { useNostr } from "../controllers/state/nostr-slice"
 import { useRouter } from "next/navigation"
+import { GATE_SERVER } from "../controllers/nostr/nostr-defines"
 
 config.autoAddCss = false /* eslint-disable import/first */
 export interface DiscoveryMediaInfo extends Metadata {
@@ -42,6 +43,7 @@ function DiscoverPageContent() {
 
   useEffect(() => {
     if(nostrPool && nostrRelays){
+      alert(GATE_SERVER);
       console.log("Fetching Podcasts");
 
       podcastFetch(
