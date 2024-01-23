@@ -40,7 +40,7 @@ export function AudioPlayer() {
   const [currentTime, setCurrentTime] = useState<number>(0)
   const [volume, setVolume] = useState<number>(80)
   const [playerIsGlobalPlayerShowing, setPlayerIsGlobalPlayerShowing] =
-    useState<boolean>(true)
+    useState<boolean>(false)
 
   // --------------- REFERENCES---------------
   const audioPlayer = useRef<HTMLAudioElement>(null)

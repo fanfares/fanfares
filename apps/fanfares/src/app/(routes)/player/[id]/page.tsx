@@ -5,30 +5,28 @@ import { MediaThumbnailUploadField } from "@/app/components/MediaThumbnailUpload
 import { faAlignLeft, faPlayCircle } from "@fortawesome/pro-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { config } from "@fortawesome/fontawesome-svg-core"
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams } from "next/navigation"
 import { useEffect } from "react"
-import { usePlayerPageActions, usePlayerPageGateId } from "@/app/controllers/state/player-page-slice"
+import {
+  usePlayerPageActions,
+  usePlayerPageGateId,
+} from "@/app/controllers/state/player-page-slice"
 
 config.autoAddCss = false /* eslint-disable import/first */
 
-
-function getIdFromUrl(pathname: string){
-  const split = pathname.split("/");
-  return split[split.length - 1];
-} 
-
+function getIdFromUrl(pathname: string) {
+  const split = pathname.split("/")
+  return split[split.length - 1]
+}
 
 export default function PlayerPage() {
-  const gateId = usePlayerPageGateId();
-  const { setPlayerPageGateId } = usePlayerPageActions();
+  const gateId = usePlayerPageGateId()
+  const { setPlayerPageGateId } = usePlayerPageActions()
   const pathname = getIdFromUrl(usePathname())
 
-
-  useEffect(()=>{
-    if(gateId !== pathname)
-      setPlayerPageGateId(pathname);
+  useEffect(() => {
+    if (gateId !== pathname) setPlayerPageGateId(pathname)
   }, [pathname, gateId])
-
 
   const renderThumbnail = () => {
     // if (editModeOn) {
@@ -80,7 +78,7 @@ export default function PlayerPage() {
           onClick={() => {}}>
           <FontAwesomeIcon className="w-10 md:w-14" icon={faPlayCircle} />
         </button>
-        <div className="flex flex-row items-center justify-center gap-2 my-auto md:gap-2">
+        {/* <div className="flex flex-row items-center justify-center gap-2 my-auto md:gap-2">
           <div className="flex items-center gap-2">
             <Button
               aria-label="Make a donation"
@@ -97,15 +95,15 @@ export default function PlayerPage() {
               label="Share"
             />
           </div>
-        </div>
+        </div> */}
       </div>
     )
   }
 
   return (
     <section className="flex w-full flex-col space-y-12">
-      <h1 className="font-black text-center text-gray-100 text-xl/4 md:mt-4 md:text-start md:text-4xl">
-        Player Page{" "}{gateId}
+      <h1 className="font-black text-center text-gray-100 text-xl/4 md:mt-4 md:text-start md:text-4xl truncate">
+        Player Page {gateId}
       </h1>
       <div className="flex items-start w-full max-w-5xl gap-8">
         <div className="w-72 flex flex-col gap-2">
@@ -136,12 +134,12 @@ export default function PlayerPage() {
                 <p className="">Description</p>
               </div>
               <p> Episode description box area</p>
-              <button
+              {/* <button
                 aria-label="Expand description"
                 type="button"
                 className={`text-xs font-thin block ml-auto`}>
-                {"showMore" ? "Hide..." : "Show more..."}
-              </button>
+                {showMore ? "Hide..." : "Show more..."}
+              </button> */}
             </div>
           </div>
 
