@@ -171,7 +171,7 @@ export default function PlayerPage() {
 
     return (
       <div className="flex gap-4 items-center h-20 ">
-        {!podcast.audioFilepath ? (
+        {podcast.audioFilepath ? (
           <>
             <button
               aria-label="Play"
