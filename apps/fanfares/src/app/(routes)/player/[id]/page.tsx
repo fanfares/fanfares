@@ -148,57 +148,57 @@ export default function PlayerPage() {
         <Button
           aria-label="Buy"
           id={"E2EID.playerBuyButton"}
-          label={"Buy this Podcast"}
-          className="px-2 text-xs md:px-4 md:text-base"
+          label={
+            <div className="flex flex-col">
+              <p className="relative">Buy this Podcast</p>
+              <span className="text-xs font-thin text-center text-white absolute -bottom-4 inset-x-0">
+                {" "}
+                It cost's {podcast.gate.cost} sats
+              </span>
+            </div>
+          }
+          className="px-2 text-xs md:px-4 md:text-base relative"
           onClick={buyPodcast}
         />
-        <p className="text-xs font-bold text-center text-white mt-2">
-          It cost's {podcast.gate.cost} sats
-        </p>
+        <p className=" "></p>
       </div>
     )
   }
 
   const renderActionMenu = () => {
     if (!podcast) return null
-    if (!podcast.audioFilepath) return renderBuy()
+    // if (!podcast.audioFilepath) return renderBuy()
 
     return (
-      <div className="flex gap-4">
-        <button
-          aria-label="Play"
-          id={"E2EID.playerPlayButton"}
-          onClick={() => {
-            if (playerPageIsPlaying) {
-              playerPageSetPlaying(false)
-            } else {
-              playerPageSetPlaying(true)
-            }
-          }}>
-          <FontAwesomeIcon
-            className="w-10 md:w-14"
-            icon={playerPageIsPlaying ? faPauseCircle : faPlayCircle}
-          />
-        </button>
-
-        <div className="flex flex-row items-center justify-center gap-2 my-auto md:gap-2">
-          <div className="flex items-center gap-2">
-            {/* <Button
-              aria-label="Make a donation"
-              id={"E2EID.playerDonateButton"}
-              label={"Contribute ⚡️"}
-              className="px-2 text-xs md:px-4 md:text-base"
-              onClick={() => {}}
-            /> */}
-            <Button
-              aria-label="Share episode on Socials"
-              id={"E2EID.playerShareButton"}
-              className="px-2 text-xs md:px-4 md:text-base"
-              onClick={() => copyToClipboard(currentUrl)}
-              label={copied ? "Copied" : "Copy Link"}
-            />
-          </div>
-        </div>
+      <div className="flex gap-4 items-center h-20 ">
+        {!podcast.audioFilepath ? (
+          <>
+            <button
+              aria-label="Play"
+              id={"E2EID.playerPlayButton"}
+              onClick={() => {
+                if (playerPageIsPlaying) {
+                  playerPageSetPlaying(false)
+                } else {
+                  playerPageSetPlaying(true)
+                }
+              }}>
+              <FontAwesomeIcon
+                className="w-10 md:w-14"
+                icon={playerPageIsPlaying ? faPauseCircle : faPlayCircle}
+              />
+            </button>
+          </>
+        ) : (
+          renderBuy()
+        )}
+        <Button
+          aria-label="Share episode on Socials"
+          id={"E2EID.playerShareButton"}
+          className="px-2 text-xs md:px-4 md:text-base"
+          onClick={() => copyToClipboard(currentUrl)}
+          label={copied ? "Copied" : "Copy Link"}
+        />
       </div>
     )
   }
