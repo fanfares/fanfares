@@ -18,6 +18,8 @@ export interface AudioPlayerProps {
 export function AudioPlayer(props: AudioPlayerProps) {
   const { audioUrl } = props;
 
+  if(!audioUrl) return null;
+
 
   // const router = useRouter()
   // const playThreshold = getConfig().playedThreshold

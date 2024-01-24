@@ -161,9 +161,8 @@ export const createPlayerPageSlice: StateCreator<
             audioFilepath,
         }
         set({ playerPagePodcast: newPodcast });
-
-    } catch (e) {
-        set({ playerPageError: `${e}` });
+    } catch (error) {
+        console.error(error);
     } finally {
         set({ playerPageIsUnlocking: false });
     }
@@ -180,7 +179,9 @@ export const createPlayerPageSlice: StateCreator<
         webln: WebLNProvider,
   ) => {
 
+    console.log('buyPodcast');
     try {
+
         if(!nostrRelays) throw new Error("No relays");
         if(!nostrPool) throw new Error("No pool");
         if(!podcast) throw new Error("No podcast");
@@ -189,18 +190,34 @@ export const createPlayerPageSlice: StateCreator<
         if(!nip04) throw new Error("No NIP-04");
         if(!nip07) throw new Error("No NIP-07");
 
+    console.log('test');
+
         set({ playerPageIsUnlocking: true });
 
 
         const uri = `${podcast.gate.endpoint}/${podcast.gate.note.id}`;
+    console.log(uri);
+
         const invoiceResponse = await fetch(uri);
+    console.log('test');
+
         const invoiceResponseJson = (await invoiceResponse.json()) as PREntry;
+
+    console.log('payment');
 
         await webln.sendPayment(invoiceResponseJson.pr);
 
+    console.log('done payment');
+
         const resultResponse = await fetch(invoiceResponseJson.successAction.url);
+    console.log('fetch');
+
         const resultResponseJson = await resultResponse.json();
+    console.log('result');
+
         const secret = resultResponseJson.secret;
+
+    console.log('encrypt');
 
         const encryptedKey = await nip04.encrypt(podcast.gate.note.pubkey, secret);
 
@@ -212,7 +229,11 @@ export const createPlayerPageSlice: StateCreator<
             true
         );
 
+    console.log('sign');
+
         const keySigned = await nip07.signEvent(key);
+    console.log('publish');
+
         await nostrPool.publish(nostrRelays, keySigned);
 
         const content = unlockGatedNote(podcast.gate.note, secret);
@@ -228,7 +249,9 @@ export const createPlayerPageSlice: StateCreator<
         set({ playerPagePodcast: newPodcast });
 
     } catch (error) {
-        alert(error);
+        console.log('error');
+        console.error(error);
+        console.log(error);
     } finally {
         set({ playerPageIsUnlocking: false });
     }
