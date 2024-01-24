@@ -2,7 +2,7 @@
 import { AudioPlayer } from "@/app/components/AudioPlayer";
 import Button from "@/app/components/Button";
 import { MediaThumbnailUploadField } from "@/app/components/MediaThumbnailUploadField";
-import { faAlignLeft, faPlayCircle } from "@fortawesome/pro-solid-svg-icons";
+import { faAlignLeft, faPauseCircle, faPlayCircle } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -12,6 +12,7 @@ import {
   usePlayerPageError,
   usePlayerPageGateId,
   usePlayerPageIsLoading,
+  usePlayerPageIsPlaying,
   usePlayerPagePodcast,
 } from "@/app/controllers/state/player-page-slice";
 import { useNostr } from "@/app/controllers/state/nostr-slice";
@@ -54,15 +55,17 @@ function formatDate(date: Date): string {
 }
 
 export default function PlayerPage() {
+  const isPlaying = usePlayerPageIsPlaying();
   const gateId = usePlayerPageGateId();
   const accountNostr = useAccountNostr();
   const webln = useAccountWebln();
   const { nostrPool, nostrRelays } = useNostr();
-  const { playerPageSetGateId, playerPageBuyPodcast, playerPageUnlockPodcast } =
+  const { playerPageSetGateId, playerPageBuyPodcast, playerPageUnlockPodcast, playerPageSetPlaying } =
     usePlayerPageActions();
   const playerPageIsLoading = usePlayerPageIsLoading();
   const podcast = usePlayerPagePodcast();
   const playerPageError = usePlayerPageError();
+  const playerPageIsPlaying = usePlayerPageIsPlaying();
   const pathname = getIdFromUrl(usePathname());
 
   useEffect(() => {
@@ -144,9 +147,18 @@ export default function PlayerPage() {
         <button
           aria-label="Play"
           id={"E2EID.playerPlayButton"}
-          onClick={() => {}}
+          onClick={() => {
+            if(playerPageIsPlaying) {
+              playerPageSetPlaying(false);
+            } else {
+              playerPageSetPlaying(true);
+            }
+          }}
         >
-          <FontAwesomeIcon className="w-10 md:w-14" icon={faPlayCircle} />
+          <FontAwesomeIcon className="w-10 md:w-14" icon={
+            playerPageIsPlaying ?
+            faPauseCircle : faPlayCircle
+          } />
         </button>
         {/* <div className="flex flex-row items-center justify-center gap-2 my-auto md:gap-2">
           <div className="flex items-center gap-2">
@@ -257,7 +269,7 @@ export default function PlayerPage() {
           </div>
         </div>
         <hr className="w-full mt-4 mb-4 border-buttonDisabled/40 " />
-        <AudioPlayer audioUrl={podcast.audioFilepath} />
+        <AudioPlayer />
         {/* {renderChat()} */}
       </>
     );

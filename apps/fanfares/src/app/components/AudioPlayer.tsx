@@ -10,15 +10,15 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { Fragment, useCallback, useEffect, useRef, useState } from "react"
+import { usePlayerPageActions, usePlayerPageIsLoading, usePlayerPageIsPlaying, usePlayerPagePodcast } from "../controllers/state/player-page-slice"
+import { Podcast } from "../controllers/state/podcast-slice"
 
-export interface AudioPlayerProps {
-  audioUrl?: string
-}
+export function AudioPlayer() {
+  const { playerPageSetPlaying } =
+  usePlayerPageActions();
+const isPlaying = usePlayerPageIsPlaying();
+const podcast = usePlayerPagePodcast();
 
-export function AudioPlayer(props: AudioPlayerProps) {
-  const { audioUrl } = props;
-
-  if(!audioUrl) return null;
 
 
   // const router = useRouter()
@@ -86,44 +86,21 @@ export function AudioPlayer(props: AudioPlayerProps) {
   //--------------- FUNCTIONS ---------------
 
   const onLoad = useCallback(async () => {
-    let rawDuration = audioPlayer.current?.duration
-    //   if (isNaN(rawDuration)) rawDuration = 0
-    //   const seconds = Math.floor(rawDuration)
+    let rawDuration = audioPlayer.current?.duration ?? 0
+      if (isNaN(rawDuration)) rawDuration = 0
+      const seconds = Math.floor(rawDuration)
 
-    //   playerUpdateSizeAndDuration(rawDuration)
-    //   setDuration(seconds)
+      // playerUpdateSizeAndDuration(rawDuration)
+      setDuration(seconds)
 
-    //   if (progressBar.current) {
-    //     progressBar.current.max = seconds.toString()
-    //   }
+      if (progressBar.current) {
+        progressBar.current.max = seconds.toString()
+      }
 
-    //   if (playerIsPlaying) play()
-    //   // eslint-disable-next-line
-    //
+      // eslint-disable-next-line
+    
   }, ["playerAudioUrl"])
 
-  // const tickMediaPlayed = useCallback(() => {
-  //   if (playCountTicked.current) return
-
-  //   const deltaTime = audioPlayer.current.currentTime - previousTime.current
-  //   previousTime.current = audioPlayer.current.currentTime
-
-  //   if (deltaTime < 1) {
-  //     listenedDuration.current = listenedDuration.current + deltaTime
-  //   }
-
-  //   if (listenedDuration.current >= duration * playThreshold) {
-  //     tickFirebaseMediaPlaysUnsafe(playerMediaKey)
-  //     playCountTicked.current = true
-  //   }
-  // }, [
-  //   audioPlayer,
-  //   previousTime,
-  //   playCountTicked,
-  //   duration,
-  //   // playerMediaKey,
-  //   // tickFirebaseMediaPlaysUnsafe,
-  // ])
 
   const changePlayerCurrentTime = useCallback(() => {
     if (progressBar.current) {
@@ -136,53 +113,54 @@ export function AudioPlayer(props: AudioPlayerProps) {
     // eslint-disable-next-line
   }, [duration, setCurrentTime])
 
-  // const whilePlaying = useCallback(() => {
-  //   if (audioPlayer.current) {
-  //     if (progressBar.current) {
-  //       // Set listened duration
+  const whilePlaying = useCallback(() => {
+    if (audioPlayer.current) {
+      if (progressBar.current) {
+        // Set listened duration
 
-  //       tickMediaPlayed()
+        // Set progress bar
+        progressBar.current.value = audioPlayer.current.currentTime.toString()
+      }
+      changePlayerCurrentTime()
+      animationRef.current = requestAnimationFrame(whilePlaying)
+    } else {
+      cancelAnimationFrame(animationRef?.current ?? 0)
+    }
+    // eslint-disable-next-line
+  }, [changePlayerCurrentTime])
 
-  //       // Set progress bar
-  //       progressBar.current.value = audioPlayer.current.currentTime.toString()
-  //     }
-  //     changePlayerCurrentTime()
-  //     animationRef.current = requestAnimationFrame(whilePlaying)
-  //   } else {
-  //     cancelAnimationFrame(animationRef.current)
-  //   }
-  //   // eslint-disable-next-line
-  // }, [changePlayerCurrentTime])
+  const play = useCallback(async () => {
+    if(!audioPlayer.current) return;
+    await audioPlayer.current.play()
+    animationRef.current = requestAnimationFrame(whilePlaying)
+    // eslint-disable-next-line
+  }, [audioPlayer, animationRef, whilePlaying])
 
-  // const play = useCallback(async () => {
-  //   await audioPlayer.current.play()
-  //   animationRef.current = requestAnimationFrame(whilePlaying)
-  //   // eslint-disable-next-line
-  // }, [audioPlayer, animationRef, whilePlaying])
+  const pause = useCallback(() => {
+    if(!audioPlayer.current) return;
+    if (audioPlayer.current) {
+      audioPlayer.current.pause()
+      cancelAnimationFrame(animationRef?.current ?? 0)
+    }
+    // eslint-disable-next-line
+  }, [audioPlayer, animationRef])
 
-  // const pause = useCallback(() => {
-  //   if (audioPlayer.current) {
-  //     audioPlayer.current.pause()
-  //     cancelAnimationFrame(animationRef.current)
-  //   }
-  //   // eslint-disable-next-line
-  // }, [audioPlayer, animationRef])
-
-  // useEffect(() => {
-  //   // Corss Origin is needed for Arweave to resolve
-  //   // setListenedDuration(0);
-  //   previousTime.current = 0
-  //   listenedDuration.current = 0
-  //   playCountTicked.current = false
-  //   audioPlayer.current.crossOrigin = "anonymous"
-  //   audioPlayer.current.onloadeddata = onLoad
-  // }, [
-  //   audioPlayer,
-  //   playerAudioUrl,
-  //   listenedDuration,
-  //   playCountTicked,
-  //   previousTime,
-  // ])
+  useEffect(() => {
+    // Corss Origin is needed for Arweave to resolve
+    // setListenedDuration(0);
+    if(!audioPlayer.current) return;
+    previousTime.current = 0
+    listenedDuration.current = 0
+    playCountTicked.current = false
+    audioPlayer.current.crossOrigin = "anonymous"
+    audioPlayer.current.onloadeddata = onLoad
+  }, [
+    audioPlayer,
+    podcast,
+    listenedDuration,
+    playCountTicked,
+    previousTime,
+  ])
 
   // useEffect(() => {
   //   if (!playerIsLoading && playerIsPlaying) {
@@ -191,6 +169,17 @@ export function AudioPlayer(props: AudioPlayerProps) {
   //     pause()
   //   }
   // }, [pause, play, playerIsPlaying, playerIsLoading])
+
+    //--------------- USE EFFECTS ---------------
+    useEffect(() => {
+      if (audioPlayer.current) {
+        if(isPlaying){
+          play();
+        } else {
+          pause();
+        }
+      }
+    }, [isPlaying])
 
   //--------------- CONTROLS ---------------
 
@@ -227,14 +216,15 @@ export function AudioPlayer(props: AudioPlayerProps) {
       <>
         <div className="absolute left-16 top-4 max-w-[268px] md:top-3 md:max-w-md">
           <p className="text-sm font-bold truncate text-skin-base md:w-full md:text-base">
-            {/* {title} */}
+            {(podcast as Podcast).title}
           </p>
 
-          <Link
+          {/* TODO */}
+          {/* <Link
             className="mt-1 flex w-40 truncate text-[0.7rem] text-skin-muted hover:underline md:w-64 md:text-[1rem] md:text-xs"
             href={"/creator/" + "owner"}>
             Creator
-          </Link>
+          </Link> */}
         </div>
       </>
     )
@@ -246,7 +236,7 @@ export function AudioPlayer(props: AudioPlayerProps) {
         <div className="absolute left-2 top-6 ">
           <Image
             // loader={contentfulLoader}
-            src={""}
+            src={(podcast as Podcast).imageFilepath}
             alt=""
             width={50}
             height={50}
@@ -423,14 +413,13 @@ export function AudioPlayer(props: AudioPlayerProps) {
     )
   }
 
-  const [isPlaying, setIsPlaying] = useState(false)
   function playerTogglePlaying() {
     if (!isPlaying) {
-      audioPlayer.current?.play()
-      setIsPlaying(!isPlaying)
+      // audioPlayer.current?.play()
+      playerPageSetPlaying(true)
     } else {
-      audioPlayer.current?.pause()
-      setIsPlaying(!isPlaying)
+      // audioPlayer.current?.pause()
+      playerPageSetPlaying(false)
     }
   }
 
@@ -476,7 +465,7 @@ export function AudioPlayer(props: AudioPlayerProps) {
       <div className="fixed left-0 z-50 justify-center w-full h-10 -bottom-1 ">
         <audio
           ref={audioPlayer}
-          src={audioUrl}
+          src={(podcast as Podcast).audioFilepath}
           preload="metadata"></audio>
         <div
           className={`absolute bottom-3 w-full max-w-7xl rounded-2xl border-t-2 border-buttonAccentHover transition-transform duration-300 ease-linear md:bottom-5 md:left-60 md:w-[70%] 
@@ -556,6 +545,9 @@ export function AudioPlayer(props: AudioPlayerProps) {
   //     </div>
   //   )
   // }
+
+  if(!podcast || !podcast.audioFilepath) return null;
+
 
   return (
     // <Media
