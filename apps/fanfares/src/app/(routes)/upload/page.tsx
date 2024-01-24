@@ -1,22 +1,25 @@
-"use client";
-import Button from "@/app/components/Button";
-import { MediaAudioUploadField } from "@/app/components/MediaAudioUploadField";
-import { MediaCreatorForm } from "@/app/components/MediaCreatorForm";
-import { MediaThumbnailUploadField } from "@/app/components/MediaThumbnailUploadField";
-import { FormLabelCreators } from "@/app/components/LabelForm";
-import { Modal } from "@/app/components/Modal";
-import { useAppState } from "@/app/controllers/state/use-app-state";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { usePostPodcast } from "@/app/controllers/state/post-podcast-slice";
-import { useAccountNostr, useAccountProfile } from "@/app/controllers/state/account-slice";
-import { useNostr } from "@/app/controllers/state/nostr-slice";
+"use client"
+import Button from "@/app/components/Button"
+import { MediaAudioUploadField } from "@/app/components/MediaAudioUploadField"
+import { MediaCreatorForm } from "@/app/components/MediaCreatorForm"
+import { MediaThumbnailUploadField } from "@/app/components/MediaThumbnailUploadField"
+import { FormLabelCreators } from "@/app/components/LabelForm"
+import { Modal } from "@/app/components/Modal"
+import { useAppState } from "@/app/controllers/state/use-app-state"
+import Link from "next/link"
+import { useEffect, useRef, useState } from "react"
+import { usePostPodcast } from "@/app/controllers/state/post-podcast-slice"
+import {
+  useAccountNostr,
+  useAccountProfile,
+} from "@/app/controllers/state/account-slice"
+import { useNostr } from "@/app/controllers/state/nostr-slice"
 
 export default function Upload() {
-  const [publishModal, setPublishModal] = useState<boolean>(false);
-  const accountProfile = useAccountProfile();
-  const accountNostr = useAccountNostr();
-  const { nostrPool, nostrRelays } = useNostr();
+  const [publishModal, setPublishModal] = useState<boolean>(false)
+  const accountProfile = useAccountProfile()
+  const accountNostr = useAccountNostr()
+  const { nostrPool, nostrRelays } = useNostr()
 
   const {
     postPodcastCheckTC,
@@ -37,73 +40,70 @@ export default function Upload() {
     postPodcastHandleLud16Change,
     postPodcastHandleDescriptionChange,
     postPodcastSetLud16,
-  } = usePostPodcast();
+  } = usePostPodcast()
 
-  const formRef = useRef<HTMLFormElement>(null);
-
+  const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
     if (accountProfile && accountProfile.lud16) {
-      postPodcastSetLud16(accountProfile.lud16);
+      postPodcastSetLud16(accountProfile.lud16)
     }
-  }, [accountProfile]);
+  }, [accountProfile])
 
   useEffect(() => {
-    postPodcastClear();
-  }, [postPodcastClear]);
+    postPodcastClear()
+  }, [postPodcastClear])
 
   const handlePostSubmit = (event: any) => {
-
-    if(!accountNostr?.accountNIP07){
-      alert("Please connect your Nostr account");
-      return;
+    if (!accountNostr?.accountNIP07) {
+      alert("Please connect your Nostr account")
+      return
     }
 
     // event.preventDefault();
-    setPublishModal(true);
-    postPodcastSubmit(
-      nostrPool,
-      nostrRelays,
-      accountNostr.accountNIP07,
-      {
+    setPublishModal(true)
+    postPodcastSubmit(nostrPool, nostrRelays, accountNostr.accountNIP07, {
       onSuccess(ids) {
-        console.log(ids);
-        alert(`Note posted with id ${ids}`);
+        console.log(ids)
+        alert(`Note posted with id ${ids}`)
       },
       onError(error) {
-        alert(`Error posting note: ${error}`);
+        alert(`Error posting note: ${error}`)
       },
       onClear() {
-        formRef.current?.reset();
-        setPublishModal(false);
+        formRef.current?.reset()
+        setPublishModal(false)
       },
-    });
-  };
+    })
+  }
 
   return (
-    <section className="w-full">
+    <section className="w-full relative">
       {/* MODAL */}
-      <Modal isOpen={publishModal}>
+      {/* <Modal isOpen={true}>
         State {postPodcastState}
         <button onClick={() => setPublishModal(!publishModal)}>
           ❌ BUTTON CLOSE TEST
         </button>
-      </Modal>
+      </Modal> */}
 
       {/* FORM SECTION */}
-      <form onSubmit={handlePostSubmit} ref={formRef}>
+      <form onSubmit={handlePostSubmit} ref={formRef} className="">
         <div className="relative flex flex-col items-center justify-center w-full h-full">
           <div className="upperSectionForm flex flex-col w-full gap-4 md:flex-row">
             <div className="flex mx-auto">
               <div className="flex flex-col border border-buttonAccent px-2 py-1 rounded items-center justify-around w-full space-y-4 relative">
-                {postPodcastImageFile ? <img className="absolute object-cover object-center w-full h-full rounded" src={URL.createObjectURL(postPodcastImageFile)}></img> : null}
+                {postPodcastImageFile ? (
+                  <img
+                    className="absolute object-cover object-center w-full h-full rounded"
+                    src={URL.createObjectURL(postPodcastImageFile)}></img>
+                ) : null}
                 <p className="mt-2 text-sm">Upload Cover Image</p>
                 <label
                   htmlFor="thumbnailUpload"
                   className={`mx-auto bg-buttonAccentHover hover:bg-opacity-70 px-3 py-1 rounded-full ${
                     postPodcastImageFile ? "opacity-80" : ""
-                  }`}
-                >
+                  }`}>
                   <input
                     className="hidden"
                     type="file"
@@ -111,7 +111,7 @@ export default function Upload() {
                     aria-label="Thumbnail Upload"
                     onChange={postPodcastHandleImageChange}
                   />
-                  {postPodcastImageFile? "Change" : "Browse"}
+                  {postPodcastImageFile ? "Change" : "Browse"}
                 </label>
 
                 <div className="text-center text-skin-muted">
@@ -141,8 +141,7 @@ export default function Upload() {
                   <p
                     className={`absolute right-0 top-8 text-xs ${
                       "charsLeft < 8" ? "text-red-500" : "text-skin-inverted"
-                    }`}
-                  >
+                    }`}>
                     {" "}
                     {"100"}
                   </p>
@@ -163,8 +162,7 @@ export default function Upload() {
                 <p
                   className={`absolute -bottom-4 right-0 text-xs ${
                     "charsLeft < 8" ? "text-red-500" : "text-skin-inverted"
-                  }`}
-                >
+                  }`}>
                   {"100"}
                 </p>
               </div>
@@ -172,20 +170,22 @@ export default function Upload() {
           </div>
           <div
             id={"E2EID.uploadAudioInput"}
-            className="relative flex items-center w-full mt-8 border border-buttonAccent px-2 py-3 rounded"
-          >
-            <p className="text-xs">{postPodcastAudioFile? postPodcastAudioFile.name: "Select Audio File"}</p>
+            className="relative flex items-center w-full mt-8 border border-buttonAccent px-2 py-3 rounded">
+            <p className="text-xs">
+              {postPodcastAudioFile
+                ? postPodcastAudioFile.name
+                : "Select Audio File"}
+            </p>
             <label
               htmlFor="audioUpload"
-              className="mx-auto py-1 rounded-full cursor-pointer px-3 bg-buttonDefault"
-            >
+              className="mx-auto py-1 rounded-full cursor-pointer px-3 bg-buttonDefault">
               <input
                 type="file"
                 id="audioUpload"
                 className="hidden"
                 onChange={postPodcastHandleAudioChange}
               />
-              {postPodcastAudioFile ?  "Change" : "Browse"}
+              {postPodcastAudioFile ? "Change" : "Browse"}
             </label>
             <p className="text-xs w-24">Formats allowed: AAC / M4A / MP3</p>
           </div>
@@ -199,8 +199,7 @@ export default function Upload() {
                   id={"E2EID.uploadCreatorAddButton"}
                   type="button"
                   className="hidden items-center md:px-4 mt-auto text-xs bg-buttonDefault rounded-md px-2 py-1"
-                  onClick={() => {}}
-                >
+                  onClick={() => {}}>
                   Add Creator
                 </button>
               </div>
@@ -208,8 +207,7 @@ export default function Upload() {
                 {" "}
                 <div
                   key={"field.id"}
-                  className="flex flex-col w-full md:gap-4 md:flex-row md:items-center md:justify-center mt-4 space-y-4 md:space-y-0"
-                >
+                  className="flex flex-col w-full md:gap-4 md:flex-row md:items-center md:justify-center mt-4 space-y-4 md:space-y-0">
                   <FormLabelCreators>
                     {" "}
                     <p>
@@ -263,7 +261,9 @@ export default function Upload() {
           </div>
 
           {/* Debugging / User Validation */}
-          <p className="mt-8 text-red-600 hidden" id={"E2EID.uploadErrorMessage"}>
+          <p
+            className="mt-8 text-red-600 hidden"
+            id={"E2EID.uploadErrorMessage"}>
             {/* {validationError?.error ?? ""} */}
           </p>
           <p className="hidden" id={"E2EID.uploadErrorType"}>
@@ -283,13 +283,12 @@ export default function Upload() {
               I agree to the{" "}
               <Link
                 href=""
-                className="underline text-buttonMuted hover:text-buttonAccentHover"
-              >
+                className="underline text-buttonMuted hover:text-buttonAccentHover">
                 Terms and Conditions
               </Link>
             </label>
             <Button
-              onClick={()=>handlePostSubmit(null)}
+              onClick={() => handlePostSubmit(null)}
               type="button"
               label="Submit"
               id={"E2EID.uploadPublishButton"}
@@ -299,5 +298,5 @@ export default function Upload() {
         </div>
       </form>
     </section>
-  );
+  )
 }

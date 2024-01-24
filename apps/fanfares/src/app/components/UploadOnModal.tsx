@@ -88,18 +88,19 @@ export default function UploadOnModal(props: UploadOnModalProps) {
   }
 
   return (
-    <section className="w-full">
-      {/* MODAL */}
-      {/* <Modal isOpen={publishModal}>
-        State {postPodcastState}
-        <button onClick={() => setPublishModal(!publishModal)}>
-          ❌ BUTTON CLOSE TEST
-        </button>
-      </Modal> */}
-
-      {/* FORM SECTION */}
+    <section className="relative w-full">
+      {publishModal && (
+        <div className="absolute flex flex-col w-full h-full items-center justify-center z-50 backdrop-blur-sm">
+          <div
+            className="inline-block h-12 w-12 relative animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+            role="status"
+          />
+          <p className="mt-2">Your podcast is being uploaded...</p>
+          <p className="mt-2 font-thin text-sm">Status: {postPodcastState}</p>
+        </div>
+      )}
       <form className="w-full" onSubmit={handlePostSubmit} ref={formRef}>
-        <div className="relative flex flex-col items-center justify-center w-full h-full px-4 py-2">
+        <div className="relative flex flex-col w-full px-2 py-1">
           <div className="upperSectionForm flex flex-col w-full gap-4 md:flex-row">
             <div className="flex mx-auto">
               <div className="flex flex-col border border-buttonAccent px-2 py-1 rounded items-center justify-around w-full space-y-4 relative">

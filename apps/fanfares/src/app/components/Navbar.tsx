@@ -19,6 +19,8 @@ import { E2E } from "../controllers/testing/e2e"
 import { ProfileBuble } from "./ProfileBubble"
 import Button from "./Button"
 import { ActionButtonsPost } from "./ActionButtonsPost"
+import { Modal } from "./Modal"
+
 // import { useAppState } from 'src/controllers/state/use-app-state';
 // import { E2EID } from 'src/controllers/utils/e2e-ids';
 // import LoginLogoutButton from "src/views/components/LoginLogoutButton"
@@ -264,6 +266,7 @@ export function Navbar() {
         </div>
         {/* <div className={`static left-5 h-10 ${publicKey ? "mt-3" : ""}`}> */}
         <ActionButtonsPost />
+
         <ProfileBuble />
         <div className={`mx-auto left-5 h-10 mb-8`}>
           <a

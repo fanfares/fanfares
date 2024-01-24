@@ -1,6 +1,5 @@
 "use client"
 import { useState } from "react"
-import { toast } from "react-toastify"
 import AnimatedLabelInput from "./AnimatedLabelInput"
 import Button from "./Button"
 import Link from "next/link"
@@ -15,7 +14,7 @@ const ContactForm = () => {
     e.preventDefault()
 
     try {
-      const res = await fetch("/api/send-email", {
+      const res = await fetch("/apps/fanfares/src/app/api/send-email", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,17 +47,16 @@ const ContactForm = () => {
         <section className="mt-4">
           If you need any help, want to give any feedback, or want to upload
           your first audio, please reach out to us at:{" "}
-          <Link className="underline" href="mailto:support@fanfares.io">
-            support@fanfares.io{" "}
-          </Link>
+          <a className="underline" href="mailto:support@fanfares.io">
+            <p className="underline">support@fanfares.io</p>
+          </a>
           <p className="mt-2">
-            {" "}
             Alternatively you can send us a message using the form below.
           </p>{" "}
         </section>
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col items-start w-full mt-8"
+          className="flex flex-col items-start w-full mt-8 gap-4"
           action="">
           <AnimatedLabelInput
             onChange={e => setFormData({ ...formData, name: e.target.value })}
