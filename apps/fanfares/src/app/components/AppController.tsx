@@ -66,6 +66,8 @@ export function AppController(props: AppControllerProps) {
               accountNIP07: nip07,
               accountNIP04: nip07.nip04 as NIP04,
             });
+
+            console.log("\n --- Fetching Profile --- \n");
             accountFetchProfile(publicKey, nostrPool, nostrRelays);
 
             // gateFetch();
