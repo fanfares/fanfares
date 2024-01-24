@@ -71,6 +71,7 @@ export default function PlayerPage() {
   }, [pathname, gateId, nostrRelays, nostrPool]);
 
   useEffect(() => {
+
     if (
       accountNostr &&
       podcast &&
@@ -86,7 +87,7 @@ export default function PlayerPage() {
         accountNostr.accountPublicKey
       );
     }
-  }, [nostrRelays, nostrPool, accountNostr]);
+  }, [nostrRelays, nostrPool, accountNostr, podcast]);
 
   const buyPodcast = () => {
     if (!podcast) {
