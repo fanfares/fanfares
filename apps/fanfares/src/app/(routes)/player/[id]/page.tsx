@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client";
 import { AudioPlayer } from "@/app/components/AudioPlayer";
 import Button from "@/app/components/Button";
@@ -7,6 +8,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+=======
+"use client"
+import { AudioPlayer } from "@/app/components/AudioPlayer"
+import Button from "@/app/components/Button"
+import { MediaThumbnailUploadField } from "@/app/components/MediaThumbnailUploadField"
+import { faAlignLeft, faPlayCircle } from "@fortawesome/pro-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { config } from "@fortawesome/fontawesome-svg-core"
+import { usePathname, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
+>>>>>>> refs/remotes/origin/dev
 import {
   usePlayerPageActions,
   usePlayerPageError,
@@ -133,10 +145,22 @@ export default function PlayerPage() {
     );
   };
 
+  const [copyClipboard, setCopyClipboard] = useState(false)
+
   const renderActionMenu = () => {
+<<<<<<< HEAD
 
     if(!podcast) return null;
     if(!podcast.audioFilepath) return renderBuy();
+=======
+    const copyToClipboard = async (text: string) => {
+      setCopyClipboard(true)
+
+      setTimeout(() => setCopyClipboard(false), 1000)
+
+      navigator.clipboard.writeText(text)
+    }
+>>>>>>> refs/remotes/origin/dev
 
     return (
       <div className="flex gap-4">
@@ -147,24 +171,24 @@ export default function PlayerPage() {
         >
           <FontAwesomeIcon className="w-10 md:w-14" icon={faPlayCircle} />
         </button>
-        {/* <div className="flex flex-row items-center justify-center gap-2 my-auto md:gap-2">
+        <div className="flex flex-row items-center justify-center gap-2 my-auto md:gap-2">
           <div className="flex items-center gap-2">
-            <Button
+            {/* <Button
               aria-label="Make a donation"
               id={"E2EID.playerDonateButton"}
               label={"Contribute ⚡️"}
               className="px-2 text-xs md:px-4 md:text-base"
               onClick={() => {}}
-            />
+            /> */}
             <Button
               aria-label="Share episode on Socials"
               id={"E2EID.playerShareButton"}
               className="px-2 text-xs md:px-4 md:text-base"
-              onClick={() => {}}
-              label="Share"
+              onClick={() => copyToClipboard("Copied")}
+              label={copyClipboard ? "Copied!" : "Share"}
             />
           </div>
-        </div> */}
+        </div>
       </div>
     );
   };

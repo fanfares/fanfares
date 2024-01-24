@@ -1,5 +1,4 @@
 import ContactForm from "@/app/components/ContactForm"
-import Link from "next/link"
 
 function Support() {
   return (

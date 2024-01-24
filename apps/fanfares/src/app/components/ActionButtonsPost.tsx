@@ -132,7 +132,7 @@ export function ActionButtonsPost() {
         isOpen={
           noteModal || gatedNoteModal || gatedPodModal || genericNoteModal
         }>
-        <div>
+        <div className="w-full">
           {noteModal && (
             <PostFormOnModal onCancel={() => setNoteModal(!noteModal)} />
           )}
