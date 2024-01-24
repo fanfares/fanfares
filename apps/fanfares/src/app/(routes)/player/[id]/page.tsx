@@ -124,7 +124,7 @@ export default function PlayerPage() {
     return (
       <div className="flex flex-col items-center justify-center w-full h-full">
         <p className="text-3xl font-bold text-center text-white">
-          Buy this podcast for {podcast.gate.cost} sats
+          Buy this podcast for {Math.round(podcast.gate.cost / 1000)} sats
         </p>
         <Button
           aria-label="Buy"
