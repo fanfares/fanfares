@@ -74,7 +74,7 @@ const DEFAULT_STATE: PostPodcastSlice = {
   postPodcastTitle: "",
   postPodcastDescription: "",
   postPodcastLud16: "",
-  postPodcastUnlockCost: 0,
+  postPodcastUnlockCost: 10_000, // Sats
   postPodcastCheckTC: false,
 
   postPodcastAudioFile: null,
@@ -146,7 +146,7 @@ export const createPostPodcastSlice: StateCreator<
       postPodcastCheckTC: false,
       // Don't clear lud16
       //   postPodcastLud16: accountProfile?.lud16 || "",
-      postPodcastUnlockCost: 10000,
+      postPodcastUnlockCost: 10_000, // Sats
       postPodcastAudioFile: null,
       postPodcastAudioUrl: undefined,
       postPodcastImageFile: null,
@@ -264,7 +264,7 @@ export const createPostPodcastSlice: StateCreator<
         announcementNoteContent,
         announcementNoteTags,
         gateServer: GATE_SERVER,
-        cost: postPodcastUnlockCost,
+        costmSats: postPodcastUnlockCost * 1000,
         lud16: postPodcastLud16,
         nip07: accountNIP07,
         publish: async (note: NostrEvent) => {

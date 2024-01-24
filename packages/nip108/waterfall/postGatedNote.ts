@@ -22,7 +22,7 @@ export interface PostGatedNoteInput extends WaterfallRequirements {
   announcementNoteTags?: string[][];
 
   gateServer: string;
-  cost: number;
+  costmSats: number;
   lud16: string;
 
   _state?: PostGatedNoteState;
@@ -64,7 +64,7 @@ export async function postGatedNote(
     announcementNoteContent,
     announcementNoteKind,
     announcementNoteTags,
-    cost,
+    costmSats,
     lud16,
     debug,
   } = input;
@@ -95,7 +95,7 @@ export async function postGatedNote(
   if (!announcementNoteContent)
     throw new Error("Missing announcement note content");
   if (!gateServer) throw new Error("Missing gate server");
-  if (!cost) throw new Error("Missing cost");
+  if (!costmSats) throw new Error("Missing cost");
   if (!lud16) throw new Error("Missing lud16");
 
   switch (_state) {
@@ -144,7 +144,7 @@ export async function postGatedNote(
       const gatedNote = createGatedNoteUnsigned(
         _publicKey,
         _secret,
-        cost,
+        costmSats,
         gateServer,
         _signedGatedNote,
         debug
@@ -174,7 +174,7 @@ export async function postGatedNote(
             gateEvent: _signedGate,
             lud16: lud16,
             secret: _secret,
-            cost: cost,
+            cost: costmSats,
           };
   
           const response = await fetch(gateServer + "/create", {
@@ -194,7 +194,6 @@ export async function postGatedNote(
   
     }
     case "PUBLISH_GATE": {
-
 
       if(!_signedGate){
             _setState("SIGNING_GATE");

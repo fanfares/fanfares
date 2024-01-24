@@ -30,7 +30,7 @@ export default function Upload() {
     postPodcastTitle,
     postPodcastDescription,
     postPodcastLud16,
-    postPodcastUnlockCost,
+    postPodcastUnlockCostmSats: postPodcastUnlockCost,
     postPodcastHandleCheckTCChange,
     postPodcastHandleUnlockCostChange,
     postPodcastHandleAudioChange,

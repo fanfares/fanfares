@@ -155,7 +155,7 @@ export const createPostGatedNoteSlice: StateCreator<
         announcementNoteContent: postGatedNoteAnnouncementContent,
         announcementNoteTags: [],
         gateServer: GATE_SERVER,
-        cost: postGatedNoteUnlockCost,
+        costmSats: postGatedNoteUnlockCost,
         lud16: postGatedNoteLud16,
         nip07: accountNIP07,
         publish: async (note: NostrEvent) => {

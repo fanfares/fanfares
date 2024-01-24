@@ -178,6 +178,8 @@ export const createPodcastSlice: StateCreator<
         pool: SimplePool,
         relays: string[],
     ) => {
+
+        console.log('\n---- Fetching Podcasts -----\n');
     
 
         const podcastFetching = get().podcastFetching;
