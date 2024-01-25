@@ -76,8 +76,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
       onSuccess(ids) {
         console.log(ids)
         // alert(`Note posted with id ${ids}`)
-        if(onCancel)
-          onCancel();
+        if (onCancel) onCancel()
       },
       onError(error) {
         alert(`Error posting note: ${error}`)
@@ -262,7 +261,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
                           id={"`${E2EID.uploadCreatorWalletInputX}${index}`"}
                           autoComplete="off"
                           min={1}
-                          max={1000000}
+                          max={100000000}
                           className="border-b-2 border-buttonAccent bg-transparent text-sm font-thin outline-none placeholder:text-sm placeholder:font-semibold mt-2 placeholder:text-skin-muted/40 text-start"
                           placeholder="Unlock cost"
                           name={"`creators.${index}.wallet`"}
