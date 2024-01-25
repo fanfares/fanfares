@@ -8,6 +8,7 @@ import {
   faComment,
   faGlobe,
   faPodcast,
+  faBolt,
 } from "@fortawesome/pro-solid-svg-icons"
 
 // import { Keypair } from '@solana/web3.js';
@@ -206,6 +207,7 @@ export function Navbar() {
           <Link href="/" className="flex flex-col items-center mb-4">
             <p className="text-[7rem] relative">🎪</p>
             <span className="text-2xl bold relative -top-6">FanFares</span>
+            <span className="text-2xl bold relative -top-6">(Alpha)</span>
             {/* <Image
               // loader={contentfulLoader}
               className="cursor-pointer"
@@ -220,6 +222,8 @@ export function Navbar() {
         <div className="flex flex-col mx-auto mt-5 mb-20 space-y-4 ">
           {renderDesktopNavLink("/discover", "Nostr Podcasts", faPodcast)}
           {renderDesktopNavLink("/feed", "Nostr Universe", faGlobe)}
+          {renderDesktopNavLink("/support/", "Support", faQuestionCircle)}
+          {renderDesktopNavLink("/feedback/", "Earn Sats", faBolt)}
 
           {/* {renderDesktopNavLink(
             "/upload",
@@ -249,7 +253,6 @@ export function Navbar() {
               )
             : null} */}
           {/* {renderDesktopNavLink("/wallet", "Wallet", faWallet)} */}
-          {renderDesktopNavLink("/support/", "Support", faQuestionCircle)}
         </div>
         {/* <LoginLogoutButton /> */}
         <div className="mt-auto left-5">

@@ -1,5 +1,5 @@
 import { StateCreator, create } from 'zustand';
-import { CombinedState } from './use-app-state';
+import { CombinedState } from './old/use-app-state';
 import { SimplePool } from 'nostr-tools';
 import { WebLNProvider, requestProvider } from "webln";
 import { NIP04, NIP07 } from 'utils';
@@ -22,7 +22,7 @@ export interface AccountSlice {
             publicKey: string,
             pool: SimplePool,
             relays: string[],
-        ) => void;
+        ) => Promise<void>;
     };
 }
 
@@ -34,7 +34,7 @@ const DEFAULT_STATE: AccountSlice = {
     actions: {
         accountSetNostr: (nostr) => {},
         accountSetWebln: (webln) => {},
-        accountFetchProfile: (
+        accountFetchProfile: async (
             publicKey,
             pool,
             relays,
@@ -63,31 +63,31 @@ export const createAccountSlice: StateCreator<
         set({accountWebln: webln});
     }
 
-    const accountFetchProfile = (
+    const accountFetchProfile = async (
         publicKey: string,
         pool: SimplePool,
         relays: string[],
     ) => {
 
-        console.log("-- Fetching profile --");
+        try {
+            const profileEvent = await pool.get(relays, {
+                kinds: [0],
+                limit: 1,
+                authors: [publicKey]
+            });
 
-        pool.get(relays, {
-            kinds: [0],
-            limit: 1,
-            authors: [publicKey]
-        }).then((profileEvent)=>{
-            if(!profileEvent) {
-                console.log("No profile event found");
-                return;
-            }
+            if(!profileEvent) throw new Error("No profile event found");
 
-            console.log("-- Profile Found --");
             set({
                 accountProfile: eventToNostrProfile(publicKey, profileEvent)
             });
-        }).catch((err)=>{
-            console.log("Failed to get profile event", err);
-        })
+
+        } catch (e) {
+
+            // So sentry can catch the error
+            throw new Error(`Failed to fetch profile - ${e}`);
+        }
+
     }
 
     return {

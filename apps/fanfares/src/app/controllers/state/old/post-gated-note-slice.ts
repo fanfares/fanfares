@@ -2,7 +2,7 @@ import { Event as NostrEvent, SimplePool } from "nostr-tools";
 import { StateCreator } from "zustand";
 import { CombinedState } from "./use-app-state";
 import { PostGatedNoteIds, PostGatedNoteState, postGatedNote } from "nip108";
-import { GATE_SERVER } from "../nostr/nostr-defines";
+import { GATE_SERVER } from "../../nostr/nostr-defines";
 import { NIP07 } from "utils";
 
 export interface PostGatedNoteCallbacks {

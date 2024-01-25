@@ -15,6 +15,3 @@ export const GATE_SERVER = process.env.NEXT_PUBLIC_GATE_SERVER as string;
 
 export const nostrRelays = NOSTR_RELAYS;
 export const nostrPool = new SimplePool();
-export const nostrDisconnect = () => {
-    nostrPool.close(nostrRelays);
-};

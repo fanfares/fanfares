@@ -1,7 +1,7 @@
 "use client";
 
-import { useAppState } from "@/app/controllers/state/use-app-state";
-import { UserPageNote } from "@/app/controllers/state/user-page-slice";
+import { useAppState } from "@/app/controllers/state/old/use-app-state";
+import { UserPageNote } from "@/app/controllers/state/old/user-page-slice";
 import { createNoteUnsigned } from "nip108";
 import React, { useEffect } from "react";
 

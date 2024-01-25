@@ -194,7 +194,7 @@ export const createPostPodcastSlice: StateCreator<
 
     try {
       if (!postPodcastCheckTC)
-        throw new Error("User has not agreed to to the terms and conditions")
+        throw new Error("User has not checked the T&C")
       if (!postPodcastLud16) throw new Error("Missing lud16")
       if (!postPodcastUnlockCost) throw new Error("Missing unlock cost")
       if (!postPodcastTitle) throw new Error("Missing announcement")
@@ -314,6 +314,9 @@ export const createPostPodcastSlice: StateCreator<
       runOnSuccess({ ids, urls: [] })
     } catch (error) {
       runOnError(`${error}`)
+
+      // So sentry can catch the error
+      throw new Error(`Failed to post podcast - ${error}`)
     } finally {
       set({ postPodcastIsRunning: false })
     }

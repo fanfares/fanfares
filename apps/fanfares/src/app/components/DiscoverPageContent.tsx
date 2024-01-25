@@ -11,7 +11,7 @@ import Searchbar from "./Searchbar"
 import EpisodeCard from "./EpisodeCard"
 
 import { config } from "@fortawesome/fontawesome-svg-core"
-import { useAppState } from "../controllers/state/use-app-state"
+import { useAppState } from "../controllers/state/old/use-app-state"
 import { usePodcastActions, usePodcastEpisodes, usePodcastFetching } from "../controllers/state/podcast-slice"
 import { useNostr } from "../controllers/state/nostr-slice"
 import { useRouter } from "next/navigation"
@@ -35,7 +35,7 @@ function DiscoverPageContent() {
   // const { program, drmApi } = useAppState();
   const router = useRouter();
   const { nostrPool, nostrRelays } = useNostr();
-  const { podcastFetch, podcastUnlock } = usePodcastActions();
+  const { podcastFetch } = usePodcastActions();
   const podcastEpisodes = usePodcastEpisodes();
   const podcastFetching = usePodcastFetching();
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useAppState } from "../controllers/state/use-app-state";
+import { useAppState } from "../controllers/state/old/use-app-state";
 import { requestProvider } from "webln";
 import { NIP04, NIP07 } from "utils";
 import { usePrimalActions } from "../controllers/state/primal-slice";
@@ -51,6 +51,7 @@ export function AppController(props: AppControllerProps) {
         alert("Please download Alby or ZBD to use this app.");
       });
 
+    //TODO make this in nostrSlice
     // Nostr Account
     if ((window as any).nostr) {
       try {
@@ -67,12 +68,11 @@ export function AppController(props: AppControllerProps) {
               accountNIP04: nip07.nip04 as NIP04,
             });
 
-            console.log("\n --- Fetching Profile --- \n");
             accountFetchProfile(publicKey, nostrPool, nostrRelays);
 
             // gateFetch();
           })
-          .catch((e: any) => {
+          .catch((e) => {
             alert("Nostr not found - error getting public key");
           });
       } catch (e) {
@@ -95,24 +95,25 @@ export function AppController(props: AppControllerProps) {
     };
   }, []);
 
-  useEffect(() => {
-    if (
-      !podcastUnlocked &&
-      accountNostr &&
-      accountNostr.accountPublicKey &&
-      accountNostr.accountNIP04 &&
-      !podcastFetching &&
-      Object.keys(podcastEpisodes).length > 0
-    ) {
-      console.log("\n\nUnlocking Podcasts\n\n");
-      podcastUnlockAll(
-        nostrPool,
-        nostrRelays,
-        accountNostr.accountPublicKey,
-        accountNostr.accountNIP04
-      );
-    }
-  }, [podcastEpisodes, podcastFetching, accountNostr, podcastUnlocked]);
+  //TODO - this is a hacky way to unlock podcasts
+  // useEffect(() => {
+  //   if (
+  //     !podcastUnlocked &&
+  //     accountNostr &&
+  //     accountNostr.accountPublicKey &&
+  //     accountNostr.accountNIP04 &&
+  //     !podcastFetching &&
+  //     Object.keys(podcastEpisodes).length > 0
+  //   ) {
+  //     console.log("\n\nUnlocking Podcasts\n\n");
+  //     podcastUnlockAll(
+  //       nostrPool,
+  //       nostrRelays,
+  //       accountNostr.accountPublicKey,
+  //       accountNostr.accountNIP04
+  //     );
+  //   }
+  // }, [podcastEpisodes, podcastFetching, accountNostr, podcastUnlocked]);
 
   return children;
 }

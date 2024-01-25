@@ -1,6 +1,6 @@
 'use client';
 
-import { useAppState } from "../controllers/state/use-app-state";
+import { useAppState } from "../controllers/state/old/use-app-state";
 
 function getRandomAnimalEmoji(exceptEmoji: string): string {
     // List of animal emojis

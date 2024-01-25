@@ -1,3 +1,9 @@
+export async function GET(request: Request) {
+    // throw new Error("TEST EMAIL ERROR");
+  return new Response(JSON.stringify({email: true, get: true}), { status: 200 })
+}
+
+
 // import sgMail from "@sendgrid/mail"
 
 // import type { NextApiRequest, NextApiResponse } from "next"

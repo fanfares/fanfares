@@ -1,5 +1,5 @@
 'use client';
-import { useAppState } from "@/app/controllers/state/use-app-state";
+import { useAppState } from "@/app/controllers/state/old/use-app-state";
 import { Event as NostrEvent } from "nostr-tools";
 
 export default function WalletPage(){

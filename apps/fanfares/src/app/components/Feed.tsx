@@ -1,6 +1,6 @@
 "use client"
 import { generatePrivateKey } from "nostr-tools"
-import { useAppState } from "../controllers/state/use-app-state"
+import { useAppState } from "../controllers/state/old/use-app-state"
 import { FeedPost } from "./FeedPost"
 import {
   usePrimalNotes,

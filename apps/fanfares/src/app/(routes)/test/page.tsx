@@ -1,6 +1,6 @@
 "use client";
 
-import { useAppState, useTestState } from "@/app/controllers/state/use-app-state";
+import { useAppState, useTestState } from "@/app/controllers/state/old/use-app-state";
 import { createNoteUnsigned } from "nip108";
 import React, { useEffect } from "react";
 
