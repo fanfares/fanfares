@@ -154,7 +154,7 @@ export default function PlayerPage() {
               <p className="relative">Buy this Podcast</p>
               <span className="text-xs font-thin text-center text-white absolute -bottom-5 inset-x-0">
                 {" "}
-                It cost's {podcast.gate.cost / 1000} sats
+                It cost's {Math.round(podcast.gate.cost / 1000)} sats
               </span>
             </div>
           }

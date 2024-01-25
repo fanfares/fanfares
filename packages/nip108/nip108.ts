@@ -101,7 +101,7 @@ export function eventToAnnouncementNote(event: NostrEvent<number>): Announcement
 export function createGatedNoteUnsigned(
   publicKey: string,
   secret: string,
-  cost: number,
+  costmSats: number,
   endpoint: string,
   payload: NostrEvent<number>,
   debug?: boolean
@@ -116,7 +116,7 @@ export function createGatedNoteUnsigned(
     created_at: Math.floor(Date.now() / 1000),
     tags: [
       ["iv", encryptedNote.iv],
-      ["cost", cost.toString()],
+      ["cost", costmSats.toString()],
       ["endpoint", endpoint],
       ...(debug ? [["debug", "true"]] : [])
     ],

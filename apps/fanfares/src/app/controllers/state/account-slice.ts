@@ -69,13 +69,19 @@ export const createAccountSlice: StateCreator<
         relays: string[],
     ) => {
 
+        console.log("-- Fetching profile --");
+
         pool.get(relays, {
             kinds: [0],
             limit: 1,
             authors: [publicKey]
         }).then((profileEvent)=>{
-            if(!profileEvent) return;
+            if(!profileEvent) {
+                console.log("No profile event found");
+                return;
+            }
 
+            console.log("-- Profile Found --");
             set({
                 accountProfile: eventToNostrProfile(publicKey, profileEvent)
             });

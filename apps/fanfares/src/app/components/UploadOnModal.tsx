@@ -75,7 +75,9 @@ export default function UploadOnModal(props: UploadOnModalProps) {
     postPodcastSubmit(nostrPool, nostrRelays, accountNostr?.accountNIP07, {
       onSuccess(ids) {
         console.log(ids)
-        alert(`Note posted with id ${ids}`)
+        // alert(`Note posted with id ${ids}`)
+        if(onCancel)
+          onCancel();
       },
       onError(error) {
         alert(`Error posting note: ${error}`)
