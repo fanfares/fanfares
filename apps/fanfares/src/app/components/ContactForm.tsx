@@ -3,6 +3,7 @@ import { useState } from "react"
 import AnimatedLabelInput from "./AnimatedLabelInput"
 import Button from "./Button"
 import Link from "next/link"
+import sgMail from "@sendgrid/mail"
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -14,7 +15,7 @@ const ContactForm = () => {
     e.preventDefault()
 
     try {
-      const res = await fetch("/apps/fanfares/src/app/api/send-email", {
+      const res = await fetch("/api/sendgrid", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,11 +51,8 @@ const ContactForm = () => {
           <a className="underline" href="mailto:support@fanfares.io">
             <p className="underline">support@fanfares.io</p>
           </a>
-          {/* <p className="mt-2">
-            Alternatively you can send us a message using the form below.
-          </p>{" "} */}
         </section>
-        {/* <form
+        <form
           onSubmit={handleSubmit}
           className="flex flex-col items-start w-full mt-8 gap-4"
           action="">
@@ -82,7 +80,7 @@ const ContactForm = () => {
             label="Submit"
             className="flex items-center mt-8 px-4"
           />
-        </form> */}
+        </form>
       </div>
     </div>
   )
