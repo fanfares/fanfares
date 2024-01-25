@@ -1,5 +1,5 @@
 import { StateCreator, create } from "zustand";
-import { CombinedState } from "./use-app-state";
+import { CombinedState } from "./old/use-app-state";
 import { Podcast } from "./podcast-slice";
 import { SimplePool } from "nostr-tools";
 import {
@@ -140,6 +140,7 @@ export const createPlayerPageSlice: StateCreator<
       set({ playerPagePodcast: podcast });
     } catch (e) {
       set({ playerPageError: `${e}` });
+      throw new Error(`Error setting player page: ${e}`);
     } finally {
       set({ playerPageIsLoading: false });
     }
@@ -152,8 +153,11 @@ export const createPlayerPageSlice: StateCreator<
     nip04: any,
     publicKey: string
   ) => {
+
+    // already unlocked
     if (podcast.audioFilepath) return;
 
+    let noKey = false;
     set({ playerPageIsUnlocking: true });
 
     try {
@@ -163,7 +167,10 @@ export const createPlayerPageSlice: StateCreator<
         kinds: [NIP_108_KINDS.key],
       });
 
-      if (!rawKey) throw new Error("Key not found");
+      if (!rawKey){
+        noKey = true;
+        throw new Error("Key not found");
+      }
       const key = eventToKeyNote(rawKey);
 
       const decryptedSecret = await nip04.decrypt(
@@ -181,8 +188,13 @@ export const createPlayerPageSlice: StateCreator<
         audioFilepath,
       };
       set({ playerPagePodcast: newPodcast });
-    } catch (error) {
-      console.error(error);
+    } catch (e) {
+
+      if(!noKey){
+        throw new Error(`Error unlocking page: ${e}`);
+      } else {
+        console.log("No key found, need to buy podcast");
+      }
     } finally {
       set({ playerPageIsUnlocking: false });
     }
@@ -214,6 +226,9 @@ export const createPlayerPageSlice: StateCreator<
 
       await webln.sendPayment(invoiceResponseJson.pr);
       const resultResponse = await fetch(invoiceResponseJson.successAction.url);
+
+      if(!resultResponse.ok) throw new Error("Failed to get secret from server");
+
       const resultResponseJson = await resultResponse.json();
 
       const secret = resultResponseJson.secret;
@@ -246,10 +261,8 @@ export const createPlayerPageSlice: StateCreator<
         audioFilepath,
       };
       set({ playerPagePodcast: newPodcast });
-    } catch (error) {
-      console.log("error");
-      console.error(error);
-      console.log(error);
+    } catch (e) {
+      throw new Error(`Failed to unlock podcast - ${e}`);
     } finally {
       set({ playerPageIsUnlocking: false });
     }

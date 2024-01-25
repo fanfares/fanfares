@@ -1,7 +1,7 @@
 "use client"
 
 import { useAccountProfile } from "../controllers/state/account-slice"
-import { useAppState } from "../controllers/state/use-app-state"
+import { useAppState } from "../controllers/state/old/use-app-state"
 
 export function ProfileBuble() {
   const accountProfile = useAccountProfile()

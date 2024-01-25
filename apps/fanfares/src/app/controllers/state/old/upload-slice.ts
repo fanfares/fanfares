@@ -1,6 +1,6 @@
 import { StateCreator } from "zustand";
 import { CombinedState } from "./use-app-state";
-import { uploadToShdwDrive } from "../shdw/upload";
+import { uploadToShdwDrive } from "../../shdw/upload";
 
 export interface UploadSubmitCallbacks {
   onSuccess?: (uploadUrls: string[]) => void;

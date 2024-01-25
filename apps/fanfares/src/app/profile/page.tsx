@@ -1,7 +1,7 @@
 "use client"
 import { generatePrivateKey } from "nostr-tools"
 import Button from "../components/Button"
-import { useAppState } from "../controllers/state/use-app-state"
+import { useAppState } from "../controllers/state/old/use-app-state"
 import { FeedPost } from "../components/FeedPost"
 import { usePrimalNoteStats, usePrimalNotes, usePrimalProfiles } from "../controllers/state/primal-slice"
 

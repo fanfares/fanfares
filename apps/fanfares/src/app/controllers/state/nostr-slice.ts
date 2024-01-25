@@ -1,5 +1,5 @@
 import { StateCreator, create } from 'zustand';
-import { CombinedState } from './use-app-state';
+import { CombinedState } from './old/use-app-state';
 import { SimplePool } from 'nostr-tools';
 import { NOSTR_RELAYS } from '../nostr/nostr-defines';
 
