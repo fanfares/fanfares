@@ -1,9 +1,7 @@
 "use client"
 import { useState } from "react"
-import AnimatedLabelInput from "./AnimatedLabelInput"
-import Button from "./Button"
-import Link from "next/link"
-import sgMail from "@sendgrid/mail"
+import AnimatedLabelInput from "../../components/AnimatedLabelInput"
+import Button from "../../components/Button"
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({

@@ -1,4 +1,4 @@
-import ContactForm from "@/app/components/ContactForm"
+import ContactForm from "@/app/(routes)/support/ContactForm"
 
 function Support() {
   return (
