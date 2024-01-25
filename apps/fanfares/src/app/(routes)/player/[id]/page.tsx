@@ -25,6 +25,7 @@ import {
   useAccountNostr,
   useAccountWebln,
 } from "@/app/controllers/state/account-slice"
+import Image from "next/image"
 
 config.autoAddCss = false /* eslint-disable import/first */
 
@@ -151,9 +152,9 @@ export default function PlayerPage() {
           label={
             <div className="flex flex-col">
               <p className="relative">Buy this Podcast</p>
-              <span className="text-xs font-thin text-center text-white absolute -bottom-4 inset-x-0">
+              <span className="text-xs font-thin text-center text-white absolute -bottom-5 inset-x-0">
                 {" "}
-                It cost's {podcast.gate.cost} sats
+                It cost's {podcast.gate.cost / 1000} sats
               </span>
             </div>
           }
@@ -244,19 +245,27 @@ export default function PlayerPage() {
     return (
       <>
         <div className="flex items-start w-full max-w-5xl gap-8">
-          <div className="w-60 h-60 flex flex-col gap-2">
-            <img
-              src={podcast.imageFilepath}
-              alt=""
-              className="rounded-2xl object-cover w-full h-full"
-            />
-            <div className="flex justify-between">
-              <p className="text-center ml-auto">
+          <div className="w-36 h-36 md:w-48 md:h-48 flex flex-col gap-2">
+            <div className="relative w-full h-full">
+              <Image
+                alt="episode thumbnail"
+                src={podcast.imageFilepath}
+                fill
+                className="rounded border border-buttonDisabled"
+              />
+            </div>
+            <div className="flex justify-between ">
+              <p className="text-center ml-auto text-xs md:text-sm">
                 {formatDate(
                   new Date(podcast.announcement.note.created_at * 1000)
                 )}
               </p>
             </div>
+            {/* <img
+              src={podcast.imageFilepath}
+              alt=""
+              className="rounded-2xl object-cover border"
+            /> */}
           </div>
           <div className="flex flex-col items-start w-full">
             <div className="flex flex-col w-full mb-4 space-y-4 text-sm text-skin-muted">

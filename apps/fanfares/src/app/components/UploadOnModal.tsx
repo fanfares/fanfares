@@ -87,6 +87,10 @@ export default function UploadOnModal(props: UploadOnModalProps) {
     })
   }
 
+  const charsLeft = (text: string) => {
+    return text.length
+  }
+
   return (
     <section className="relative w-full">
       {publishModal && (
@@ -103,7 +107,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
         <div className="relative flex flex-col w-full px-2 py-1">
           <div className="upperSectionForm flex flex-col w-full gap-4 md:flex-row">
             <div className="flex mx-auto">
-              <div className="flex flex-col border border-buttonAccent px-2 py-1 rounded items-center justify-around w-full space-y-4 relative">
+              <div className="flex flex-col border border-buttonAccent px-2 py-1 rounded items-center justify-around w-48 h-48 space-y-4 relative">
                 {postPodcastImageFile ? (
                   <img
                     className="absolute object-cover object-center w-full h-full rounded"
@@ -143,19 +147,21 @@ export default function UploadOnModal(props: UploadOnModalProps) {
                     id={"E2EID.uploadTitleInput"}
                     autoComplete="false"
                     placeholder="Title"
-                    className="w-full border-b-2 border-buttonAccent bg-transparent outline-none font-thin text-lg placeholder:text-lg placeholder:font-thin placeholder:text-skin-muted"
+                    className="w-full border-b-2 border-buttonAccent bg-transparent outline-none font-thin text-sm placeholder:text-lg placeholder:font-thin placeholder:text-skin-muted"
                     // requiredMessage="Please enter the Episode name"
-                    maxLength={100}
+                    maxLength={20}
                     name="name"
                     onChange={postPodcastHandleTitleChange}
                     value={postPodcastTitle}
                   />
                   <p
                     className={`absolute right-0 top-8 text-xs ${
-                      "charsLeft < 8" ? "text-red-500" : "text-skin-inverted"
+                      20 - charsLeft(postPodcastTitle) < 8
+                        ? "text-red-500"
+                        : "text-skin-inverted"
                     }`}>
                     {" "}
-                    {"100"}
+                    {20 - charsLeft(postPodcastTitle)}
                   </p>
                 </label>
               </div>
@@ -165,17 +171,19 @@ export default function UploadOnModal(props: UploadOnModalProps) {
                 <textarea
                   id={"E2EID.uploadDescriptionInput"}
                   placeholder="Description"
-                  className="w-full h-40 min-h-[40px] max-h-[200px] bg-transparent border-b-2 outline-none resize-none notes active border-buttonAccent placeholder:text-lg placeholder:font-thin placeholder:text-skin-muted overflow-y-auto text-lg"
-                  maxLength={9999}
+                  className="w-full h-32 min-h-[40px] max-h-[200px] bg-transparent border-b-2 outline-none resize-none notes active border-buttonAccent placeholder:text-lg placeholder:font-thin placeholder:text-skin-muted overflow-y-auto text-sm"
+                  maxLength={1000}
                   name="description"
                   onChange={postPodcastHandleDescriptionChange}
                   value={postPodcastDescription}
                 />
                 <p
                   className={`absolute -bottom-4 right-0 text-xs ${
-                    "charsLeft < 8" ? "text-red-500" : "text-skin-inverted"
+                    1000 - charsLeft(postPodcastDescription) < 8
+                      ? "text-red-500"
+                      : "text-skin-inverted"
                   }`}>
-                  {"100"}
+                  {1000 - charsLeft(postPodcastDescription)}
                 </p>
               </div>
             </div>
@@ -251,6 +259,8 @@ export default function UploadOnModal(props: UploadOnModalProps) {
                           type="number"
                           id={"`${E2EID.uploadCreatorWalletInputX}${index}`"}
                           autoComplete="off"
+                          min={1}
+                          max={1000000}
                           className="border-b-2 border-buttonAccent bg-transparent text-sm font-thin outline-none placeholder:text-sm placeholder:font-semibold mt-2 placeholder:text-skin-muted/40 text-start"
                           placeholder="Unlock cost"
                           name={"`creators.${index}.wallet`"}
