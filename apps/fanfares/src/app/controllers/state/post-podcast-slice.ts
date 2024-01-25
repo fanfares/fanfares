@@ -54,9 +54,6 @@ export interface PostPodcastSlice {
   postPodcastUnlockCost: number
   postPodcastHandleUnlockCostChange: (event: any) => void
 
-  postPodcastUnlockCostmSats: number
-  postPodcastHandleUnlockCostMChange: (event: any) => void
-
   postPodcastState: PostPodcastState
   postPodcastPublicKey?: string | undefined
   postPodcastSignedGatedNote?: NostrEvent
@@ -76,7 +73,6 @@ const DEFAULT_STATE: PostPodcastSlice = {
   postPodcastDescription: "",
   postPodcastLud16: "",
   postPodcastUnlockCost: 10_000, // Sats
-  postPodcastUnlockCostmSats: 10_000 / 1000,
   postPodcastCheckTC: false,
 
   postPodcastAudioFile: null,
@@ -91,7 +87,6 @@ const DEFAULT_STATE: PostPodcastSlice = {
   postPodcastHandleTitleChange: () => {},
   postPodcastHandleDescriptionChange: () => {},
   postPodcastHandleUnlockCostChange: () => {},
-  postPodcastHandleUnlockCostMChange: () => {},
   postPodcastSubmit: () => {},
   postPodcastClear: () => {},
 }
