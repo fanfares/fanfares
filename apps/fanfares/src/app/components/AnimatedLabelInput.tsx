@@ -6,7 +6,7 @@ interface AnimatedLabelInputProps {
   children?: React.ReactNode
   inputType?: string
   messageField?: boolean
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChange: (input: string) => void
   onEmailValidation?: (isValid: boolean) => void
 }
 
@@ -33,9 +33,9 @@ const AnimatedLabelInput = (props: AnimatedLabelInputProps) => {
         <>
           <textarea
             required
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              props.onChange
-            }
+            onChange={(e)=>{
+              props.onChange(e.target.value)
+            }}
             id={props.htmlFor}
             autoComplete="off"
             className={`w-full break-all appearance-none border-b-2 bg-transparent p-2 focus:outline-none ${
@@ -55,7 +55,9 @@ const AnimatedLabelInput = (props: AnimatedLabelInputProps) => {
           {" "}
           <input
             required={props.inputType === "email" ? true : false}
-            onChange={props.onChange}
+            onChange={(e)=>{
+              props.onChange(e.target.value)
+            }}
             type={props.inputType || "text"}
             id={props.htmlFor}
             autoComplete="off"

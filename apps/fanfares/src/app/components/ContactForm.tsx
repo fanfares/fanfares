@@ -21,6 +21,11 @@ const ContactForm = (props: ContactFormProps) => {
     e.preventDefault()
 
     try {
+
+      if(!formData.name) throw new Error("Name is required")
+      if(!formData.email) throw new Error("Email is required")
+      if(!formData.message) throw new Error("Message is required")
+
       const res = await fetch("/api/email", {
         method: "POST",
         headers: {
@@ -85,23 +90,23 @@ const ContactForm = (props: ContactFormProps) => {
           className="flex flex-col items-start w-full gap-4 mt-8"
           action="">
           <AnimatedLabelInput
-            onChange={e => setFormData({ ...formData, name: e.target.value })}
+            onChange={input => setFormData({ ...formData, name: input })}
             label={feedback ? "LUD16*" : "Name*"}
             htmlFor="name"
           />
           <AnimatedLabelInput
-            onChange={e => setFormData({ ...formData, email: e.target.value })}
+            onChange={input => setFormData({ ...formData, email: input })}
             label="Email*"
             htmlFor="email"
             inputType={"email"}
           />
           <AnimatedLabelInput
-            onChange={e =>
-              setFormData({ ...formData, message: e.target.value })
+            onChange={input =>
+              setFormData({ ...formData, message: input })
             }
             label="Message*"
             htmlFor="message"
-            messageField
+            // messageField
           />
           <Button
             type="submit"
