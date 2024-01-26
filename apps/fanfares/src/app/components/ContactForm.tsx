@@ -48,30 +48,37 @@ const ContactForm = (props: ContactFormProps) => {
       <div className="p-4 rounded-lg">
         <h1
           id="e2e-whitepaper-heading"
-          className="mt-4 text-xl font-bold leading-10 md:text-2xl xl:text-3xl">
-          Contact Us{" "}
-        </h1>
+          className="mt-4 text-xl font-bold leading-10 md:text-2xl xl:text-3xl"></h1>
         {feedback ? (
           <>
-            <div className="mt-4">
-              We appretiate your feedback and want to reward you with some sats!
-              If you find any issue with this form you can send an email to
-              <a className="underline" href="mailto:support@fanfares.io">
-                <p className="underline">support@fanfares.io</p>
-              </a>
-            </div>
+            <p className="mt-4 font-thin text-sm">
+              {" "}
+              We aim to perfect FanFares to be an intuitive and easy to use
+              application that gives access to Nostr for everyone no matter what
+              their level of technical abilty.
+            </p>
+            <p className="mt-4 font-thin text-sm">
+              For constructive feedback that genuinely adds value to the
+              application we are willing to pay our customers 10000 sats as a
+              reward for identifying problems and making suggestions as to how
+              the application can work better.
+            </p>
           </>
         ) : (
-          <div className="mt-4">
-            If you need any help, want to give any feedback, or want to upload
+          <p className="mt-4 font-thin text-sm">
+            We apologise if you are experiencing issues with FanFares. Please
+            write a description of your problem in the form below and we will
+            get back to you as soon as possible in order to help fix the
+            problem.
+            {/* If you need any help, want to give any feedback, or want to upload
             your first audio, please reach out to us at:{" "}
             <a className="underline" href="mailto:support@fanfares.io">
               <p className="underline">support@fanfares.io</p>
-            </a>
+            </a> */}
             {/* <p className="mt-2">
             Alternatively you can send us a message using the form below.
           </p>{" "} */}
-          </div>
+          </p>
         )}
         <form
           onSubmit={handleSubmit}
