@@ -26,7 +26,7 @@ const ContactForm = (props: ContactFormProps) => {
       if(!formData.email) throw new Error("Email is required")
       if(!formData.message) throw new Error("Message is required")
 
-      const res = await fetch("/api/email", {
+      const res = await fetch("/api/support", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
