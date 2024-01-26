@@ -5,14 +5,11 @@ export async function GET(request: Request) {
   })
 }
 
-import sgMail from "@sendgrid/mail"
+const sgMail = require("@sendgrid/mail")
 
 import type { NextApiRequest, NextApiResponse } from "next"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string)
-// sgMail.setApiKey(
-//   ""
-// )
 
 export default async function handler(
   req: NextApiRequest,
