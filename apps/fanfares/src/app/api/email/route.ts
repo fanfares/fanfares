@@ -4,10 +4,8 @@ export async function GET(request: Request) {
     status: 200,
   })
 }
-
-const sgMail = require("@sendgrid/mail")
-
 import type { NextApiRequest, NextApiResponse } from "next"
+import sgMail from "@sendgrid/mail"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string)
 
