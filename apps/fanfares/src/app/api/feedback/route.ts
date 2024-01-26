@@ -1,37 +1,29 @@
-export async function GET(request: Request) {
-    // throw new Error("TEST EMAIL ERROR");
-  return new Response(JSON.stringify({feedback: true, get: true}), { status: 200 })
+import sgMail from "@sendgrid/mail"
+
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY as string;
+
+export async function POST(
+  request: Request
+) {
+
+  const { lud16, email, message } = await request.json()
+
+  if(!lud16) throw new Error("LUD16 is required")
+  if(!email) throw new Error("Email is required")
+  if(!message) throw new Error("Message is required")
+
+  const msg = {
+    to: "support@fanfares.io", // Replace with your email
+    from: "support@fanfares.io", // Replace with a verified sender email
+    subject: `FEEDBACK: ${email}`,
+    text: `LUD16: ${email}\nName: ${name}\nMessage: ${message}`,
+  }
+
+  try {
+    sgMail.setApiKey(SENDGRID_API_KEY)
+    await sgMail.send(msg)
+    return new Response("Email sent!", { status: 200 })
+  } catch (e) {
+    throw new Error(`Error sending email - ${e}`)
+  }
 }
-
-
-// import sgMail from "@sendgrid/mail"
-
-// import type { NextApiRequest, NextApiResponse } from "next"
-
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY as string)
-
-// export default async function handler(
-//   req: NextApiRequest,
-//   res: NextApiResponse
-// ) {
-//   if (req.method !== "POST") {
-//     return res.status(405).end("Method not allowed")
-//   }
-
-//   const { name, email, message } = req.body
-
-//   const msg = {
-//     to: "support@fanfares.io", // Replace with your email
-//     from: "support@fanfares.io", // Replace with a verified sender email
-//     subject: "New Contact Form Submission",
-//     text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
-//   }
-
-//   try {
-//     await sgMail.send(msg)
-//     res.status(200).end("Email sent successfully")
-//   } catch (error) {
-//     console.error(error)
-//     res.status(500).end("Error sending email")
-//   }
-// }

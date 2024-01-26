@@ -24,7 +24,6 @@ const ContactForm = (props: ContactFormProps) => {
       const res = await fetch("/api/email", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${process.env.SENDGRID_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),

@@ -1,35 +1,29 @@
-export async function GET(request: Request) {
-  // throw new Error("TEST EMAIL ERROR");
-  return new Response(JSON.stringify({ email: true, get: true }), {
-    status: 200,
-  })
-}
-import type { NextApiRequest, NextApiResponse } from "next"
 import sgMail from "@sendgrid/mail"
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY as string)
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY as string;
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
+export async function POST(
+  request: Request
 ) {
-  if (req.method !== "POST") {
-    return res.status(405).end("Method not allowed")
-  }
-  const { name, email, message } = req.body
+
+  const { name, email, message } = await request.json()
+
+  if(!name) throw new Error("Name is required")
+  if(!email) throw new Error("Email is required")
+  if(!message) throw new Error("Message is required")
 
   const msg = {
     to: "support@fanfares.io", // Replace with your email
     from: "support@fanfares.io", // Replace with a verified sender email
-    subject: "New Contact Form Submission",
-    text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+    subject: `SUPPORT: ${email}`,
+    text: `Email: ${email}\nName: ${name}\nMessage: ${message}`,
   }
 
   try {
+    sgMail.setApiKey(SENDGRID_API_KEY)
     await sgMail.send(msg)
-    res.status(200).end("Email sent successfully")
-  } catch (error) {
-    console.error(error)
-    res.status(500).end("Error sending email")
+    return new Response("Email sent!", { status: 200 })
+  } catch (e) {
+    throw new Error(`Error sending email - ${e}`)
   }
 }
