@@ -14,9 +14,10 @@ const ContactForm = () => {
     e.preventDefault()
 
     try {
-      const res = await fetch("/apps/fanfares/src/app/api/send-email", {
+      const res = await fetch("/api/email", {
         method: "POST",
         headers: {
+          Authorization: `Bearer ${process.env.SENDGRID_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
@@ -54,9 +55,9 @@ const ContactForm = () => {
             Alternatively you can send us a message using the form below.
           </p>{" "} */}
         </section>
-        {/* <form
+        <form
           onSubmit={handleSubmit}
-          className="flex flex-col items-start w-full mt-8 gap-4"
+          className="flex flex-col items-start w-full gap-4 mt-8"
           action="">
           <AnimatedLabelInput
             onChange={e => setFormData({ ...formData, name: e.target.value })}
@@ -80,9 +81,9 @@ const ContactForm = () => {
           <Button
             type="submit"
             label="Submit"
-            className="flex items-center mt-8 px-4"
+            className="flex items-center px-4 mt-8"
           />
-        </form> */}
+        </form>
       </div>
     </div>
   )
