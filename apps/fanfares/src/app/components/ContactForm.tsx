@@ -12,6 +12,10 @@ interface ContactFormProps {
 
 const ContactForm = (props: ContactFormProps) => {
   const { feedback, callToAction, lud16 } = props
+  // TODO: Split this data to individual states
+  //TODO : Loading icon on Submit
+  // TODO: Support form and Feedback form
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -21,10 +25,9 @@ const ContactForm = (props: ContactFormProps) => {
     e.preventDefault()
 
     try {
-
-      if(!formData.name) throw new Error("Name is required")
-      if(!formData.email) throw new Error("Email is required")
-      if(!formData.message) throw new Error("Message is required")
+      if (!formData.name) throw new Error("Name is required")
+      if (!formData.email) throw new Error("Email is required")
+      if (!formData.message) throw new Error("Message is required")
 
       const res = await fetch("/api/support", {
         method: "POST",
@@ -101,9 +104,7 @@ const ContactForm = (props: ContactFormProps) => {
             inputType={"email"}
           />
           <AnimatedLabelInput
-            onChange={input =>
-              setFormData({ ...formData, message: input })
-            }
+            onChange={input => setFormData({ ...formData, message: input })}
             label="Message*"
             htmlFor="message"
             // messageField
