@@ -12,10 +12,11 @@ import {
 } from "../controllers/state/support-form-slice"
 import { AnimatedLabelTextInput } from "./AnimatedLabelInputText"
 import { AnimatedLabelTextAreaInput } from "./AnimatedLabelInputTextArea"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faSpinner } from "@fortawesome/pro-solid-svg-icons"
 
 const ContactForm = () => {
   //TODO : Loading icon on Submit
-  // TODO: Support form and Feedback form
   const name = useSupportFormName()
   const email = useSupportFormEmail()
   const message = useSupportFormMessage()
@@ -68,7 +69,8 @@ const ContactForm = () => {
           <Button
             type="submit"
             label={isLoading ? "Loading..." : "Submit"}
-            className="flex items-center px-4 mt-8"
+            icon={isLoading && <FontAwesomeIcon icon={faSpinner} />}
+            className="flex flex-row-reverse items-center px-4 mt-8"
           />
         </form>
       </div>
