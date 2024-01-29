@@ -1,5 +1,4 @@
 import { StateCreator, create } from "zustand";
-import { CombinedState } from "./old/use-app-state";
 import { Podcast } from "./podcast-slice";
 import { SimplePool } from "nostr-tools";
 import {
@@ -16,12 +15,20 @@ import { WebLNProvider } from "webln";
 
 export interface PlayerPageSlice {
   playerPageIsPlaying: boolean;
+  playerPageDuration: number;
+  playerPageCurrentTime: number;
+  playerPageVolume: number;
+  playerPageIsPlayerShowing: boolean;
   playerPageGateId: string;
   playerPagePodcast: Podcast | null;
   playerPageIsLoading: boolean;
   playerPageIsUnlocking: boolean;
   playerPageError: string | null;
   actions: {
+    playerPageSetDuration: (duration: number) => void;
+    playerPageSetCurrentTime: (currentTime: number) => void;
+    playerPageSetVolume: (volume: number) => void;
+    playerPageSetPlayerShowing: (isShowing: boolean) => void;
     playerPageSetPlaying: (isPlaying: boolean) => void;
     playerPageSetGateId: (
       nostrRelays: string[],
@@ -49,12 +56,20 @@ export interface PlayerPageSlice {
 
 const DEFAULT_STATE: PlayerPageSlice = {
   playerPageGateId: "...",
+  playerPageDuration: 0,
+  playerPageCurrentTime: 0,
+  playerPageVolume: 80,
+  playerPageIsPlayerShowing: true,
   playerPageError: null,
   playerPagePodcast: null,
   playerPageIsPlaying: false,
   playerPageIsUnlocking: false,
   playerPageIsLoading: false,
   actions: {
+    playerPageSetDuration: (duration: number) => {},
+    playerPageSetCurrentTime: (currentTime: number) => {},
+    playerPageSetVolume: (volume: number) => {},
+    playerPageSetPlayerShowing: (isShowing: boolean) => {},
     playerPageSetPlaying: (isPlaying: boolean) => {},
     playerPageSetGateId: async (
       nostrRelays: string[],
@@ -86,20 +101,57 @@ export const createPlayerPageSlice: StateCreator<
   [],
   PlayerPageSlice
 > = (set, get) => {
+
+
+  const playerPageSetDuration = (duration: number) => {
+    set({ playerPageDuration: duration });
+  };
+
+  const playerPageSetCurrentTime = (currentTime: number) => {
+    set({ playerPageCurrentTime: currentTime });
+  };
+
+  const playerPageSetVolume = (volume: number) => {
+    set({ playerPageVolume: volume });
+  };
+
+  const playerPageSetPlayerShowing = (isShowing: boolean) => {
+    set({ playerPageIsPlayerShowing: isShowing });
+  };
+
   const playerPageSetPlaying = (isPlaying: boolean) => {
     set({ playerPageIsPlaying: isPlaying });
   };
+
+  const clearWith = (state: Partial<PlayerPageSlice>) => {
+    set({
+      playerPageGateId: "",
+      playerPageDuration: 0,
+      playerPageCurrentTime: 0,
+      playerPageIsPlayerShowing: true,
+      playerPageError: null,
+      playerPagePodcast: null,
+      playerPageIsPlaying: false,
+      playerPageIsUnlocking: false,
+      playerPageIsLoading: false,
+      ...state
+    });
+  }
 
   const playerPageSetGateId = async (
     nostrRelays: string[],
     nostrPool: SimplePool,
     id: string
   ) => {
-    set({
-      playerPageGateId: id,
-      playerPageIsLoading: true,
-      playerPageError: null,
-    });
+
+    if(id === get().playerPageGateId) return;
+
+    clearWith(
+      {
+        playerPageGateId: id,
+        playerPageIsLoading: true,
+      }
+    );
 
     try {
       // Fetch Announcement
@@ -275,6 +327,10 @@ export const createPlayerPageSlice: StateCreator<
       playerPageUnlockPodcast,
       playerPageBuyPodcast,
       playerPageSetPlaying,
+      playerPageSetDuration,
+      playerPageSetCurrentTime,
+      playerPageSetVolume,
+      playerPageSetPlayerShowing,
     },
   };
 };
@@ -282,6 +338,11 @@ export const createPlayerPageSlice: StateCreator<
 const usePlayerPage = create<PlayerPageSlice>()(createPlayerPageSlice);
 
 export const usePlayerPageIsPlaying = () => usePlayerPage((state) => state.playerPageIsPlaying);
+export const usePlayerPageDuration = () => usePlayerPage((state) => state.playerPageDuration);
+export const usePlayerPageCurrentTime = () => usePlayerPage((state) => state.playerPageCurrentTime);
+export const usePlayerPageVolume = () => usePlayerPage((state) => state.playerPageVolume);
+export const usePlayerPageIsPlayerShowing = () =>
+  usePlayerPage((state) => state.playerPageIsPlayerShowing);
 export const usePlayerPagePodcast = () =>
   usePlayerPage((state) => state.playerPagePodcast);
 export const usePlayerPageGateId = () =>
