@@ -114,7 +114,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
                     className="absolute object-cover object-center w-full h-full rounded"
                     src={URL.createObjectURL(postPodcastImageFile)}></img>
                 ) : null}
-                <p className="mt-2 text-sm">Upload Cover Image</p>
+                <p className="mt-2">Upload Cover Image</p>
                 <label
                   htmlFor="thumbnailUpload"
                   className={`mx-auto bg-buttonDefault hover:bg-buttonAccentHover px-3 py-1 rounded-full text-sm cursor-pointer ${
@@ -131,9 +131,9 @@ export default function UploadOnModal(props: UploadOnModalProps) {
                   {postPodcastImageFile ? "Change" : "Browse"}
                 </label>
 
-                <div className="text-center text-skin-muted">
+                <div className="text-center">
                   {/* MAKE THIS AS TOOLTIP */}
-                  <div className=" w-40 text-xs text-center">
+                  <div className=" w-40 text-xs text-center  text-skin-muted">
                     JPG / PNG with 1:1 size ratio (min. 528x528 px) and 2 MB max
                     file size
                   </div>
@@ -191,11 +191,11 @@ export default function UploadOnModal(props: UploadOnModalProps) {
           </div>
           <div
             id={"E2EID.uploadAudioInput"}
-            className="relative flex items-center w-full mt-8 border border-buttonAccent px-2 py-3 rounded">
-            <p className="text-xs">
+            className="relative grid grid-cols-3 items-center w-full mt-8 border border-buttonAccent px-2 py-3 rounded justify-between">
+            <p className="w-36 truncate">
               {postPodcastAudioFile
                 ? postPodcastAudioFile.name
-                : "Select Audio File"}
+                : "Upload Audio File"}
             </p>
             <label
               htmlFor="audioUpload"
@@ -209,7 +209,9 @@ export default function UploadOnModal(props: UploadOnModalProps) {
               />
               {postPodcastAudioFile ? "Change" : "Browse"}
             </label>
-            <p className="text-xs w-24">Formats allowed: AAC / M4A / MP3</p>
+            <p className="text-xs w-24 ml-auto  text-skin-muted">
+              Formats allowed: AAC / M4A / MP3
+            </p>
           </div>
           {isCheckedAudio ? (
             <>
