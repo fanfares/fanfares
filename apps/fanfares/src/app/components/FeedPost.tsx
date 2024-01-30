@@ -4,6 +4,7 @@ import { Event as NostrEvent } from "nostr-tools"
 import Button from "./Button"
 import { useState } from "react"
 import { Modal } from "./Modal"
+import { RenderContent } from "./RenderContent"
 
 interface FeedPostProps {
   note: NostrEvent<1>
@@ -17,6 +18,7 @@ export function FeedPost(props: FeedPostProps) {
   const { user, userPfp, content, userProfile } = props
   const [fanfaresButtonMessage, setFanfaresButtonMessage] = useState(false)
   const [zapButtonMessage, setZapButtonMessage] = useState(false)
+
 
   return (
     <div
@@ -38,7 +40,8 @@ export function FeedPost(props: FeedPostProps) {
             {userProfile ? userProfile : null}
           </Link>
         </p>
-        <h3 className="break-words text-sm font-normal">{content}</h3>
+        <RenderContent rawContent={content ?? ''} />
+        {/* <h3 className="break-words text-sm font-normal">{parseContent(content ?? '')}</h3> */}
         {/* <h3 className="break-words text-sm font-normal">{JSON.stringify(note)}</h3> */}
       </div>
       <Modal isOpen={fanfaresButtonMessage}>
