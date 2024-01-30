@@ -16,16 +16,13 @@ function Profile() {
   const primalProfiles = usePrimalProfiles()
   const primalNoteStats = usePrimalNoteStats()
   const accountProfile = useAccountProfile()
-
   const [filteredEvents, setFilteredEvents] = useState<Event<1>[]>([])
 
   useEffect(() => {
-    // Filter events based on pubkey
     const filtered = primalNotes.filter(
       event => event.pubkey === accountProfile?.pubkey
     )
 
-    // Update state with filtered events
     setFilteredEvents(filtered)
   }, [primalNotes, accountProfile])
 
@@ -34,7 +31,7 @@ function Profile() {
       <div className="relative w-full flex">
         <div className="absolute w-32 h-32">
           <img
-            src={accountProfile?.picture || ""}
+            src={accountProfile?.picture}
             className="drop-shadow-md rounded-full w-32 h-32 object-cover object-center absolute"
             alt="profile picture"
           />
@@ -44,7 +41,7 @@ function Profile() {
         </div>
       </div>
       <div className="mt-28 w-full">
-        <div className="flex text-buttonDefault">
+        <div className="text-buttonDefault">
           <p className="">{accountProfile?.display_name}</p>
         </div>
         <p className="text-buttonDisabled text-xs/4">{accountProfile?.lud16}</p>
@@ -52,17 +49,14 @@ function Profile() {
       </div>
       <div className="space-y-2 mt-4">
         {filteredEvents.map(note => {
-          const profile = primalProfiles[note.pubkey]
-          const stats = primalNoteStats[note.id]
-
           return (
             <FeedPost
               key={generatePrivateKey()}
               note={note}
-              user={profile?.name}
+              user={accountProfile?.name}
               content={note.content}
-              userPfp={profile?.picture}
-              userProfile={profile?.lud16}
+              userPfp={accountProfile?.picture}
+              userProfile={accountProfile?.lud16}
             />
           )
         })}
