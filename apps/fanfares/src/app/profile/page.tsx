@@ -82,10 +82,8 @@ function Profile() {
         </div>
       </div>
       <div className="space-y-2 mt-8">
-        <div className="w-full flex items-center justify-between">
-          <p>Notes</p>
-          <Button className="text-sm/4 px-4" label="Show all..." />
-        </div>{" "}
+        <p>My posts...</p>
+
         {filteredEvents.map(note => {
           return (
             <FeedPost
