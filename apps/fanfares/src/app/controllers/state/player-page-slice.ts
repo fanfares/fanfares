@@ -10,7 +10,7 @@ import {
   eventToKeyNote,
   unlockGatedNote,
 } from "nip108";
-import { NIP04, NIP07 } from "utils";
+import { NIP04, NIP07, NostrProfile, eventToNostrProfile } from "utils";
 import { WebLNProvider } from "webln";
 
 export interface PlayerPageSlice {
@@ -20,6 +20,7 @@ export interface PlayerPageSlice {
   playerPageVolume: number;
   playerPageIsPlayerShowing: boolean;
   playerPageGateId: string;
+  playerPagePodcastCreator: NostrProfile | null;
   playerPagePodcast: Podcast | null;
   playerPageIsLoading: boolean;
   playerPageIsUnlocking: boolean;
@@ -59,6 +60,7 @@ const DEFAULT_STATE: PlayerPageSlice = {
   playerPageDuration: 0,
   playerPageCurrentTime: 0,
   playerPageVolume: 80,
+  playerPagePodcastCreator: null,
   playerPageIsPlayerShowing: true,
   playerPageError: null,
   playerPagePodcast: null,
@@ -134,6 +136,7 @@ export const createPlayerPageSlice: StateCreator<
       playerPageIsPlaying: false,
       playerPageIsUnlocking: false,
       playerPageIsLoading: false,
+      playerPagePodcastCreator: null,
       ...state
     });
   }
@@ -190,6 +193,19 @@ export const createPlayerPageSlice: StateCreator<
       };
 
       set({ playerPagePodcast: podcast });
+
+      // Fetch Creator
+      const rawProfile = await nostrPool.get(nostrRelays, {
+        authors: [gate.note.pubkey],
+        kinds: [0],
+        limit: 1,
+      });
+      const profile = eventToNostrProfile(gate.note.pubkey, rawProfile);
+      if(rawProfile){
+        const profile = eventToNostrProfile(gate.note.pubkey, rawProfile);
+        set({ playerPagePodcastCreator: profile });
+      }
+
     } catch (e) {
       set({ playerPageError: `${e}` });
       throw new Error(`Error setting player page: ${e}`);
@@ -337,6 +353,7 @@ export const createPlayerPageSlice: StateCreator<
 
 const usePlayerPage = create<PlayerPageSlice>()(createPlayerPageSlice);
 
+export const usePlayerPagePodcastCreator = () => usePlayerPage((state) => state.playerPagePodcastCreator);
 export const usePlayerPageIsPlaying = () => usePlayerPage((state) => state.playerPageIsPlaying);
 export const usePlayerPageDuration = () => usePlayerPage((state) => state.playerPageDuration);
 export const usePlayerPageCurrentTime = () => usePlayerPage((state) => state.playerPageCurrentTime);

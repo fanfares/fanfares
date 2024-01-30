@@ -16,10 +16,12 @@ import {
   usePlayerPageIsPlayerShowing,
   usePlayerPageIsPlaying,
   usePlayerPagePodcast,
+  usePlayerPagePodcastCreator,
   usePlayerPageVolume,
 } from "../controllers/state/player-page-slice";
 import { Podcast } from "../controllers/state/podcast-slice";
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
+import { formatPlayerTime } from "../controllers/utils/formatting";
 
 export function GlobalAudioPlayer() {
   const podcast = usePlayerPagePodcast();
@@ -28,14 +30,15 @@ export function GlobalAudioPlayer() {
   const currentTime = usePlayerPageCurrentTime();
   const volume = usePlayerPageVolume();
   const isShowing = usePlayerPageIsPlayerShowing();
+  const creator = usePlayerPagePodcastCreator();
   const router = useRouter();
 
-  const { 
+  const {
     playerPageSetPlaying,
     playerPageSetDuration,
     playerPageSetCurrentTime,
     playerPageSetVolume,
-    playerPageSetPlayerShowing
+    playerPageSetPlayerShowing,
   } = usePlayerPageActions();
 
   // --------------- REFERENCES---------------
@@ -46,12 +49,6 @@ export function GlobalAudioPlayer() {
   const previousTime = useRef<number>(0);
   const listenedDuration = useRef<number>(0);
   const playCountTicked = useRef<boolean>(false);
-
-  //--------------- UTILS ---------------
-
-  const toggleShowing = () => {
-    playerPageSetPlayerShowing(!isShowing);
-  };
 
   //--------------- FUNCTIONS ---------------
 
@@ -111,8 +108,6 @@ export function GlobalAudioPlayer() {
     // eslint-disable-next-line
   }, [audioPlayer, animationRef]);
 
-
-
   //--------------- USE EFFECTS ---------------
 
   useEffect(() => {
@@ -123,7 +118,6 @@ export function GlobalAudioPlayer() {
     playCountTicked.current = false;
     audioPlayer.current.crossOrigin = "anonymous";
     audioPlayer.current.onloadeddata = onLoad;
-
   }, [audioPlayer, podcast, listenedDuration, playCountTicked, previousTime]);
 
   useEffect(() => {
@@ -136,45 +130,58 @@ export function GlobalAudioPlayer() {
     }
   }, [isPlaying]);
 
+  //--------------- STOPPERS ---------------
+
+  // DON'T SHOW IF NO PODCAST
+  if (!podcast || !podcast.audioFilepath) return null;
+
+  //--------------- UTILS ---------------
+
+  const toggleShowing = () => {
+    playerPageSetPlayerShowing(!isShowing);
+  };
+
   //--------------- CONTROLS ---------------
 
   const changeVolume = (e: any) => {
-    if(!audioPlayer.current) return;
-    if(!audioBar.current) return;
+    if (!audioPlayer.current) return;
+    if (!audioBar.current) return;
 
-    audioPlayer.current.volume = Number.parseInt(audioBar.current.value) / 100
+    audioPlayer.current.volume = Number.parseInt(audioBar.current.value) / 100;
 
-    playerPageSetVolume(Number.parseInt(audioBar.current.value))
-  }
+    playerPageSetVolume(Number.parseInt(audioBar.current.value));
+  };
 
   const changeRange = () => {
-    if(!audioPlayer.current) return;
-    if(!progressBar.current) return;
+    if (!audioPlayer.current) return;
+    if (!progressBar.current) return;
 
-    audioPlayer.current.currentTime = Number.parseInt(progressBar.current.value)
-    updateCurrentTime()
-  }
+    audioPlayer.current.currentTime = Number.parseInt(
+      progressBar.current.value
+    );
+    updateCurrentTime();
+  };
 
   const back15 = () => {
-    if(!progressBar.current) return;
+    if (!progressBar.current) return;
 
     progressBar.current.value = Math.max(
       Number(progressBar.current.value) - 15,
       0
-    ).toString()
+    ).toString();
 
-    changeRange()
-  }
+    changeRange();
+  };
 
   const forward15 = () => {
-    if(!progressBar.current) return;
+    if (!progressBar.current) return;
 
     progressBar.current.value = Math.min(
       Number(progressBar.current.value) + 15,
       duration
-    ).toString()
-    changeRange()
-  }
+    ).toString();
+    changeRange();
+  };
 
   const playerTogglePlaying = () => {
     if (!isPlaying) {
@@ -184,19 +191,21 @@ export function GlobalAudioPlayer() {
       // audioPlayer.current?.pause()
       playerPageSetPlaying(false);
     }
-  }
+  };
 
   const routeToPlayerPage = () => {
-    if(!podcast) return;
-
     router.push(`/player/${podcast.gate.note.id}`);
-  }
+  };
 
-  //--------------- STOPPERS ---------------
+  const routeToCreatorPage = () => {
+    console.log("TODO: route to creator page");
+    // router.push(`/creator/${podcast.creatorKey}`);
+  };
 
-  // DON'T SHOW IF NO PODCAST
-  if (!podcast || !podcast.audioFilepath) return null;
+  //--------------- CONSTS ---------------
 
+  const {title, audioFilepath, imageFilepath} = podcast;
+  const creatorName = creator ? creator.name : podcast.gate.note.pubkey;
 
   //--------------- RENDERERS ---------------
 
@@ -204,11 +213,20 @@ export function GlobalAudioPlayer() {
     return (
       <>
         <div className="absolute left-16 top-4 max-w-[268px] md:top-3 md:max-w-md">
-          <p onClick={routeToPlayerPage} className="text-sm font-bold truncate text-skin-base md:w-full md:text-base cursor-pointer hover:underline">
-            {podcast.title}
+          <p
+            onClick={routeToPlayerPage}
+            className="text-sm font-bold truncate text-skin-base md:w-full md:text-base cursor-pointer hover:underline"
+          >
+            {title}
           </p>
 
           {/* TODO */}
+          <p
+            className="mt-1 flex w-40 truncate text-[0.7rem] text-skin-muted hover:underline md:w-64 md:text-[1rem] md:text-xs"
+            onClick={routeToCreatorPage}
+          >
+            {creatorName}
+          </p>
           {/* <Link
             className="mt-1 flex w-40 truncate text-[0.7rem] text-skin-muted hover:underline md:w-64 md:text-[1rem] md:text-xs"
             href={"/creator/" + "owner"}>
@@ -225,7 +243,7 @@ export function GlobalAudioPlayer() {
         <div className="absolute left-2 top-6 ">
           <Image
             // loader={contentfulLoader}
-            src={podcast.imageFilepath}
+            src={imageFilepath}
             alt=""
             width={50}
             height={50}
@@ -242,7 +260,7 @@ export function GlobalAudioPlayer() {
       <>
         <div className="absolute bottom-2 left-2 flex w-[90%] items-center justify-center gap-x-2">
           <p className="text-xs text-skin-muted">
-            {/* {printPlayerTime(currentTime)} */}
+            {formatPlayerTime(currentTime)}
           </p>
           <input
             aria-label="Player progress bar"
@@ -250,16 +268,15 @@ export function GlobalAudioPlayer() {
             className="progressBar w-full "
             defaultValue="0"
             ref={progressBar as any}
-            onChange={() => {}}
+            onChange={changeRange}
           />
           <p className="text-xs text-skin-muted">
-            {/* {printPlayerTime(duration)} */}
+            {formatPlayerTime(duration)}
           </p>
         </div>
       </>
     );
   };
-
 
   const renderRightMenuButtons = () => {
     return (
@@ -281,7 +298,7 @@ export function GlobalAudioPlayer() {
             aria-label="Back 15 seconds"
             className="hover:text-buttonAccentHover w-4 md:w-6"
             icon={faArrowRotateLeft}
-            onClick={() => {}}
+            onClick={back15}
           />
 
           <FontAwesomeIcon
@@ -290,19 +307,11 @@ export function GlobalAudioPlayer() {
             icon={isPlaying ? faPauseCircle : faPlayCircle}
             onClick={playerTogglePlaying}
           />
-          {/* <FontAwesomeIcon
-            aria-label="Play/Pause"
-            className="text-2xl hover:text-buttonAccentHover md:text-4xl"
-            icon={faPauseCircle}
-            onClick={() => {
-              audioPlayer.current?.pause()
-            }}
-          /> */}
           <FontAwesomeIcon
             aria-label="Forward 15 seconds"
             className="text-xl hover:text-buttonAccentHover w-4 md:w-6"
             icon={faArrowRotateRight}
-            onClick={() => {}}
+            onClick={forward15}
           />
         </div>
       </>
@@ -314,7 +323,7 @@ export function GlobalAudioPlayer() {
       <div className="fixed left-0 z-50 justify-center w-full h-10 -bottom-1 ">
         <audio
           ref={audioPlayer}
-          src={(podcast as Podcast).audioFilepath}
+          src={audioFilepath}
           preload="metadata"
         ></audio>
         <div
@@ -349,199 +358,197 @@ export function GlobalAudioPlayer() {
 
   return renderAudioPlayerBigScreen();
 }
-    // <Media
-    //   queries={{
-    //     mobile: "(max-width: 768px)",
-    //     bigScreen: "(min-width: 769px)",
-    //   }}>
-    //   {matches => (
-    //     <Fragment>
-    //       {matches.mobile && renderAudioPlayerMobile()}
-    //       {matches.bigScreen && renderAudioPlayerBigScreen()}
-    //     </Fragment>
-    //   )}
-    // </Media>
+// <Media
+//   queries={{
+//     mobile: "(max-width: 768px)",
+//     bigScreen: "(min-width: 769px)",
+//   }}>
+//   {matches => (
+//     <Fragment>
+//       {matches.mobile && renderAudioPlayerMobile()}
+//       {matches.bigScreen && renderAudioPlayerBigScreen()}
+//     </Fragment>
+//   )}
+// </Media>
 
+// const renderAudioPlayerMobile = () => {
+//   return (
+//     <div className="fixed left-0 z-40 flex flex-row items-center w-full h-12 bottom-16 bg-skin-fill ">
+//       <audio
+//         ref={audioPlayer}
+//         src={playerAudioUrl}
+//         preload="metadata"></audio>
+//       <div className="absolute flex items-center justify-center w-full -top-1 gap-x-2">
+//         <input
+//           aria-label="Player progress bar"
+//           type="range"
+//           className="w-full rounded-none progressBar "
+//           defaultValue="0"
+//           ref={progressBar}
+//           onChange={changeRange}
+//         />
+//       </div>
+//       <div className="mx-2 mt-2">
+//         <Image
+//           loader={contentfulLoader}
+//           src={playerThumbnailUrl}
+//           alt=""
+//           width={40}
+//           height={40}
+//           className=""
+//           layout={"intrinsic"}
+//         />
+//       </div>
+//       <div>
+//         <p className="font-bold truncate text-skin-base">{title}</p>
+//         <Link
+//           className=""
+//           href={
+//             "/creator/" + playerCreatorAccount.creatorKey.toString() ??
+//             "owner"
+//           }>
+//           <a className="mt-1 flex w-40 truncate text-sm text-skin-muted hover:underline md:w-64 md:text-[1rem] md:text-xs">
+//             {creatorName}
+//           </a>
+//         </Link>
+//       </div>{" "}
+//       <FontAwesomeIcon
+//         aria-label="Play/Pause"
+//         className="ml-auto mr-8 text-3xl"
+//         icon={playerGetIcon()}
+//         onClick={playerTogglePlaying}
+//       />{" "}
+//     </div>
+//   )
+// }
 
-  // const renderAudioPlayerMobile = () => {
-  //   return (
-  //     <div className="fixed left-0 z-40 flex flex-row items-center w-full h-12 bottom-16 bg-skin-fill ">
-  //       <audio
-  //         ref={audioPlayer}
-  //         src={playerAudioUrl}
-  //         preload="metadata"></audio>
-  //       <div className="absolute flex items-center justify-center w-full -top-1 gap-x-2">
-  //         <input
-  //           aria-label="Player progress bar"
-  //           type="range"
-  //           className="w-full rounded-none progressBar "
-  //           defaultValue="0"
-  //           ref={progressBar}
-  //           onChange={changeRange}
-  //         />
-  //       </div>
-  //       <div className="mx-2 mt-2">
-  //         <Image
-  //           loader={contentfulLoader}
-  //           src={playerThumbnailUrl}
-  //           alt=""
-  //           width={40}
-  //           height={40}
-  //           className=""
-  //           layout={"intrinsic"}
-  //         />
-  //       </div>
-  //       <div>
-  //         <p className="font-bold truncate text-skin-base">{title}</p>
-  //         <Link
-  //           className=""
-  //           href={
-  //             "/creator/" + playerCreatorAccount.creatorKey.toString() ??
-  //             "owner"
-  //           }>
-  //           <a className="mt-1 flex w-40 truncate text-sm text-skin-muted hover:underline md:w-64 md:text-[1rem] md:text-xs">
-  //             {creatorName}
-  //           </a>
-  //         </Link>
-  //       </div>{" "}
-  //       <FontAwesomeIcon
-  //         aria-label="Play/Pause"
-  //         className="ml-auto mr-8 text-3xl"
-  //         icon={playerGetIcon()}
-  //         onClick={playerTogglePlaying}
-  //       />{" "}
-  //     </div>
-  //   )
-  // }
+// const renderBackToPlayerMenuItem = () => {
+//   if (!backToPlayer) return null
+//   return (
+//     <Menu.Item>
+//       {() => (
+//         <>
+//           <button
+//             onClick={backToPlayer}
+//             className="flex rounded-t-lg bg-black px-4 py-3 text-sm text-white hover:bg-skin-button-accent-hover active:bg-violet-300 active:text-black">
+//             Back to Player
+//           </button>
+//           <hr className="mx-auto mt-[-1px] w-[80%] border-buttonDisabled"></hr>
+//         </>
+//       )}
+//     </Menu.Item>
+//   )
+// }
 
+// const renderDonateMenuItem = () => {
+//   return (
+//     <Menu.Item>
+//       {() => (
+//         <>
+//           <button
+//             aria-label="Make a donation"
+//             onClick={mediaModalOpenDonate}
+//             className={`flex bg-black px-4 py-3 text-sm text-white hover:bg-skin-button-accent-hover active:bg-violet-300 active:text-black ${
+//               !backToPlayer ? " rounded-t-lg" : ""
+//             }`}>
+//             Contribute
+//           </button>
+//           <hr className="mx-auto mt-[-1px] w-[80%] border-buttonDisabled"></hr>
+//         </>
+//       )}
+//     </Menu.Item>
+//   )
+// }
 
-  // const renderBackToPlayerMenuItem = () => {
-  //   if (!backToPlayer) return null
-  //   return (
-  //     <Menu.Item>
-  //       {() => (
-  //         <>
-  //           <button
-  //             onClick={backToPlayer}
-  //             className="flex rounded-t-lg bg-black px-4 py-3 text-sm text-white hover:bg-skin-button-accent-hover active:bg-violet-300 active:text-black">
-  //             Back to Player
-  //           </button>
-  //           <hr className="mx-auto mt-[-1px] w-[80%] border-buttonDisabled"></hr>
-  //         </>
-  //       )}
-  //     </Menu.Item>
-  //   )
-  // }
+// const renderMintMenuItem = () => {
+//   const disabled = isMintingFrozen || playerHasMinted
+//   return (
+//     <Menu.Item>
+//       {() => (
+//         <>
+//           <button
+//             aria-label="Mint Audio NFT"
+//             disabled={disabled}
+//             onClick={mediaModalOpenMint}
+//             className={`flex bg-black px-4 py-3 text-sm text-white hover:bg-skin-button-accent-hover active:bg-violet-300 active:text-black ${
+//               isMintingFrozen && !playerHasMinted ? "line-through" : ""
+//             } ${disabled ? "opacity-50" : ""}`}>
+//             {isMintingFrozen ? "❄️ " : ""}
+//             {playerHasMinted ? "Already Minted ⭐️" : "Mint Audio NFT"}
+//             {isMintingFrozen ? " ❄️" : ""}
+//           </button>
+//           <hr className="mx-auto mt-[-1px] w-[80%] border-buttonDisabled"></hr>
+//         </>
+//       )}
+//     </Menu.Item>
+//   )
+// }
 
-  // const renderDonateMenuItem = () => {
-  //   return (
-  //     <Menu.Item>
-  //       {() => (
-  //         <>
-  //           <button
-  //             aria-label="Make a donation"
-  //             onClick={mediaModalOpenDonate}
-  //             className={`flex bg-black px-4 py-3 text-sm text-white hover:bg-skin-button-accent-hover active:bg-violet-300 active:text-black ${
-  //               !backToPlayer ? " rounded-t-lg" : ""
-  //             }`}>
-  //             Contribute
-  //           </button>
-  //           <hr className="mx-auto mt-[-1px] w-[80%] border-buttonDisabled"></hr>
-  //         </>
-  //       )}
-  //     </Menu.Item>
-  //   )
-  // }
+// const renderShareMenuItem = () => {
+//   return (
+//     <Menu.Item>
+//       {() => (
+//         <button
+//           aria-label="Share episode on Socials"
+//           onClick={mediaModalOpenShare}
+//           className="flex rounded-b-lg bg-black px-4 py-3 text-sm text-white hover:bg-skin-button-accent-hover active:bg-violet-300 active:text-black">
+//           Share
+//         </button>
+//       )}
+//     </Menu.Item>
+//   )
+// }
 
-  // const renderMintMenuItem = () => {
-  //   const disabled = isMintingFrozen || playerHasMinted
-  //   return (
-  //     <Menu.Item>
-  //       {() => (
-  //         <>
-  //           <button
-  //             aria-label="Mint Audio NFT"
-  //             disabled={disabled}
-  //             onClick={mediaModalOpenMint}
-  //             className={`flex bg-black px-4 py-3 text-sm text-white hover:bg-skin-button-accent-hover active:bg-violet-300 active:text-black ${
-  //               isMintingFrozen && !playerHasMinted ? "line-through" : ""
-  //             } ${disabled ? "opacity-50" : ""}`}>
-  //             {isMintingFrozen ? "❄️ " : ""}
-  //             {playerHasMinted ? "Already Minted ⭐️" : "Mint Audio NFT"}
-  //             {isMintingFrozen ? " ❄️" : ""}
-  //           </button>
-  //           <hr className="mx-auto mt-[-1px] w-[80%] border-buttonDisabled"></hr>
-  //         </>
-  //       )}
-  //     </Menu.Item>
-  //   )
-  // }
+// const renderActionMenu = () => {
+//   return (
+//     <Menu>
+//       <Menu.Button aria-label="Open Menu">
+//         <FontAwesomeIcon
+//           className="h-4 w-4 rounded bg-skin-button-accent p-1 hover:bg-skin-button-accent-hover hover:text-buttonAccent"
+//           icon={faEllipsisH}
+//         />
+//       </Menu.Button>
+//       <Menu.Items
+//         aria-label="Select one option"
+//         className="absolute bottom-20 right-0 z-50 flex w-36 flex-col font-bold">
+//         {renderBackToPlayerMenuItem()}
+//         {renderDonateMenuItem()}
+//         {renderMintMenuItem()}
+//         {renderShareMenuItem()}
+//       </Menu.Items>
+//     </Menu>
+//   )
+// }
 
-  // const renderShareMenuItem = () => {
-  //   return (
-  //     <Menu.Item>
-  //       {() => (
-  //         <button
-  //           aria-label="Share episode on Socials"
-  //           onClick={mediaModalOpenShare}
-  //           className="flex rounded-b-lg bg-black px-4 py-3 text-sm text-white hover:bg-skin-button-accent-hover active:bg-violet-300 active:text-black">
-  //           Share
-  //         </button>
-  //       )}
-  //     </Menu.Item>
-  //   )
-  // }
-
-  // const renderActionMenu = () => {
-  //   return (
-  //     <Menu>
-  //       <Menu.Button aria-label="Open Menu">
-  //         <FontAwesomeIcon
-  //           className="h-4 w-4 rounded bg-skin-button-accent p-1 hover:bg-skin-button-accent-hover hover:text-buttonAccent"
-  //           icon={faEllipsisH}
-  //         />
-  //       </Menu.Button>
-  //       <Menu.Items
-  //         aria-label="Select one option"
-  //         className="absolute bottom-20 right-0 z-50 flex w-36 flex-col font-bold">
-  //         {renderBackToPlayerMenuItem()}
-  //         {renderDonateMenuItem()}
-  //         {renderMintMenuItem()}
-  //         {renderShareMenuItem()}
-  //       </Menu.Items>
-  //     </Menu>
-  //   )
-  // }
-
-  // const renderVolumeMenu = () => {
-  //   return (
-  //     <Menu>
-  //       <Menu.Button aria-label="Adjust volume">
-  //         <FontAwesomeIcon
-  //           className="h-4 w-4 rounded bg-skin-button-accent p-1 hover:bg-skin-button-accent-hover hover:text-buttonAccent"
-  //           icon={faVolume}
-  //         />
-  //       </Menu.Button>
-  //       <Menu.Items className="absolute bottom-[90px] left-[-59px] flex h-10 w-36 rotate-[270deg] flex-col items-center justify-center rounded-l-md bg-black py-2 font-bold">
-  //         <Menu.Item aria-label="Volume bar">
-  //           {() => (
-  //             <>
-  //               <input
-  //                 className="volumeControlBar"
-  //                 type="range"
-  //                 min="0"
-  //                 max="100"
-  //                 value={volume}
-  //                 ref={audioBar}
-  //                 onChange={e => changeVolume(e)}
-  //               />
-  //               <p className="0 absolute -right-8 -z-40 w-10 rotate-90 rounded-t-md bg-black py-3 text-center text-xs text-skin-muted">
-  //                 {volume}%
-  //               </p>
-  //             </>
-  //           )}
-  //         </Menu.Item>
-  //       </Menu.Items>
-  //     </Menu>
-  //   )
-  // }
+// const renderVolumeMenu = () => {
+//   return (
+//     <Menu>
+//       <Menu.Button aria-label="Adjust volume">
+//         <FontAwesomeIcon
+//           className="h-4 w-4 rounded bg-skin-button-accent p-1 hover:bg-skin-button-accent-hover hover:text-buttonAccent"
+//           icon={faVolume}
+//         />
+//       </Menu.Button>
+//       <Menu.Items className="absolute bottom-[90px] left-[-59px] flex h-10 w-36 rotate-[270deg] flex-col items-center justify-center rounded-l-md bg-black py-2 font-bold">
+//         <Menu.Item aria-label="Volume bar">
+//           {() => (
+//             <>
+//               <input
+//                 className="volumeControlBar"
+//                 type="range"
+//                 min="0"
+//                 max="100"
+//                 value={volume}
+//                 ref={audioBar}
+//                 onChange={e => changeVolume(e)}
+//               />
+//               <p className="0 absolute -right-8 -z-40 w-10 rotate-90 rounded-t-md bg-black py-3 text-center text-xs text-skin-muted">
+//                 {volume}%
+//               </p>
+//             </>
+//           )}
+//         </Menu.Item>
+//       </Menu.Items>
+//     </Menu>
+//   )
+// }

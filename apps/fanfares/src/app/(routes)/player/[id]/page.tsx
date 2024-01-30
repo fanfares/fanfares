@@ -1,8 +1,6 @@
 "use client"
 
-import { AudioPlayer } from "@/app/components/AudioPlayer"
 import Button from "@/app/components/Button"
-import { MediaThumbnailUploadField } from "@/app/components/MediaThumbnailUploadField"
 import {
   faAlignLeft,
   faPauseCircle,
@@ -10,7 +8,7 @@ import {
 } from "@fortawesome/pro-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { config } from "@fortawesome/fontawesome-svg-core"
-import { usePathname, useSearchParams } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import {
   usePlayerPageActions,
@@ -19,6 +17,7 @@ import {
   usePlayerPageIsLoading,
   usePlayerPageIsPlaying,
   usePlayerPagePodcast,
+  usePlayerPagePodcastCreator,
 } from "@/app/controllers/state/player-page-slice"
 import { useNostr } from "@/app/controllers/state/nostr-slice"
 import {
@@ -26,42 +25,12 @@ import {
   useAccountWebln,
 } from "@/app/controllers/state/account-slice"
 import Image from "next/image"
+import { formatDate, getIdFromUrl } from "@/app/controllers/utils/formatting"
 
 config.autoAddCss = false /* eslint-disable import/first */
 
-function getIdFromUrl(pathname: string) {
-  const split = pathname.split("/")
-  return split[split.length - 1]
-}
-
-function formatDate(date: Date): string {
-  // Array of month abbreviations
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ]
-
-  // Extracting day, month, and year from the date
-  const day = date.getDate().toString().padStart(2, "0")
-  const month = months[date.getMonth()]
-  const year = date.getFullYear().toString().substring(2)
-
-  // Formatting the date
-  return `${day} ${month}, ${year}`
-}
-
 export default function PlayerPage() {
-  const isPlaying = usePlayerPageIsPlaying()
+  const creator = usePlayerPagePodcastCreator();
   const gateId = usePlayerPageGateId()
   const accountNostr = useAccountNostr()
   const webln = useAccountWebln()
@@ -76,8 +45,17 @@ export default function PlayerPage() {
   const podcast = usePlayerPagePodcast()
   const playerPageError = usePlayerPageError()
   const playerPageIsPlaying = usePlayerPageIsPlaying()
-  const pathname = getIdFromUrl(usePathname())
+
+  // ------------ USE STATE ------------
+
   const [copied, setCopied] = useState(false)
+
+  // ------------ CONSTS ------------
+
+  const pathname = getIdFromUrl(usePathname())
+
+  // ------------ USE EFFECTS ------------
+
   useEffect(() => {
     if (gateId !== pathname)
       playerPageSetGateId(nostrRelays, nostrPool, pathname)
@@ -101,11 +79,15 @@ export default function PlayerPage() {
     }
   }, [nostrRelays, nostrPool, accountNostr, podcast])
 
+
+  // ------------ FUNCTIONS ------------
+
   const buyPodcast = () => {
     if (!podcast) {
       alert("Podcast not found")
       return
     }
+
     if (
       !accountNostr ||
       !accountNostr.accountNIP04 ||
@@ -116,6 +98,7 @@ export default function PlayerPage() {
       alert("You need to login first")
       return
     }
+    
     playerPageBuyPodcast(
       nostrRelays,
       nostrPool,
@@ -127,12 +110,6 @@ export default function PlayerPage() {
     )
   }
 
-  const [currentUrl, setCurrentUrl] = useState<string>("")
-
-  useEffect(() => {
-    setCurrentUrl(window.location.href)
-  }, [])
-
   const copyToClipboard = async (text: string) => {
     setCopied(true)
 
@@ -140,6 +117,8 @@ export default function PlayerPage() {
 
     navigator.clipboard.writeText(text)
   }
+
+  // ------------ RENDERERS ------------
 
   const renderBuy = () => {
     if (!podcast) return null
@@ -168,7 +147,6 @@ export default function PlayerPage() {
 
   const renderActionMenu = () => {
     if (!podcast) return null
-    // if (!podcast.audioFilepath) return renderBuy()
 
     return (
       <div className="flex gap-4 items-center h-20 ">
@@ -197,7 +175,7 @@ export default function PlayerPage() {
           aria-label="Share episode on Socials"
           id={"E2EID.playerShareButton"}
           className="px-2 text-xs md:px-4 md:text-base"
-          onClick={() => copyToClipboard(currentUrl)}
+          onClick={() => copyToClipboard(window.location.href)}
           label={copied ? "Copied" : "Copy Link"}
         />
       </div>
@@ -271,7 +249,7 @@ export default function PlayerPage() {
             <div className="flex flex-col w-full mb-4 space-y-4 text-sm text-skin-muted">
               <p className="lg:text-2xl lg:font-bold">{podcast.title}</p>
               <p className="lg:text-base lg:font-bold truncate w-80">
-                {podcast.announcement.note.pubkey}
+                { creator ? creator.name : podcast.announcement.note.pubkey }
               </p>
 
               <div
@@ -294,12 +272,10 @@ export default function PlayerPage() {
                 </button> */}
               </div>
             </div>
-
             {renderActionMenu()}
           </div>
         </div>
         <hr className="w-full mt-4 mb-4 border-buttonDisabled/40 " />
-        {/* <AudioPlayer /> */}
       </>
     )
   }
@@ -311,5 +287,5 @@ export default function PlayerPage() {
       </h1>
       {renderContent()}
     </section>
-  )
+  );
 }

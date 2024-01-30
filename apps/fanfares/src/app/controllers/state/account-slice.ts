@@ -5,6 +5,9 @@ import { WebLNProvider, requestProvider } from "webln";
 import { NIP04, NIP07 } from 'utils';
 import { NostrProfile, eventToNostrProfile } from 'utils/nostrProfile';
 
+
+//TODO get relays: https://github.com/nostr-protocol/nips/blob/master/65.md
+
 export interface NostrAccount {
     accountPublicKey: string | null;
     accountNIP07: NIP07 | null;
