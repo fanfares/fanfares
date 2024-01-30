@@ -11,6 +11,7 @@ import {
 import { useAccountProfile } from "../controllers/state/account-slice"
 import Image from "next/image"
 import { useEffect, useState } from "react"
+import EpisodeCard from "../components/EpisodeCard"
 function Profile() {
   const primalNotes = usePrimalNotes()
   const primalProfiles = usePrimalProfiles()
@@ -47,8 +48,57 @@ function Profile() {
         <p className="text-buttonDisabled text-xs/4">{accountProfile?.lud16}</p>
         <p className="text-buttonDisabled text-xs/4">{accountProfile?.nip05}</p>
       </div>
-      <div className="space-y-2 mt-4">
+      <div className="flex-col gap-2 mt-2 overflow-x-clip relative space-y-2">
+        <div className="w-full flex items-center justify-between">
+          <p>Podcasts</p>
+          <Button className="text-sm/4 px-4" label="Show all..." />
+        </div>
+        <div className="flex gap-2 overflow-x-scroll overflow-y-hidden h-64 items-center ">
+          <EpisodeCard
+            imgUrl="https://m.primal.net/HZpV.png"
+            description="Description"
+            title="Title"
+          />
+          <EpisodeCard
+            imgUrl="https://m.primal.net/HZpV.png"
+            description="Description"
+            title="Title"
+          />
+          <EpisodeCard
+            imgUrl="https://m.primal.net/HZpV.png"
+            description="Description"
+            title="Title"
+          />
+          <EpisodeCard
+            imgUrl="https://m.primal.net/HZpV.png"
+            description="Description"
+            title="Title"
+          />
+          <EpisodeCard
+            imgUrl="https://m.primal.net/HZpV.png"
+            description="Description"
+            title="Title"
+          />
+        </div>
+      </div>
+      <div className="space-y-2 mt-8">
+        <div className="w-full flex items-center justify-between">
+          <p>Notes</p>
+          <Button className="text-sm/4 px-4" label="Show all..." />
+        </div>{" "}
         {filteredEvents.map(note => {
+          return (
+            <FeedPost
+              key={generatePrivateKey()}
+              note={note}
+              user={accountProfile?.name}
+              content={note.content}
+              userPfp={accountProfile?.picture}
+              userProfile={accountProfile?.lud16}
+            />
+          )
+        })}
+        {primalNotes.map(note => {
           return (
             <FeedPost
               key={generatePrivateKey()}
