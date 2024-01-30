@@ -299,7 +299,7 @@ export default function PlayerPage() {
           </div>
         </div>
         <hr className="w-full mt-4 mb-4 border-buttonDisabled/40 " />
-        <AudioPlayer />
+        {/* <AudioPlayer /> */}
       </>
     )
   }
