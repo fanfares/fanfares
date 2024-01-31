@@ -18,3 +18,15 @@ export function secretToKeypair(secretString: string) {
 
   return keypair;
 }
+
+export function formatFilePrefixedName(file: File, fileNamePrefix?: string) {
+  // Sanitize the filename: remove spaces, special characters, and existing underscores
+  let sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.]/g, '');
+
+  // If fileNamePrefix is provided, prepend it to the sanitized filename
+  if (fileNamePrefix) {
+      return `${fileNamePrefix}_${sanitizedFileName}`;
+  }
+
+  return sanitizedFileName;
+}

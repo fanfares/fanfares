@@ -4,6 +4,7 @@ import { PostGatedNoteIds, PostGatedNoteState, postGatedNote } from "nip108"
 import { GATE_SERVER } from "../nostr/nostr-defines"
 import { uploadToShdwDrive } from "../shdw/upload"
 import { NIP07 } from "utils"
+import { formatFilePrefixedName } from "../shdw/utils"
 
 export type PostPodcastState = PostGatedNoteState | "UPLOADING_FILES"
 
@@ -205,6 +206,8 @@ export const createPostPodcastSlice: StateCreator<
       if (!nostrPool) throw new Error("Missing pool")
       if (!nostrRelays) throw new Error("Missing relays")
 
+      if (!postPodcastLud16.includes("getalby.com")) throw new Error("Currently only Alby addresses are supported")
+
       set({ postPodcastIsRunning: true })
 
       // Upload Files
@@ -218,12 +221,13 @@ export const createPostPodcastSlice: StateCreator<
         const uploadFiles = [postPodcastAudioFile, postPodcastImageFile]
         const prefix = "debug"
         const fileUrls = await uploadToShdwDrive(uploadFiles, prefix)
+        console.log(fileUrls)
 
         const audioUrl = fileUrls.find(url =>
-          url.includes(postPodcastAudioFile.name)
+          url.includes(formatFilePrefixedName(postPodcastAudioFile))
         )
         const imageUrl = fileUrls.find(url =>
-          url.includes(postPodcastImageFile.name)
+          url.includes(formatFilePrefixedName(postPodcastImageFile))
         )
 
         if (!audioUrl) throw new Error("Missing audio url")

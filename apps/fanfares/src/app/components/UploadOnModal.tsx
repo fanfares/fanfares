@@ -56,7 +56,9 @@ export default function UploadOnModal(props: UploadOnModalProps) {
 
   useEffect(() => {
     if (accountProfile && accountProfile.lud16) {
-      postPodcastSetLud16(accountProfile.lud16)
+      if(accountProfile.lud16.includes('getalby.com')){
+        postPodcastSetLud16(accountProfile.lud16)
+      }
     }
   }, [accountProfile])
 
@@ -74,7 +76,6 @@ export default function UploadOnModal(props: UploadOnModalProps) {
     setPublishModal(true)
     postPodcastSubmit(nostrPool, nostrRelays, accountNostr?.accountNIP07, {
       onSuccess(ids) {
-        console.log(ids)
         // alert(`Note posted with id ${ids}`)
         setPublishModal(false)
         if (onCancel) onCancel()
@@ -240,14 +241,14 @@ export default function UploadOnModal(props: UploadOnModalProps) {
                       <FormLabelCreators>
                         {" "}
                         <p>
-                          LUD16 Address {/* THIS SHOULD BE A POPOVER */}
+                          Alby Address {/* THIS SHOULD BE A POPOVER */}
                           <span className="text-skin-muted hidden">() </span>
                         </p>{" "}
                         <input
                           id={"`${E2EID.uploadCreatorWalletInputX}${index}`"}
                           autoComplete="off"
                           className="border-b-2 border-buttonAccent bg-transparent text-sm font-thin outline-none placeholder:text-sm placeholder:font-semibold mt-2 placeholder:text-skin-muted/40 text-start"
-                          placeholder="Enter Creator LUD16 Address"
+                          placeholder="username@getalby.com"
                           name={"`creators.${index}.wallet`"}
                           maxLength={48} // 44 seems to be the max
                           value={postPodcastLud16}
