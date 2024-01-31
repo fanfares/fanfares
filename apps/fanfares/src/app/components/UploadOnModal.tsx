@@ -76,10 +76,12 @@ export default function UploadOnModal(props: UploadOnModalProps) {
       onSuccess(ids) {
         console.log(ids)
         // alert(`Note posted with id ${ids}`)
+        setPublishModal(false)
         if (onCancel) onCancel()
       },
       onError(error) {
         alert(`Error posting note: ${error}`)
+        setPublishModal(false)
       },
       onClear() {
         formRef.current?.reset()
