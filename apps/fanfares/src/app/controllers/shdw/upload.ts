@@ -15,10 +15,16 @@ function formatFileNames(fileNames: string[]): string {
   return fileNames.join(",");
 }
 
-function formatFilePrefixedName(file: File, fileNamePrefix?: string): string {
-  if (!fileNamePrefix) return file.name;
+function formatFilePrefixedName(file: File, fileNamePrefix?: string) {
+  // Sanitize the filename: remove spaces, special characters, and existing underscores
+  let sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.]/g, '');
 
-  return `${fileNamePrefix}_${file.name}`;
+  // If fileNamePrefix is provided, prepend it to the sanitized filename
+  if (fileNamePrefix) {
+      return `${fileNamePrefix}_${sanitizedFileName}`;
+  }
+
+  return sanitizedFileName;
 }
 
 export async function uploadToShdwDrive(
