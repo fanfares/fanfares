@@ -19,11 +19,10 @@ export function FeedPost(props: FeedPostProps) {
   const [fanfaresButtonMessage, setFanfaresButtonMessage] = useState(false)
   const [zapButtonMessage, setZapButtonMessage] = useState(false)
 
-
   return (
     <div
       id="e2e-feed-post-container"
-      className="border-buttonAccent w-full rounded-md flex relative border pl-16 pr-4 py-3 flex-col">
+      className="border-buttonAccent w-full max-w-lg lg:max-w-2xl rounded-md flex relative border pl-16 pr-4 py-3 flex-col mx-auto md:mx-0">
       <div className="w-12 h-12 absolute left-2 top-2 group">
         <img
           src={userPfp ?? "http://placebeard.it/640/480.jpg"}
@@ -40,7 +39,7 @@ export function FeedPost(props: FeedPostProps) {
             {userProfile ? userProfile : null}
           </Link>
         </p>
-        <RenderContent rawContent={content ?? ''} />
+        <RenderContent rawContent={content ?? ""} />
         {/* <h3 className="break-words text-sm font-normal">{parseContent(content ?? '')}</h3> */}
         {/* <h3 className="break-words text-sm font-normal">{JSON.stringify(note)}</h3> */}
       </div>

@@ -92,15 +92,30 @@ export function RenderContent(props: RenderContentProps) {
   const renderContent = useCallback((content: Content) => {
     switch (content.type) {
       case ContentType.video:
-        return <video className="rounded" src={content.content} />
+        return (
+          <video
+            controls
+            className="rounded max-w-md mt-2 mx-auto"
+            src={content.content}
+          />
+        )
       case ContentType.image:
-        return <img className="rounded drop-shadow-md" src={content.content} />
+        return (
+          <img
+            className="rounded drop-shadow-md max-w-sm mx-auto mt-2"
+            src={content.content}
+          />
+        )
       case ContentType.text:
-        return <span>{content.content}</span>
+        return (
+          <span className="tracking-wide text-sm font-light">
+            {content.content}
+          </span>
+        )
       case ContentType.link:
         return (
           <a
-            className="text-stone-400 hover:text-stone-200"
+            className="text-stone-400 hover:text-stone-200 tracking-wide text-sm font-light"
             href={content.content}>
             {content.content.substring(0, 21)}...
           </a>
@@ -109,27 +124,32 @@ export function RenderContent(props: RenderContentProps) {
         return <audio src={content.content} />
       case ContentType.youtube:
         return (
-          <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+          <div
+            className="relative w-full max-w-md mx-auto content-center aspect-video mt-2"
+            // style={{ paddingTop: "56.25%" }}
+          >
             {" "}
             {/* 16:9 aspect ratio */}
             <iframe
               src={content.content}
               title="YouTube video player"
               frameBorder="0"
-              className="absolute top-0 left-0 w-full h-full rounded "
+              className="absolute top-0 left-0 w-full h-full rounded object-contain"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen></iframe>
           </div>
         )
       case ContentType.mention:
         return (
-          <a className="text-yellow-400 hover:text-yellow-300">
+          <a className="text-yellow-400 hover:text-yellow-300 tracking-wide text-sm font-light">
             {content.content.substring(6, 21)}...
           </a>
         )
       case ContentType.hashtag:
         return (
-          <a className="text-blue-400 hover:text-blue-300">{content.content}</a>
+          <a className="text-blue-400 hover:text-blue-300 tracking-wide text-sm font-light">
+            {content.content}
+          </a>
         )
       default:
         return null

@@ -36,7 +36,7 @@ function EpisodeCard(props: EpisodeCardProps) {
     <section onClick={onClick}>
       <Link
         href={props.episodeUrl || "/player"}
-        className="e2e-podcast-tile group md:w-48 lg:w-40 w-full cursor-pointer flex md:flex-col  md:items-center justify-start rounded-lg border border-buttonAccent p-2 transition duration-300 ease-linear md:hover:scale-105 md:hover:bg-black/[10%] md:h-fit gap-2">
+        className="e2e-podcast-tile group md:w-48 lg:w-40  w-full cursor-pointer flex md:flex-col  md:items-center justify-start rounded-lg border border-buttonAccent p-2 transition duration-300 ease-linear md:hover:scale-105 md:hover:bg-black/[10%] md:h-60 gap-2">
         <div className="flex items-center w-20 rounded-lg md:transition md:duration-300 md:w-full group/playButton md:h-36 md:group-hover:brightness-110">
           {/* //should be IMAGE, this is just mocking */}
 
@@ -71,7 +71,7 @@ function EpisodeCard(props: EpisodeCardProps) {
             {/* {metadataNameSlicer()} */}
             {props.title}
           </p>
-          <p className="tracking-tight text-xs/4 line-clamp-2 md:text-sm/4">
+          <p className="tracking-tight text-xs/4 line-clamp-2 md:text-xs/4">
             {props.description}
           </p>
           {/* <p className="ml-auto text-xs font-thin text-right md:text-start absolute bottom-0">
