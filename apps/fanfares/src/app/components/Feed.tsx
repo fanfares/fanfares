@@ -36,12 +36,10 @@ export function Feed() {
 
   return (
     <FeedPost
-      userPfp={profile.picture}
       key={note.id}
       note={note}
-      user={profile.name}
-      content={note.content}
-      userProfile={profile.lud16}
+      profile={profile}
+      stats={stats}
     />
   )
 })
