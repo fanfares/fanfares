@@ -13,11 +13,15 @@ import Image from "next/image"
 import { useEffect, useState } from "react"
 import EpisodeCard from "../components/EpisodeCard"
 import PodcastsCarrousel from "../components/PodcastsCarrousel"
+import { Modal } from "../components/Modal"
+import ProfileEditorForm from "../components/ProfileEditorForm"
 function Profile() {
   const primalNotes = usePrimalNotes()
   const primalProfiles = usePrimalProfiles()
   const primalNoteStats = usePrimalNoteStats()
   const accountProfile = useAccountProfile()
+  const [editProfileModalOn, setEditProfileModalOn] = useState(false)
+
   const [filteredEvents, setFilteredEvents] = useState<Event<1>[]>([])
 
   useEffect(() => {
@@ -79,8 +83,15 @@ function Profile() {
             alt="profile picture"
           />
         </div>
+        <Modal isOpen={editProfileModalOn}>
+          <ProfileEditorForm />
+        </Modal>
         <div className="flex gap-2 ml-auto">
-          <Button className="w-32" label="edit profile" />
+          <Button
+            onClick={() => setEditProfileModalOn(!editProfileModalOn)}
+            className="w-32"
+            label="edit profile"
+          />
         </div>
       </div>
       <div className="mt-28 w-full">
