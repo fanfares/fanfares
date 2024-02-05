@@ -1,22 +1,24 @@
 import { create } from "zustand";
 import { StateCreator } from "zustand";
-import {
-  generatePrivateKey,
-  Event as NostrEvent,
-} from "nostr-tools";
+import { generatePrivateKey, Event as NostrEvent } from "nostr-tools";
 import { PRIMAL_CACHE } from "../nostr/nostr-defines";
 import { NostrProfile } from "utils";
-import { getExploreFeed, MediaEvent, NostrPostStats, PrimalScope, PrimalSort } from "../primal/primalHelpers";
-
+import {
+  getExploreFeed,
+  MediaEvent,
+  NostrPostStats,
+  PrimalScope,
+  PrimalSort,
+} from "../primal/primalHelpers";
 
 export interface PrimalSlice {
   primalSocket: WebSocket | null;
   primalAppID: string;
-
-  primalNotes: NostrEvent<1>[];
+  primalFetching: boolean;
+  primalNotes: { [key: string]: NostrEvent<1> };
   primalProfiles: { [key: string]: NostrProfile }; // Keyed by Pubkey
   primalNoteStats: { [key: string]: NostrPostStats }; // Keyed by Event ID
-  primalMediaEvents:{ [key: string]: MediaEvent }; // Keyed by Event ID
+  primalMediaEvents: { [key: string]: MediaEvent }; // Keyed by Event ID
 
   actions: {
     primalConnect: () => void;
@@ -28,8 +30,9 @@ export interface PrimalSlice {
 
 const DEFAULT_STATE: PrimalSlice = {
   primalSocket: null,
+  primalFetching: false,
   primalAppID: "nostr",
-  primalNotes: [],
+  primalNotes: {},
   primalProfiles: {},
   primalNoteStats: {},
   primalMediaEvents: {},
@@ -48,7 +51,6 @@ export const createPrimalSlice: StateCreator<
   [],
   PrimalSlice
 > = (set, get) => {
-
   // -------------- PRIMAL SEND ----------------
   const primalSend = (message: string) => {
     const ws = get().primalSocket;
@@ -61,9 +63,7 @@ export const createPrimalSlice: StateCreator<
   };
 
   // -------------- PRIMAL GET ----------------
-  const primalGet = (
-    publicKey: string
-  ) => {
+  const primalGet = (publicKey: string) => {
     const id = get().primalAppID;
 
     //  network
@@ -72,13 +72,20 @@ export const createPrimalSlice: StateCreator<
     //scope: global, timeframe: popular, until: 0, limit: 20
     //scope: global, timeframe: latest, until: 0, limit: 20
 
+    if(get().primalFetching){
+      console.log("Primal is already fetching");
+      return;
+    }
+
+    set({ primalFetching: true });
+
     getExploreFeed(
       publicKey ?? "",
       `explore_${id}`,
       PrimalScope.global, //scope
       PrimalSort.mostzapped, //timeframe
       0,
-      50,
+      100,
       primalSend
     );
   };
@@ -87,38 +94,54 @@ export const createPrimalSlice: StateCreator<
   const parsePrimalEvent = (event: any) => {
     try {
       const rawData = JSON.parse(event.data);
-      if (rawData[0] === "EOSE") return;
-  
+      if (rawData[0] === "EOSE"){
+        set({ primalFetching: false });
+        return;
+      }
+
       const data = rawData[2];
-  
+
       switch (data.kind) {
         case 0:
           const profile: NostrProfile = {
-            ...JSON.parse(data.content)
+            ...JSON.parse(data.content),
           };
+
+          const profiles = get().primalProfiles;
+          if(profiles[profile.pubkey]) return;
 
           set({
             primalProfiles: {
-              ...get().primalProfiles,
+              ...profiles,
               [data.pubkey]: profile,
             },
-          })
+          });
           break;
         case 1:
           const note = data as NostrEvent<1>;
 
+          const notes = get().primalNotes;
+          if(notes[note.id]) return;
+
           set({
-            primalNotes: [...get().primalNotes, note],
-          })
+            primalNotes: {
+              ...notes,
+              [note.id]: note,
+            },
+          });
           break;
         case 1000_0100:
           const noteStats = JSON.parse(data.content) as NostrPostStats;
+
+          const stats = get().primalNoteStats;
+          if(stats[noteStats.event_id]) return;
+
           set({
             primalNoteStats: {
-              ...get().primalNoteStats,
+              ...stats,
               [noteStats.event_id]: noteStats,
             },
-          })
+          });
           break;
         case 1000_0107: // CONTENT?
           // console.log(JSON.parse(data.content));
@@ -129,24 +152,27 @@ export const createPrimalSlice: StateCreator<
           break;
         case 1000_0119: // MEDIA EVENT
           const mediaEvent = JSON.parse(data.content) as MediaEvent;
+
+          const mediaEvents = get().primalMediaEvents;
+          if(mediaEvents[mediaEvent.event_id]) return;
+
           set({
             primalMediaEvents: {
-              ...get().primalMediaEvents,
+              ...mediaEvents,
               [data.event_id]: mediaEvent,
             },
-          })
+          });
           break;
         case 1000_0128: // ARTICLES
           // console.log(JSON.parse(data.content));
           break;
       }
-  
     } catch (error) {
       console.error(`\n\nError parsing primal event: ${error}`);
       console.error(JSON.parse(event.data));
       console.error("\n\n\n");
     }
-  }
+  };
 
   // -------------- PRIMAL CONNECT ----------------
   const primalConnect = () => {
@@ -186,18 +212,24 @@ export const createPrimalSlice: StateCreator<
       primalDisconnect,
       primalSend,
       primalGet,
-    }
+    },
   };
 };
 
 const usePrimalSlice = create<PrimalSlice>()(createPrimalSlice);
 
+export const usePrimalIsFetching = () => usePrimalSlice((state) => state.primalFetching);
 export const usePrimalActions = () => usePrimalSlice((state) => state.actions);
 export const usePrimalState = () => usePrimalSlice((state) => state);
-export const usePrimalSocket = () => usePrimalSlice((state) => state.primalSocket);
-export const usePrimalAppID = () => usePrimalSlice((state) => state.primalAppID);
-export const usePrimalNotes = () => usePrimalSlice((state) => state.primalNotes);
-export const usePrimalProfiles = () => usePrimalSlice((state) => state.primalProfiles);
-export const usePrimalNoteStats = () => usePrimalSlice((state) => state.primalNoteStats);
-export const usePrimalMediaEvents = () => usePrimalSlice((state) => state.primalMediaEvents);
-
+export const usePrimalSocket = () =>
+  usePrimalSlice((state) => state.primalSocket);
+export const usePrimalAppID = () =>
+  usePrimalSlice((state) => state.primalAppID);
+export const usePrimalNotes = () =>
+  usePrimalSlice((state) => state.primalNotes);
+export const usePrimalProfiles = () =>
+  usePrimalSlice((state) => state.primalProfiles);
+export const usePrimalNoteStats = () =>
+  usePrimalSlice((state) => state.primalNoteStats);
+export const usePrimalMediaEvents = () =>
+  usePrimalSlice((state) => state.primalMediaEvents);

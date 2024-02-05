@@ -1,3 +1,4 @@
+import { generatePrivateKey } from "nostr-tools"
 import { useCallback } from "react"
 
 enum ContentType {
@@ -89,11 +90,15 @@ export function RenderContent(props: RenderContentProps) {
   const { rawContent } = props
   const parsedContent = parseContent(rawContent)
 
-  const renderContent = useCallback((content: Content) => {
+  const renderContent = useCallback((content: Content, index: number) => {
+
+    const key = `${content.type}-${index}`
+
     switch (content.type) {
       case ContentType.video:
         return (
           <video
+            key={key}
             controls
             className="rounded max-w-md mt-2 mx-auto"
             src={content.content}
@@ -102,31 +107,38 @@ export function RenderContent(props: RenderContentProps) {
       case ContentType.image:
         return (
           <img
+            key={key}
             className="rounded drop-shadow-md max-w-sm mx-auto mt-2"
             src={content.content}
           />
         )
       case ContentType.text:
         return (
-          <span className="tracking-wide text-sm font-light">
+          <span 
+          key={key}
+          className="tracking-wide text-sm font-light">
             {content.content}
           </span>
         )
       case ContentType.link:
         return (
           <a
+          key={key}
             className="text-stone-400 hover:text-stone-200 tracking-wide text-sm font-light"
             href={content.content}>
             {content.content.substring(0, 21)}...
           </a>
         )
       case ContentType.audio:
-        return <audio src={content.content} />
+        return <audio 
+        key={key}
+        src={content.content} />
       case ContentType.youtube:
         return (
           <div
             className="relative w-full max-w-md mx-auto content-center aspect-video mt-2"
             // style={{ paddingTop: "56.25%" }}
+            key={key}
           >
             {" "}
             {/* 16:9 aspect ratio */}
@@ -141,13 +153,17 @@ export function RenderContent(props: RenderContentProps) {
         )
       case ContentType.mention:
         return (
-          <a className="text-yellow-400 hover:text-yellow-300 tracking-wide text-sm font-light">
+          <a 
+          key={key}
+          className="text-yellow-400 hover:text-yellow-300 tracking-wide text-sm font-light">
             {content.content.substring(6, 21)}...
           </a>
         )
       case ContentType.hashtag:
         return (
-          <a className="text-blue-400 hover:text-blue-300 tracking-wide text-sm font-light">
+          <a 
+          key={key}
+          className="text-blue-400 hover:text-blue-300 tracking-wide text-sm font-light">
             {content.content}
           </a>
         )
