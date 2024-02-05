@@ -12,6 +12,7 @@ import { useAccountProfile } from "../controllers/state/account-slice"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import EpisodeCard from "../components/EpisodeCard"
+import PodcastsCarrousel from "../components/PodcastsCarrousel"
 function Profile() {
   const primalNotes = usePrimalNotes()
   const primalProfiles = usePrimalProfiles()
@@ -26,6 +27,47 @@ function Profile() {
 
     setFilteredEvents(filtered)
   }, [primalNotes, accountProfile])
+
+  const episodes = [
+    {
+      imgUrl: "https://m.primal.net/HZpV.png",
+      description: "Description 1",
+      title: "Title 1",
+    },
+    {
+      imgUrl: "https://m.primal.net/HZpV.png",
+      description: "Description 2",
+      title: "Title 2",
+    },
+    {
+      imgUrl: "https://m.primal.net/HZpV.png",
+      description: "Description 3",
+      title: "Title 3",
+    },
+    {
+      imgUrl: "https://m.primal.net/HZpV.png",
+      description: "Description 4",
+      title: "Title 4",
+    },
+
+    {
+      imgUrl: "https://m.primal.net/HZpV.png",
+      description: "Description 5",
+      title: "Title 5",
+    },
+    {
+      imgUrl: "https://m.primal.net/HZpV.png",
+      description: "Description 6",
+      title: "Title 6",
+    },
+    {
+      imgUrl: "https://m.primal.net/HZpV.png",
+      description: "Description 7",
+      title: "Title 8",
+    },
+
+    // Add more episodes as needed
+  ]
 
   return (
     <section className="container flex flex-col max-w-xl">
@@ -53,7 +95,7 @@ function Profile() {
           <p>Podcasts</p>
           <Button className="text-sm/4 px-4" label="Show all..." />
         </div>
-        <div className="flex gap-2 overflow-x-scroll overflow-y-hidden h-64 items-center ">
+        {/* <div className="flex gap-2 overflow-x-scroll overflow-y-hidden h-64 items-center ">
           <EpisodeCard
             imgUrl="https://m.primal.net/HZpV.png"
             description="Description"
@@ -79,7 +121,8 @@ function Profile() {
             description="Description"
             title="Title"
           />
-        </div>
+        </div> */}
+        <PodcastsCarrousel episodes={episodes} />
       </div>
       <div className="space-y-2 mt-8">
         <p>My posts...</p>
