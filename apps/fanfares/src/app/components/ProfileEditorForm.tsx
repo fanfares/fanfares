@@ -15,6 +15,7 @@ import {
   useProfileEditorActions,
   useProfileEditorLoading,
 } from "../controllers/state/profile-editor-slice"
+import { useAccountProfile } from "../controllers/state/account-slice"
 
 const ProfileEditorForm = () => {
   //TODO : Loading icon on Submit
@@ -38,13 +39,53 @@ const ProfileEditorForm = () => {
     submit()
   }
 
+  const profile = useAccountProfile()
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // need to finish the logic to upload the image to the profile
+    const file = event.target.files?.[0]
+    if (file) {
+    }
+  }
+
+  const handleButtonClick = () => {
+    const uploadInput = document.getElementById(
+      "upload"
+    ) as HTMLInputElement | null
+    if (uploadInput) {
+      uploadInput.click()
+    }
+  }
+
   return (
     <div className="flex flex-col w-full max-w-sm md:max-w-lg">
       <div className="p-4 rounded-lg">
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col items-start w-full gap-4"
+          className="flex flex-col items-start w-full gap-4 relative"
           action="">
+          <label
+            htmlFor="upload"
+            className="relative w-full pointer-events-none">
+            <img
+              src={profile ? profile.picture : ""}
+              className="w-24 rounded-full object-center"
+              alt=""
+            />
+            <input
+              type="file"
+              id="upload"
+              className="hidden"
+              onChange={handleFileUpload}
+            />
+          </label>
+          <Button
+            type="button"
+            className="absolute text-xs right-0 top-16 px-2"
+            onClick={handleButtonClick}
+            label="Change avatar"
+          />
+
           <AnimatedLabelTextInput
             required={true}
             label="Username*"
@@ -84,7 +125,7 @@ const ProfileEditorForm = () => {
             type="submit"
             label={isLoading ? "Loading..." : "Submit"}
             icon={isLoading && <FontAwesomeIcon icon={faSpinner} />}
-            className="flex flex-row-reverse items-center px-4 mt-8"
+            className="flex flex-row-reverse items-center px-4 mt-8 ml-auto"
           />
         </form>
       </div>

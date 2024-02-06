@@ -9,11 +9,10 @@ interface AnimatedLabelInputTextProps {
   required?: boolean
 }
 
-export function AnimatedLabelTextInput(props: AnimatedLabelInputTextProps){
-  const { type, htmlFor, label, onChange, value, required } = props;
+export function AnimatedLabelTextInput(props: AnimatedLabelInputTextProps) {
+  const { type, htmlFor, label, onChange, value, required } = props
   const [isFocused, setIsFocused] = useState(false)
-  const hasValue = value !== "";
-
+  const hasValue = value !== ""
 
   const handleFocus = () => {
     setIsFocused(true)
@@ -29,28 +28,28 @@ export function AnimatedLabelTextInput(props: AnimatedLabelInputTextProps){
 
   return (
     <div className="relative w-full mt-4">
-        <>
-          {" "}
-          <input
-            required={required}
-            onChange={(e)=>{
-              onChange(e.target.value)
-            }}
-            type={type ?? 'text'}
-            id={htmlFor}
-            autoComplete="off"
-            value={value}
-            className={`w-full break-all appearance-none border-b-2 bg-transparent p-2 focus:outline-none ${
-              hasValue && "invalid:border-b-red-500 dark:invalid:border-red-500"
-            }
+      <>
+        {" "}
+        <input
+          required={required}
+          onChange={e => {
+            onChange(e.target.value)
+          }}
+          type={type ?? "text"}
+          id={htmlFor}
+          autoComplete="off"
+          value={value}
+          className={`w-full break-all appearance-none border-b bg-transparent p-2 focus:outline-none ${
+            hasValue && "invalid:border-b-red-500 dark:invalid:border-red-500"
+          }
 
         ${
           isFocused || hasValue ? "border-buttonAccentHover " : "border-white"
         }`}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-          />{" "}
-        </>
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+        />{" "}
+      </>
 
       <label
         htmlFor={htmlFor}

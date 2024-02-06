@@ -15,6 +15,7 @@ import EpisodeCard from "../components/EpisodeCard"
 import PodcastsCarrousel from "../components/PodcastsCarrousel"
 import { Modal } from "../components/Modal"
 import ProfileEditorForm from "../components/ProfileEditorForm"
+
 function Profile() {
   const primalNotes = usePrimalNotes()
   const primalProfiles = usePrimalProfiles()
@@ -22,15 +23,15 @@ function Profile() {
   const accountProfile = useAccountProfile()
   const [editProfileModalOn, setEditProfileModalOn] = useState(false)
 
-  const [filteredEvents, setFilteredEvents] = useState<Event<1>[]>([])
+  // const [filteredEvents, setFilteredEvents] = useState<Event<1>[]>([])
 
-  useEffect(() => {
-    const filtered = primalNotes.filter(
-      event => event.pubkey === accountProfile?.pubkey
-    )
+  // useEffect(() => {
+  //   const filtered = primalNotes.filter(
+  //     event => event.pubkey === accountProfile?.pubkey
+  //   )
 
-    setFilteredEvents(filtered)
-  }, [primalNotes, accountProfile])
+  //   setFilteredEvents(filtered)
+  // }, [primalNotes, accountProfile])
 
   const episodes = [
     {
@@ -69,9 +70,22 @@ function Profile() {
       description: "Description 7",
       title: "Title 8",
     },
-
-    // Add more episodes as needed
   ]
+
+  const renderNotes = () => {
+    return Object.values(primalNotes).map(note => {
+      const profile = primalProfiles[note.pubkey]
+      const stats = primalNoteStats[note.id]
+
+      if (!profile) {
+        return null
+      }
+
+      return (
+        <FeedPost key={note.id} note={note} profile={profile} stats={stats} />
+      )
+    })
+  }
 
   return (
     <section className="container flex flex-col max-w-xl">
@@ -106,40 +120,23 @@ function Profile() {
           <p>Podcasts</p>
           <Button className="text-sm/4 px-4" label="Show all..." />
         </div>
-        {/* <div className="flex gap-2 overflow-x-scroll overflow-y-hidden h-64 items-center ">
-          <EpisodeCard
-            imgUrl="https://m.primal.net/HZpV.png"
-            description="Description"
-            title="Title"
-          />
-          <EpisodeCard
-            imgUrl="https://m.primal.net/HZpV.png"
-            description="Description"
-            title="Title"
-          />
-          <EpisodeCard
-            imgUrl="https://m.primal.net/HZpV.png"
-            description="Description"
-            title="Title"
-          />
-          <EpisodeCard
-            imgUrl="https://m.primal.net/HZpV.png"
-            description="Description"
-            title="Title"
-          />
-          <EpisodeCard
-            imgUrl="https://m.primal.net/HZpV.png"
-            description="Description"
-            title="Title"
-          />
-        </div> */}
+
         <PodcastsCarrousel episodes={episodes} />
       </div>
       <div className="space-y-2 mt-8">
         <p>My posts...</p>
 
-        {filteredEvents.map(note => {
+        {/* {filteredEvents.map(note => {
+
+
+
           return (
+            <FeedPost
+            key={note.id}
+            note={note}
+            profile={profile}
+            stats={stats}
+          />
             <FeedPost
               key={generatePrivateKey()}
               note={note}
@@ -149,19 +146,8 @@ function Profile() {
               userProfile={accountProfile?.lud16}
             />
           )
-        })}
-        {primalNotes.map(note => {
-          return (
-            <FeedPost
-              key={generatePrivateKey()}
-              note={note}
-              user={accountProfile?.name}
-              content={note.content}
-              userPfp={accountProfile?.picture}
-              userProfile={accountProfile?.lud16}
-            />
-          )
-        })}
+        })} */}
+        {renderNotes()}
       </div>
     </section>
   )
