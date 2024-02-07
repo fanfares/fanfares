@@ -1,20 +1,20 @@
 "use client"
 import { Event, generatePrivateKey } from "nostr-tools"
-import Button from "../components/Button"
-import { useAppState } from "../controllers/state/old/use-app-state"
-import { FeedPost } from "../components/FeedPost"
+import Button from "../../components/Button"
+import { useAppState } from "../../controllers/state/old/use-app-state"
+import { FeedPost } from "../../components/FeedPost"
 import {
   usePrimalNoteStats,
   usePrimalNotes,
   usePrimalProfiles,
-} from "../controllers/state/primal-slice"
-import { useAccountProfile } from "../controllers/state/account-slice"
+} from "../../controllers/state/primal-slice"
+import { useAccountProfile } from "../../controllers/state/account-slice"
 import Image from "next/image"
 import { useEffect, useState } from "react"
-import EpisodeCard from "../components/EpisodeCard"
-import PodcastsCarrousel from "../components/PodcastsCarrousel"
-import { Modal } from "../components/Modal"
-import ProfileEditorForm from "../components/ProfileEditorForm"
+import EpisodeCard from "../../components/EpisodeCard"
+import PodcastsCarrousel from "../../components/PodcastsCarrousel"
+import { Modal } from "../../components/Modal"
+import ProfileEditorForm from "../../components/ProfileEditorForm"
 
 function Profile() {
   const primalNotes = usePrimalNotes()

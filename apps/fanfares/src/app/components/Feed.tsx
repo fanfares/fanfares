@@ -6,43 +6,42 @@ import {
   usePrimalNotes,
   usePrimalProfiles,
   usePrimalNoteStats,
-  usePrimalIsFetching
+  usePrimalIsFetching,
 } from "../controllers/state/primal-slice"
+import Lottie from "lottie-react"
+import { LottieLoading } from "./Lottie"
 
 export function Feed() {
   const primalNotes = usePrimalNotes()
   const primalProfiles = usePrimalProfiles()
   const primalNoteStats = usePrimalNoteStats()
-  const primalIsFetching = usePrimalIsFetching();
+  const primalIsFetching = usePrimalIsFetching()
 
   //TODO fix renders
   // console.log("Render Feed -- " + primalNotes.length);
 
-
   const renderLoading = () => {
-    return <div>TODO Better Loading Screen Loading...</div>
+    return (
+      <div className="w-full h-full flex items-center">
+        <Lottie className="w-20" animationData={LottieLoading} loop={true} />
+        <p className="">Loading...</p>
+      </div>
+    )
   }
 
   const renderNotes = () => {
- return Object.values(primalNotes).map(note => {
-  const profile = primalProfiles[note.pubkey]
-  const stats = primalNoteStats[note.id]
+    return Object.values(primalNotes).map(note => {
+      const profile = primalProfiles[note.pubkey]
+      const stats = primalNoteStats[note.id]
 
+      if (!profile) {
+        return null
+      }
 
-  if (!profile) {
-    return null
-  }
-
-
-  return (
-    <FeedPost
-      key={note.id}
-      note={note}
-      profile={profile}
-      stats={stats}
-    />
-  )
-})
+      return (
+        <FeedPost key={note.id} note={note} profile={profile} stats={stats} />
+      )
+    })
   }
 
   return (
@@ -50,7 +49,8 @@ export function Feed() {
       <h1 className="font-black text-center text-gray-100 text-xl/4 md:mt-4 md:text-start md:text-4xl">
         Nostr Universe{" "}
       </h1>
-      {primalIsFetching ? renderLoading() : renderNotes()}
+      {/* {primalIsFetching ? renderLoading() : renderNotes()} */}
+      {renderLoading()}
     </>
   )
 }
