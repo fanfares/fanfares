@@ -9,7 +9,6 @@ import { getIdFromUrl } from "@/app/controllers/utils/formatting"
 import { usePathname } from "next/navigation"
 import { useEffect } from "react"
 import Lottie from "lottie-react"
-import lottie from "./lottie.json"
 
 export default function Page() {
   const primalNotes = usePrimalNotes()
