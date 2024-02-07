@@ -1,15 +1,21 @@
 "use client"
 
+import { useRouter } from "next/navigation";
 import { useAccountProfile } from "../controllers/state/account-slice"
 import { useAppState } from "../controllers/state/old/use-app-state"
 
 export function ProfileBuble() {
+  const router = useRouter();
   const accountProfile = useAccountProfile()
 
   if (!accountProfile) return null
 
+  const goToProfilePage = () => {
+    router.push(`/p/${accountProfile.pubkey}`);
+  }
+
   return (
-    <div className="flex bg-skin-fill rounded-full items-center w-36 mx-auto p-1 h-10 hover:bg-skin-fill/70 transition-colors ease-linear mb-4 gap-1">
+    <div onClick={goToProfilePage} className="cursor-pointer flex bg-skin-fill rounded-full items-center w-36 mx-auto p-1 h-10 hover:bg-skin-fill/70 transition-colors ease-linear mb-4 gap-1">
       <div className="w-8 rounded-full flex items-center justify-center">
         {accountProfile?.picture ? (
           <img
