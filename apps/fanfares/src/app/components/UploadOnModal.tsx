@@ -14,6 +14,7 @@ import {
   useAccountProfile,
 } from "../controllers/state/account-slice"
 import { useNostr } from "../controllers/state/nostr-slice"
+import { Popover } from "./Popover"
 
 interface UploadOnModalProps {
   onCancel?: () => void
@@ -241,7 +242,21 @@ export default function UploadOnModal(props: UploadOnModalProps) {
                       <FormLabelCreators>
                         {" "}
                         <p>
-                          Alby Address {/* THIS SHOULD BE A POPOVER */}
+                          Alby Address 
+                          <Popover 
+                            content={
+                              <div className="text-xs">
+                                <p>Currently we only work with <span className="text-blue-500 hover:underline cursor-pointer" onClick={()=>{ window.open('https://getalby.com/')}}>@getalby.com</span> addresses</p>
+                                <img
+                                  className="p-2"
+                                  src="/assets/alby-how-to.png"
+                                />
+                              </div>
+                            }
+                          >
+                            <span>&#x24D8;</span>
+                          </Popover> {/* THIS SHOULD BE A POPOVER */}
+
                           <span className="text-skin-muted hidden">() </span>
                         </p>{" "}
                         <input
