@@ -27,7 +27,7 @@ export default function Page() {
 
   return (
     <div>
-      <Lottie className="w-10" animationData={lottie} loop={true} />
+      {/* <Lottie className="w-10" animationData={lottie} loop={true} /> */}
       Page of {profile.name}
     </div>
   )
