@@ -57,7 +57,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
 
   useEffect(() => {
     if (accountProfile && accountProfile.lud16) {
-      if(accountProfile.lud16.includes('getalby.com')){
+      if (accountProfile.lud16.includes("getalby.com")) {
         postPodcastSetLud16(accountProfile.lud16)
       }
     }
@@ -241,22 +241,31 @@ export default function UploadOnModal(props: UploadOnModalProps) {
                       className="flex flex-col w-full md:gap-4 md:flex-row md:items-center md:justify-center mt-4 space-y-4 md:space-y-0">
                       <FormLabelCreators>
                         {" "}
-                        <p>
-                          Alby Address 
-                          <Popover 
+                        <p className="flex gap-1">
+                          Alby Address
+                          <Popover
                             content={
-                              <div className="text-xs">
-                                <p>Currently we only work with <span className="text-blue-500 hover:underline cursor-pointer" onClick={()=>{ window.open('https://getalby.com/')}}>@getalby.com</span> addresses</p>
+                              <div className="text-xs font-thin text-center">
+                                <p>
+                                  Currently we only work with{" "}
+                                  <span
+                                    className="text-blue-500 hover:underline cursor-pointer"
+                                    onClick={() => {
+                                      window.open("https://getalby.com/")
+                                    }}>
+                                    @getalby.com
+                                  </span>{" "}
+                                  addresses
+                                </p>
                                 <img
                                   className="p-2"
                                   src="/assets/alby-how-to.png"
                                 />
                               </div>
-                            }
-                          >
+                            }>
                             <span>&#x24D8;</span>
-                          </Popover> {/* THIS SHOULD BE A POPOVER */}
-
+                          </Popover>{" "}
+                          {/* THIS SHOULD BE A POPOVER */}
                           <span className="text-skin-muted hidden">() </span>
                         </p>{" "}
                         <input
