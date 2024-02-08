@@ -14,10 +14,16 @@ export interface NostrAccount {
     accountNIP04: NIP04 | null;
 }
 
+export interface AccountBalance {
+    balance: number;
+    currency: string;
+}
+
 export interface AccountSlice {
     accountNostr: NostrAccount | null;
     accountProfile: NostrProfile | null;
     accountWebln: WebLNProvider | null;
+    accountBalance: AccountBalance | null;
     actions: {
         accountSetNostr: (nostr: NostrAccount) => void;
         accountSetWebln: (webln: WebLNProvider) => void;
@@ -33,7 +39,7 @@ const DEFAULT_STATE: AccountSlice = {
     accountNostr: null,
     accountWebln: null,
     accountProfile: null,
-
+    accountBalance: null,
     actions: {
         accountSetNostr: (nostr) => {},
         accountSetWebln: (webln) => {},
@@ -60,8 +66,21 @@ export const createAccountSlice: StateCreator<
     }
 
     const accountSetWebln = (webln: WebLNProvider) => {
-
         // Init function goes here
+        webln.enable();
+        if((webln as any).getBalance){
+            (webln as any).getBalance().then((balanceResponse: any)=>{
+                const {balance, currency} = balanceResponse;
+
+                set({
+                    accountBalance: {
+                        balance,
+                        currency
+                    }
+                });
+            })
+        }
+        (webln as any).getBalance()
 
         set({accountWebln: webln});
     }
@@ -109,3 +128,4 @@ export const useAccountActions = () => useAccountSlice((state) => state.actions)
 export const useAccountNostr = () => useAccountSlice((state) => state.accountNostr);
 export const useAccountWebln = () => useAccountSlice((state) => state.accountWebln);
 export const useAccountProfile = () => useAccountSlice((state) => state.accountProfile);
+export const useAccountBalance = () => useAccountSlice((state) => state.accountBalance);
