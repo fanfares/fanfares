@@ -14,6 +14,8 @@ import {
   useProfileEditorLud16,
   useProfileEditorActions,
   useProfileEditorLoading,
+  useProfileEditorImageUrl,
+  useProfileEditorImageFile,
 } from "../controllers/state/profile-editor-slice"
 import { useAccountProfile } from "../controllers/state/account-slice"
 
@@ -68,7 +70,7 @@ const ProfileEditorForm = () => {
             htmlFor="upload"
             className="relative w-full pointer-events-none">
             <img
-              src={profile ? profile.picture : ""}
+              src={URL.createObjectURL(useProfileEditorImageFile)}
               className="w-24 rounded-full object-center"
               alt=""
             />
@@ -76,7 +78,7 @@ const ProfileEditorForm = () => {
               type="file"
               id="upload"
               className="hidden"
-              onChange={handleFileUpload}
+              onChange={profileEditor}
             />
           </label>
           <Button
