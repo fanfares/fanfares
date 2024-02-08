@@ -7,6 +7,8 @@ export interface ProfileEditorInputs {
   website: string
   aboutMe: string
   lud16: string
+  profileImageFile?: string
+  profileImageUrl?: string
 }
 
 export interface ProfileEditorSlice {
@@ -16,6 +18,8 @@ export interface ProfileEditorSlice {
   profileEditorAboutMe: string
   profileEditorLud16: string
   profileEditorLoading: boolean
+  // profileEditorImageFile: File | null
+  // profileEditorImageUrl?: string
   actions: {
     clear: () => void
     submit: () => Promise<void>
@@ -24,6 +28,9 @@ export interface ProfileEditorSlice {
     setWebsite: (website: string) => void
     setAboutMe: (aboutMe: string) => void
     setLud16: (lud16: string) => void
+    setProfileImage: (image: File | null) => void
+    // setProfileImageUrl: (profileImageUrl: string) => void
+    // profileEditorHandleImageChange: (event: any) => void
   }
 }
 
@@ -34,6 +41,8 @@ const DEFAULT_STATE: ProfileEditorSlice = {
   profileEditorAboutMe: "",
   profileEditorLud16: "",
   profileEditorLoading: false,
+  // profileEditorImageFile: null,
+  // profileEditorImageUrl: "",
   actions: {
     clear: () => {},
     submit: async () => {},
@@ -42,6 +51,9 @@ const DEFAULT_STATE: ProfileEditorSlice = {
     setWebsite: () => {},
     setAboutMe: () => {},
     setLud16: () => {},
+    setProfileImage: () => {},
+    // setProfileImageUrl: () => {},
+    // profileEditorHandleImageChange: () => {},
   },
 }
 
@@ -59,6 +71,8 @@ export const createProfileEditorSlice: StateCreator<
       profileEditorAboutMe: "",
       profileEditorLud16: "",
       profileEditorLoading: false,
+      // profileEditorImageFile: null,
+      // profileEditorImageUrl: "",
     })
   }
 
@@ -70,6 +84,8 @@ export const createProfileEditorSlice: StateCreator<
       profileEditorAboutMe: aboutMe,
       profileEditorLud16: lud16,
       profileEditorLoading: supportFormLoading,
+      // profileEditorImageFile: profileImage,
+      // profileEditorImageUrl: profileImageUrl,
     } = get()
 
     if (supportFormLoading) return
@@ -87,6 +103,7 @@ export const createProfileEditorSlice: StateCreator<
         website: website,
         aboutMe: aboutMe,
         lud16: lud16,
+        // profileImageUrl: profileImageUrl,
       }
 
       const response = await fetch("/api/support", {
@@ -128,6 +145,18 @@ export const createProfileEditorSlice: StateCreator<
     set({ profileEditorLud16: lud16 })
   }
 
+  // const setProfileEditorImageFile = (profileEditorImageFile: File) => {
+  //   set({ profileEditorImageFile: profileEditorImageFile })
+  // }
+
+  // const setProfileEditorImageUrl = (profileEditorImageUrl: string) => {
+  //   set({ profileEditorImageUrl: profileEditorImageUrl })
+  // }
+
+  // const profileEditorHandleImageChange: (event: any) => {
+  //   set({profileEditorImageFile: profileEditorImageFile})
+  // }
+
   return {
     ...DEFAULT_STATE,
     actions: {
@@ -138,6 +167,9 @@ export const createProfileEditorSlice: StateCreator<
       setWebsite,
       setAboutMe,
       setLud16,
+
+      // profileEditorHandleImageChange,
+      // setProfileEditorImageUrl,
     },
   }
 }
@@ -157,5 +189,9 @@ export const useProfileEditorAboutMe = () =>
   useProfileEditorSlice(state => state.profileEditorAboutMe)
 export const useProfileEditorLud16 = () =>
   useProfileEditorSlice(state => state.profileEditorLud16)
+// export const useProfileEditorImageFile = () =>
+//   useProfileEditorSlice(state => state.profileEditorImageFile)
+// export const useProfileEditorImageUrl = () =>
+//   useProfileEditorSlice(state => state.profileEditorImageUrl)
 export const useProfileEditorActions = () =>
   useProfileEditorSlice(state => state.actions)
