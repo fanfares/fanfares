@@ -1,5 +1,7 @@
 import { StateCreator, create } from "zustand"
 import { CombinedState } from "./old/use-app-state"
+import { NostrProfile } from "utils"
+import { SimplePool } from "nostr-tools"
 
 export interface ProfileEditorInputs {
   displayName: string
@@ -18,19 +20,21 @@ export interface ProfileEditorSlice {
   profileEditorAboutMe: string
   profileEditorLud16: string
   profileEditorLoading: boolean
-  // profileEditorImageFile: File | null
-  // profileEditorImageUrl?: string
+  profileEditorImageFile: File | null
+  profileEditorImageUrl?: string
   actions: {
-    clear: () => void
-    submit: () => Promise<void>
+    clearToProfile: (profile: NostrProfile) => void
+    submit: (
+      nostrPool: SimplePool,
+      nostrRelays: string[],
+      nostrProfile: NostrProfile,
+    ) => Promise<void>
     setDisplayName: (displayName: string) => void
     setUsername: (username: string) => void
     setWebsite: (website: string) => void
     setAboutMe: (aboutMe: string) => void
     setLud16: (lud16: string) => void
-    setProfileImage: (image: File | null) => void
-    // setProfileImageUrl: (profileImageUrl: string) => void
-    // profileEditorHandleImageChange: (event: any) => void
+    handleImageFileChange: (event: any) => void
   }
 }
 
@@ -41,19 +45,17 @@ const DEFAULT_STATE: ProfileEditorSlice = {
   profileEditorAboutMe: "",
   profileEditorLud16: "",
   profileEditorLoading: false,
-  // profileEditorImageFile: null,
-  // profileEditorImageUrl: "",
+  profileEditorImageFile: null,
+  profileEditorImageUrl: "",
   actions: {
-    clear: () => {},
+    clearToProfile: () => {},
     submit: async () => {},
     setDisplayName: () => {},
     setUsername: () => {},
     setWebsite: () => {},
     setAboutMe: () => {},
     setLud16: () => {},
-    setProfileImage: () => {},
-    // setProfileImageUrl: () => {},
-    // profileEditorHandleImageChange: () => {},
+    handleImageFileChange: () => {},
   },
 }
 
@@ -63,68 +65,51 @@ export const createProfileEditorSlice: StateCreator<
   [],
   ProfileEditorSlice
 > = (set, get) => {
-  const clear = () => {
+
+  const clearToProfile = (profile: NostrProfile) => {
     set({
-      profileEditorDisplayName: "",
-      profileEditorUsername: "",
-      profileEditorWebsite: "",
-      profileEditorAboutMe: "",
-      profileEditorLud16: "",
-      profileEditorLoading: false,
-      // profileEditorImageFile: null,
-      // profileEditorImageUrl: "",
+      profileEditorDisplayName: profile.display_name,
+      profileEditorUsername: profile.name,
+      profileEditorWebsite: profile.website,
+      profileEditorAboutMe: profile.about,
+      profileEditorLud16: profile.lud16,
+      profileEditorImageUrl: profile.picture,
+      profileEditorImageFile: null,
     })
   }
 
-  const submit = async () => {
+  const submit = async (
+    nostrPool: SimplePool,
+    nostrRelays: string[],
+    nostrProfile: NostrProfile,
+  ) => {
+
+    if (get().profileEditorLoading) return
+
     const {
-      profileEditorDisplayName: displayName,
-      profileEditorUsername: username,
-      profileEditorWebsite: website,
-      profileEditorAboutMe: aboutMe,
-      profileEditorLud16: lud16,
-      profileEditorLoading: supportFormLoading,
-      // profileEditorImageFile: profileImage,
-      // profileEditorImageUrl: profileImageUrl,
+      profileEditorDisplayName,
+      profileEditorUsername,
+      profileEditorWebsite,
+      profileEditorAboutMe,
+      profileEditorLud16,
+      profileEditorImageUrl,
+      profileEditorImageFile,
     } = get()
 
-    if (supportFormLoading) return
+    set({ profileEditorLoading: true })
 
     try {
-      if (!displayName) throw new Error("Display Name is required")
-      if (!username) throw new Error("Username is required")
-      if (!lud16) throw new Error("Lightning Address is required")
 
-      set({ profileEditorLoading: true })
+      console.log("Submitting profile editor form");
 
-      const inputs: ProfileEditorInputs = {
-        displayName: displayName,
-        username: username,
-        website: website,
-        aboutMe: aboutMe,
-        lud16: lud16,
-        // profileImageUrl: profileImageUrl,
-      }
-
-      const response = await fetch("/api/support", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(inputs),
-      })
-
-      if (!response.ok)
-        throw new Error(`Error sending email - ${response.statusText}`)
-
-      alert("Support Message sent!")
-      clear()
-    } catch (e) {
-      alert(`Error sending email - ${e}`)
+    } catch (error) {
+      throw new Error(`Failed to update account - ${error}`)
     } finally {
       set({ profileEditorLoading: false })
     }
+
   }
+
 
   const setUsername = (userName: string) => {
     set({ profileEditorUsername: userName })
@@ -145,38 +130,38 @@ export const createProfileEditorSlice: StateCreator<
     set({ profileEditorLud16: lud16 })
   }
 
-  // const setProfileEditorImageFile = (profileEditorImageFile: File) => {
-  //   set({ profileEditorImageFile: profileEditorImageFile })
-  // }
+  const postPodcastHandleAudioChange = (event: any) => {
+    const fileList = event.target.files as FileList
+    const file = fileList.item(0)
 
-  // const setProfileEditorImageUrl = (profileEditorImageUrl: string) => {
-  //   set({ profileEditorImageUrl: profileEditorImageUrl })
-  // }
+    if(!file) return;
 
-  // const profileEditorHandleImageChange: (event: any) => {
-  //   set({profileEditorImageFile: profileEditorImageFile})
-  // }
+    set({ 
+      profileEditorImageFile: file,
+      profileEditorImageUrl: URL.createObjectURL(file),
+    })
+  }
 
   return {
     ...DEFAULT_STATE,
     actions: {
-      clear,
+      ...DEFAULT_STATE.actions,
+      clearToProfile,
       submit,
       setDisplayName,
       setUsername,
       setWebsite,
       setAboutMe,
       setLud16,
+      postPodcastHandleAudioChange,
+    }
 
-      // profileEditorHandleImageChange,
-      // setProfileEditorImageUrl,
-    },
   }
 }
 
 const useProfileEditorSlice = create<ProfileEditorSlice>(
   createProfileEditorSlice
-)
+);
 export const useProfileEditorLoading = () =>
   useProfileEditorSlice(state => state.profileEditorLoading)
 export const useProfileEditorUsername = () =>
@@ -189,9 +174,9 @@ export const useProfileEditorAboutMe = () =>
   useProfileEditorSlice(state => state.profileEditorAboutMe)
 export const useProfileEditorLud16 = () =>
   useProfileEditorSlice(state => state.profileEditorLud16)
-// export const useProfileEditorImageFile = () =>
-//   useProfileEditorSlice(state => state.profileEditorImageFile)
-// export const useProfileEditorImageUrl = () =>
-//   useProfileEditorSlice(state => state.profileEditorImageUrl)
+export const useProfileEditorImageFile = () =>
+  useProfileEditorSlice(state => state.profileEditorImageFile)
+export const useProfileEditorImageUrl = () =>
+  useProfileEditorSlice(state => state.profileEditorImageUrl)
 export const useProfileEditorActions = () =>
   useProfileEditorSlice(state => state.actions)

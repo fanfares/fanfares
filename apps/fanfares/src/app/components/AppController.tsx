@@ -30,15 +30,15 @@ export interface AppControllerProps {
  */
 export function AppController(props: AppControllerProps) {
   const { children } = props;
-  const accountNostr = useAccountNostr();
   const { primalConnect, primalDisconnect } = usePrimalActions();
   const { accountSetWebln, accountFetchProfile, accountSetNostr } =
     useAccountActions();
   const { nostrDisconnect, nostrPool, nostrRelays } = useNostr();
-  const { podcastFetch, podcastUnlockAll } = usePodcastActions();
-  const podcastEpisodes = usePodcastEpisodes();
-  const podcastFetching = usePodcastFetching();
-  const podcastUnlocked = usePodcastsUnlocked();
+  const { podcastFetch } = usePodcastActions();
+  // const podcastEpisodes = usePodcastEpisodes();
+  // const podcastFetching = usePodcastFetching();
+  // const podcastUnlocked = usePodcastsUnlocked();
+  // const accountNostr = useAccountNostr();
 
   useEffect(() => {
     // Fixes the Local storage rehydration issue

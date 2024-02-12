@@ -41,13 +41,9 @@ const DEFAULT_STATE: AccountSlice = {
     accountProfile: null,
     accountBalance: null,
     actions: {
-        accountSetNostr: (nostr) => {},
-        accountSetWebln: (webln) => {},
-        accountFetchProfile: async (
-            publicKey,
-            pool,
-            relays,
-        ) => {},
+        accountSetNostr: () => {},
+        accountSetWebln: () => {},
+        accountFetchProfile: async () => {},
     },
 };
 

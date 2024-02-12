@@ -17,40 +17,67 @@ import {
   useProfileEditorImageUrl,
   useProfileEditorImageFile,
 } from "../controllers/state/profile-editor-slice"
-import { useAccountProfile } from "../controllers/state/account-slice"
+import { useAccountActions, useAccountNostr, useAccountProfile } from "../controllers/state/account-slice"
+import { useCallback, useEffect } from "react"
+import { useNostr } from "../controllers/state/nostr-slice"
 
-const ProfileEditorForm = () => {
+export interface ProfileEditorFormProps {
+  onClose: () => void,
+}
+
+export function ProfileEditorForm(props: ProfileEditorFormProps) {
   //TODO : Loading icon on Submit
+  const { onClose } = props;
+  const { nostrPool, nostrRelays } = useNostr();
+  const profile = useAccountProfile();
+  const nostrAccount = useAccountNostr();
   const username = useProfileEditorUsername()
   const displayName = useProfileEditorDisplayName()
   const website = useProfileEditorWebsite()
   const aboutMe = useProfileEditorAboutMe()
   const lud16 = useProfileEditorLud16()
+  const imageUrl = useProfileEditorImageUrl()
   const isLoading = useProfileEditorLoading()
+  const { accountFetchProfile } = useAccountActions();
+
   const {
+    clearToProfile,
     submit,
     setUsername,
     setDisplayName,
     setWebsite,
     setAboutMe,
     setLud16,
+    handleImageFileChange,
   } = useProfileEditorActions()
+
+  const refreshAccount = useCallback(()=>{ 
+    if(nostrAccount && nostrAccount.accountPublicKey){
+      accountFetchProfile(nostrAccount.accountPublicKey, nostrPool, nostrRelays);
+    }
+  }, [nostrAccount, nostrAccount?.accountPublicKey, nostrPool, nostrRelays])
+
+  useEffect(() => {
+    refreshAccount();
+  }, [nostrAccount, nostrAccount?.accountPublicKey, nostrPool, nostrRelays])
+
+  useEffect(() => {
+    if (profile) {
+      clearToProfile(profile)
+    }
+  }, [profile, clearToProfile])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    submit()
-  }
 
-  const profile = useAccountProfile()
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // need to finish the logic to upload the image to the profile
-    const file = event.target.files?.[0]
-    if (file) {
+    if(profile){
+      submit(nostrPool, nostrRelays, profile).then(() => {
+        refreshAccount();
+      })
     }
   }
 
-  const handleButtonClick = () => {
+  const handleChangeImageClick = () => {
     const uploadInput = document.getElementById(
       "upload"
     ) as HTMLInputElement | null
@@ -70,7 +97,7 @@ const ProfileEditorForm = () => {
             htmlFor="upload"
             className="relative w-full pointer-events-none">
             <img
-              src={URL.createObjectURL(useProfileEditorImageFile)}
+              src={imageUrl ?? 'https://placehold.co/500x500'}
               className="w-24 rounded-full object-center"
               alt=""
             />
@@ -78,47 +105,42 @@ const ProfileEditorForm = () => {
               type="file"
               id="upload"
               className="hidden"
-              onChange={profileEditor}
+              onChange={handleImageFileChange}
             />
           </label>
           <Button
             type="button"
+            disabled={isLoading}
             className="absolute text-xs right-0 top-16 px-2"
-            onClick={handleButtonClick}
+            onClick={handleChangeImageClick}
             label="Change avatar"
           />
-
           <AnimatedLabelTextInput
-            required={true}
             label="Username*"
             htmlFor="username"
             value={username}
             onChange={setUsername}
           />
           <AnimatedLabelTextInput
-            required={true}
             label="Display Name*"
             htmlFor="displayName"
             value={displayName}
             onChange={setDisplayName}
           />
           <AnimatedLabelTextInput
-            required={true}
             label="Website"
             htmlFor="website"
             value={website}
             onChange={setWebsite}
           />
           <AnimatedLabelTextAreaInput
-            required={true}
             label="About Me"
             htmlFor="aboutMe"
             value={aboutMe}
             onChange={setAboutMe}
           />
           <AnimatedLabelTextInput
-            required={true}
-            label="Lighning Address"
+            label="Lightning Address"
             htmlFor="lud16"
             value={lud16}
             onChange={setLud16}
@@ -126,7 +148,15 @@ const ProfileEditorForm = () => {
           <Button
             type="submit"
             label={isLoading ? "Loading..." : "Submit"}
+            disabled={isLoading}
             icon={isLoading && <FontAwesomeIcon icon={faSpinner} />}
+            className="flex flex-row-reverse items-center px-4 mt-8 ml-auto"
+          />
+          <Button
+            type="button"
+            label={"Cancel"}
+            onClick={onClose}
+            disabled={isLoading}
             className="flex flex-row-reverse items-center px-4 mt-8 ml-auto"
           />
         </form>

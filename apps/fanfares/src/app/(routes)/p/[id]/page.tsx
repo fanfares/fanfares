@@ -1,42 +1,35 @@
-"use client"
-import { Event, generatePrivateKey } from "nostr-tools"
-import Button from "../../../components/Button"
-import { useAppState } from "../../../controllers/state/old/use-app-state"
-import { FeedPost } from "../../../components/FeedPost"
+"use client";
+import { Event, generatePrivateKey } from "nostr-tools";
+import Button from "../../../components/Button";
+import { useAppState } from "../../../controllers/state/old/use-app-state";
+import { FeedPost } from "../../../components/FeedPost";
 import {
   usePrimalNoteStats,
   usePrimalNotes,
   usePrimalProfiles,
-} from "../../../controllers/state/primal-slice"
-import { useAccountProfile } from "../../../controllers/state/account-slice"
-import Image from "next/image"
-import { useEffect, useState } from "react"
-import EpisodeCard from "../../../components/EpisodeCard"
-import PodcastsCarrousel from "../../../components/PodcastsCarrousel"
-import { Modal } from "../../../components/Modal"
-import ProfileEditorForm from "../../../components/ProfileEditorForm"
-import { getIdFromUrl } from "@/app/controllers/utils/formatting"
-import { usePathname } from "next/navigation"
+} from "../../../controllers/state/primal-slice";
+import { useAccountNostr, useAccountProfile } from "../../../controllers/state/account-slice";
+import Image from "next/image";
+import { useCallback, useEffect, useState } from "react";
+import EpisodeCard from "../../../components/EpisodeCard";
+import PodcastsCarrousel from "../../../components/PodcastsCarrousel";
+import { Modal } from "../../../components/Modal";
+import ProfileEditorForm from "../../../components/ProfileEditorForm";
+import { getIdFromUrl } from "@/app/controllers/utils/formatting";
+import { usePathname } from "next/navigation";
 
 function Profile() {
-  const primalNotes = usePrimalNotes()
-  const primalProfiles = usePrimalProfiles()
-  const primalNoteStats = usePrimalNoteStats()
-  const accountProfile = useAccountProfile()
-  const [editProfileModalOn, setEditProfileModalOn] = useState(false)
+  const primalNotes = usePrimalNotes();
+  const nostrAccount = useAccountNostr();
+  const primalProfiles = usePrimalProfiles();
+  const primalNoteStats = usePrimalNoteStats();
+  const accountProfile = useAccountProfile();
+  const [editProfileModalOn, setEditProfileModalOn] = useState(false);
 
-  const id = getIdFromUrl(usePathname())
-  const profile = primalProfiles[id]
-
-  // const [filteredEvents, setFilteredEvents] = useState<Event<1>[]>([])
-
-  // useEffect(() => {
-  //   const filtered = primalNotes.filter(
-  //     event => event.pubkey === accountProfile?.pubkey
-  //   )
-
-  //   setFilteredEvents(filtered)
-  // }, [primalNotes, accountProfile])
+  // ------------ VARIABLES ------------
+  const id = getIdFromUrl(usePathname());
+  const isOwner = id === nostrAccount?.accountPublicKey;
+  const loadedProfile = isOwner ? accountProfile : primalProfiles[id];
 
   const episodes = [
     {
@@ -75,50 +68,70 @@ function Profile() {
       description: "Description 7",
       title: "Title 8",
     },
-  ]
+  ];
+
+  // ------------ FUNCTIONS ------------
+
+  //TODO Load Profile from ID
+
+  const openEditor = useCallback(() => {
+    if (isOwner) {
+      setEditProfileModalOn(true);
+    }
+  }, [setEditProfileModalOn, isOwner]);
+
+  const closeEditor = useCallback(() => {
+    setEditProfileModalOn(false);
+  }, [setEditProfileModalOn]);
 
   const renderNotes = () => {
-    return Object.values(primalNotes).map(note => {
-      const profile = primalProfiles[note.pubkey]
-      const stats = primalNoteStats[note.id]
+    return Object.values(primalNotes).map((note) => {
+      const profile = primalProfiles[note.pubkey];
+      const stats = primalNoteStats[note.id];
 
       if (!profile) {
-        return null
+        return null;
       }
 
       return (
         <FeedPost key={note.id} note={note} profile={profile} stats={stats} />
-      )
-    })
-  }
+      );
+    });
+  };
+
+  const renderEditor = () => {
+    if (!isOwner) return null;
+
+    return (
+      <>
+        <Modal isOpen={editProfileModalOn}>
+          <ProfileEditorForm onClose={closeEditor} />
+        </Modal>
+        <div className="flex gap-2 ml-auto">
+          <Button onClick={openEditor} className="w-32" label="edit profile" />
+        </div>
+      </>
+    );
+  };
 
   return (
     <section className="container flex flex-col max-w-xl">
       <div className="relative w-full flex">
         <div className="absolute w-32 h-32">
           <img
-            src={accountProfile?.picture}
+            src={loadedProfile?.picture ?? "https://placehold.co/400"}
             className="drop-shadow-md rounded-full w-32 h-32 object-cover object-center absolute"
             alt="profile picture"
           />
         </div>
-        <Modal isOpen={editProfileModalOn}>
-          <ProfileEditorForm />
-        </Modal>
-        <div className="flex gap-2 ml-auto">
-          <Button
-            onClick={() => setEditProfileModalOn(!editProfileModalOn)}
-            className="w-32"
-            label="edit profile"
-          />
-        </div>
+        {renderEditor()}
       </div>
       <div className="mt-28 w-full">
         <div className="text-buttonDefault">
-          <p className="">{accountProfile?.display_name}</p>
+          <p className="">{loadedProfile?.display_name ?? ""}</p>
         </div>
-        <p className="text-buttonDisabled text-xs/4">{accountProfile?.lud16}</p>
-        <p className="text-buttonDisabled text-xs/4">{accountProfile?.nip05}</p>
+        <p className="text-buttonDisabled text-xs/4">{loadedProfile?.lud16 ?? ""}</p>
+        <p className="text-buttonDisabled text-xs/4">{loadedProfile?.nip05 ?? ""}</p>
       </div>
       <div className="flex-col gap-2 mt-2 overflow-x-clip relative space-y-2">
         <div className="w-full flex items-center justify-between">
@@ -155,11 +168,10 @@ function Profile() {
         {renderNotes()}
       </div>
     </section>
-  )
+  );
 }
 
-export default Profile
-
+export default Profile;
 
 // "use client"
 
