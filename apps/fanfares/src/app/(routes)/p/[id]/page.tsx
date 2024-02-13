@@ -1,7 +1,5 @@
 "use client";
-import { Event, generatePrivateKey } from "nostr-tools";
 import Button from "../../../components/Button";
-import { useAppState } from "../../../controllers/state/old/use-app-state";
 import { FeedPost } from "../../../components/FeedPost";
 import {
   usePrimalNoteStats,
@@ -9,9 +7,7 @@ import {
   usePrimalProfiles,
 } from "../../../controllers/state/primal-slice";
 import { useAccountNostr, useAccountProfile } from "../../../controllers/state/account-slice";
-import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
-import EpisodeCard from "../../../components/EpisodeCard";
+import { useCallback, useState } from "react";
 import PodcastsCarrousel from "../../../components/PodcastsCarrousel";
 import { Modal } from "../../../components/Modal";
 import ProfileEditorForm from "../../../components/ProfileEditorForm";
@@ -52,7 +48,6 @@ function Profile() {
       description: "Description 4",
       title: "Title 4",
     },
-
     {
       imgUrl: "https://m.primal.net/HZpV.png",
       description: "Description 5",

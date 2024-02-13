@@ -28,6 +28,7 @@ export interface ProfileEditorFormProps {
 export function ProfileEditorForm(props: ProfileEditorFormProps) {
   //TODO : Loading icon on Submit
   const { onClose } = props;
+  const { accountFetchProfile } = useAccountActions();
   const { nostrPool, nostrRelays } = useNostr();
   const profile = useAccountProfile();
   const nostrAccount = useAccountNostr();
@@ -38,7 +39,6 @@ export function ProfileEditorForm(props: ProfileEditorFormProps) {
   const lud16 = useProfileEditorLud16()
   const imageUrl = useProfileEditorImageUrl()
   const isLoading = useProfileEditorLoading()
-  const { accountFetchProfile } = useAccountActions();
 
   const {
     clearToProfile,
@@ -70,8 +70,8 @@ export function ProfileEditorForm(props: ProfileEditorFormProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    if(profile){
-      submit(nostrPool, nostrRelays, profile).then(() => {
+    if(profile && nostrAccount){
+      submit(nostrPool, nostrRelays, profile, nostrAccount).then(() => {
         refreshAccount();
       })
     }
@@ -95,10 +95,10 @@ export function ProfileEditorForm(props: ProfileEditorFormProps) {
           action="">
           <label
             htmlFor="upload"
-            className="relative w-full pointer-events-none">
+            className="relative w-full">
             <img
               src={imageUrl ?? 'https://placehold.co/500x500'}
-              className="w-24 rounded-full object-center"
+              className="w-24 rounded-full object-center cursor-pointer"
               alt=""
             />
             <input
@@ -118,31 +118,31 @@ export function ProfileEditorForm(props: ProfileEditorFormProps) {
           <AnimatedLabelTextInput
             label="Username*"
             htmlFor="username"
-            value={username}
+            value={username ?? ''}
             onChange={setUsername}
           />
           <AnimatedLabelTextInput
             label="Display Name*"
             htmlFor="displayName"
-            value={displayName}
+            value={displayName ?? ''}
             onChange={setDisplayName}
           />
           <AnimatedLabelTextInput
             label="Website"
             htmlFor="website"
-            value={website}
+            value={website ?? ''}
             onChange={setWebsite}
           />
           <AnimatedLabelTextAreaInput
             label="About Me"
             htmlFor="aboutMe"
-            value={aboutMe}
+            value={aboutMe ?? ''}
             onChange={setAboutMe}
           />
           <AnimatedLabelTextInput
             label="Lightning Address"
             htmlFor="lud16"
-            value={lud16}
+            value={lud16 ?? ''}
             onChange={setLud16}
           />
           <Button

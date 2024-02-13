@@ -2,24 +2,17 @@ import { StateCreator, create } from "zustand"
 import { CombinedState } from "./old/use-app-state"
 import { NostrProfile } from "utils"
 import { SimplePool } from "nostr-tools"
-
-export interface ProfileEditorInputs {
-  displayName: string
-  username: string
-  website: string
-  aboutMe: string
-  lud16: string
-  profileImageFile?: string
-  profileImageUrl?: string
-}
+import { uploadToShdwDrive } from "../shdw/upload"
+import { NostrAccount } from "./account-slice"
 
 export interface ProfileEditorSlice {
-  profileEditorDisplayName: string
-  profileEditorUsername: string
-  profileEditorWebsite: string
-  profileEditorAboutMe: string
-  profileEditorLud16: string
+  profileEditorDisplayName?: string
+  profileEditorUsername?: string
+  profileEditorWebsite?: string
+  profileEditorAboutMe?: string
+  profileEditorLud16?: string
   profileEditorLoading: boolean
+  profileEditorDidUpload: boolean
   profileEditorImageFile: File | null
   profileEditorImageUrl?: string
   actions: {
@@ -28,6 +21,7 @@ export interface ProfileEditorSlice {
       nostrPool: SimplePool,
       nostrRelays: string[],
       nostrProfile: NostrProfile,
+      nostrAccount: NostrAccount,
     ) => Promise<void>
     setDisplayName: (displayName: string) => void
     setUsername: (username: string) => void
@@ -44,9 +38,10 @@ const DEFAULT_STATE: ProfileEditorSlice = {
   profileEditorWebsite: "",
   profileEditorAboutMe: "",
   profileEditorLud16: "",
-  profileEditorLoading: false,
   profileEditorImageFile: null,
   profileEditorImageUrl: "",
+  profileEditorLoading: false,
+  profileEditorDidUpload: false,
   actions: {
     clearToProfile: () => {},
     submit: async () => {},
@@ -75,6 +70,7 @@ export const createProfileEditorSlice: StateCreator<
       profileEditorLud16: profile.lud16,
       profileEditorImageUrl: profile.picture,
       profileEditorImageFile: null,
+      profileEditorDidUpload: false,
     })
   }
 
@@ -82,25 +78,68 @@ export const createProfileEditorSlice: StateCreator<
     nostrPool: SimplePool,
     nostrRelays: string[],
     nostrProfile: NostrProfile,
+    nostrAccount: NostrAccount
   ) => {
 
-    if (get().profileEditorLoading) return
-
-    const {
-      profileEditorDisplayName,
-      profileEditorUsername,
-      profileEditorWebsite,
-      profileEditorAboutMe,
-      profileEditorLud16,
-      profileEditorImageUrl,
+    const { 
       profileEditorImageFile,
+      profileEditorLoading,
+      profileEditorDidUpload
     } = get()
+
+    if (profileEditorLoading) return
 
     set({ profileEditorLoading: true })
 
     try {
 
-      console.log("Submitting profile editor form");
+      if(profileEditorImageFile && !profileEditorDidUpload){
+        const prefix = "profile"
+        const fileUrls = await uploadToShdwDrive([profileEditorImageFile], prefix)
+        if(fileUrls.length === 0){
+          throw new Error("Failed to upload image")
+        }
+
+        set({ 
+          profileEditorImageUrl: fileUrls[0],
+          profileEditorDidUpload: true,
+        })
+      }
+
+      const {
+        profileEditorDisplayName,
+        profileEditorUsername,
+        profileEditorWebsite,
+        profileEditorAboutMe,
+        profileEditorLud16,
+        profileEditorImageUrl,
+        profileEditorDidUpload: didUpload,
+      } = get()
+
+      const profileUpdate: NostrProfile = {
+        ...nostrProfile,
+        display_name: profileEditorDisplayName ? profileEditorDisplayName : nostrProfile.display_name,
+        name: profileEditorUsername ? profileEditorUsername : nostrProfile.name,
+        website: profileEditorWebsite ? profileEditorWebsite : nostrProfile.website,
+        about: profileEditorAboutMe ? profileEditorAboutMe : nostrProfile.about,
+        lud16: profileEditorLud16 ? profileEditorLud16 : nostrProfile.lud16,
+        picture: (didUpload && profileEditorImageUrl) ? profileEditorImageUrl : nostrProfile.picture,
+      }
+
+      const content = JSON.stringify(profileUpdate);
+
+      const event = {
+        kind: 0,
+        pubkey: nostrAccount.accountPublicKey,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [],
+        content,
+      };
+
+      const singedEvent = await nostrAccount.accountNIP07?.signEvent(event);
+      if(!singedEvent) throw new Error("Failed to sign event");
+
+      await nostrPool.publish(nostrRelays, singedEvent); 
 
     } catch (error) {
       throw new Error(`Failed to update account - ${error}`)
@@ -130,9 +169,11 @@ export const createProfileEditorSlice: StateCreator<
     set({ profileEditorLud16: lud16 })
   }
 
-  const postPodcastHandleAudioChange = (event: any) => {
+  const handleImageFileChange = (event: any) => {
     const fileList = event.target.files as FileList
     const file = fileList.item(0)
+
+    console.log(file)
 
     if(!file) return;
 
@@ -153,7 +194,7 @@ export const createProfileEditorSlice: StateCreator<
       setWebsite,
       setAboutMe,
       setLud16,
-      postPodcastHandleAudioChange,
+      handleImageFileChange,
     }
 
   }

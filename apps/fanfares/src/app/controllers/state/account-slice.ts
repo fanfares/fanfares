@@ -55,7 +55,6 @@ export const createAccountSlice: StateCreator<
 > = (set, get) => {
 
     const accountSetNostr = (nostr: NostrAccount) => {
-
         // Init function goes here
 
         set({accountNostr: nostr});
@@ -96,6 +95,7 @@ export const createAccountSlice: StateCreator<
 
             if(!profileEvent) throw new Error("No profile event found");
 
+            console.log(JSON.stringify(profileEvent));
             set({
                 accountProfile: eventToNostrProfile(publicKey, profileEvent)
             });
