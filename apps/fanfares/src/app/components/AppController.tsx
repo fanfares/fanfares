@@ -1,24 +1,24 @@
-"use client";
+"use client"
 
-import { useEffect } from "react";
-import { useAppState } from "../controllers/state/old/use-app-state";
-import { requestProvider } from "webln";
-import { NIP04, NIP07 } from "utils";
-import { usePrimalActions } from "../controllers/state/primal-slice";
+import { useEffect, useState } from "react"
+import { useAppState } from "../controllers/state/old/use-app-state"
+import { requestProvider } from "webln"
+import { NIP04, NIP07 } from "utils"
+import { usePrimalActions } from "../controllers/state/primal-slice"
 import {
   useAccountActions,
   useAccountNostr,
-} from "../controllers/state/account-slice";
-import { useNostr } from "../controllers/state/nostr-slice";
+} from "../controllers/state/account-slice"
+import { useNostr } from "../controllers/state/nostr-slice"
 import {
   usePodcastActions,
   usePodcastEpisodes,
   usePodcastFetching,
   usePodcastsUnlocked,
-} from "../controllers/state/podcast-slice";
+} from "../controllers/state/podcast-slice"
 
 export interface AppControllerProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 /**
@@ -29,35 +29,37 @@ export interface AppControllerProps {
  * @returns
  */
 export function AppController(props: AppControllerProps) {
-  const { children } = props;
-  const accountNostr = useAccountNostr();
-  const { primalConnect, primalDisconnect } = usePrimalActions();
+  const { children } = props
+  const accountNostr = useAccountNostr()
+  const { primalConnect, primalDisconnect } = usePrimalActions()
   const { accountSetWebln, accountFetchProfile, accountSetNostr } =
-    useAccountActions();
-  const { nostrDisconnect, nostrPool, nostrRelays } = useNostr();
-  const { podcastFetch, podcastUnlockAll } = usePodcastActions();
-  const podcastEpisodes = usePodcastEpisodes();
-  const podcastFetching = usePodcastFetching();
-  const podcastUnlocked = usePodcastsUnlocked();
+    useAccountActions()
+  const { nostrDisconnect, nostrPool, nostrRelays } = useNostr()
+  const { podcastFetch, podcastUnlockAll } = usePodcastActions()
+  const podcastEpisodes = usePodcastEpisodes()
+  const podcastFetching = usePodcastFetching()
+  const podcastUnlocked = usePodcastsUnlocked()
+  const [nostrNotFound, setNostrNotFound] = useState(false)
 
   useEffect(() => {
     // Fixes the Local storage rehydration issue
-    useAppState.persist.rehydrate();
+    useAppState.persist.rehydrate()
 
     // WEBLN
     requestProvider()
       .then(accountSetWebln)
-      .catch((e) => {
-        alert("Please download Alby or ZBD to use this app.");
-      });
+      .catch(e => {
+        // alert("Please download Alby or ZBD to use this app.")
+        setNostrNotFound(true)
+      })
 
     //TODO make this in nostrSlice
     // Nostr Account
     if ((window as any).nostr) {
       try {
-        const nip07: NIP07 = (window as any).nostr;
+        const nip07: NIP07 = (window as any).nostr
         if (!nip07 || !nip07.nip04 || !nip07.getPublicKey)
-          throw new Error("Bad NIP07");
+          throw new Error("Bad NIP07")
 
         nip07
           .getPublicKey()
@@ -66,34 +68,34 @@ export function AppController(props: AppControllerProps) {
               accountPublicKey: publicKey,
               accountNIP07: nip07,
               accountNIP04: nip07.nip04 as NIP04,
-            });
+            })
 
-            accountFetchProfile(publicKey, nostrPool, nostrRelays);
+            accountFetchProfile(publicKey, nostrPool, nostrRelays)
 
             // gateFetch();
           })
-          .catch((e) => {
-            alert("Nostr not found - error getting public key");
-          });
+          .catch(e => {
+            alert("Nostr not found - error getting public key")
+          })
       } catch (e) {
-        alert("Nostr not found - error getting public key");
+        alert("Nostr not found - error getting public key")
       }
     } else {
-      alert("Nostr not found");
+      setNostrNotFound(true)
     }
 
     // PRIMAL
-    primalConnect();
+    primalConnect()
 
     // PODCASTS
-    podcastFetch(nostrPool, nostrRelays);
+    podcastFetch(nostrPool, nostrRelays)
 
     return () => {
       // // Cleans up connections at the end of the app
-      nostrDisconnect();
-      primalDisconnect();
-    };
-  }, []);
+      nostrDisconnect()
+      primalDisconnect()
+    }
+  }, [])
 
   //TODO - this is a hacky way to unlock podcasts
   // useEffect(() => {
@@ -115,5 +117,5 @@ export function AppController(props: AppControllerProps) {
   //   }
   // }, [podcastEpisodes, podcastFetching, accountNostr, podcastUnlocked]);
 
-  return children;
+  return children
 }

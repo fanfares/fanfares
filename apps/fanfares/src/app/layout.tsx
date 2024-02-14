@@ -9,6 +9,8 @@ import { DebugOverlay } from "./components/DebugOverlay"
 import { config } from "@fortawesome/fontawesome-svg-core"
 import { GlobalAudioPlayer } from "./components/GlobalAudioPlayer"
 config.autoAddCss = false /* eslint-disable import/first */
+import Button from "./components/Button"
+import { useState } from "react"
 
 const inter = Inter({
   weight: ["400", "700", "900"],
@@ -46,7 +48,7 @@ export default function RootLayout({
             <Navbar />
           </header>
           {/* Content */}
-          <ContainerGrid className="block md:ml-44 md:h-screen">
+          <ContainerGrid className="block md:ml-44 md:h-screen relative">
             {children}
           </ContainerGrid>
           <GlobalAudioPlayer />
