@@ -69,12 +69,31 @@ function DiscoverPageContent() {
         <Button label="Create Account" className="px-5 w-40 mt-5" />
         <p className="flex items-center gap-2 mt-4">
           Already have a Nostr account?{" "}
-          <button
-            className="text-buttonAccentHover"
-            onClick={() => setGetStartedOn(false)}>
+          <button className="text-buttonAccentHover" onClick={handleLogin}>
             Login now
           </button>
         </p>
+      </div>
+    )
+  }
+
+  const loginModalContent = () => {
+    return (
+      <div className="flex flex-col w-full px-4 py-2">
+        <div className="flex items-center justify-between">
+          <p className="text-xl font-medium">Login</p>
+          <button className="px-4" onClick={() => setLoginOn(false)}>
+            X
+          </button>
+        </div>
+        <label className="w-96 mt-5">
+          Enter your Nostr private key (starting with "nsec"):
+          <input
+            type="text"
+            className="mt-4 bg-skin-fill/20 border border-buttonAccent h-9 rounded-full w-full px-2"
+          />
+        </label>
+        <Button label="Login" className="px-5 w-40 mt-5" />
       </div>
     )
   }
@@ -221,7 +240,10 @@ function DiscoverPageContent() {
       <h1 className="font-black text-center text-gray-100 text-xl/4 md:mt-4 md:text-start md:text-4xl">
         This Week on FanFares
       </h1>
-      <Modal isOpen={getStartedOn}>{getStartedModalContent()}</Modal>
+      <Modal isOpen={getStartedOn || loginOn}>
+        {getStartedOn ? getStartedModalContent() : loginModalContent()}
+      </Modal>
+
       {/* <Searchbar /> */}
       {renderLoading()}
       {renderContent()}
