@@ -26,11 +26,12 @@ import {
 } from "@/app/controllers/state/account-slice"
 import Image from "next/image"
 import { formatDate, getIdFromUrl } from "@/app/controllers/utils/formatting"
+import { toast } from "react-toastify"
 
 config.autoAddCss = false /* eslint-disable import/first */
 
 export default function PlayerPage() {
-  const creator = usePlayerPagePodcastCreator();
+  const creator = usePlayerPagePodcastCreator()
   const gateId = usePlayerPageGateId()
   const accountNostr = useAccountNostr()
   const webln = useAccountWebln()
@@ -79,12 +80,11 @@ export default function PlayerPage() {
     }
   }, [nostrRelays, nostrPool, accountNostr, podcast])
 
-
   // ------------ FUNCTIONS ------------
 
   const buyPodcast = () => {
     if (!podcast) {
-      alert("Podcast not found")
+      toast.error("Podcast not found")
       return
     }
 
@@ -95,10 +95,10 @@ export default function PlayerPage() {
       !accountNostr.accountPublicKey ||
       !webln
     ) {
-      alert("You need to login first")
+      toast.error("You need to login first")
       return
     }
-    
+
     playerPageBuyPodcast(
       nostrRelays,
       nostrPool,
@@ -249,7 +249,7 @@ export default function PlayerPage() {
             <div className="flex flex-col w-full mb-4 space-y-4 text-sm text-skin-muted">
               <p className="lg:text-2xl lg:font-bold">{podcast.title}</p>
               <p className="lg:text-base lg:font-bold truncate w-80">
-                { creator ? creator.name : podcast.announcement.note.pubkey }
+                {creator ? creator.name : podcast.announcement.note.pubkey}
               </p>
 
               <div
@@ -287,5 +287,5 @@ export default function PlayerPage() {
       </h1>
       {renderContent()}
     </section>
-  );
+  )
 }

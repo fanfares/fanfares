@@ -15,6 +15,7 @@ import {
 } from "../controllers/state/account-slice"
 import { useNostr } from "../controllers/state/nostr-slice"
 import { Popover } from "./Popover"
+import { toast } from "react-toastify"
 
 interface UploadOnModalProps {
   onCancel?: () => void
@@ -69,7 +70,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
 
   const handlePostSubmit = (event: any) => {
     if (!accountNostr?.accountNIP07) {
-      alert("Please connect your Nostr account")
+      toast.warn("Please connect your Nostr account")
       return
     }
 
@@ -77,12 +78,12 @@ export default function UploadOnModal(props: UploadOnModalProps) {
     setPublishModal(true)
     postPodcastSubmit(nostrPool, nostrRelays, accountNostr?.accountNIP07, {
       onSuccess(ids) {
-        // alert(`Note posted with id ${ids}`)
+        toast.success(`Note posted with id ${ids}`)
         setPublishModal(false)
         if (onCancel) onCancel()
       },
       onError(error) {
-        alert(`Error posting note: ${error}`)
+        toast.error(`Error posting note: ${error}`)
         setPublishModal(false)
       },
       onClear() {

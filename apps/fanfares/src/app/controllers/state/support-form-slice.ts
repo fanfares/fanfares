@@ -1,5 +1,6 @@
 import { StateCreator, create } from "zustand"
 import { CombinedState } from "./old/use-app-state"
+import { toast } from "react-toastify"
 
 export interface SupportInputs {
   name: string
@@ -80,10 +81,10 @@ export const createSupportFormSlice: StateCreator<
       if (!response.ok)
         throw new Error(`Error sending email - ${response.statusText}`)
 
-      alert("Support Message sent!")
+      toast.success("Support Message sent!")
       clear()
     } catch (e) {
-      alert(`Error sending email - ${e}`)
+      toast.error(`Error sending email - ${e}`)
     } finally {
       set({ supportFormLoading: false })
     }

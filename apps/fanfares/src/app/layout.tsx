@@ -8,6 +8,7 @@ import { DebugOverlay } from "./components/DebugOverlay"
 
 import { config } from "@fortawesome/fontawesome-svg-core"
 import { GlobalAudioPlayer } from "./components/GlobalAudioPlayer"
+import Toast from "./components/Toast"
 config.autoAddCss = false /* eslint-disable import/first */
 
 const inter = Inter({
@@ -47,6 +48,7 @@ export default function RootLayout({
           </header>
           {/* Content */}
           <ContainerGrid className="block md:ml-44 md:h-screen">
+            <Toast />
             {children}
           </ContainerGrid>
           <GlobalAudioPlayer />

@@ -14,6 +14,7 @@ import {
   useAccountProfile,
 } from "@/app/controllers/state/account-slice"
 import { useNostr } from "@/app/controllers/state/nostr-slice"
+import { toast } from "react-toastify"
 
 export default function Upload() {
   const [publishModal, setPublishModal] = useState<boolean>(false)
@@ -56,7 +57,7 @@ export default function Upload() {
 
   const handlePostSubmit = (event: any) => {
     if (!accountNostr?.accountNIP07) {
-      alert("Please connect your Nostr account")
+      toast.warn("Please connect your Nostr account")
       return
     }
 
@@ -65,10 +66,10 @@ export default function Upload() {
     postPodcastSubmit(nostrPool, nostrRelays, accountNostr.accountNIP07, {
       onSuccess(ids) {
         console.log(ids)
-        alert(`Note posted with id ${ids}`)
+        toast.success(`Note posted with id ${ids}`)
       },
       onError(error) {
-        alert(`Error posting note: ${error}`)
+        toast.error(`Error posting note: ${error}`)
       },
       onClear() {
         formRef.current?.reset()

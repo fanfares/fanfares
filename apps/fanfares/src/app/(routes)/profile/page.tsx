@@ -90,7 +90,7 @@ function Profile() {
   return (
     <section className="container flex flex-col max-w-xl">
       <div className="relative w-full flex">
-        <div className="absolute w-32 h-32">
+        <div className="relative w-32 h-32 ">
           <img
             src={accountProfile?.picture}
             className="drop-shadow-md rounded-full w-32 h-32 object-cover object-center absolute"
@@ -98,7 +98,7 @@ function Profile() {
           />
         </div>
         <Modal isOpen={editProfileModalOn}>
-          <ProfileEditorForm />
+          <ProfileEditorForm onClose={() => {}} />
         </Modal>
         <div className="flex gap-2 ml-auto">
           <Button
@@ -108,9 +108,9 @@ function Profile() {
           />
         </div>
       </div>
-      <div className="mt-28 w-full">
+      <div className="mt-32 w-full">
         <div className="text-buttonDefault">
-          <p className="">{accountProfile?.display_name}</p>
+          <p className="">{accountProfile?.display_name}asdasd</p>
         </div>
         <p className="text-buttonDisabled text-xs/4">{accountProfile?.lud16}</p>
         <p className="text-buttonDisabled text-xs/4">{accountProfile?.nip05}</p>

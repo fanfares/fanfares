@@ -17,21 +17,25 @@ import {
   useProfileEditorImageUrl,
   useProfileEditorImageFile,
 } from "../controllers/state/profile-editor-slice"
-import { useAccountActions, useAccountNostr, useAccountProfile } from "../controllers/state/account-slice"
+import {
+  useAccountActions,
+  useAccountNostr,
+  useAccountProfile,
+} from "../controllers/state/account-slice"
 import { useCallback, useEffect } from "react"
 import { useNostr } from "../controllers/state/nostr-slice"
 
 export interface ProfileEditorFormProps {
-  onClose: () => void,
+  onClose: () => void
 }
 
 export function ProfileEditorForm(props: ProfileEditorFormProps) {
   //TODO : Loading icon on Submit
-  const { onClose } = props;
-  const { accountFetchProfile } = useAccountActions();
-  const { nostrPool, nostrRelays } = useNostr();
-  const profile = useAccountProfile();
-  const nostrAccount = useAccountNostr();
+  const { onClose } = props
+  const { accountFetchProfile } = useAccountActions()
+  const { nostrPool, nostrRelays } = useNostr()
+  const profile = useAccountProfile()
+  const nostrAccount = useAccountNostr()
   const username = useProfileEditorUsername()
   const displayName = useProfileEditorDisplayName()
   const website = useProfileEditorWebsite()
@@ -51,14 +55,14 @@ export function ProfileEditorForm(props: ProfileEditorFormProps) {
     handleImageFileChange,
   } = useProfileEditorActions()
 
-  const refreshAccount = useCallback(()=>{ 
-    if(nostrAccount && nostrAccount.accountPublicKey){
-      accountFetchProfile(nostrAccount.accountPublicKey, nostrPool, nostrRelays);
+  const refreshAccount = useCallback(() => {
+    if (nostrAccount && nostrAccount.accountPublicKey) {
+      accountFetchProfile(nostrAccount.accountPublicKey, nostrPool, nostrRelays)
     }
   }, [nostrAccount, nostrAccount?.accountPublicKey, nostrPool, nostrRelays])
 
   useEffect(() => {
-    refreshAccount();
+    refreshAccount()
   }, [nostrAccount, nostrAccount?.accountPublicKey, nostrPool, nostrRelays])
 
   useEffect(() => {
@@ -70,9 +74,9 @@ export function ProfileEditorForm(props: ProfileEditorFormProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    if(profile && nostrAccount){
+    if (profile && nostrAccount) {
       submit(nostrPool, nostrRelays, profile, nostrAccount).then(() => {
-        refreshAccount();
+        refreshAccount()
       })
     }
   }
@@ -93,11 +97,9 @@ export function ProfileEditorForm(props: ProfileEditorFormProps) {
           onSubmit={handleSubmit}
           className="flex flex-col items-start w-full gap-4 relative"
           action="">
-          <label
-            htmlFor="upload"
-            className="relative w-full">
+          <label htmlFor="upload" className="relative w-full">
             <img
-              src={imageUrl ?? 'https://placehold.co/500x500'}
+              src={imageUrl ?? "https://placehold.co/500x500"}
               className="w-24 rounded-full object-center cursor-pointer"
               alt=""
             />
@@ -118,47 +120,50 @@ export function ProfileEditorForm(props: ProfileEditorFormProps) {
           <AnimatedLabelTextInput
             label="Username*"
             htmlFor="username"
-            value={username ?? ''}
+            value={username ?? ""}
             onChange={setUsername}
           />
           <AnimatedLabelTextInput
             label="Display Name*"
             htmlFor="displayName"
-            value={displayName ?? ''}
+            value={displayName ?? ""}
             onChange={setDisplayName}
           />
           <AnimatedLabelTextInput
             label="Website"
             htmlFor="website"
-            value={website ?? ''}
+            value={website ?? ""}
             onChange={setWebsite}
           />
           <AnimatedLabelTextAreaInput
             label="About Me"
             htmlFor="aboutMe"
-            value={aboutMe ?? ''}
+            value={aboutMe ?? ""}
             onChange={setAboutMe}
           />
           <AnimatedLabelTextInput
             label="Lightning Address"
             htmlFor="lud16"
-            value={lud16 ?? ''}
+            value={lud16 ?? ""}
             onChange={setLud16}
           />
-          <Button
-            type="submit"
-            label={isLoading ? "Loading..." : "Submit"}
-            disabled={isLoading}
-            icon={isLoading && <FontAwesomeIcon icon={faSpinner} />}
-            className="flex flex-row-reverse items-center px-4 mt-8 ml-auto"
-          />
-          <Button
-            type="button"
-            label={"Cancel"}
-            onClick={onClose}
-            disabled={isLoading}
-            className="flex flex-row-reverse items-center px-4 mt-8 ml-auto"
-          />
+          <div className="flex gap-4 ml-auto">
+            {" "}
+            <Button
+              type="submit"
+              label={isLoading ? "Loading..." : "Submit"}
+              disabled={isLoading}
+              icon={isLoading && <FontAwesomeIcon icon={faSpinner} />}
+              className="flex flex-row-reverse items-center px-4 mt-8 ml-auto"
+            />
+            <Button
+              type="button"
+              label={"Cancel"}
+              onClick={onClose}
+              disabled={isLoading}
+              className="flex flex-row-reverse items-center px-4 mt-8 ml-auto"
+            />
+          </div>
         </form>
       </div>
     </div>

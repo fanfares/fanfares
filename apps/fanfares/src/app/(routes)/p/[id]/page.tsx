@@ -1,69 +1,36 @@
-"use client";
-import Button from "../../../components/Button";
-import { FeedPost } from "../../../components/FeedPost";
+"use client"
+import Button from "../../../components/Button"
+import { FeedPost } from "../../../components/FeedPost"
 import {
   usePrimalNoteStats,
   usePrimalNotes,
   usePrimalProfiles,
-} from "../../../controllers/state/primal-slice";
-import { useAccountNostr, useAccountProfile } from "../../../controllers/state/account-slice";
-import { useCallback, useState } from "react";
-import PodcastsCarrousel from "../../../components/PodcastsCarrousel";
-import { Modal } from "../../../components/Modal";
-import ProfileEditorForm from "../../../components/ProfileEditorForm";
-import { getIdFromUrl } from "@/app/controllers/utils/formatting";
-import { usePathname } from "next/navigation";
+} from "../../../controllers/state/primal-slice"
+import {
+  useAccountNostr,
+  useAccountProfile,
+} from "../../../controllers/state/account-slice"
+import { useCallback, useState } from "react"
+import PodcastsCarrousel from "../../../components/PodcastsCarrousel"
+import { Modal } from "../../../components/Modal"
+import ProfileEditorForm from "../../../components/ProfileEditorForm"
+import { getIdFromUrl } from "@/app/controllers/utils/formatting"
+import { usePathname } from "next/navigation"
 
 function Profile() {
-  const primalNotes = usePrimalNotes();
-  const nostrAccount = useAccountNostr();
-  const primalProfiles = usePrimalProfiles();
-  const primalNoteStats = usePrimalNoteStats();
-  const accountProfile = useAccountProfile();
-  const [editProfileModalOn, setEditProfileModalOn] = useState(false);
+  const primalNotes = usePrimalNotes()
+  const nostrAccount = useAccountNostr()
+  const primalProfiles = usePrimalProfiles()
+  const primalNoteStats = usePrimalNoteStats()
+  const accountProfile = useAccountProfile()
+  const [editProfileModalOn, setEditProfileModalOn] = useState(false)
 
   // ------------ VARIABLES ------------
-  const id = getIdFromUrl(usePathname());
-  const isOwner = id === nostrAccount?.accountPublicKey;
-  const loadedProfile = isOwner ? accountProfile : primalProfiles[id];
+  const id = getIdFromUrl(usePathname())
+  const isOwner = id === nostrAccount?.accountPublicKey
+  const loadedProfile = isOwner ? accountProfile : primalProfiles[id]
 
-  const episodes = [
-    {
-      imgUrl: "https://m.primal.net/HZpV.png",
-      description: "Description 1",
-      title: "Title 1",
-    },
-    {
-      imgUrl: "https://m.primal.net/HZpV.png",
-      description: "Description 2",
-      title: "Title 2",
-    },
-    {
-      imgUrl: "https://m.primal.net/HZpV.png",
-      description: "Description 3",
-      title: "Title 3",
-    },
-    {
-      imgUrl: "https://m.primal.net/HZpV.png",
-      description: "Description 4",
-      title: "Title 4",
-    },
-    {
-      imgUrl: "https://m.primal.net/HZpV.png",
-      description: "Description 5",
-      title: "Title 5",
-    },
-    {
-      imgUrl: "https://m.primal.net/HZpV.png",
-      description: "Description 6",
-      title: "Title 6",
-    },
-    {
-      imgUrl: "https://m.primal.net/HZpV.png",
-      description: "Description 7",
-      title: "Title 8",
-    },
-  ];
+  const episodes: { imgUrl: string; description: string; title: string }[] = []
 
   // ------------ FUNCTIONS ------------
 
@@ -71,31 +38,31 @@ function Profile() {
 
   const openEditor = useCallback(() => {
     if (isOwner) {
-      setEditProfileModalOn(true);
+      setEditProfileModalOn(true)
     }
-  }, [setEditProfileModalOn, isOwner]);
+  }, [setEditProfileModalOn, isOwner])
 
   const closeEditor = useCallback(() => {
-    setEditProfileModalOn(false);
-  }, [setEditProfileModalOn]);
+    setEditProfileModalOn(false)
+  }, [setEditProfileModalOn])
 
   const renderNotes = () => {
-    return Object.values(primalNotes).map((note) => {
-      const profile = primalProfiles[note.pubkey];
-      const stats = primalNoteStats[note.id];
+    return Object.values(primalNotes).map(note => {
+      const profile = primalProfiles[note.pubkey]
+      const stats = primalNoteStats[note.id]
 
       if (!profile) {
-        return null;
+        return null
       }
 
       return (
         <FeedPost key={note.id} note={note} profile={profile} stats={stats} />
-      );
-    });
-  };
+      )
+    })
+  }
 
   const renderEditor = () => {
-    if (!isOwner) return null;
+    if (!isOwner) return null
 
     return (
       <>
@@ -106,8 +73,8 @@ function Profile() {
           <Button onClick={openEditor} className="w-32" label="edit profile" />
         </div>
       </>
-    );
-  };
+    )
+  }
 
   return (
     <section className="container flex flex-col max-w-xl">
@@ -121,20 +88,27 @@ function Profile() {
         </div>
         {renderEditor()}
       </div>
-      <div className="mt-28 w-full">
+      <div className="mt-36 w-full">
         <div className="text-buttonDefault">
           <p className="">{loadedProfile?.display_name ?? ""}</p>
         </div>
-        <p className="text-buttonDisabled text-xs/4">{loadedProfile?.lud16 ?? ""}</p>
-        <p className="text-buttonDisabled text-xs/4">{loadedProfile?.nip05 ?? ""}</p>
+        <p className="text-buttonDisabled text-xs/4">
+          {loadedProfile?.lud16 ?? ""}
+        </p>
+        <p className="text-buttonDisabled text-xs/4">
+          {loadedProfile?.nip05 ?? ""}
+        </p>
       </div>
       <div className="flex-col gap-2 mt-2 overflow-x-clip relative space-y-2">
-        <div className="w-full flex items-center justify-between">
-          <p>Podcasts</p>
-          <Button className="text-sm/4 px-4" label="Show all..." />
-        </div>
-
-        <PodcastsCarrousel episodes={episodes} />
+        {episodes.length == 0 ? null : (
+          <>
+            <div className="w-full flex items-center justify-between">
+              <p>My Podcasts...</p>
+              <Button className="text-sm/4 px-4" label="Show all..." />
+            </div>
+            <PodcastsCarrousel episodes={episodes} />
+          </>
+        )}
       </div>
       <div className="space-y-2 mt-8">
         <p>My posts...</p>
@@ -163,10 +137,10 @@ function Profile() {
         {renderNotes()}
       </div>
     </section>
-  );
+  )
 }
 
-export default Profile;
+export default Profile
 
 // "use client"
 
