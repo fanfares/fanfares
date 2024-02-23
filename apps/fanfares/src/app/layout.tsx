@@ -43,7 +43,7 @@ export default function RootLayout({
         <Providers>
           {/* Debug Overlay */}
           {/* <DebugOverlay /> */}
-          <header className="">
+          <header className="mr-4">
             <Navbar />
           </header>
           {/* Content */}

@@ -190,7 +190,7 @@ export function Navbar() {
         id={id}>
         <FontAwesomeIcon
           icon={icon}
-          className={`flex justify-center group-hover:text-buttonMuted text-xl w-5 ${
+          className={`flex justify-center group-hover:text-buttonMuted w-4 max-w-[16px] ${
             isCurrent ? "text-buttonAccentHover" : "text-white"
           }`}
         />
@@ -202,13 +202,12 @@ export function Navbar() {
   const renderDesktopNavbar = () => {
     return (
       <div
-        className={`desktop-sidebar fixed z-40 hidden h-full flex-col px-4 transition-all duration-100 ease-linear md:flex md:mx-auto `}>
-        <div className="flex mx-auto bg-transparent">
-          <Link href="/" className="flex flex-col items-center mb-4">
-            <p className="text-[7rem] relative">🎪</p>
-            <span className="text-2xl bold relative -top-6">FanFares</span>
-            <span className="text-2xl bold relative -top-6">(Alpha)</span>
-            {/* <Image
+        className={`desktop-sidebar fixed z-40 hidden h-full flex-col px-4 transition-all duration-100 ease-linear md:flex md:mx-auto overflow-y-scroll`}>
+        <Link href="/" className="flex flex-col items-center mb-4">
+          <p className="text-[90px]  relative">🎪</p>
+          <span className="text-[24px]/2 bold relative -top-6">FanFares</span>
+          <span className="text-[24px]/2 bold relative -top-6">(Alpha)</span>
+          {/* <Image
               // loader={contentfulLoader}
               className="cursor-pointer"
               src={"/assets/excalibur.png"}
@@ -217,8 +216,8 @@ export function Navbar() {
               width={100}
               height={100}
             /> */}
-          </Link>
-        </div>
+        </Link>
+
         <div className="flex flex-col mx-auto mt-5 mb-20 space-y-4 ">
           {renderDesktopNavLink("/discover", "Nostr Podcasts", faPodcast)}
           {renderDesktopNavLink("/feed", "Nostr Universe", faGlobe)}
