@@ -111,7 +111,7 @@ function Profile() {
         )}
       </div>
       <div className="space-y-2 mt-8">
-        <p>My posts...</p>
+        {/* <p>My posts...</p> */}
 
         {/* {filteredEvents.map(note => {
 
