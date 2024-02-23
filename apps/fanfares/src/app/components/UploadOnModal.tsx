@@ -82,7 +82,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
     postPodcastSubmit(nostrPool, nostrRelays, accountNostr?.accountNIP07, {
       onSuccess(ids) {
         toast.success(`Note posted with id ${ids}`)
-        router.push(`http://www.fanfares.com/player/${ids}`)
+        // router.push(`http://www.fanfares.com/player/${ids}`)
         setPublishModal(false)
         if (onCancel) onCancel()
       },
