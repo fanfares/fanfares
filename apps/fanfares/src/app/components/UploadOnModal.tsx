@@ -16,6 +16,7 @@ import {
 import { useNostr } from "../controllers/state/nostr-slice"
 import { Popover } from "./Popover"
 import { toast } from "react-toastify"
+import { useRouter } from "next/router"
 
 interface UploadOnModalProps {
   onCancel?: () => void
@@ -68,6 +69,8 @@ export default function UploadOnModal(props: UploadOnModalProps) {
     postPodcastClear()
   }, [postPodcastClear])
 
+  const router = useRouter()
+
   const handlePostSubmit = (event: any) => {
     if (!accountNostr?.accountNIP07) {
       toast.warn("Please connect your Nostr account")
@@ -78,12 +81,8 @@ export default function UploadOnModal(props: UploadOnModalProps) {
     setPublishModal(true)
     postPodcastSubmit(nostrPool, nostrRelays, accountNostr?.accountNIP07, {
       onSuccess(ids) {
-        // toast.success(`Note posted with id ${ids}`)
-        toast.success(
-          <Link href={`http://fanfares.com/player/${ids}`}>
-            Episode published, click here to open it.
-          </Link>
-        )
+        toast.success(`Note posted with id ${ids}`)
+        router.push(`http://www.fanfares.com/player/${ids}`)
         setPublishModal(false)
         if (onCancel) onCancel()
       },
