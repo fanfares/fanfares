@@ -16,7 +16,7 @@ import {
 import { useNostr } from "../controllers/state/nostr-slice"
 import { Popover } from "./Popover"
 import { toast } from "react-toastify"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 
 interface UploadOnModalProps {
   onCancel?: () => void
@@ -29,6 +29,8 @@ export default function UploadOnModal(props: UploadOnModalProps) {
   const { nostrPool, nostrRelays } = useNostr()
   const accountProfile = useAccountProfile()
   const accountNostr = useAccountNostr()
+
+  const router = useRouter()
 
   const handleCheckboxChangeAudio = (event: ChangeEvent<HTMLInputElement>) => {
     const { checked } = event.target
@@ -68,8 +70,6 @@ export default function UploadOnModal(props: UploadOnModalProps) {
   useEffect(() => {
     postPodcastClear()
   }, [postPodcastClear])
-
-  const router = useRouter()
 
   const handlePostSubmit = (event: any) => {
     if (!accountNostr?.accountNIP07) {
