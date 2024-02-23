@@ -78,7 +78,12 @@ export default function UploadOnModal(props: UploadOnModalProps) {
     setPublishModal(true)
     postPodcastSubmit(nostrPool, nostrRelays, accountNostr?.accountNIP07, {
       onSuccess(ids) {
-        toast.success(`Note posted with id ${ids}`)
+        // toast.success(`Note posted with id ${ids}`)
+        toast.success(
+          <Link href={`http://fanfares.com/player/${ids}`}>
+            Episode published, click here to open it.
+          </Link>
+        )
         setPublishModal(false)
         if (onCancel) onCancel()
       },
