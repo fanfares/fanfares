@@ -214,7 +214,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
                 type="file"
                 id="audioUpload"
                 className="hidden"
-                accept="audio/mp3, audio/mp4, audio/m4a, audio/aac"
+                accept="audio/mp3, audio/mp4, .m4a , audio/aac"
                 onChange={postPodcastHandleAudioChange}
               />
               {postPodcastAudioFile ? "Change" : "Browse"}
