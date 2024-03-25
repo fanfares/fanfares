@@ -81,7 +81,6 @@ export default function UploadOnModal(props: UploadOnModalProps) {
     setPublishModal(true)
     postPodcastSubmit(nostrPool, nostrRelays, accountNostr?.accountNIP07, {
       onSuccess(ids) {
-
         const id = ids.ids.gateNote
         toast.success(`Note posted with id ${id}`)
         router.push(`${window.location.origin}/player/${id}`)
@@ -215,7 +214,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
                 type="file"
                 id="audioUpload"
                 className="hidden"
-                accept="audio/mp3, audio/m4a, audio/aac"
+                accept="audio/mp3, audio/mp4, audio/m4a, audio/aac"
                 onChange={postPodcastHandleAudioChange}
               />
               {postPodcastAudioFile ? "Change" : "Browse"}
