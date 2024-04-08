@@ -12,7 +12,11 @@ import EpisodeCard from "./EpisodeCard"
 
 import { config } from "@fortawesome/fontawesome-svg-core"
 import { useAppState } from "../controllers/state/old/use-app-state"
-import { usePodcastActions, usePodcastEpisodes, usePodcastFetching } from "../controllers/state/podcast-slice"
+import {
+  usePodcastActions,
+  usePodcastEpisodes,
+  usePodcastFetching,
+} from "../controllers/state/podcast-slice"
 import { useNostr } from "../controllers/state/nostr-slice"
 import { useRouter } from "next/navigation"
 import { GATE_SERVER } from "../controllers/nostr/nostr-defines"
@@ -33,22 +37,19 @@ export interface DiscoveryTileInfo {
 
 function DiscoverPageContent() {
   // const { program, drmApi } = useAppState();
-  const router = useRouter();
-  const { nostrPool, nostrRelays } = useNostr();
-  const { podcastFetch } = usePodcastActions();
-  const podcastEpisodes = usePodcastEpisodes();
-  const podcastFetching = usePodcastFetching();
+  const router = useRouter()
+  const { nostrPool, nostrRelays } = useNostr()
+  const { podcastFetch } = usePodcastActions()
+  const podcastEpisodes = usePodcastEpisodes()
+  const podcastFetching = usePodcastFetching()
 
   console.log("Render Podcasts -- " + Object.values(podcastEpisodes).length)
 
   useEffect(() => {
-    if(nostrPool && nostrRelays){
-      console.log("Fetching Podcasts");
+    if (nostrPool && nostrRelays) {
+      console.log("Fetching Podcasts")
 
-      podcastFetch(
-        nostrPool,
-        nostrRelays,
-      );
+      podcastFetch(nostrPool, nostrRelays)
     }
   }, [podcastFetch, nostrPool, nostrRelays])
 
@@ -99,6 +100,22 @@ function DiscoverPageContent() {
     )
   }
 
+  const episodeTestingTitlesFilter = [
+    "TEST",
+    "THIS IS AN M4A",
+    "NOSTR TEST",
+    "TEST2",
+    "This is an M4A",
+    "2nd",
+    "3rd",
+    "Test",
+    "Test2",
+    "nostr test",
+    "test",
+    "Another",
+    "new",
+  ]
+
   const renderContent = () => {
     if (podcastFetching) return null
     return (
@@ -106,10 +123,12 @@ function DiscoverPageContent() {
       <div className="container flex">
         <div className="flex flex-wrap gap-3 ">
           {Object.values(podcastEpisodes).map(podcast => {
+            const toHide = episodeTestingTitlesFilter.includes(podcast.title)
+            if (toHide) return null
             return (
               <EpisodeCard
                 onClick={() => {
-                  router.push(`/player/${podcast.gate.note.id}`);
+                  router.push(`/player/${podcast.gate.note.id}`)
                   // if (!podcast.audioFilepath) {
                   //   podcastUnlock(
                   //     podcast.gate.note.id
@@ -182,4 +201,3 @@ function DiscoverPageContent() {
 }
 
 export default DiscoverPageContent
-
