@@ -52,7 +52,7 @@ export function FeedbackForm() {
           </p>
           <p className="mt-4 font-thin text-sm">
             For constructive feedback that genuinely adds value to the
-            application we are willing to pay our customers 10000 sats as a
+            application we are willing to pay our customers 10,000 sats as a
             reward for identifying problems and making suggestions as to how the
             application can work better.
           </p>
@@ -62,21 +62,21 @@ export function FeedbackForm() {
           className="flex flex-col items-start w-full gap-4 mt-8"
           action="">
           <AnimatedLabelTextInput
-            label="Public Key*"
+            label="Nostr Public Key*"
             htmlFor="publicKey"
             value={publicKey}
             onChange={setPublicKey}
           />
           <AnimatedLabelTextInput
             required={true}
-            label="LUD16*"
+            label="Lightning Address* (LUD16)"
             htmlFor="lud16"
             value={lud16}
             onChange={setLud16}
           />
           <AnimatedLabelTextInput
             required={true}
-            label="Email*"
+            label="E-Mail*"
             htmlFor="email"
             value={email}
             onChange={setEmail}
