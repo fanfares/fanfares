@@ -130,10 +130,10 @@ export default function PlayerPage() {
           id={"E2EID.playerBuyButton"}
           label={
             <div className="flex flex-col">
-              <p className="relative">Buy this Podcast</p>
+              <p className="relative">Buy this Episode</p>
               <span className="text-xs font-thin text-center text-white absolute -bottom-5 inset-x-0">
                 {" "}
-                It cost's {Math.round(podcast.gate.cost / 1000)} sats
+                It costs {Math.round(podcast.gate.cost / 1000).toLocaleString()} sats
               </span>
             </div>
           }
