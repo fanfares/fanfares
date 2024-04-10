@@ -28,6 +28,10 @@ export interface PostPodcastSlice {
   ) => void
   postPodcastClear: () => void
 
+  postPodcastHandleSeriesImageChange: (event: any) => void
+  postPodcastSeriesImageFile: File | null
+  postPodcastSeriesImageUrl?: string
+
   postPodcastHandleImageChange: (event: any) => void
   postPodcastImageFile: File | null
   postPodcastImageUrl?: string
@@ -39,12 +43,21 @@ export interface PostPodcastSlice {
   postPodcastIsRunning: boolean
   postGatesNoteError?: string
 
+  postPodcastCheckMeta: boolean
+  postPodcastHandleCheckMetaChange: (event: any) => void
+
   postPodcastCheckTC: boolean
   postPodcastHandleCheckTCChange: (event: any) => void
 
   postPodcastLud16: string
   postPodcastSetLud16: (event: any) => void
   postPodcastHandleLud16Change: (event: any) => void
+
+  postPodcastSeriesTitle: string
+  postPodcastHandleSeriesTitleChange: (event: any) => void
+
+  postPodcastSeriesDescription: string
+  postPodcastHandleSeriesDescriptionChange: (event: any) => void
 
   postPodcastTitle: string
   postPodcastHandleTitleChange: (event: any) => void
@@ -70,10 +83,14 @@ export interface PostPodcastSlice {
 const DEFAULT_STATE: PostPodcastSlice = {
   postPodcastState: "IDLE",
   postPodcastIsRunning: false,
+  postPodcastSeriesTitle: "",
+  postPodcastSeriesDescription: "",
+  postPodcastShoSerieswImageFile: null,
   postPodcastTitle: "",
   postPodcastDescription: "",
   postPodcastLud16: "",
   postPodcastUnlockCost: 10_000, // Sats
+  postPodcastCheckMeta: false,
   postPodcastCheckTC: false,
 
   postPodcastAudioFile: null,
@@ -81,10 +98,14 @@ const DEFAULT_STATE: PostPodcastSlice = {
 
   postPodcastHandleAudioChange: () => {},
   postPodcastHandleImageChange: () => {},
+  postPodcastHandleSeriesImageChange: () => {},
 
   postPodcastSetLud16: () => {},
+  postPodcastHandleCheckMetaChange: () => {},
   postPodcastHandleCheckTCChange: () => {},
   postPodcastHandleLud16Change: () => {},
+  postPodcastHandleSeriesTitleChange: () => {},
+  postPodcastHandleSeriesDescriptionChange: () => {},
   postPodcastHandleTitleChange: () => {},
   postPodcastHandleDescriptionChange: () => {},
   postPodcastHandleUnlockCostChange: () => {},
@@ -98,6 +119,10 @@ export const createPostPodcastSlice: StateCreator<
   [],
   PostPodcastSlice
 > = (set, get) => {
+  const postPodcastHandleCheckMetaChange = (event: any) => {
+    set({ postPodcastCheckMeta: event.target.checked })
+  }
+
   const postPodcastHandleCheckTCChange = (event: any) => {
     set({ postPodcastCheckTC: event.target.checked })
   }
@@ -107,6 +132,13 @@ export const createPostPodcastSlice: StateCreator<
     const file = fileList.item(0)
 
     set({ postPodcastAudioFile: file })
+  }
+
+  const postPodcastHandleSeriesImageChange = (event: any) => {
+    const fileList = event.target.files as FileList
+    const file = fileList.item(0)
+
+    set({ postPodcastSeriesImageFile: file })
   }
 
   const postPodcastHandleImageChange = (event: any) => {
@@ -124,6 +156,14 @@ export const createPostPodcastSlice: StateCreator<
     set({ postPodcastLud16: event.target.value })
   }
 
+  const postPodcastHandleSeriesTitleChange = (event: any) => {
+    set({ postPodcastSeriesTitle: event.target.value })
+  }
+
+  const postPodcastHandleSeriesDescriptionChange = (event: any) => {
+    set({ postPodcastSeriesDescription: event.target.value })
+  }
+
   const postPodcastHandleTitleChange = (event: any) => {
     set({ postPodcastTitle: event.target.value })
   }
@@ -139,8 +179,12 @@ export const createPostPodcastSlice: StateCreator<
   const postPodcastClear = () => {
     set({
       postPodcastState: "IDLE",
+      postPodcastSeriesTitle: "",
+      postPodcastSeriesDescription: "",
+      postPodcastSeriesImageFile: null,
       postPodcastTitle: "",
       postPodcastDescription: "",
+      postPodcastCheckMeta: false,
       postPodcastCheckTC: false,
       // Don't clear lud16
       //   postPodcastLud16: accountProfile?.lud16 || "",
@@ -167,6 +211,9 @@ export const createPostPodcastSlice: StateCreator<
     callbacks: PostPodcastCallbacks
   ) => {
     const {
+      postPodcastSeriesTitle,
+      postPodcastSeriesDescription,
+      postPodcastSeriesImageFile,
       postPodcastAudioFile,
       postPodcastImageFile,
       postPodcastIsRunning,
@@ -201,7 +248,8 @@ export const createPostPodcastSlice: StateCreator<
       if (!postPodcastTitle) throw new Error("Missing announcement")
       if (!postPodcastDescription) throw new Error("Missing content")
       if (!postPodcastAudioFile) throw new Error("Missing audio file")
-      if (!postPodcastImageFile) throw new Error("Missing image file")
+      if (!postPodcastImageFile) throw new Error("Missing episode image file")
+      if (!postPodcastSeriesImageFile) throw new Error("Missing podcast image file")
       if (!accountNIP07) throw new Error("Missing NIP07")
       if (!nostrPool) throw new Error("Missing pool")
       if (!nostrRelays) throw new Error("Missing relays")
@@ -218,7 +266,7 @@ export const createPostPodcastSlice: StateCreator<
         set({ postPodcastState: "UPLOADING_FILES" })
 
         // const prefix = generatePrivateKey();
-        const uploadFiles = [postPodcastAudioFile, postPodcastImageFile]
+        const uploadFiles = [postPodcastAudioFile, postPodcastImageFile, postPodcastSeriesImageFile]
         const prefix = "debug"
         const fileUrls = await uploadToShdwDrive(uploadFiles, prefix)
         console.log(fileUrls)
@@ -228,6 +276,9 @@ export const createPostPodcastSlice: StateCreator<
         )
         const imageUrl = fileUrls.find(url =>
           url.includes(formatFilePrefixedName(postPodcastImageFile))
+        )
+        const showImageUrl = fileUrls.find(url =>
+          url.includes(formatFilePrefixedName(postPodcastSeriesImageFile))
         )
 
         if (!audioUrl) throw new Error("Missing audio url")
@@ -329,12 +380,16 @@ export const createPostPodcastSlice: StateCreator<
   return {
     ...DEFAULT_STATE,
     postPodcastClear,
+    postPodcastHandleCheckMetaChange,
     postPodcastHandleCheckTCChange,
     postPodcastHandleAudioChange,
     postPodcastHandleImageChange,
+    postPodcastHandleSeriesImageChange,
     postPodcastHandleLud16Change,
+    postPodcastHandleSeriesTitleChange,
     postPodcastHandleTitleChange,
     postPodcastSetLud16,
+    postPodcastHandleSeriesDescriptionChange,
     postPodcastHandleDescriptionChange,
     postPodcastHandleUnlockCostChange,
     postPodcastSubmit,

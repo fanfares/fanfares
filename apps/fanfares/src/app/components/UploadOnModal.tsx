@@ -39,15 +39,23 @@ export default function UploadOnModal(props: UploadOnModalProps) {
 
   const formRef = useRef<HTMLFormElement>(null)
   const {
+    postPodcastCheckMeta,
     postPodcastCheckTC,
     postPodcastClear,
     postPodcastState,
     postPodcastSubmit,
+    postPodcastHandleSeriesTitleChange,
+    postPodcastHandleSeriesImageChange,
+    postPodcastHandleSeriesDescriptionChange,
+    postPodcastSeriesTitle,
+    postPodcastSeriesDescription,
+    postPodcastSeriesImageFile,
     postPodcastHandleTitleChange,
     postPodcastTitle,
     postPodcastDescription,
     postPodcastLud16,
     postPodcastUnlockCost,
+    postPodcastHandleCheckMetaChange,
     postPodcastHandleCheckTCChange,
     postPodcastHandleUnlockCostChange,
     postPodcastHandleAudioChange,
@@ -115,7 +123,111 @@ export default function UploadOnModal(props: UploadOnModalProps) {
         </div>
       )}
       <form className="w-full" onSubmit={handlePostSubmit} ref={formRef}>
+
+      <div className="flex flex-row gap-2 mb-2 w-full">
+        {postPodcastCheckMeta && (
         <div className="relative flex flex-col w-full px-2 py-1">
+
+          <div className="w-full mx-auto space-y-4 pt-2">
+            {/* <MediaSeriesNameField maxLength={MAX_TITLE_LENGTH} /> */}
+            <div className="relative">
+              <label>
+                <input
+                  id={"E2EID.podcastSeriesTitleInput"}
+                  autoComplete="false"
+                  placeholder="Podcast Title"
+                  className="w-full border-b-2 border-buttonAccent bg-transparent outline-none font-thin text-sm placeholder:text-lg placeholder:font-thin placeholder:text-skin-muted"
+                  // requiredMessage="Please enter the Podcast name"
+                  maxLength={20}
+                  name="name"
+                  onChange={postPodcastHandleSeriesTitleChange}
+                  value={postPodcastSeriesTitle}
+                />
+                <p
+                  className={`absolute right-0 top-8 text-xs ${
+                    20 - charsLeft(postPodcastSeriesTitle) < 8
+                      ? "text-red-500"
+                      : "text-skin-inverted"
+                  }`}>
+                  {" "}
+                  {20 - charsLeft(postPodcastSeriesTitle)}
+                </p>
+              </label>
+            </div>
+
+            {/* <MediaSeriesDescriptionField maxLength={MAX_DESCRIPTION_LENGTH} /> */}
+            <div className="relative">
+              <textarea
+                id={"E2EID.uploadSeriesDescriptionInput"}
+                placeholder="Description"
+                className="w-full h-32 min-h-[40px] max-h-[200px] bg-transparent border-b-2 outline-none resize-none notes active border-buttonAccent placeholder:text-lg placeholder:font-thin placeholder:text-skin-muted overflow-y-auto text-sm"
+                maxLength={1000}
+                name="seriesDescription"
+                onChange={postPodcastHandleSeriesDescriptionChange}
+                value={postPodcastSeriesDescription}
+              />
+              <p
+                className={`absolute -bottom-4 right-0 text-xs ${
+                  1000 - charsLeft(postPodcastSeriesDescription) < 8
+                    ? "text-red-500"
+                    : "text-skin-inverted"
+                }`}>
+                {1000 - charsLeft(postPodcastSeriesDescription)}
+              </p>
+            </div>
+
+            <div className="flex mx-auto">
+              <div className="flex flex-col border border-buttonAccent px-2 py-1 rounded items-center justify-around w-48 h-48 space-y-4 relative">
+                {postPodcastSeriesImageFile ? (
+                  <img
+                    className="absolute object-cover object-center w-full h-full rounded"
+                    src={URL.createObjectURL(postPodcastSeriesImageFile)}></img>
+                ) : null}
+                <p className="mt-2">Podcast Cover</p>
+                <label
+                  htmlFor="seriesThumbnailUpload"
+                  className={`mx-auto bg-buttonDefault hover:bg-buttonAccentHover px-3 py-1 rounded-full text-sm cursor-pointer ${
+                    postPodcastSeriesImageFile ? "opacity-80" : ""
+                  }`}>
+                  <input
+                    className="hidden"
+                    type="file"
+                    id="seriesThumbnailUpload"
+                    accept="image/*"
+                    aria-label="Thumbnail Upload"
+                    onChange={postPodcastHandleSeriesImageChange}
+                  />
+                  {postPodcastSeriesImageFile ? "Change" : "Browse"}
+                </label>
+
+                <div className="text-center">
+                  {/* MAKE THIS AS TOOLTIP */}
+                  <div className=" w-40 text-xs text-center  text-skin-muted">
+                    JPG / PNG with 1:1 size ratio (min. 528x528 px) and 2 MB max
+                    file size
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+        )}
+
+        <div className="relative flex flex-col w-full px-2 py-1">
+          <div className="flex flex-col gap-2 mb-2 w-full">
+            <label htmlFor="showMeta">
+              <input
+                required
+                id={"showMeta"}
+                className="mr-2"
+                type="checkbox"
+                onChange={postPodcastHandleCheckMetaChange}
+              />
+              {!postPodcastCheckMeta && postPodcastSeriesTitle && (postPodcastSeriesTitle) || "Show Podcast Details"}
+            </label>
+          </div>
           <div className="upperSectionForm flex flex-col w-full gap-4 md:flex-row">
             <div className="flex mx-auto">
               <div className="flex flex-col border border-buttonAccent px-2 py-1 rounded items-center justify-around w-48 h-48 space-y-4 relative">
@@ -124,7 +236,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
                     className="absolute object-cover object-center w-full h-full rounded"
                     src={URL.createObjectURL(postPodcastImageFile)}></img>
                 ) : null}
-                <p className="mt-2">Upload Cover Image</p>
+                <p className="mt-2">Episode Cover</p>
                 <label
                   htmlFor="thumbnailUpload"
                   className={`mx-auto bg-buttonDefault hover:bg-buttonAccentHover px-3 py-1 rounded-full text-sm cursor-pointer ${
@@ -157,7 +269,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
                   <input
                     id={"E2EID.uploadTitleInput"}
                     autoComplete="false"
-                    placeholder="Title"
+                    placeholder="Episode Title"
                     className="w-full border-b-2 border-buttonAccent bg-transparent outline-none font-thin text-sm placeholder:text-lg placeholder:font-thin placeholder:text-skin-muted"
                     // requiredMessage="Please enter the Episode name"
                     maxLength={20}
@@ -360,7 +472,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
           </p>
 
           <div className="flex flex-col gap-2 mt-8 w-full items-center">
-            <label htmlFor="TermsAndConditionCheckbox">
+            <label htmlFor="E2EID.uploadTermsCheckbox">
               <input
                 required
                 id={"E2EID.uploadTermsCheckbox"}
@@ -395,6 +507,9 @@ export default function UploadOnModal(props: UploadOnModalProps) {
             </div>
           </div>
         </div>
+
+      </div>
+
       </form>
     </section>
   )

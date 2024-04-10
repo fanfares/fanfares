@@ -23,15 +23,20 @@ export default function Upload() {
   const { nostrPool, nostrRelays } = useNostr()
 
   const {
+    postPodcastCheckMeta,
     postPodcastCheckTC,
     postPodcastClear,
     postPodcastState,
     postPodcastSubmit,
+    postPodcastSeriesTitle,
+    postPodcastSeriesDescription,
+    postPodcastSeriesImageFile,
     postPodcastHandleTitleChange,
     postPodcastTitle,
     postPodcastDescription,
     postPodcastLud16,
     postPodcastUnlockCost,
+    postPodcastHandleCheckMetaChange,
     postPodcastHandleCheckTCChange,
     postPodcastHandleUnlockCostChange,
     postPodcastHandleAudioChange,
@@ -40,6 +45,7 @@ export default function Upload() {
     postPodcastAudioFile,
     postPodcastHandleLud16Change,
     postPodcastHandleDescriptionChange,
+    postPodcastHandleSeriesDescriptionChange,
     postPodcastSetLud16,
   } = usePostPodcast()
 
@@ -93,7 +99,9 @@ export default function Upload() {
         <div className="relative flex flex-col items-center justify-center w-full h-full">
           <div className="upperSectionForm flex flex-col w-full gap-4 md:flex-row">
             <div className="flex mx-auto">
+
               <div className="flex flex-col border border-buttonAccent px-2 py-1 rounded items-center justify-around w-full space-y-4 relative">
+              
                 {postPodcastImageFile ? (
                   <img
                     className="absolute object-cover object-center w-full h-full rounded"

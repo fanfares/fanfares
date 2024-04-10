@@ -151,7 +151,7 @@ export function ActionButtonsPost() {
       /> */}
       <Button
         onClick={() => setGatedPodModal(!gatedPodModal)}
-        label="Post Podcast"
+        label="Upload"
       />
       {/* <Button
         onClick={() => setGenericNoteModal(!genericNoteModal)}
