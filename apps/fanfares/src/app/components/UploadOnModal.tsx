@@ -216,17 +216,32 @@ export default function UploadOnModal(props: UploadOnModalProps) {
         )}
 
         <div className="relative flex flex-col w-full px-2 py-1">
-          <div className="flex flex-col gap-2 mb-2 w-full">
+          <div className="flex flex-row gap-2 mb-2 w-full">
             <label htmlFor="showMeta">
               <input
                 required
                 id={"showMeta"}
                 className="mr-2"
                 type="checkbox"
+                checked={postPodcastCheckMeta}
                 onChange={postPodcastHandleCheckMetaChange}
               />
-              {!postPodcastCheckMeta && postPodcastSeriesTitle && (postPodcastSeriesTitle) || "Show Podcast Details"}
+              Podcast:
             </label>
+
+            <select
+              className="flex-grow bg-transparent"
+              onChange={() => {}}
+              defaultValue={"new"}
+            >
+              <option style={{ backgroundColor: '#494B5D' }} value="new">New Podcast</option>
+              <option style={{ backgroundColor: '#494B5D' }} value="1">My Existing Podcast #1</option>
+              <option style={{ backgroundColor: '#494B5D' }} value="2">My Existing Podcast #2</option>
+              {/* {props.categories.map((category,key) => 
+                <Application key={key} item={category} />
+              )} */}
+            </select>
+
           </div>
           <div className="upperSectionForm flex flex-col w-full gap-4 md:flex-row">
             <div className="flex mx-auto">

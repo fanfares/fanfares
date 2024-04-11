@@ -90,7 +90,7 @@ const DEFAULT_STATE: PostPodcastSlice = {
   postPodcastDescription: "",
   postPodcastLud16: "",
   postPodcastUnlockCost: 10_000, // Sats
-  postPodcastCheckMeta: false,
+  postPodcastCheckMeta: true,
   postPodcastCheckTC: false,
 
   postPodcastAudioFile: null,
@@ -184,7 +184,7 @@ export const createPostPodcastSlice: StateCreator<
       postPodcastSeriesImageFile: null,
       postPodcastTitle: "",
       postPodcastDescription: "",
-      postPodcastCheckMeta: false,
+      postPodcastCheckMeta: true,
       postPodcastCheckTC: false,
       // Don't clear lud16
       //   postPodcastLud16: accountProfile?.lud16 || "",
