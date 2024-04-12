@@ -85,7 +85,7 @@ const DEFAULT_STATE: PostPodcastSlice = {
   postPodcastIsRunning: false,
   postPodcastSeriesTitle: "",
   postPodcastSeriesDescription: "",
-  postPodcastShoSerieswImageFile: null,
+  postPodcastSeriesImageFile: null,
   postPodcastTitle: "",
   postPodcastDescription: "",
   postPodcastLud16: "",
