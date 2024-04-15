@@ -5,6 +5,7 @@ import { PRIMAL_CACHE } from "../nostr/nostr-defines";
 import { NostrProfile } from "utils";
 import {
   getExploreFeed,
+  getUserFeed,
   MediaEvent,
   NostrPostStats,
   PrimalScope,
@@ -54,6 +55,7 @@ export const createPrimalSlice: StateCreator<
   // -------------- PRIMAL SEND ----------------
   const primalSend = (message: string) => {
     const ws = get().primalSocket;
+    console.log('ws message',message,ws)
 
     if (!ws) return;
 
@@ -64,6 +66,12 @@ export const createPrimalSlice: StateCreator<
 
   // -------------- PRIMAL GET ----------------
   const primalGet = (publicKey: string) => {
+
+    if(get().primalSocket === null){
+      console.log('Primal socket is null')
+      return;
+    }
+
     const id = get().primalAppID;
 
     //  network
@@ -79,19 +87,31 @@ export const createPrimalSlice: StateCreator<
 
     set({ primalFetching: true });
 
-    getExploreFeed(
-      publicKey ?? "",
-      `explore_${id}`,
-      PrimalScope.global, //scope
-      PrimalSort.mostzapped, //timeframe
-      0,
-      100,
-      primalSend
-    );
+    if (publicKey) {
+      getUserFeed(
+        publicKey ?? "",
+        publicKey ?? "",
+        `feed_${id}`,
+        0,
+        20,
+        primalSend
+      );
+    } else {
+      getExploreFeed(
+        publicKey ?? "",
+        `explore_${id}`,
+        PrimalScope.global, //scope
+        PrimalSort.mostzapped, //timeframe
+        0,
+        100,
+        primalSend
+      );
+    }
   };
 
   // -------------- PARSE PRIMAL SEND ----------------
   const parsePrimalEvent = (event: any) => {
+    // console.log('event',event)
     try {
       const rawData = JSON.parse(event.data);
       if (rawData[0] === "EOSE"){
@@ -179,11 +199,11 @@ export const createPrimalSlice: StateCreator<
     const socket = new WebSocket(PRIMAL_CACHE);
     socket.readyState;
     socket.onopen = () => {
-      console.log("Primal connected");
+      console.log("Primal connected", socket);
       set({ primalSocket: socket });
 
       // First round of Data
-      primalGet("");
+      // primalGet("");
     };
     socket.onclose = () => {
       console.log("Primal disconnected");

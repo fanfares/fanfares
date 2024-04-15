@@ -69,6 +69,8 @@ export function getExploreFeed(
 ) {
   let payload: ExploreFeedPayload = { timeframe, scope, limit };
 
+  console.log('subid',subid)
+
   if (pubkey) {
     payload.user_pubkey = pubkey;
   }
@@ -100,4 +102,26 @@ export function getExploreFeed(
   //   ]));
 
   primalSend(JSON.stringify(["REQ", subid, { cache: ["explore", payload] }]));
+}
+
+export function getUserFeed(
+  user_pubkey: string,
+  pubkey: string,
+  subid: string,
+  until = 0,
+  limit = 20,
+  primalSend: (data: string) => void
+) {
+  if (!pubkey) return;
+  const start = until === 0 ? 'since' : 'until';
+  let payload = {
+    pubkey,
+    limit, 
+    notes: 'authored', // 'replies'
+    [start]: until,
+  };
+  if (user_pubkey) {
+    payload.user_pubkey = user_pubkey;
+  }
+  primalSend(JSON.stringify(["REQ", subid, { cache: ["feed", payload] }]));
 }

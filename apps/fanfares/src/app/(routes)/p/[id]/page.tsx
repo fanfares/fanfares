@@ -2,6 +2,7 @@
 import Button from "../../../components/Button"
 import { FeedPost } from "../../../components/FeedPost"
 import {
+  usePrimalActions,
   usePrimalNoteStats,
   usePrimalNotes,
   usePrimalProfiles,
@@ -20,6 +21,7 @@ import { usePathname } from "next/navigation"
 function Profile() {
   const primalNotes = usePrimalNotes()
   const nostrAccount = useAccountNostr()
+  const primalActions = usePrimalActions()
   const primalProfiles = usePrimalProfiles()
   const primalNoteStats = usePrimalNoteStats()
   const accountProfile = useAccountProfile()
@@ -27,6 +29,7 @@ function Profile() {
 
   // ------------ VARIABLES ------------
   const id = getIdFromUrl(usePathname())
+  primalActions.primalGet(id)
   const isOwner = id === nostrAccount?.accountPublicKey
   const loadedProfile = isOwner ? accountProfile : primalProfiles[id]
 
@@ -47,7 +50,12 @@ function Profile() {
   }, [setEditProfileModalOn])
 
   const renderNotes = () => {
+    // console.log('primalNotes from zustand', primalNotes)
     return Object.values(primalNotes).map(note => {
+      // console.log(note.pubkey == id, note, note.pubkey, id)
+      if (note.pubkey !== id) {
+        return null
+      }
       const profile = primalProfiles[note.pubkey]
       const stats = primalNoteStats[note.id]
 
