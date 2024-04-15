@@ -25,7 +25,7 @@ export interface PrimalSlice {
     primalConnect: () => void;
     primalDisconnect: () => void;
     primalSend: (data: string) => void;
-    primalGet: (publicKey: string) => void;
+    primalGet: (publicKey: string, feedType: 'global' | 'profile') => void;
   };
 }
 
@@ -42,7 +42,7 @@ const DEFAULT_STATE: PrimalSlice = {
     primalConnect: () => {},
     primalDisconnect: () => {},
     primalSend: (data: string) => {},
-    primalGet: (pubkey: string) => {},
+    primalGet: (pubkey: string, feedType: 'global' | 'profile') => {},
   },
 };
 
@@ -65,7 +65,7 @@ export const createPrimalSlice: StateCreator<
   };
 
   // -------------- PRIMAL GET ----------------
-  const primalGet = (publicKey: string) => {
+  const primalGet = (publicKey: string, feedType: 'global' | 'profile' = 'global') => {
 
     if(get().primalSocket === null){
       console.log('Primal socket is null')
@@ -87,7 +87,7 @@ export const createPrimalSlice: StateCreator<
 
     set({ primalFetching: true });
 
-    if (publicKey) {
+    if (feedType === 'profile') {
       getUserFeed(
         publicKey ?? "",
         publicKey ?? "",

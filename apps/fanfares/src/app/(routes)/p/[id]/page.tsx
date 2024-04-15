@@ -28,10 +28,10 @@ function Profile() {
   const [editProfileModalOn, setEditProfileModalOn] = useState(false)
 
   // ------------ VARIABLES ------------
-  const id = getIdFromUrl(usePathname())
-  primalActions.primalGet(id)
-  const isOwner = id === nostrAccount?.accountPublicKey
-  const loadedProfile = isOwner ? accountProfile : primalProfiles[id]
+  const pubkeyFromURL = getIdFromUrl(usePathname())
+  primalActions.primalGet(pubkeyFromURL, 'profile')
+  const isOwner = pubkeyFromURL === nostrAccount?.accountPublicKey
+  const loadedProfile = isOwner ? accountProfile : primalProfiles[pubkeyFromURL]
 
   const episodes: { imgUrl: string; description: string; title: string }[] = []
 
@@ -53,7 +53,7 @@ function Profile() {
     // console.log('primalNotes from zustand', primalNotes)
     return Object.values(primalNotes).map(note => {
       // console.log(note.pubkey == id, note, note.pubkey, id)
-      if (note.pubkey !== id) {
+      if (note.pubkey !== pubkeyFromURL) {
         return null
       }
       const profile = primalProfiles[note.pubkey]
