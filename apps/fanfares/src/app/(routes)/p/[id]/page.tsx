@@ -2,6 +2,7 @@
 import Button from "../../../components/Button"
 import { FeedPost } from "../../../components/FeedPost"
 import {
+  usePrimalActions,
   usePrimalNoteStats,
   usePrimalNotes,
   usePrimalProfiles,
@@ -20,15 +21,17 @@ import { usePathname } from "next/navigation"
 function Profile() {
   const primalNotes = usePrimalNotes()
   const nostrAccount = useAccountNostr()
+  const primalActions = usePrimalActions()
   const primalProfiles = usePrimalProfiles()
   const primalNoteStats = usePrimalNoteStats()
   const accountProfile = useAccountProfile()
   const [editProfileModalOn, setEditProfileModalOn] = useState(false)
 
   // ------------ VARIABLES ------------
-  const id = getIdFromUrl(usePathname())
-  const isOwner = id === nostrAccount?.accountPublicKey
-  const loadedProfile = isOwner ? accountProfile : primalProfiles[id]
+  const pubkeyFromURL = getIdFromUrl(usePathname())
+  primalActions.primalGet(pubkeyFromURL, 'profile')
+  const isOwner = pubkeyFromURL === nostrAccount?.accountPublicKey
+  const loadedProfile = isOwner ? accountProfile : primalProfiles[pubkeyFromURL]
 
   const episodes: { imgUrl: string; description: string; title: string }[] = []
 
@@ -47,7 +50,12 @@ function Profile() {
   }, [setEditProfileModalOn])
 
   const renderNotes = () => {
+    // console.log('primalNotes from zustand', primalNotes)
     return Object.values(primalNotes).map(note => {
+      // console.log(note.pubkey == id, note, note.pubkey, id)
+      if (note.pubkey !== pubkeyFromURL) {
+        return null
+      }
       const profile = primalProfiles[note.pubkey]
       const stats = primalNoteStats[note.id]
 
