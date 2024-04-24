@@ -8,7 +8,7 @@ import { RenderContent } from "./RenderContent";
 import ModalZap from "./ModalZap";
 import ModalFutureFeature from "./ModalFutureFeature";
 import { useRouter } from "next/navigation";
-import { NostrProfile } from "utils";
+import { NostrProfile, getInvoice, getLud16Url } from "utils";
 import { NostrPostStats } from "../controllers/primal/primalHelpers";
 
 interface FeedPostProps {
@@ -31,6 +31,18 @@ export function FeedPost(props: FeedPostProps) {
   const goToNotePage = () => {
     router.push(`/e/${note.id}`);
   };
+
+  const zap = async () => {
+    if (!profile.lud16) {
+      return;
+    }
+
+    let expiry = new Date();
+    expiry.setMinutes(expiry.getMinutes() + 2);
+
+    const invoice = await getInvoice(profile.lud16, 'http://localhost:3000', 55000, note.id, expiry);
+
+  }
 
   return (
     <div
@@ -80,14 +92,15 @@ export function FeedPost(props: FeedPostProps) {
           label={"Fanfare 🎪"}
           onClick={() => setFutureFeatureModalOn(!futureFeatureModalOn)}
         />
-        <Button
-          className="px-2 w-28"
-          id="e2e-feed-post-zap-button"
-          label={"Zap ⚡️"}
-          onClick={() => setFutureFeatureModalOn(!futureFeatureModalOn)}
-
-          // onClick={() => setZapModalOn(!zapModalOn)}
-        />
+        { profile.lud16 ? 
+          <Button
+            className="px-2 w-28"
+            id="e2e-feed-post-zap-button"
+            label={"Zap ⚡️"}
+            onClick={() => zap()}
+            // onClick={() => setZapModalOn(!zapModalOn)}
+          />
+          : <Button disabled={true} label={"Can't zap!"}></Button> }
       </div>
     </div>
   );
