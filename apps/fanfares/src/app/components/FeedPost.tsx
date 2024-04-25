@@ -9,6 +9,7 @@ import ModalZap from "./ModalZap";
 import ModalFutureFeature from "./ModalFutureFeature";
 import { useRouter } from "next/navigation";
 import { NostrProfile, getInvoice, getLud16Url } from "utils";
+import { bech32 } from "bech32";
 import { NostrPostStats } from "../controllers/primal/primalHelpers";
 
 interface FeedPostProps {
@@ -33,14 +34,78 @@ export function FeedPost(props: FeedPostProps) {
   };
 
   const zap = async () => {
+    // examining note's props/tags
+    console.log('zap: note', note);
+    // HOW TO ZAP
+    // check for zap tag
+    // if no zap tag, use lud16
     if (!profile.lud16) {
       return;
     }
 
-    let expiry = new Date();
-    expiry.setMinutes(expiry.getMinutes() + 2);
+    const zapTag = note.tags.find((tag) => tag[0] === "zap");
+    const lud16 = zapTag && typeof zapTag === 'object' && zapTag.length >= 2 ? zapTag[1] : profile.lud16
+    let lud16Url = null
 
-    const invoice = await getInvoice(profile.lud16, 'http://localhost:3000', 55000, note.id, expiry);
+    try {
+      lud16Url = getLud16Url(lud16)
+    } catch (e) {
+      console.warn(e)
+    }
+
+    if (!lud16Url) {
+      return;
+    }
+
+    // send GET to lud16Url
+    const response = await fetch(lud16Url, {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      console.error('zap: error', await response.json())
+      return;
+    }
+
+    const sendDetails = await response.json()
+    console.log('zap: response', sendDetails)
+
+    // check allowNostr key for true
+    if (!sendDetails.allowNostr) {
+      return;
+    }
+    // check that nostrPubkey exists and is a valid BIP 340 pubkey in hex
+    if (!sendDetails.nostrPubkey || !/^[0-9a-fA-F]{64}$/.test(sendDetails.nostrPubkey)) {
+      return;
+    }
+
+    // create 9734 zap requset event (step 3 https://github.com/nostr-protocol/nips/blob/master/57.md#protocol-flow)
+import { bech32 } from 'bech32';
+
+const words = bech32.toWords(Buffer.from('hello world', 'utf8'));
+const encoded = bech32.encode('bech32', words);
+
+console.log(encoded); // Outputs: bech321qpz4nc4pe
+    const lnurl = bech32(sendDetails.callback)
+    const zapRequest = {
+      kind: 9734,
+      content: "",
+      tags: [
+        ["relays", /* TODO grab relays from zustand */ 'wss://relay.primal.net'],
+        ["amount", "55000"],
+        ["lnurl", sendDetails.callback],
+        ["p", sendDetails.nostrPubkey],
+        ["e", note.id],
+      ],
+      pubkey: /* current user's pubkey */null,
+      created_at: Math.floor((+new Date()) / 1000),
+    }
+
+    // get the event id
+
+    // sign it
+
+    // send via GET to callback URL
 
   }
 
