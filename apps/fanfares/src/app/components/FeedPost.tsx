@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Event as NostrEvent } from "nostr-tools";
+import { EventTemplate, Event as NostrEvent, nip57 } from "nostr-tools";
 import Button from "./Button";
 import { useState } from "react";
 import { Modal } from "./Modal";
@@ -8,9 +8,18 @@ import { RenderContent } from "./RenderContent";
 import ModalZap from "./ModalZap";
 import ModalFutureFeature from "./ModalFutureFeature";
 import { useRouter } from "next/navigation";
-import { NostrProfile, getInvoice, getLud16Url } from "utils";
-import { bech32 } from "bech32";
+import { NIP07, NostrProfile, getInvoice, getLud16Url } from "utils";
 import { NostrPostStats } from "../controllers/primal/primalHelpers";
+import { bech32 } from 'bech32';
+import { useAccountNostr } from "../controllers/state/account-slice";
+
+// This declaration allows us to access window.nostr without TS errors.
+// https://stackoverflow.com/a/47130953
+declare global {
+    interface Window {
+        nostr: NIP07;
+    }
+}
 
 interface FeedPostProps {
   note: NostrEvent<1>;
@@ -24,6 +33,7 @@ export function FeedPost(props: FeedPostProps) {
   // const [fanfaresButtonMessage, setFanfaresButtonMessage] = useState(false)
   // const [zapButtonMessage, setZapButtonMessage] = useState(false)
   const [futureFeatureModalOn, setFutureFeatureModalOn] = useState(false);
+  const nostrAccount = useAccountNostr();
 
   const goToProfilePage = () => {
     router.push(`/p/${note.pubkey}`);
@@ -37,6 +47,10 @@ export function FeedPost(props: FeedPostProps) {
     // examining note's props/tags
     console.log('zap: note', note);
     // HOW TO ZAP
+    // check for our account
+    if (!nostrAccount) {
+      return; // no account loaded
+    }
     // check for zap tag
     // if no zap tag, use lud16
     if (!profile.lud16) {
@@ -70,42 +84,46 @@ export function FeedPost(props: FeedPostProps) {
     const sendDetails = await response.json()
     console.log('zap: response', sendDetails)
 
-    // check allowNostr key for true
-    if (!sendDetails.allowNostr) {
+    // check allowsNostr key for true
+    if (!sendDetails.allowsNostr) {
+      console.log('nostr not allowed', sendDetails.allowsNostr, response)
       return;
     }
     // check that nostrPubkey exists and is a valid BIP 340 pubkey in hex
     if (!sendDetails.nostrPubkey || !/^[0-9a-fA-F]{64}$/.test(sendDetails.nostrPubkey)) {
+      console.log('response pubkey invalid')
       return;
     }
 
     // create 9734 zap requset event (step 3 https://github.com/nostr-protocol/nips/blob/master/57.md#protocol-flow)
-import { bech32 } from 'bech32';
+    const data = lud16 
+    const buffer = Buffer.from(data, 'utf8')
+    const words = bech32.toWords(buffer)
+    console.log('words', data, words, words.length)
+    const encoded = bech32.encode('lnurl', words)
 
-const words = bech32.toWords(Buffer.from('hello world', 'utf8'));
-const encoded = bech32.encode('bech32', words);
-
-console.log(encoded); // Outputs: bech321qpz4nc4pe
-    const lnurl = bech32(sendDetails.callback)
     const zapRequest = {
       kind: 9734,
       content: "",
+      pubkey: nostrAccount.accountPublicKey,
+      created_at: Math.floor((+new Date()) / 1000),
       tags: [
         ["relays", /* TODO grab relays from zustand */ 'wss://relay.primal.net'],
-        ["amount", "55000"],
-        ["lnurl", sendDetails.callback],
+        ["amount", /* TODO create user-controlled amount */ "55000"],
+        ["lnurl", encoded],
         ["p", sendDetails.nostrPubkey],
         ["e", note.id],
       ],
-      pubkey: /* current user's pubkey */null,
-      created_at: Math.floor((+new Date()) / 1000),
-    }
+    } as EventTemplate<9734>
 
-    // get the event id
+    // sign event
+    const signed = await window.nostr.signEvent(zapRequest)
+    const encodedEvent = encodeURIComponent(JSON.stringify(signed))
 
-    // sign it
+    // send signed event via GET to callback URL
+    const {pr: invoice} = await (await fetch(`${sendDetails.callback}?amount=${55000}&nostr=${encodedEvent}&lnurl=${encoded}`)).json()
 
-    // send via GET to callback URL
+    console.log('zap: invoice', invoice)
 
   }
 
