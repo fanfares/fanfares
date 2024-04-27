@@ -146,7 +146,7 @@ export function FeedPost(props: FeedPostProps) {
         <img
           onClick={goToProfilePage}
           src={profile?.picture ?? "http://placebeard.it/640/480.jpg"}
-          className="w-full h-full border-2 border-buttonAccent object-cover rounded-full group-hover:border-buttonAccentHover"
+          className="w-full h-full border-2 border-buttonAccent object-cover rounded-full group-hover:border-buttonAccentHover cursor-pointer"
           alt="Profile Image"
         />
       </div>
@@ -160,7 +160,9 @@ export function FeedPost(props: FeedPostProps) {
             {profile?.lud16}
           </Link>
         </p>
-        <RenderContent rawContent={note.content ?? ""} />
+        <div className="cursor-pointer" onClick={goToNotePage}>
+          <RenderContent rawContent={note.content ?? ""}/>
+        </div>
         {/* <h3 className="break-words text-sm font-normal">{parseContent(content ?? '')}</h3> */}
         {/* <h3 className="break-words text-sm font-normal">{JSON.stringify(note)}</h3> */}
       </div>

@@ -203,7 +203,7 @@ export const createPrimalSlice: StateCreator<
       set({ primalSocket: socket });
 
       // First round of Data
-      // primalGet("");
+      primalGet("");
     };
     socket.onclose = () => {
       console.log("Primal disconnected");
