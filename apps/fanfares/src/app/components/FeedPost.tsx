@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { NIP07, NostrProfile, getInvoice, getLud16Url } from "utils";
 import { NostrPostStats } from "../controllers/primal/primalHelpers";
 import { bech32 } from 'bech32';
-import { useAccountNostr } from "../controllers/state/account-slice";
+import { useAccountNostr, useAccountWebln } from "../controllers/state/account-slice";
 
 // This declaration allows us to access window.nostr without TS errors.
 // https://stackoverflow.com/a/47130953
@@ -34,6 +34,7 @@ export function FeedPost(props: FeedPostProps) {
   // const [zapButtonMessage, setZapButtonMessage] = useState(false)
   const [futureFeatureModalOn, setFutureFeatureModalOn] = useState(false);
   const nostrAccount = useAccountNostr();
+  const webln = useAccountWebln()
 
   const goToProfilePage = () => {
     router.push(`/p/${note.pubkey}`);
@@ -49,11 +50,18 @@ export function FeedPost(props: FeedPostProps) {
     // HOW TO ZAP
     // check for our account
     if (!nostrAccount) {
+      console.warn('nostr account not loaded')
       return; // no account loaded
     }
     // check for zap tag
     // if no zap tag, use lud16
     if (!profile.lud16) {
+      console.warn('zap target has no lud16')
+      return;
+    }
+    
+    if (!webln) {
+      console.warn('webln not loaded')
       return;
     }
 
@@ -124,6 +132,8 @@ export function FeedPost(props: FeedPostProps) {
     const {pr: invoice} = await (await fetch(`${sendDetails.callback}?amount=${55000}&nostr=${encodedEvent}&lnurl=${encoded}`)).json()
 
     console.log('zap: invoice', invoice)
+
+    webln.sendPayment(invoice)
 
   }
 
