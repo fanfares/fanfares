@@ -156,6 +156,8 @@ export const createPrimalSlice: StateCreator<
           const stats = get().primalNoteStats;
           if(stats[noteStats.event_id]) return;
 
+          console.log('notestats',noteStats)
+
           set({
             primalNoteStats: {
               ...stats,

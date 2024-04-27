@@ -10,6 +10,7 @@ enum ContentType {
   youtube = "youtube",
   mention = "mention",
   hashtag = "hashtag",
+  linefeed = "linefeed",
 }
 interface Content {
   type: ContentType
@@ -19,64 +20,74 @@ interface Content {
 function parseContent(content: string): Content[] {
   const parsedContents: Content[] = []
 
-  // Split content by spaces to analyze each part
-  const parts = content.split(/\s+/)
+  const lines = content.split(/\n/)
 
-  for (const part of parts) {
-    // Image detection
-    if (/\.(webm|mov|mp4)$/.test(part)) {
-      parsedContents.push({ type: ContentType.video, content: part })
-    }
-    // Image detection
-    if (/\.(jpeg|jpg|gif|png|webp)$/.test(part)) {
-      parsedContents.push({ type: ContentType.image, content: part })
-    }
-    // Link detection, excluding image and YouTube links
-    else if (
-      /^https?:\/\/.+/i.test(part) &&
-      !/youtu(be\.com|\.be)/i.test(part)
-    ) {
-      parsedContents.push({ type: ContentType.link, content: part })
-    }
-    // YouTube detection
-    else if (/youtu(be\.com|\.be)/i.test(part)) {
-      let embedUrl = ""
+  for (const line of lines) {
 
-      // Long YouTube URL: https://www.youtube.com/watch?v=VuJ2XgbIK7E&t=15s
-      const longMatch = part.match(/youtube\.com\/watch\?v=([^&]+)(?:&.*)?/)
-      if (longMatch) {
-        embedUrl = `https://www.youtube.com/embed/${longMatch[1]}`
-        if (part.includes("&t=")) {
-          const timeParam = part.match(/&t=([^&]+)/)
-          if (timeParam) {
-            embedUrl += `?${timeParam[0]}`
+    // Split content by spaces to analyze each part
+    const parts = line.split(/\s+/)
+
+    for (const part of parts) {
+      // Whitespace format detection
+      if (/\n/.test(part)) {
+        parsedContents.push({ type: ContentType.text, content: "\n" })
+      }
+      // Video detection
+      if (/\.(webm|mov|mp4)$/.test(part)) {
+        parsedContents.push({ type: ContentType.video, content: part })
+      } 
+      // Image detection
+      else if (/\.(jpeg|jpg|gif|png|webp)$/.test(part)) {
+        parsedContents.push({ type: ContentType.image, content: part })
+      }
+      // Link detection, excluding image and YouTube links
+      else if (
+        /^https?:\/\/.+/i.test(part) &&
+        !/youtu(be\.com|\.be)/i.test(part)
+      ) {
+        parsedContents.push({ type: ContentType.link, content: part })
+      }
+      // YouTube detection
+      else if (/youtu(be\.com|\.be)/i.test(part)) {
+        let embedUrl = ""
+
+        // Long YouTube URL: https://www.youtube.com/watch?v=VuJ2XgbIK7E&t=15s
+        const longMatch = part.match(/youtube\.com\/watch\?v=([^&]+)(?:&.*)?/)
+        if (longMatch) {
+          embedUrl = `https://www.youtube.com/embed/${longMatch[1]}`
+          if (part.includes("&t=")) {
+            const timeParam = part.match(/&t=([^&]+)/)
+            if (timeParam) {
+              embedUrl += `?${timeParam[0]}`
+            }
           }
+        }
+
+        // Short YouTube URL: https://youtu.be/VuJ2XgbIK7E
+        const shortMatch = part.match(/youtu\.be\/([^&]+)/)
+        if (shortMatch) {
+          embedUrl = `https://www.youtube.com/embed/${shortMatch[1]}`
+        }
+
+        if (embedUrl) {
+          parsedContents.push({ type: ContentType.youtube, content: embedUrl })
         }
       }
 
-      // Short YouTube URL: https://youtu.be/VuJ2XgbIK7E
-      const shortMatch = part.match(/youtu\.be\/([^&]+)/)
-      if (shortMatch) {
-        embedUrl = `https://www.youtube.com/embed/${shortMatch[1]}`
+      // Mention detection
+      else if (/nostr:[a-zA-Z0-9:.]+/.test(part)) {
+        parsedContents.push({ type: ContentType.mention, content: part })
       }
-
-      if (embedUrl) {
-        parsedContents.push({ type: ContentType.youtube, content: embedUrl })
+      // Hashtag detection
+      else if (/^#\w+/.test(part)) {
+        parsedContents.push({ type: ContentType.hashtag, content: ` ${part} ` })
+      }
+      // Everything else is treated as text
+      else {
+        parsedContents.push({ type: ContentType.text, content: ` ${part} ` })
       }
     }
-
-    // Mention detection
-    else if (/nostr:[a-zA-Z0-9:.]+/.test(part)) {
-      parsedContents.push({ type: ContentType.mention, content: part })
-    }
-    // Hashtag detection
-    else if (/^#\w+/.test(part)) {
-      parsedContents.push({ type: ContentType.hashtag, content: ` ${part} ` })
-    }
-    // Everything else is treated as text
-    else {
-      parsedContents.push({ type: ContentType.text, content: ` ${part} ` })
-    }
+    parsedContents.push({ type: ContentType.linefeed, content: "\n" })
   }
 
   return parsedContents
@@ -95,6 +106,8 @@ export function RenderContent(props: RenderContentProps) {
     const key = `${content.type}-${index}`
 
     switch (content.type) {
+      case ContentType.linefeed:
+        return <br key={key} />
       case ContentType.video:
         return (
           <video
