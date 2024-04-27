@@ -137,6 +137,8 @@ export function FeedPost(props: FeedPostProps) {
 
   }
 
+  console.log(stats)
+
   return (
     <div
       id="e2e-feed-post-container"
@@ -163,22 +165,14 @@ export function FeedPost(props: FeedPostProps) {
         <div className="cursor-pointer" onClick={goToNotePage}>
           <RenderContent rawContent={note.content ?? ""}/>
         </div>
-        {/* <h3 className="break-words text-sm font-normal">{parseContent(content ?? '')}</h3> */}
-        {/* <h3 className="break-words text-sm font-normal">{JSON.stringify(note)}</h3> */}
       </div>
-      <ModalFutureFeature
-        isOpen={futureFeatureModalOn}
-        onClick={() => setFutureFeatureModalOn(!futureFeatureModalOn)}
-      />
-      {/* <ModalFanfare
-        isOpen={fanfaresButtonMessage}
-        onClick={() => setFanfaresButtonMessage(!fanfaresButtonMessage)}
-      />
 
-      <ModalZap
-        isOpen={zapButtonMessage}
-        onClick={() => setZapButtonMessage(false)}
-      /> */}
+      { stats ? <div className="mt-5 mx-auto flex gap-4">
+        {stats.likes ? <span className="text-sm font-bold">{stats.likes} Likes</span> : null}
+        {stats.replies ? <span className="text-sm font-bold">{stats.replies} Replies</span> : null}
+        {stats.reposts ? <span className="text-sm font-bold">{stats.reposts} Reposts</span> : null}
+        {stats.satszapped ? <span className="text-sm font-bold">{stats.satszapped} Sats Zapped</span> : null}
+      </div> : null}
 
       <div className="mt-5 mx-auto flex gap-4">
         <Button
@@ -193,10 +187,13 @@ export function FeedPost(props: FeedPostProps) {
             id="e2e-feed-post-zap-button"
             label={"Zap ⚡️"}
             onClick={() => zap()}
-            // onClick={() => setZapModalOn(!zapModalOn)}
           />
           : <Button disabled={true} label={"Can't zap!"}></Button> }
       </div>
+      <ModalFutureFeature
+        isOpen={futureFeatureModalOn}
+        onClick={() => setFutureFeatureModalOn(!futureFeatureModalOn)}
+      />
     </div>
   );
 }
