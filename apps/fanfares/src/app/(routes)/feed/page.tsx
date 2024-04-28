@@ -12,7 +12,7 @@ import {
 export default function FeedPage() {
   const nostrAccount = useAccountNostr()
   const primalActions = usePrimalActions()
-  primalActions.primalGet(nostrAccount?.accountPublicKey || "", 'global')
+  primalActions.primalGetTrending(nostrAccount?.accountPublicKey || undefined)
   return (
     <section className="flex flex-col space-y-2">
       {/* <FeedHeader /> */}

@@ -29,7 +29,7 @@ function Profile() {
 
   // ------------ VARIABLES ------------
   const pubkeyFromURL = getIdFromUrl(usePathname())
-  primalActions.primalGet(pubkeyFromURL, 'profile')
+  primalActions.primalGetUserFeed(pubkeyFromURL)
   const isOwner = pubkeyFromURL === nostrAccount?.accountPublicKey
   const loadedProfile = isOwner ? accountProfile : primalProfiles[pubkeyFromURL]
 

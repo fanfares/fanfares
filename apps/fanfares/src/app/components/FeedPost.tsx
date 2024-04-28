@@ -140,8 +140,6 @@ export function FeedPost(props: FeedPostProps) {
 
   }
 
-  console.log(stats)
-
   return (
     <div
       id="e2e-feed-post-container"

@@ -25,7 +25,9 @@ export interface PrimalSlice {
     primalConnect: () => void;
     primalDisconnect: () => void;
     primalSend: (data: string) => void;
-    primalGet: (publicKey: string, feedType: 'global' | 'profile') => void;
+    primalGetTrending: (pubkey?: string) => void;
+    primalGetUserFeed: (pubkey: string) => void;
+    primalGetReplies: (eventid: string) => void;
   };
 }
 
@@ -42,7 +44,9 @@ const DEFAULT_STATE: PrimalSlice = {
     primalConnect: () => {},
     primalDisconnect: () => {},
     primalSend: (data: string) => {},
-    primalGet: (pubkey: string, feedType: 'global' | 'profile') => {},
+    primalGetTrending: (pubkey?: string) => {},
+    primalGetUserFeed: (pubkey: string) => {},
+    primalGetReplies: (eventid: string) => {},
   },
 };
 
@@ -65,53 +69,67 @@ export const createPrimalSlice: StateCreator<
   };
 
   // -------------- PRIMAL GET ----------------
-  const primalGet = (publicKey: string, feedType: 'global' | 'profile' = 'global') => {
 
+  function primalSocketOK(){
     if(get().primalSocket === null){
       console.log('Primal socket is null')
-      return;
+      return false;
     }
-
-    const id = get().primalAppID;
-
-    //  network
-    //scope: global, timeframe: trending, until: 0, limit: 20
-    //scope: global, timeframe: mostzapped, until: 0, limit: 20
-    //scope: global, timeframe: popular, until: 0, limit: 20
-    //scope: global, timeframe: latest, until: 0, limit: 20
-
+    return true;
+  }
+  function primalCheckFetching(){
     if(get().primalFetching){
       console.log("Primal is already fetching");
-      return;
+      return false;
     }
 
     set({ primalFetching: true });
+    return true;
+  }
 
-    if (feedType === 'profile') {
-      getUserFeed(
-        publicKey ?? "",
-        publicKey ?? "",
-        `feed_${id}`,
-        0,
-        20,
-        primalSend
-      );
-    } else {
-      getExploreFeed(
-        publicKey ?? "",
-        `explore_${id}`,
-        PrimalScope.global, //scope
-        PrimalSort.mostzapped, //timeframe
-        0,
-        100,
-        primalSend
-      );
-    }
-  };
+  /**
+   * @param pubkey optionally personalize the trending feed with the user's pubkey
+   */
+  const primalGetTrending = (pubkey?: string) => {
+    if (!primalSocketOK()) return;
+    if (!primalCheckFetching()) return;
+    const id = get().primalAppID;
+    getExploreFeed(
+      pubkey ?? "",
+      `explore_${id}`,
+      PrimalScope.global, //scope
+      PrimalSort.mostzapped, //timeframe
+      0,
+      100,
+      primalSend
+    );
+  }
+  const primalGetUserFeed = (pubkey: string) => {
+    if (!primalSocketOK()) return;
+    if (!primalCheckFetching()) return;
+    const id = get().primalAppID;
+    getUserFeed(
+      pubkey ?? "",
+      pubkey ?? "",
+      `feed_${id}`,
+      0,
+      100,
+      primalSend
+    );
+  }
+  const primalGetReplies = (eventid: string) => {
+    if (!primalSocketOK()) return;
+    if (!primalCheckFetching()) return;
+    const id = get().primalAppID;
+    const payload = {
+      event_id: eventid,
+      limit: 100,
+    };
+    primalSend(JSON.stringify(["REQ", `thread_view_${eventid}_${id}`, { cache: ["thread_view", payload ]}]));
+  }
 
   // -------------- PARSE PRIMAL SEND ----------------
   const parsePrimalEvent = (event: any) => {
-    // console.log('event',event)
     try {
       const rawData = JSON.parse(event.data);
       if (rawData[0] === "EOSE"){
@@ -155,8 +173,6 @@ export const createPrimalSlice: StateCreator<
 
           const stats = get().primalNoteStats;
           if(stats[noteStats.event_id]) return;
-
-          console.log('notestats',noteStats)
 
           set({
             primalNoteStats: {
@@ -205,7 +221,7 @@ export const createPrimalSlice: StateCreator<
       set({ primalSocket: socket });
 
       // First round of Data
-      primalGet("");
+      primalGetTrending();
     };
     socket.onclose = () => {
       console.log("Primal disconnected");
@@ -233,7 +249,9 @@ export const createPrimalSlice: StateCreator<
       primalConnect,
       primalDisconnect,
       primalSend,
-      primalGet,
+      primalGetTrending,
+      primalGetUserFeed,
+      primalGetReplies
     },
   };
 };
