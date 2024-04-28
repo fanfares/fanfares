@@ -85,7 +85,7 @@ function Profile() {
   }
 
   return (
-    <section className="container flex flex-col max-w-xl">
+    <section className="container flex flex-col">
       <div className="relative w-full flex">
         <div className="absolute w-32 h-32">
           <img
