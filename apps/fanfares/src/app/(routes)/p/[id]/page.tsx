@@ -30,6 +30,7 @@ function Profile() {
   const primalIsFetching = usePrimalIsFetching()
   const accountProfile = useAccountProfile()
   const [editProfileModalOn, setEditProfileModalOn] = useState(false)
+  const [fetched, setFetched] = useState(false)
 
   // ------------ VARIABLES ------------
   const pubkeyFromURL = getIdFromUrl(usePathname())
@@ -91,10 +92,11 @@ function Profile() {
   // ------------ USE EFFCTS ------------
 
   useEffect(() => {
-    if (primalSocket) {
+      if (primalSocket && !fetched && !primalIsFetching){
       primalActions.primalGetUserFeed(pubkeyFromURL)
+      setFetched(true)
     }
-  }, [primalSocket, primalIsFetching])
+  }, [primalSocket, primalIsFetching, fetched, pubkeyFromURL])
 
 
 

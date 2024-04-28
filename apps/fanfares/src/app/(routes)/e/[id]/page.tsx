@@ -23,6 +23,7 @@ export default function Page() {
 
     const [stats, setStats] = useState<NostrPostStats>()
     const [profile, setProfile] = useState<NostrProfile>()
+    const [fetched, setFetched] = useState(false)
 
     const renderLoading = () => {
         return (
@@ -47,10 +48,11 @@ export default function Page() {
     }
 
     useEffect(() => {
-        if (primalSocket){
+        if (primalSocket && !fetched && !primalIsFetching){
             primalActions.primalGetReplies(id)
+            setFetched(true)
         }
-    }, [primalSocket, primalIsFetching, id])
+    }, [primalSocket, primalIsFetching, id, fetched])
 
     const note = primalNotes[id]
 
