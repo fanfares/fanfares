@@ -3,15 +3,17 @@ import Button from "../../../components/Button"
 import { FeedPost } from "../../../components/FeedPost"
 import {
   usePrimalActions,
+  usePrimalIsFetching,
   usePrimalNoteStats,
   usePrimalNotes,
   usePrimalProfiles,
+  usePrimalSocket,
 } from "../../../controllers/state/primal-slice"
 import {
   useAccountNostr,
   useAccountProfile,
 } from "../../../controllers/state/account-slice"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import PodcastsCarrousel from "../../../components/PodcastsCarrousel"
 import { Modal } from "../../../components/Modal"
 import ProfileEditorForm from "../../../components/ProfileEditorForm"
@@ -24,6 +26,8 @@ function Profile() {
   const primalActions = usePrimalActions()
   const primalProfiles = usePrimalProfiles()
   const primalNoteStats = usePrimalNoteStats()
+  const primalSocket = usePrimalSocket();
+  const primalIsFetching = usePrimalIsFetching()
   const accountProfile = useAccountProfile()
   const [editProfileModalOn, setEditProfileModalOn] = useState(false)
 
@@ -83,6 +87,16 @@ function Profile() {
       </>
     )
   }
+
+  // ------------ USE EFFCTS ------------
+
+  useEffect(() => {
+    if (primalSocket) {
+      primalActions.primalGetUserFeed(pubkeyFromURL)
+    }
+  }, [primalSocket, primalIsFetching])
+
+
 
   return (
     <section className="container flex flex-col">

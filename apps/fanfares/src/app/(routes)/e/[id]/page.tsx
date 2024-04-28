@@ -1,7 +1,7 @@
 "use client"
 
 import { FeedPost } from "@/app/components/FeedPost";
-import { usePrimalActions, usePrimalIsFetching, usePrimalNoteStats, usePrimalNotes, usePrimalProfiles } from "@/app/controllers/state/primal-slice";
+import { usePrimalActions, usePrimalIsFetching, usePrimalNoteStats, usePrimalNotes, usePrimalProfiles, usePrimalSocket } from "@/app/controllers/state/primal-slice";
 import { getIdFromUrl } from "@/app/controllers/utils/formatting";
 import { usePathname } from "next/navigation";
 import Lottie from "lottie-react";
@@ -16,6 +16,7 @@ export default function Page() {
     const primalNotes = usePrimalNotes();
     const primalProfiles = usePrimalProfiles();
     const primalNoteStats = usePrimalNoteStats();
+    const primalSocket = usePrimalSocket();
     const primalIsFetching = usePrimalIsFetching()
     const primalActions = usePrimalActions()
     const id = getIdFromUrl(usePathname())
@@ -45,11 +46,13 @@ export default function Page() {
         return replies
     }
 
-    const note = primalNotes[id]
-
     useEffect(() => {
-        primalActions.primalGetReplies(id)
-    }, [])
+        if (primalSocket){
+            primalActions.primalGetReplies(id)
+        }
+    }, [primalSocket, primalIsFetching, id])
+
+    const note = primalNotes[id]
 
     useEffect(() => {
         if (note){

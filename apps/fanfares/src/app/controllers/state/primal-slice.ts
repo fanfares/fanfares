@@ -100,7 +100,7 @@ export const createPrimalSlice: StateCreator<
       PrimalScope.global, //scope
       PrimalSort.mostzapped, //timeframe
       0,
-      100,
+      40,
       primalSend
     );
   }
@@ -113,7 +113,7 @@ export const createPrimalSlice: StateCreator<
       pubkey ?? "",
       `feed_${id}`,
       0,
-      100,
+      20,
       primalSend
     );
   }
@@ -124,6 +124,7 @@ export const createPrimalSlice: StateCreator<
     const payload = {
       event_id: eventid,
       limit: 100,
+      since: 0,
     };
     primalSend(JSON.stringify(["REQ", `thread_view_${eventid}_${id}`, { cache: ["thread_view", payload ]}]));
   }
