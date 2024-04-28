@@ -28,10 +28,6 @@ function parseContent(content: string): Content[] {
     const parts = line.split(/\s+/)
 
     for (const part of parts) {
-      // Whitespace format detection
-      if (/\n/.test(part)) {
-        parsedContents.push({ type: ContentType.text, content: "\n" })
-      }
       // Video detection
       if (/\.(webm|mov|mp4)$/.test(part)) {
         parsedContents.push({ type: ContentType.video, content: part })
