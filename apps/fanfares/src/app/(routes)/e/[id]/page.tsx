@@ -78,8 +78,9 @@ export default function Page() {
     return (
         <div id="root-note">
             <FeedPost key={note.id} note={note} profile={profile} stats={stats} />
-            <div id="reply-notes">
+            <div id="reply-notes ">
                 {getReplies()}
+                
             </div>
         </div>
     )

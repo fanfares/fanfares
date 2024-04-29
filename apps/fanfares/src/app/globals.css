@@ -15,6 +15,10 @@
   --button-accent-hover: 95, 112, 255; /* #463EDC */
   --button-butted: 147, 156, 227; /* #929ce3 */
   --card-color: hsla(0, 0%, 9%, 0.2);
+  --color-comment: 113,204,231; /*#71cce7*/
+  --color-retweet: #71e788;
+  --color-like : 231,113,138; /*#e7718a*/
+  --color-zap: #e6e771; 
 }
 
 html {
@@ -34,6 +38,20 @@ html {
       transparent 50%
     );
 }
+
+.zap-color {
+  @apply text-yellow-400;
+}
+.comment-color {
+  @apply text-blue-400;
+}
+.retweet-color {
+  @apply text-green-400;
+}
+.like-color {
+  @apply text-red-400;
+}
+
 
 #e2e-navbar-mobile-container {
   background-color: hsla(0, 0%, 0%, 1);

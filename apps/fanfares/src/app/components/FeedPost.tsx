@@ -14,7 +14,6 @@ import { NIP07, NostrProfile, getInvoice, getLud16Url } from "utils";
 import { NostrPostStats } from "../controllers/primal/primalHelpers";
 import { bech32 } from 'bech32';
 import { useAccountNostr, useAccountWebln } from "../controllers/state/account-slice";
-import "../../../../../shared/styles/colors.scss";
 
 // This declaration allows us to access window.nostr without TS errors.
 // https://stackoverflow.com/a/47130953
@@ -143,7 +142,7 @@ export function FeedPost(props: FeedPostProps) {
   return (
     <div
       id="e2e-feed-post-container"
-      className="border-buttonAccent w-full rounded-md flex relative border pl-4 pr-4 py-3 flex-col mx-auto md:mx-0 mr-4"
+      className="border-buttonAccent mb-4 w-full rounded-md flex relative border pl-4 pr-4 py-3 flex-col mx-auto md:mx-0 mr-4"
     >
       <div className="flex w-12 h-12 left-2 top-2 group">
         <img

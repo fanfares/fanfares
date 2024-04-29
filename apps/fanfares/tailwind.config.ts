@@ -40,6 +40,7 @@ const config: Config = {
           inverted: withOpacity("--color-inverted")({
             opacityValue: 100,
           }),
+          
         },
       },
       backgroundColor: {
