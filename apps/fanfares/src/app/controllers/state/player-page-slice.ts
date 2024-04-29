@@ -292,6 +292,8 @@ export const createPlayerPageSlice: StateCreator<
       const invoiceResponse = await fetch(uri);
       const invoiceResponseJson = (await invoiceResponse.json()) as PREntry;
 
+      console.log(uri, invoiceResponseJson)
+
       await webln.sendPayment(invoiceResponseJson.pr);
       const resultResponse = await fetch(invoiceResponseJson.successAction.url);
 
