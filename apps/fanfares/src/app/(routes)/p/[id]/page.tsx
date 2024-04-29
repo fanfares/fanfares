@@ -3,15 +3,17 @@ import Button from "../../../components/Button"
 import { FeedPost } from "../../../components/FeedPost"
 import {
   usePrimalActions,
+  usePrimalIsFetching,
   usePrimalNoteStats,
   usePrimalNotes,
   usePrimalProfiles,
+  usePrimalSocket,
 } from "../../../controllers/state/primal-slice"
 import {
   useAccountNostr,
   useAccountProfile,
 } from "../../../controllers/state/account-slice"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import PodcastsCarrousel from "../../../components/PodcastsCarrousel"
 import { Modal } from "../../../components/Modal"
 import ProfileEditorForm from "../../../components/ProfileEditorForm"
@@ -24,12 +26,15 @@ function Profile() {
   const primalActions = usePrimalActions()
   const primalProfiles = usePrimalProfiles()
   const primalNoteStats = usePrimalNoteStats()
+  const primalSocket = usePrimalSocket();
+  const primalIsFetching = usePrimalIsFetching()
   const accountProfile = useAccountProfile()
   const [editProfileModalOn, setEditProfileModalOn] = useState(false)
+  const [fetched, setFetched] = useState(false)
 
   // ------------ VARIABLES ------------
   const pubkeyFromURL = getIdFromUrl(usePathname())
-  primalActions.primalGet(pubkeyFromURL, 'profile')
+  primalActions.primalGetUserFeed(pubkeyFromURL)
   const isOwner = pubkeyFromURL === nostrAccount?.accountPublicKey
   const loadedProfile = isOwner ? accountProfile : primalProfiles[pubkeyFromURL]
 
@@ -84,8 +89,19 @@ function Profile() {
     )
   }
 
+  // ------------ USE EFFCTS ------------
+
+  useEffect(() => {
+      if (primalSocket && !fetched && !primalIsFetching){
+      primalActions.primalGetUserFeed(pubkeyFromURL)
+      setFetched(true)
+    }
+  }, [primalSocket, primalIsFetching, fetched, pubkeyFromURL])
+
+
+
   return (
-    <section className="container flex flex-col max-w-xl">
+    <section className="container flex flex-col">
       <div className="relative w-full flex">
         <div className="absolute w-32 h-32">
           <img

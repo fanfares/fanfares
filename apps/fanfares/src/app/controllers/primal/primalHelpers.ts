@@ -69,8 +69,6 @@ export function getExploreFeed(
 ) {
   let payload: ExploreFeedPayload = { timeframe, scope, limit };
 
-  console.log('subid',subid)
-
   if (pubkey) {
     payload.user_pubkey = pubkey;
   }

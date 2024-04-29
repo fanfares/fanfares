@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { FaRegComment, FaRegHeart, FaRetweet } from "react-icons/fa";
+import { BsLightningCharge } from "react-icons/bs";
 import Link from "next/link";
 import { EventTemplate, Event as NostrEvent, nip57 } from "nostr-tools";
 import Button from "./Button";
@@ -12,6 +14,7 @@ import { NIP07, NostrProfile, getInvoice, getLud16Url } from "utils";
 import { NostrPostStats } from "../controllers/primal/primalHelpers";
 import { bech32 } from 'bech32';
 import { useAccountNostr, useAccountWebln } from "../controllers/state/account-slice";
+import "../../../../../shared/styles/colors.scss";
 
 // This declaration allows us to access window.nostr without TS errors.
 // https://stackoverflow.com/a/47130953
@@ -140,17 +143,15 @@ export function FeedPost(props: FeedPostProps) {
   return (
     <div
       id="e2e-feed-post-container"
-      className="border-buttonAccent w-full max-w-lg lg:max-w-2xl rounded-md flex relative border pl-16 pr-4 py-3 flex-col mx-auto md:mx-0"
+      className="border-buttonAccent w-full rounded-md flex relative border pl-4 pr-4 py-3 flex-col mx-auto md:mx-0 mr-4"
     >
-      <div className="w-12 h-12 absolute left-2 top-2 group">
+      <div className="flex w-12 h-12 left-2 top-2 group">
         <img
           onClick={goToProfilePage}
           src={profile?.picture ?? "http://placebeard.it/640/480.jpg"}
-          className="w-full h-full border-2 border-buttonAccent object-cover rounded-full group-hover:border-buttonAccentHover"
+          className="border-2 border-buttonAccent object-cover rounded-full group-hover:border-buttonAccentHover cursor-pointer mr-2"
           alt="Profile Image"
         />
-      </div>
-      <div className="flex-grow overflow-hidden space-y-1">
         <p onClick={goToProfilePage} className="text-sm font-bold">
           {profile?.name}{" "}
           <Link
@@ -160,25 +161,37 @@ export function FeedPost(props: FeedPostProps) {
             {profile?.lud16}
           </Link>
         </p>
-        <RenderContent rawContent={note.content ?? ""} />
-        {/* <h3 className="break-words text-sm font-normal">{parseContent(content ?? '')}</h3> */}
-        {/* <h3 className="break-words text-sm font-normal">{JSON.stringify(note)}</h3> */}
       </div>
-      <ModalFutureFeature
-        isOpen={futureFeatureModalOn}
-        onClick={() => setFutureFeatureModalOn(!futureFeatureModalOn)}
-      />
-      {/* <ModalFanfare
-        isOpen={fanfaresButtonMessage}
-        onClick={() => setFanfaresButtonMessage(!fanfaresButtonMessage)}
-      />
+      <div className="flex-grow overflow-hidden space-y-1 mt-2">
+        <div className="cursor-pointer" onClick={goToNotePage}>
+          <RenderContent rawContent={note.content ?? ""}/>
+        </div>
+      </div>
 
-      <ModalZap
-        isOpen={zapButtonMessage}
-        onClick={() => setZapButtonMessage(false)}
-      /> */}
+      { stats ? <div className="mt-5 flex gap-4 justify-evenly">
+        <span onClick={zap} className="text-sm rounded-full px-4 py-2 cursor-pointer transition-all duration-300 hover:bg-skin-fill flex items-center">
+          <BsLightningCharge className="font-bold inline zap-color"/>
+          &nbsp;
+          {stats.satszapped}
+        </span> 
+        <span className="text-sm rounded-full px-4 py-2 cursor-pointer transition-all duration-300 hover:bg-skin-fill flex items-center">
+          <FaRetweet className="font-bold inline retweet-color"/>
+          &nbsp;
+          {stats.reposts}
+        </span> 
+        <span className="text-sm rounded-full px-4 py-2 cursor-pointer transition-all duration-300 hover:bg-skin-fill flex items-center">
+          <FaRegComment className="font-bold inline comment-color"/>
+          &nbsp;
+          {stats.replies}
+        </span> 
+        <span className="text-sm rounded-full px-4 py-2 cursor-pointer transition-all duration-300 hover:bg-skin-fill flex items-center">
+          <FaRegHeart className="font-bold inline like-color"/>
+          &nbsp;
+          {stats.likes}
+        </span> 
+      </div> : null}
 
-      <div className="mt-5 mx-auto flex gap-4">
+      {/* <div className="mt-5 mx-auto flex gap-4">
         <Button
           className="px-2 w-28"
           id="e2e-feed-post-fanfare-button"
@@ -191,10 +204,13 @@ export function FeedPost(props: FeedPostProps) {
             id="e2e-feed-post-zap-button"
             label={"Zap ⚡️"}
             onClick={() => zap()}
-            // onClick={() => setZapModalOn(!zapModalOn)}
           />
           : <Button disabled={true} label={"Can't zap!"}></Button> }
       </div>
+      <ModalFutureFeature
+        isOpen={futureFeatureModalOn}
+        onClick={() => setFutureFeatureModalOn(!futureFeatureModalOn)}
+      /> */}
     </div>
   );
 }
