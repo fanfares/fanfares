@@ -113,6 +113,7 @@ function DiscoverPageContent() {
     "nostr test",
     "test",
     "Another",
+    "TEst",
     "new",
   ]
 
@@ -120,8 +121,8 @@ function DiscoverPageContent() {
     if (podcastFetching) return null
     return (
       // <div className="flex items-center justify-center w-full pb-10 mx-auto rounded lg:justify-start">
-      <div className="container flex">
-        <div className="flex flex-wrap gap-3 ">
+      <div className="container flex pb-8">
+        <div className="flex md:flex-wrap md:flex-row flex-col gap-3 w-full">
           {Object.values(podcastEpisodes).map(podcast => {
             const toHide = episodeTestingTitlesFilter.includes(podcast.title)
             if (toHide) return null
@@ -191,7 +192,7 @@ function DiscoverPageContent() {
   return (
     <div className="space-y-4">
       <h1 className="font-black text-center text-gray-100 text-xl/4 md:mt-4 md:text-start md:text-4xl">
-        This Week on FanFares
+        Recent Podcasts{" "}
       </h1>
       {/* <Searchbar /> */}
       {renderLoading()}

@@ -27,6 +27,7 @@ import {
 import Image from "next/image"
 import { formatDate, getIdFromUrl } from "@/app/controllers/utils/formatting"
 import { toast } from "react-toastify"
+import { launchPaymentModal } from "@getalby/bitcoin-connect"
 
 config.autoAddCss = false /* eslint-disable import/first */
 
@@ -92,8 +93,7 @@ export default function PlayerPage() {
       !accountNostr ||
       !accountNostr.accountNIP04 ||
       !accountNostr.accountNIP07 ||
-      !accountNostr.accountPublicKey ||
-      !webln
+      !accountNostr.accountPublicKey
     ) {
       toast.error("You need to login first")
       return
@@ -106,7 +106,18 @@ export default function PlayerPage() {
       accountNostr.accountNIP04,
       accountNostr.accountNIP07,
       accountNostr.accountPublicKey,
-      webln
+      (finishPaymentAttempt: () => Promise<void>, invoice: string) =>
+        launchPaymentModal({
+          invoice,
+          onPaid: response => {
+            console.log("Received payment! " + response.preimage)
+            finishPaymentAttempt()
+          },
+          onCancelled: () => {
+            console.log("Payment cancelled")
+            finishPaymentAttempt()
+          },
+        })
     )
   }
 
@@ -133,7 +144,10 @@ export default function PlayerPage() {
               <p className="relative">Buy this Episode</p>
               <span className="text-xs font-thin text-center text-white absolute -bottom-5 inset-x-0">
                 {" "}
-                It costs {Math.round(podcast.gate.cost / 1000).toLocaleString()} sats
+                It costs {Math.round(
+                  podcast.gate.cost / 1000
+                ).toLocaleString()}{" "}
+                sats
               </span>
             </div>
           }
@@ -149,7 +163,7 @@ export default function PlayerPage() {
     if (!podcast) return null
 
     return (
-      <div className="flex gap-4 items-center h-20 ">
+      <div className="flex gap-4 items-center h-20 mx-auto md:mx-0 w-full justify-evenly md:justify-normal">
         {podcast.audioFilepath ? (
           <>
             <button
@@ -222,14 +236,18 @@ export default function PlayerPage() {
 
     return (
       <>
-        <div className="flex items-start w-full max-w-5xl gap-8">
-          <div className="w-36 h-36 md:w-48 md:h-48 flex flex-col gap-2">
-            <div className="relative w-full h-full">
+        <div className="flex md:flex-row flex-col md:items-start md:w-full md:max-w-5xl md:gap-8">
+          <div className="flex flex-col gap-2 mx-auto">
+            <div className="relative w-full h-full mx-auto md:mx-0">
               <Image
                 alt="episode thumbnail"
                 src={podcast.imageFilepath}
-                fill
-                className="rounded border border-buttonDisabled"
+                layout="cover"
+                objectFit="cover"
+                objectPosition="center"
+                width={200}
+                height={200}
+                className="rounded border border-buttonDisabled "
               />
             </div>
             <div className="flex justify-between ">
@@ -247,7 +265,9 @@ export default function PlayerPage() {
           </div>
           <div className="flex flex-col items-start w-full">
             <div className="flex flex-col w-full mb-4 space-y-4 text-sm text-skin-muted">
-              <p className="lg:text-2xl lg:font-bold">{podcast.title}</p>
+              <p className="lg:text-2xl lg:font-bold text-base font-semibold">
+                {podcast.title}
+              </p>
               <p className="lg:text-base lg:font-bold truncate w-80">
                 {creator ? creator.name : podcast.announcement.note.pubkey}
               </p>
@@ -282,9 +302,6 @@ export default function PlayerPage() {
 
   return (
     <section className="flex w-full flex-col space-y-12">
-      <h1 className="font-black text-center text-gray-100 text-xl/4 md:mt-4 md:text-start md:text-4xl">
-        Player Page
-      </h1>
       {renderContent()}
     </section>
   )

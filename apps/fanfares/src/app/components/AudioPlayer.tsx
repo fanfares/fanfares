@@ -10,16 +10,18 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { Fragment, useCallback, useEffect, useRef, useState } from "react"
-import { usePlayerPageActions, usePlayerPageIsLoading, usePlayerPageIsPlaying, usePlayerPagePodcast } from "../controllers/state/player-page-slice"
+import {
+  usePlayerPageActions,
+  usePlayerPageIsLoading,
+  usePlayerPageIsPlaying,
+  usePlayerPagePodcast,
+} from "../controllers/state/player-page-slice"
 import { Podcast } from "../controllers/state/podcast-slice"
 
 export function AudioPlayer() {
-  const { playerPageSetPlaying } =
-  usePlayerPageActions();
-const isPlaying = usePlayerPageIsPlaying();
-const podcast = usePlayerPagePodcast();
-
-
+  const { playerPageSetPlaying } = usePlayerPageActions()
+  const isPlaying = usePlayerPageIsPlaying()
+  const podcast = usePlayerPagePodcast()
 
   // const router = useRouter()
   // const playThreshold = getConfig().playedThreshold
@@ -87,20 +89,18 @@ const podcast = usePlayerPagePodcast();
 
   const onLoad = useCallback(async () => {
     let rawDuration = audioPlayer.current?.duration ?? 0
-      if (isNaN(rawDuration)) rawDuration = 0
-      const seconds = Math.floor(rawDuration)
+    if (isNaN(rawDuration)) rawDuration = 0
+    const seconds = Math.floor(rawDuration)
 
-      // playerUpdateSizeAndDuration(rawDuration)
-      setDuration(seconds)
+    // playerUpdateSizeAndDuration(rawDuration)
+    setDuration(seconds)
 
-      if (progressBar.current) {
-        progressBar.current.max = seconds.toString()
-      }
+    if (progressBar.current) {
+      progressBar.current.max = seconds.toString()
+    }
 
-      // eslint-disable-next-line
-    
+    // eslint-disable-next-line
   }, ["playerAudioUrl"])
-
 
   const changePlayerCurrentTime = useCallback(() => {
     if (progressBar.current) {
@@ -130,14 +130,14 @@ const podcast = usePlayerPagePodcast();
   }, [changePlayerCurrentTime])
 
   const play = useCallback(async () => {
-    if(!audioPlayer.current) return;
+    if (!audioPlayer.current) return
     await audioPlayer.current.play()
     animationRef.current = requestAnimationFrame(whilePlaying)
     // eslint-disable-next-line
   }, [audioPlayer, animationRef, whilePlaying])
 
   const pause = useCallback(() => {
-    if(!audioPlayer.current) return;
+    if (!audioPlayer.current) return
     if (audioPlayer.current) {
       audioPlayer.current.pause()
       cancelAnimationFrame(animationRef?.current ?? 0)
@@ -148,19 +148,13 @@ const podcast = usePlayerPagePodcast();
   useEffect(() => {
     // Corss Origin is needed for Arweave to resolve
     // setListenedDuration(0);
-    if(!audioPlayer.current) return;
+    if (!audioPlayer.current) return
     previousTime.current = 0
     listenedDuration.current = 0
     playCountTicked.current = false
     audioPlayer.current.crossOrigin = "anonymous"
     audioPlayer.current.onloadeddata = onLoad
-  }, [
-    audioPlayer,
-    podcast,
-    listenedDuration,
-    playCountTicked,
-    previousTime,
-  ])
+  }, [audioPlayer, podcast, listenedDuration, playCountTicked, previousTime])
 
   // useEffect(() => {
   //   if (!playerIsLoading && playerIsPlaying) {
@@ -170,16 +164,16 @@ const podcast = usePlayerPagePodcast();
   //   }
   // }, [pause, play, playerIsPlaying, playerIsLoading])
 
-    //--------------- USE EFFECTS ---------------
-    useEffect(() => {
-      if (audioPlayer.current) {
-        if(isPlaying){
-          play();
-        } else {
-          pause();
-        }
+  //--------------- USE EFFECTS ---------------
+  useEffect(() => {
+    if (audioPlayer.current) {
+      if (isPlaying) {
+        play()
+      } else {
+        pause()
       }
-    }, [isPlaying])
+    }
+  }, [isPlaying])
 
   //--------------- CONTROLS ---------------
 
@@ -467,6 +461,7 @@ const podcast = usePlayerPagePodcast();
           ref={audioPlayer}
           src={(podcast as Podcast).audioFilepath}
           preload="metadata"></audio>
+
         <div
           className={`absolute bottom-3 w-full max-w-7xl rounded-2xl border-t-2 border-buttonAccentHover transition-transform duration-300 ease-linear md:bottom-5 md:left-60 md:w-[70%] 
           ${
@@ -546,8 +541,7 @@ const podcast = usePlayerPagePodcast();
   //   )
   // }
 
-  if(!podcast || !podcast.audioFilepath) return null;
-
+  if (!podcast || !podcast.audioFilepath) return null
 
   return (
     // <Media
