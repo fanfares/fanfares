@@ -10,6 +10,7 @@ import {
   faPodcast,
   faBolt,
 } from "@fortawesome/pro-solid-svg-icons"
+import Logo from "../assets/logo.svg"
 
 // import { Keypair } from '@solana/web3.js';
 import Image from "next/image"
@@ -204,9 +205,15 @@ export function Navbar() {
       <div
         className={`desktop-sidebar fixed z-40 hidden h-full flex-col px-4 transition-all duration-100 ease-linear md:flex md:mx-auto overflow-y-scroll`}>
         <Link href="/" className="flex flex-col items-center mb-4">
-          <p className="text-[90px]  relative">🎪</p>
-          <span className="text-[24px]/2 bold relative -top-6">FanFares</span>
-          <span className="text-[24px]/2 bold relative -top-6">(Alpha)</span>
+          <Image
+            className="mt-4"
+            width={96}
+            height={96}
+            src={Logo}
+            alt="FanFares Logo"
+          />
+          <span className="text-2xl/4 font-bold relative mt-4">FanFares</span>
+          <span className="text-lg font-medium relative">(Alpha)</span>
           {/* <Image
               // loader={contentfulLoader}
               className="cursor-pointer"

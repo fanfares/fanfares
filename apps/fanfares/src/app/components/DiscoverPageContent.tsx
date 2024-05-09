@@ -113,6 +113,7 @@ function DiscoverPageContent() {
     "nostr test",
     "test",
     "Another",
+    "TEst",
     "new",
   ]
 
