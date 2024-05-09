@@ -242,12 +242,13 @@ export default function PlayerPage() {
               <Image
                 alt="episode thumbnail"
                 src={podcast.imageFilepath}
-                layout="cover"
-                objectFit="cover"
-                objectPosition="center"
                 width={200}
                 height={200}
                 className="rounded border border-buttonDisabled "
+                priority
+                layout="cover"
+                objectFit="cover"
+                objectPosition="center"
               />
             </div>
             <div className="flex justify-between ">
