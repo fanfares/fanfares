@@ -46,9 +46,13 @@ export default function UploadOnModal(props: UploadOnModalProps) {
     postPodcastHandleTitleChange,
     postPodcastTitle,
     postPodcastDescription,
+    postPodcastShowNotesUrl,
+    postPodcastHomepageUrl,
     postPodcastLud16,
     postPodcastUnlockCost,
     postPodcastHandleCheckTCChange,
+    postPodcastHandleShowNotesUrlChange,
+    postPodcastHandleHomepageUrlChange,
     postPodcastHandleUnlockCostChange,
     postPodcastHandleAudioChange,
     postPodcastHandleImageChange,
@@ -201,7 +205,7 @@ export default function UploadOnModal(props: UploadOnModalProps) {
           </div>
           <div
             id={"E2EID.uploadAudioInput"}
-            className="relative grid grid-cols-3 items-center w-full mt-8 border border-buttonAccent px-2 py-3 rounded justify-between">
+            className="relative grid grid-cols-3 items-center w-full mt-4 border border-buttonAccent px-2 py-3 rounded justify-between">
             <p className="w-36 truncate">
               {postPodcastAudioFile
                 ? postPodcastAudioFile.name
@@ -226,6 +230,48 @@ export default function UploadOnModal(props: UploadOnModalProps) {
           {isCheckedAudio ? (
             <>
               {" "}
+              <div className="flex-col w-full ">
+                <div className="relative flex flex-col w-full">
+                  <div className="w-full">
+                    {" "}
+                    <div
+                      className="flex w-full md:gap-4 md:flex-col md:items-center md:justify-center mt-4 space-y-4 md:space-y-0">
+                      <label className="w-full text-xs">
+                        {" "}
+                        <p className="flex gap-1">
+                          Episode Show Notes URL (optional)
+                        </p>{" "}
+                        <input
+                          id={"`${E2EID.uploadShowNotesUrl}${index}`"}
+                          autoComplete="off"
+                          className="w-full border-b-2 border-buttonAccent bg-transparent text-sm font-thin outline-none placeholder:text-sm placeholder:font-semibold mt-2 placeholder:text-skin-muted/40 text-start"
+                          placeholder="https://your.content/path/to/episode/show-notes..."
+                          name={"`creators.${index}.showNotes`"}
+                          maxLength={255}
+                          value={postPodcastShowNotesUrl}
+                          onChange={postPodcastHandleShowNotesUrlChange}
+                        />
+                      </label>
+                      <label className="w-full text-xs">
+                        {" "}
+                        <p className="flex gap-1">
+                          Podcast Series Homepage URL (optional)
+                        </p>{" "}
+                        <input
+                          id={"`${E2EID.uploadHomepageUrl}${index}`"}
+                          autoComplete="off"
+                          className="w-full border-b-2 border-buttonAccent bg-transparent text-sm font-thin outline-none placeholder:text-sm placeholder:font-semibold mt-2 placeholder:text-skin-muted/40 text-start"
+                          placeholder="https://your.content/home/page..."
+                          name={"`creators.${index}.homepage`"}
+                          maxLength={255}
+                          value={postPodcastHomepageUrl}
+                          onChange={postPodcastHandleHomepageUrlChange}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div className="flex-col w-full ">
                 {/* <MediaParameterForm /> */}
                 <div className="relative flex flex-col w-full mt-4">
@@ -379,16 +425,16 @@ export default function UploadOnModal(props: UploadOnModalProps) {
             <div className="flex w-full gap-4 justify-center mt-4 my-2">
               {" "}
               <Button
-                onClick={onCancel}
+                onClick={() => handlePostSubmit(null)}
                 type="button"
-                label="Cancel"
+                label="Submit"
                 id={"E2EID.uploadPublishButton"}
                 className="px-5 text-xs"
               />
               <Button
-                onClick={() => handlePostSubmit(null)}
+                onClick={onCancel}
                 type="button"
-                label="Submit"
+                label="Cancel"
                 id={"E2EID.uploadPublishButton"}
                 className="px-5 text-xs"
               />

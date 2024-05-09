@@ -20,6 +20,7 @@ import {
 import { useNostr } from "../controllers/state/nostr-slice"
 import { useRouter } from "next/navigation"
 import { GATE_SERVER } from "../controllers/nostr/nostr-defines"
+import { Podcast } from "@/app/controllers/state/podcast-slice"
 
 config.autoAddCss = false /* eslint-disable import/first */
 export interface DiscoveryMediaInfo extends Metadata {
@@ -35,23 +36,32 @@ export interface DiscoveryTileInfo {
   audioUrl?: string
 }
 
-function DiscoverPageContent() {
+export interface DiscoverProps {
+  filterByHomepage?: string
+  excludeEpisodes?: string[]
+}
+
+// functions to extract optional reference URLs from announcement note, if they are present
+export function getShowNotesUrl(podcast: Podcast|null) { return ((podcast?.announcement?.note?.tags?.filter(t=>t[0]=='r'&&t.length>=3&&(t[2]=='episode-page'||t[2]=='episode-show-notes'))||[])[0]||['r',''])[1] }
+export function getHomepageUrl(podcast: Podcast|null) { return ((podcast?.announcement?.note?.tags?.filter(t=>t[0]=='r'&&t.length>=3&&t[2]=='podcast-homepage')||[])[0]||['r',''])[1] }
+
+function DiscoverPageContent(props: DiscoverProps) {
   // const { program, drmApi } = useAppState();
   const router = useRouter()
   const { nostrPool, nostrRelays } = useNostr()
   const { podcastFetch } = usePodcastActions()
   const podcastEpisodes = usePodcastEpisodes()
   const podcastFetching = usePodcastFetching()
-
+  
   console.log("Render Podcasts -- " + Object.values(podcastEpisodes).length)
 
   useEffect(() => {
     if (nostrPool && nostrRelays) {
       console.log("Fetching Podcasts")
 
-      podcastFetch(nostrPool, nostrRelays)
+      podcastFetch(nostrPool, nostrRelays, props.filterByHomepage)
     }
-  }, [podcastFetch, nostrPool, nostrRelays])
+  }, [podcastFetch, nostrPool, nostrRelays, props.filterByHomepage])
 
   // const loadMedias = useCallback(async () => {
   //   setIsLoading(true);
@@ -124,7 +134,7 @@ function DiscoverPageContent() {
       <div className="container flex pb-8">
         <div className="flex md:flex-wrap md:flex-row flex-col gap-3 w-full">
           {Object.values(podcastEpisodes).map(podcast => {
-            const toHide = episodeTestingTitlesFilter.includes(podcast.title)
+            const toHide = false // episodeTestingTitlesFilter.includes(podcast.title)
             if (toHide) return null
             return (
               <EpisodeCard

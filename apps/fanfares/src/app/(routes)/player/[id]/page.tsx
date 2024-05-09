@@ -5,6 +5,8 @@ import {
   faAlignLeft,
   faPauseCircle,
   faPlayCircle,
+  faPencil,
+  faTrashCan,
 } from "@fortawesome/pro-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { config } from "@fortawesome/fontawesome-svg-core"
@@ -20,6 +22,7 @@ import {
   usePlayerPagePodcastCreator,
 } from "@/app/controllers/state/player-page-slice"
 import { useNostr } from "@/app/controllers/state/nostr-slice"
+import { useDeletePodcast } from "@/app/controllers/state/delete-podcast"
 import {
   useAccountNostr,
   useAccountWebln,
@@ -27,6 +30,7 @@ import {
 import Image from "next/image"
 import { formatDate, getIdFromUrl } from "@/app/controllers/utils/formatting"
 import { toast } from "react-toastify"
+import DiscoverPageContent, { getShowNotesUrl, getHomepageUrl } from "@/app/components/DiscoverPageContent"
 import { launchPaymentModal } from "@getalby/bitcoin-connect"
 
 config.autoAddCss = false /* eslint-disable import/first */
@@ -47,6 +51,7 @@ export default function PlayerPage() {
   const podcast = usePlayerPagePodcast()
   const playerPageError = usePlayerPageError()
   const playerPageIsPlaying = usePlayerPageIsPlaying()
+  const { deletePodcast } = useDeletePodcast()
 
   // ------------ USE STATE ------------
 
@@ -192,6 +197,45 @@ export default function PlayerPage() {
           onClick={() => copyToClipboard(window.location.href)}
           label={copied ? "Copied" : "Copy Link"}
         />
+        {podcast.announcement.note.pubkey === accountNostr?.accountPublicKey ? (
+          <>
+            {/* <Button
+              aria-label="Edit"
+              id={"E2EID.playerEditButton"}
+              className="px-2 text-xs md:px-4 md:text-base"
+              onClick={() => {
+                //copyToClipboard(window.location.href)
+              }}
+              label={
+                <FontAwesomeIcon
+                  className="w-5 md:w-5" style={{display: "inline"}}
+                  icon={faPencil}
+                />}
+            /> */}
+            <Button
+              aria-label="Delete"
+              id={"E2EID.playerDeleteButton"}
+              className="px-2 text-xs md:px-4 md:text-base"
+              onClick={() => {
+                if (!confirm("Delete this episode permanently?")) return
+                if (!accountNostr?.accountNIP07) throw new Error("Missing NIP07")
+                deletePodcast(nostrPool, nostrRelays, accountNostr.accountNIP07, podcast.gate.note.id, podcast.announcement.note.id, {
+                  onDelete() {
+                    toast.success(`Episode deleted`)
+                  },
+                  onError(error) {
+                    toast.error(`Error deleting: ${error}`)
+                  },
+                })
+              }}
+              label={
+                <FontAwesomeIcon
+                  className="w-4 md:w-4" style={{display: "inline"}}
+                  icon={faTrashCan}
+                />}
+            />
+          </>
+        ) : (<></>)}
       </div>
     )
   }
@@ -228,6 +272,9 @@ export default function PlayerPage() {
       </div>
     )
   }
+
+  const showNotes = getShowNotesUrl(podcast)
+  const homepage = getHomepageUrl(podcast)
 
   const renderContent = () => {
     if (playerPageError) return renderError()
@@ -295,7 +342,25 @@ export default function PlayerPage() {
             {renderActionMenu()}
           </div>
         </div>
+        {showNotes?(
+          <div>
+            <a href={showNotes}>Go To Episode Show Notes</a>
+          </div>
+        ):(<></>)}
+        {homepage?(
+          <div>
+            <a href={homepage}>Go To Podcast Series Homepage</a>
+          </div>
+        ):(<></>)}
         <hr className="w-full mt-4 mb-4 border-buttonDisabled/40 " />
+        {homepage?(
+          <div>
+            <h2 className="font-black text-center text-gray-100 text-xl/4 md:mt-4 md:text-start md:text-4xl md:mb-4">
+              Other Episodes
+            </h2>
+            <DiscoverPageContent filterByHomepage={homepage} excludeEpisodes={[podcast.gate.note.id]}/>
+          </div>
+        ):(<></>)}
       </>
     )
   }

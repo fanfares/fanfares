@@ -86,14 +86,14 @@ export function ActionButtonsPost() {
             </div>
             <div className="flex items-center w-full mt-12 gap-4">
               <Button
-                className="font-bold border border-buttonAccent ml-auto w-20 text-xs"
-                onClick={() => setGatedNoteModal(!gatedNoteModal)}
-                label="Cancel"
-              />
-              <Button
                 className="font-bold border border-buttonAccent w-20 text-xs"
                 onClick={() => {}}
                 label="Submit"
+              />
+              <Button
+                className="font-bold border border-buttonAccent ml-auto w-20 text-xs"
+                onClick={() => setGatedNoteModal(!gatedNoteModal)}
+                label="Cancel"
               />
             </div>
           </div>
@@ -151,7 +151,7 @@ export function ActionButtonsPost() {
       /> */}
       <Button
         onClick={() => setGatedPodModal(!gatedPodModal)}
-        label="Post Podcast"
+        label="Upload"
       />
       {/* <Button
         onClick={() => setGenericNoteModal(!genericNoteModal)}

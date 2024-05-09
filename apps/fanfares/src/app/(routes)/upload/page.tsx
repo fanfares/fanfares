@@ -30,6 +30,8 @@ export default function Upload() {
     postPodcastHandleTitleChange,
     postPodcastTitle,
     postPodcastDescription,
+    postPodcastShowNotesUrl,
+    postPodcastHomepageUrl,
     postPodcastLud16,
     postPodcastUnlockCost,
     postPodcastHandleCheckTCChange,
@@ -40,6 +42,8 @@ export default function Upload() {
     postPodcastAudioFile,
     postPodcastHandleLud16Change,
     postPodcastHandleDescriptionChange,
+    postPodcastHandleShowNotesUrlChange,
+    postPodcastHandleHomepageUrlChange,
     postPodcastSetLud16,
   } = usePostPodcast()
 
@@ -189,6 +193,48 @@ export default function Upload() {
               {postPodcastAudioFile ? "Change" : "Browse"}
             </label>
             <p className="text-xs w-24">Formats allowed: AAC / M4A / MP3</p>
+          </div>
+          <div className="flex-col w-full ">
+            <div className="relative flex flex-col w-full">
+              <div className="w-full">
+                {" "}
+                <div
+                  className="flex w-full md:gap-4 md:flex-col md:items-center md:justify-center mt-4 space-y-4 md:space-y-0">
+                  <label className="w-full text-xs">
+                    {" "}
+                    <p className="flex gap-1">
+                      Episode Show Notes URL (optional)
+                    </p>{" "}
+                    <input
+                      id={"`${E2EID.uploadShowNotesUrl}${index}`"}
+                      autoComplete="off"
+                      className="w-full border-b-2 border-buttonAccent bg-transparent text-sm font-thin outline-none placeholder:text-sm placeholder:font-semibold mt-2 placeholder:text-skin-muted/40 text-start"
+                      placeholder="https://your.content/path/to/episode/show-notes..."
+                      name={"`creators.${index}.showNotes`"}
+                      maxLength={255}
+                      value={postPodcastShowNotesUrl}
+                      onChange={postPodcastHandleShowNotesUrlChange}
+                    />
+                  </label>
+                  <label className="w-full text-xs">
+                    {" "}
+                    <p className="flex gap-1">
+                      Podcast Series Homepage URL (optional)
+                    </p>{" "}
+                    <input
+                      id={"`${E2EID.uploadHomepageUrl}${index}`"}
+                      autoComplete="off"
+                      className="w-full border-b-2 border-buttonAccent bg-transparent text-sm font-thin outline-none placeholder:text-sm placeholder:font-semibold mt-2 placeholder:text-skin-muted/40 text-start"
+                      placeholder="https://your.content/home/page..."
+                      name={"`creators.${index}.homepage`"}
+                      maxLength={255}
+                      value={postPodcastHomepageUrl}
+                      onChange={postPodcastHandleHomepageUrlChange}
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
           </div>
           <div className="flex-col w-full ">
             {/* <MediaParameterForm /> */}

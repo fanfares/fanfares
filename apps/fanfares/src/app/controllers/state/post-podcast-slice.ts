@@ -52,6 +52,12 @@ export interface PostPodcastSlice {
   postPodcastDescription: string
   postPodcastHandleDescriptionChange: (event: any) => void
 
+  postPodcastShowNotesUrl: string
+  postPodcastHandleShowNotesUrlChange: (event: any) => void
+
+  postPodcastHomepageUrl: string
+  postPodcastHandleHomepageUrlChange: (event: any) => void
+
   postPodcastUnlockCost: number
   postPodcastHandleUnlockCostChange: (event: any) => void
 
@@ -72,6 +78,8 @@ const DEFAULT_STATE: PostPodcastSlice = {
   postPodcastIsRunning: false,
   postPodcastTitle: "",
   postPodcastDescription: "",
+  postPodcastShowNotesUrl: "",
+  postPodcastHomepageUrl: "",
   postPodcastLud16: "",
   postPodcastUnlockCost: 10_000, // Sats
   postPodcastCheckTC: false,
@@ -87,6 +95,8 @@ const DEFAULT_STATE: PostPodcastSlice = {
   postPodcastHandleLud16Change: () => {},
   postPodcastHandleTitleChange: () => {},
   postPodcastHandleDescriptionChange: () => {},
+  postPodcastHandleShowNotesUrlChange: () => {},
+  postPodcastHandleHomepageUrlChange: () => {},
   postPodcastHandleUnlockCostChange: () => {},
   postPodcastSubmit: () => {},
   postPodcastClear: () => {},
@@ -132,6 +142,14 @@ export const createPostPodcastSlice: StateCreator<
     set({ postPodcastDescription: event.target.value })
   }
 
+  const postPodcastHandleShowNotesUrlChange = (event: any) => {
+    set({ postPodcastShowNotesUrl: event.target.value })
+  }
+
+  const postPodcastHandleHomepageUrlChange = (event: any) => {
+    set({ postPodcastHomepageUrl: event.target.value })
+  }
+
   const postPodcastHandleUnlockCostChange = (event: any) => {
     set({ postPodcastUnlockCost: event.target.value })
   }
@@ -142,6 +160,8 @@ export const createPostPodcastSlice: StateCreator<
       postPodcastTitle: "",
       postPodcastDescription: "",
       postPodcastCheckTC: false,
+      postPodcastShowNotesUrl: "",
+      postPodcastHomepageUrl: "",
       // Don't clear lud16
       //   postPodcastLud16: accountProfile?.lud16 || "",
       postPodcastUnlockCost: 10_000, // Sats
@@ -172,6 +192,8 @@ export const createPostPodcastSlice: StateCreator<
       postPodcastIsRunning,
       postPodcastTitle,
       postPodcastDescription,
+      postPodcastShowNotesUrl,
+      postPodcastHomepageUrl,
       postPodcastLud16,
       postPodcastState,
       postPodcastPublicKey,
@@ -206,7 +228,7 @@ export const createPostPodcastSlice: StateCreator<
       if (!nostrPool) throw new Error("Missing pool")
       if (!nostrRelays) throw new Error("Missing relays")
 
-      if (!postPodcastLud16.includes("getalby.com")) throw new Error("Currently only Alby addresses are supported")
+      //if (!postPodcastLud16.includes("getalby.com")) throw new Error("Currently only Alby addresses are supported")
 
       set({ postPodcastIsRunning: true })
 
@@ -256,6 +278,12 @@ export const createPostPodcastSlice: StateCreator<
         ["r", postPodcastImageUrl],
         ["t", "podcast"],
       ]
+      if (postPodcastShowNotesUrl) {
+        announcementNoteTags.push(['r', postPodcastShowNotesUrl, 'episode-page'])
+      }
+      if (postPodcastHomepageUrl) {
+        announcementNoteTags.push(['r', postPodcastHomepageUrl, 'podcast-homepage'])
+      }
 
       const announcementNoteContent = `${postPodcastTitle}\n${postPodcastDescription}`
 
@@ -336,6 +364,8 @@ export const createPostPodcastSlice: StateCreator<
     postPodcastHandleTitleChange,
     postPodcastSetLud16,
     postPodcastHandleDescriptionChange,
+    postPodcastHandleShowNotesUrlChange,
+    postPodcastHandleHomepageUrlChange,
     postPodcastHandleUnlockCostChange,
     postPodcastSubmit,
   }

@@ -26,6 +26,7 @@ export interface PodcastSlice {
         podcastFetch: (
             pool: SimplePool,
             relays: string[],
+            seriesUrl?: string,
         )=>void;
         podcastUnlock: (
             gateId: string,
@@ -185,6 +186,7 @@ export const createPodcastSlice: StateCreator<
     const podcastFetch = async (
         pool: SimplePool,
         relays: string[],
+        seriesUrl?: string,
     ) => {
         const podcastFetching = get().podcastFetching;
 
@@ -200,7 +202,12 @@ export const createPodcastSlice: StateCreator<
             } = {};
     
             const rawAnnouncements = await pool.list(relays, [
-                {
+                (seriesUrl)?{
+                  "#t": ["podcast"],
+                  "#r": [seriesUrl],
+                  kinds: [NIP_108_KINDS.announcement],
+                  limit: 10,
+                }:{
                   "#t": ["podcast"],
                   kinds: [NIP_108_KINDS.announcement],
                   limit: 10,
