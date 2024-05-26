@@ -12,6 +12,7 @@ import {
 } from "nip108";
 import { NIP04, NIP07, NostrProfile, eventToNostrProfile } from "utils";
 import { WebLNProvider } from "webln";
+import { launchPaymentModal } from '@getalby/bitcoin-connect-react';
 
 export interface PlayerPageSlice {
   playerPageIsPlaying: boolean;
@@ -294,43 +295,56 @@ export const createPlayerPageSlice: StateCreator<
 
       console.log(uri, invoiceResponseJson)
 
-      await webln.sendPayment(invoiceResponseJson.pr);
-      const resultResponse = await fetch(invoiceResponseJson.successAction.url);
-
-      if(!resultResponse.ok) throw new Error("Failed to get secret from server");
-
-      const resultResponseJson = await resultResponse.json();
-
-      const secret = resultResponseJson.secret;
-
-      const encryptedKey = await nip04.encrypt(
-        podcast.gate.note.pubkey,
-        secret
-      );
-
-      const key = createKeyNoteUnsigned(
-        publicKey,
-        encryptedKey,
-        podcast.gate.note,
-        podcast.announcement.note,
-        true
-      );
-
-      const keySigned = await nip07.signEvent(key);
-
-      await nostrPool.publish(nostrRelays, keySigned);
-
-      const content = unlockGatedNote(podcast.gate.note, secret);
-      const audioFilepath = content.tags?.find((tag) => tag[0] === "r")?.[1];
-
-      if (!audioFilepath) throw new Error("Audio filepath not found");
-
-      const newPodcast = {
-        ...podcast,
-        content,
-        audioFilepath,
-      };
-      set({ playerPagePodcast: newPodcast });
+      console.log('ready to pay', invoiceResponseJson.pr)
+      launchPaymentModal({
+        invoice: invoiceResponseJson.pr,
+        onPaid: (response) => {
+          console.log('Received payment! ' + response.preimage);
+          finishPaymentAttempt()
+        },
+        onCancelled: () => {
+          console.log('Payment cancelled');
+          finishPaymentAttempt()
+        },
+      })
+      const finishPaymentAttempt = async () => {
+        const resultResponse = await fetch(invoiceResponseJson.successAction.url);
+  
+        if(!resultResponse.ok) throw new Error("Failed to get secret from server");
+  
+        const resultResponseJson = await resultResponse.json();
+  
+        const secret = resultResponseJson.secret;
+  
+        const encryptedKey = await nip04.encrypt(
+          podcast.gate.note.pubkey,
+          secret
+        );
+  
+        const key = createKeyNoteUnsigned(
+          publicKey,
+          encryptedKey,
+          podcast.gate.note,
+          podcast.announcement.note,
+          true
+        );
+  
+        const keySigned = await nip07.signEvent(key);
+  
+        await nostrPool.publish(nostrRelays, keySigned);
+  
+        const content = unlockGatedNote(podcast.gate.note, secret);
+        const audioFilepath = content.tags?.find((tag) => tag[0] === "r")?.[1];
+  
+        if (!audioFilepath) throw new Error("Audio filepath not found");
+  
+        const newPodcast = {
+          ...podcast,
+          content,
+          audioFilepath,
+        };
+        set({ playerPagePodcast: newPodcast });
+      }
     } catch (e) {
       throw new Error(`Failed to unlock podcast - ${e}`);
     } finally {
