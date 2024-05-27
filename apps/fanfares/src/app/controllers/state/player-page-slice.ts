@@ -12,7 +12,6 @@ import {
 } from "nip108";
 import { NIP04, NIP07, NostrProfile, eventToNostrProfile } from "utils";
 import { WebLNProvider } from "webln";
-import { launchPaymentModal } from '@getalby/bitcoin-connect-react';
 
 export interface PlayerPageSlice {
   playerPageIsPlaying: boolean;
@@ -51,7 +50,7 @@ export interface PlayerPageSlice {
       nip04: NIP04,
       nip07: NIP07,
       publicKey: string,
-      webln: WebLNProvider
+      payFunc: (finishPaymentAttempt: () => Promise<void>, invoice: string) => void
     ) => Promise<void>;
   };
 }
@@ -93,7 +92,7 @@ const DEFAULT_STATE: PlayerPageSlice = {
       nip04: NIP04,
       nip07: NIP07,
       publicKey: string,
-      webln: WebLNProvider
+      payFunc: (finishPaymentAttempt: () => Promise<void>, invoice: string) => void
     ) => {},
   },
 };
@@ -276,13 +275,12 @@ export const createPlayerPageSlice: StateCreator<
     nip04: NIP04,
     nip07: NIP07,
     publicKey: string,
-    webln: WebLNProvider
+    payFunc: (finishPaymentAttempt: () => Promise<void>, invoice: string) => void
   ) => {
     try {
       if (!nostrRelays) throw new Error("No relays");
       if (!nostrPool) throw new Error("No pool");
       if (!podcast) throw new Error("No podcast");
-      if (!webln) throw new Error("No webln provider");
       if (!publicKey) throw new Error("No public key");
       if (!nip04) throw new Error("No NIP-04");
       if (!nip07) throw new Error("No NIP-07");
@@ -296,17 +294,6 @@ export const createPlayerPageSlice: StateCreator<
       console.log(uri, invoiceResponseJson)
 
       console.log('ready to pay', invoiceResponseJson.pr)
-      launchPaymentModal({
-        invoice: invoiceResponseJson.pr,
-        onPaid: (response) => {
-          console.log('Received payment! ' + response.preimage);
-          finishPaymentAttempt()
-        },
-        onCancelled: () => {
-          console.log('Payment cancelled');
-          finishPaymentAttempt()
-        },
-      })
       const finishPaymentAttempt = async () => {
         const resultResponse = await fetch(invoiceResponseJson.successAction.url);
   
@@ -345,6 +332,7 @@ export const createPlayerPageSlice: StateCreator<
         };
         set({ playerPagePodcast: newPodcast });
       }
+      await payFunc(finishPaymentAttempt, invoiceResponseJson.pr)
     } catch (e) {
       throw new Error(`Failed to unlock podcast - ${e}`);
     } finally {

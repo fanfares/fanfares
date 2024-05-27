@@ -27,6 +27,7 @@ import {
 import Image from "next/image"
 import { formatDate, getIdFromUrl } from "@/app/controllers/utils/formatting"
 import { toast } from "react-toastify"
+import { launchPaymentModal } from '@getalby/bitcoin-connect';
 
 config.autoAddCss = false /* eslint-disable import/first */
 
@@ -92,8 +93,7 @@ export default function PlayerPage() {
       !accountNostr ||
       !accountNostr.accountNIP04 ||
       !accountNostr.accountNIP07 ||
-      !accountNostr.accountPublicKey ||
-      !webln
+      !accountNostr.accountPublicKey
     ) {
       toast.error("You need to login first")
       return
@@ -106,7 +106,17 @@ export default function PlayerPage() {
       accountNostr.accountNIP04,
       accountNostr.accountNIP07,
       accountNostr.accountPublicKey,
-      webln
+      (finishPaymentAttempt: () => Promise<void>, invoice: string) => launchPaymentModal({
+        invoice,
+        onPaid: (response) => {
+          console.log('Received payment! ' + response.preimage);
+          finishPaymentAttempt()
+        },
+        onCancelled: () => {
+          console.log('Payment cancelled');
+          finishPaymentAttempt()
+        },
+      })
     )
   }
 
