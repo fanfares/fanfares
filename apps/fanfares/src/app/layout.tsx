@@ -47,7 +47,7 @@ export default function RootLayout({
             <Navbar />
           </header>
           {/* Content */}
-          <ContainerGrid className="block md:ml-44 md:h-screen">
+          <ContainerGrid className="block md:ml-44 md:h-screen pb-32 md:pb-0">
             <Toast />
             {children}
           </ContainerGrid>

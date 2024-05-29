@@ -1,14 +1,14 @@
-"use client";
+"use client"
 
 import {
   faArrowRotateLeft,
   faArrowRotateRight,
   faPauseCircle,
   faPlayCircle,
-} from "@fortawesome/pro-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Image from "next/image";
-import { useCallback, useEffect, useRef } from "react";
+} from "@fortawesome/pro-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import Image from "next/image"
+import { useCallback, useEffect, useRef } from "react"
 import {
   usePlayerPageActions,
   usePlayerPageCurrentTime,
@@ -18,20 +18,20 @@ import {
   usePlayerPagePodcast,
   usePlayerPagePodcastCreator,
   usePlayerPageVolume,
-} from "../controllers/state/player-page-slice";
-import { Podcast } from "../controllers/state/podcast-slice";
-import { useRouter } from "next/navigation";
-import { formatPlayerTime } from "../controllers/utils/formatting";
+} from "../controllers/state/player-page-slice"
+import { Podcast } from "../controllers/state/podcast-slice"
+import { useRouter } from "next/navigation"
+import { formatPlayerTime } from "../controllers/utils/formatting"
 
 export function GlobalAudioPlayer() {
-  const podcast = usePlayerPagePodcast();
-  const isPlaying = usePlayerPageIsPlaying();
-  const duration = usePlayerPageDuration();
-  const currentTime = usePlayerPageCurrentTime();
-  const volume = usePlayerPageVolume();
-  const isShowing = usePlayerPageIsPlayerShowing();
-  const creator = usePlayerPagePodcastCreator();
-  const router = useRouter();
+  const podcast = usePlayerPagePodcast()
+  const isPlaying = usePlayerPageIsPlaying()
+  const duration = usePlayerPageDuration()
+  const currentTime = usePlayerPageCurrentTime()
+  const volume = usePlayerPageVolume()
+  const isShowing = usePlayerPageIsPlayerShowing()
+  const creator = usePlayerPagePodcastCreator()
+  const router = useRouter()
 
   const {
     playerPageSetPlaying,
@@ -39,173 +39,171 @@ export function GlobalAudioPlayer() {
     playerPageSetCurrentTime,
     playerPageSetVolume,
     playerPageSetPlayerShowing,
-  } = usePlayerPageActions();
+  } = usePlayerPageActions()
 
   // --------------- REFERENCES---------------
-  const audioPlayer = useRef<HTMLAudioElement>(null);
-  const audioBar = useRef<HTMLInputElement>();
-  const progressBar = useRef<HTMLInputElement>();
-  const animationRef = useRef<number>();
-  const previousTime = useRef<number>(0);
-  const listenedDuration = useRef<number>(0);
-  const playCountTicked = useRef<boolean>(false);
+  const audioPlayer = useRef<HTMLAudioElement>(null)
+  const audioBar = useRef<HTMLInputElement>()
+  const progressBar = useRef<HTMLInputElement>()
+  const animationRef = useRef<number>()
+  const previousTime = useRef<number>(0)
+  const listenedDuration = useRef<number>(0)
+  const playCountTicked = useRef<boolean>(false)
 
   //--------------- FUNCTIONS ---------------
 
   const onLoad = useCallback(async () => {
-    let rawDuration = audioPlayer.current?.duration ?? 0;
-    if (isNaN(rawDuration)) rawDuration = 0;
-    const seconds = Math.floor(rawDuration);
+    let rawDuration = audioPlayer.current?.duration ?? 0
+    if (isNaN(rawDuration)) rawDuration = 0
+    const seconds = Math.floor(rawDuration)
 
     // playerUpdateSizeAndDuration(rawDuration)
-    playerPageSetDuration(seconds);
+    playerPageSetDuration(seconds)
 
     if (progressBar.current) {
-      progressBar.current.max = seconds.toString();
+      progressBar.current.max = seconds.toString()
     }
 
     // eslint-disable-next-line
-  }, ["playerAudioUrl"]);
+  }, ["playerAudioUrl"])
 
   const updateCurrentTime = useCallback(() => {
     if (progressBar.current) {
       progressBar.current.style.setProperty(
         "--seek-before-width",
         `${(Number(progressBar.current.value) / duration) * 100}%`
-      );
-      playerPageSetCurrentTime(Number.parseInt(progressBar.current.value));
+      )
+      playerPageSetCurrentTime(Number.parseInt(progressBar.current.value))
     }
     // eslint-disable-next-line
-  }, [duration]);
+  }, [duration])
 
   const whilePlaying = useCallback(() => {
     if (audioPlayer.current) {
       if (progressBar.current) {
         // Set progress bar
-        progressBar.current.value = audioPlayer.current.currentTime.toString();
+        progressBar.current.value = audioPlayer.current.currentTime.toString()
       }
-      updateCurrentTime();
-      animationRef.current = requestAnimationFrame(whilePlaying);
+      updateCurrentTime()
+      animationRef.current = requestAnimationFrame(whilePlaying)
     } else {
-      cancelAnimationFrame(animationRef?.current ?? 0);
+      cancelAnimationFrame(animationRef?.current ?? 0)
     }
     // eslint-disable-next-line
-  }, [updateCurrentTime]);
+  }, [updateCurrentTime])
 
   const play = useCallback(async () => {
-    if (!audioPlayer.current) return;
-    await audioPlayer.current.play();
-    animationRef.current = requestAnimationFrame(whilePlaying);
+    if (!audioPlayer.current) return
+    await audioPlayer.current.play()
+    animationRef.current = requestAnimationFrame(whilePlaying)
     // eslint-disable-next-line
-  }, [audioPlayer, animationRef, whilePlaying]);
+  }, [audioPlayer, animationRef, whilePlaying])
 
   const pause = useCallback(() => {
-    if (!audioPlayer.current) return;
+    if (!audioPlayer.current) return
     if (audioPlayer.current) {
-      audioPlayer.current.pause();
-      cancelAnimationFrame(animationRef?.current ?? 0);
+      audioPlayer.current.pause()
+      cancelAnimationFrame(animationRef?.current ?? 0)
     }
     // eslint-disable-next-line
-  }, [audioPlayer, animationRef]);
+  }, [audioPlayer, animationRef])
 
   //--------------- USE EFFECTS ---------------
 
   useEffect(() => {
-    if (!audioPlayer.current) return;
+    if (!audioPlayer.current) return
 
-    previousTime.current = 0;
-    listenedDuration.current = 0;
-    playCountTicked.current = false;
-    audioPlayer.current.crossOrigin = "anonymous";
-    audioPlayer.current.onloadeddata = onLoad;
-  }, [audioPlayer, podcast, listenedDuration, playCountTicked, previousTime]);
+    previousTime.current = 0
+    listenedDuration.current = 0
+    playCountTicked.current = false
+    audioPlayer.current.crossOrigin = "anonymous"
+    audioPlayer.current.onloadeddata = onLoad
+  }, [audioPlayer, podcast, listenedDuration, playCountTicked, previousTime])
 
   useEffect(() => {
     if (audioPlayer.current) {
       if (isPlaying) {
-        play();
+        play()
       } else {
-        pause();
+        pause()
       }
     }
-  }, [isPlaying]);
+  }, [isPlaying])
 
   //--------------- STOPPERS ---------------
 
   // DON'T SHOW IF NO PODCAST
-  if (!podcast || !podcast.audioFilepath) return null;
+  if (!podcast || !podcast.audioFilepath) return null
 
   //--------------- UTILS ---------------
 
   const toggleShowing = () => {
-    playerPageSetPlayerShowing(!isShowing);
-  };
+    playerPageSetPlayerShowing(!isShowing)
+  }
 
   //--------------- CONTROLS ---------------
 
   const changeVolume = (e: any) => {
-    if (!audioPlayer.current) return;
-    if (!audioBar.current) return;
+    if (!audioPlayer.current) return
+    if (!audioBar.current) return
 
-    audioPlayer.current.volume = Number.parseInt(audioBar.current.value) / 100;
+    audioPlayer.current.volume = Number.parseInt(audioBar.current.value) / 100
 
-    playerPageSetVolume(Number.parseInt(audioBar.current.value));
-  };
+    playerPageSetVolume(Number.parseInt(audioBar.current.value))
+  }
 
   const changeRange = () => {
-    if (!audioPlayer.current) return;
-    if (!progressBar.current) return;
+    if (!audioPlayer.current) return
+    if (!progressBar.current) return
 
-    audioPlayer.current.currentTime = Number.parseInt(
-      progressBar.current.value
-    );
-    updateCurrentTime();
-  };
+    audioPlayer.current.currentTime = Number.parseInt(progressBar.current.value)
+    updateCurrentTime()
+  }
 
   const back15 = () => {
-    if (!progressBar.current) return;
+    if (!progressBar.current) return
 
     progressBar.current.value = Math.max(
       Number(progressBar.current.value) - 15,
       0
-    ).toString();
+    ).toString()
 
-    changeRange();
-  };
+    changeRange()
+  }
 
   const forward15 = () => {
-    if (!progressBar.current) return;
+    if (!progressBar.current) return
 
     progressBar.current.value = Math.min(
       Number(progressBar.current.value) + 15,
       duration
-    ).toString();
-    changeRange();
-  };
+    ).toString()
+    changeRange()
+  }
 
   const playerTogglePlaying = () => {
     if (!isPlaying) {
       // audioPlayer.current?.play()
-      playerPageSetPlaying(true);
+      playerPageSetPlaying(true)
     } else {
       // audioPlayer.current?.pause()
-      playerPageSetPlaying(false);
+      playerPageSetPlaying(false)
     }
-  };
+  }
 
   const routeToPlayerPage = () => {
-    router.push(`/player/${podcast.gate.note.id}`);
-  };
+    router.push(`/player/${podcast.gate.note.id}`)
+  }
 
   const routeToCreatorPage = () => {
-    console.log("TODO: route to creator page");
+    console.log("TODO: route to creator page")
     // router.push(`/creator/${podcast.creatorKey}`);
-  };
+  }
 
   //--------------- CONSTS ---------------
 
-  const {title, audioFilepath, imageFilepath} = podcast;
-  const creatorName = creator ? creator.name : podcast.gate.note.pubkey;
+  const { title, audioFilepath, imageFilepath } = podcast
+  const creatorName = creator ? creator.name : podcast.gate.note.pubkey
 
   //--------------- RENDERERS ---------------
 
@@ -215,16 +213,14 @@ export function GlobalAudioPlayer() {
         <div className="absolute left-16 top-4 max-w-[268px] md:top-3 md:max-w-md">
           <p
             onClick={routeToPlayerPage}
-            className="text-sm font-bold truncate text-skin-base md:w-full md:text-base cursor-pointer hover:underline"
-          >
+            className="text-sm font-bold truncate text-skin-base md:w-full md:text-base cursor-pointer hover:underline">
             {title}
           </p>
 
           {/* TODO */}
           <p
             className="mt-1 flex w-40 truncate text-[0.7rem] text-skin-muted hover:underline md:w-64 md:text-[1rem] md:text-xs"
-            onClick={routeToCreatorPage}
-          >
+            onClick={routeToCreatorPage}>
             {creatorName}
           </p>
           {/* <Link
@@ -234,8 +230,8 @@ export function GlobalAudioPlayer() {
           </Link> */}
         </div>
       </>
-    );
-  };
+    )
+  }
 
   const renderPodcastPFP = () => {
     return (
@@ -252,8 +248,8 @@ export function GlobalAudioPlayer() {
           />
         </div>
       </>
-    );
-  };
+    )
+  }
 
   const renderProgressBar = () => {
     return (
@@ -275,8 +271,8 @@ export function GlobalAudioPlayer() {
           </p>
         </div>
       </>
-    );
-  };
+    )
+  }
 
   const renderRightMenuButtons = () => {
     return (
@@ -286,8 +282,8 @@ export function GlobalAudioPlayer() {
           {/* {renderVolumeMenu()} */}
         </div>
       </>
-    );
-  };
+    )
+  }
 
   const renderPlayerControlButtons = () => {
     return (
@@ -315,17 +311,13 @@ export function GlobalAudioPlayer() {
           />
         </div>
       </>
-    );
-  };
+    )
+  }
 
   const renderAudioPlayerBigScreen = () => {
     return (
-      <div className="fixed left-0 z-50 justify-center w-full h-10 -bottom-1 ">
-        <audio
-          ref={audioPlayer}
-          src={audioFilepath}
-          preload="metadata"
-        ></audio>
+      <div className="fixed md:left-0 z-10 justify-center w-full h-10 md:-bottom-1 bottom-20 ">
+        <audio ref={audioPlayer} src={audioFilepath} preload="metadata"></audio>
         <div
           className={`absolute bottom-3 w-full max-w-7xl rounded-2xl border-t-2 border-buttonAccentHover transition-transform duration-300 ease-linear md:bottom-5 md:left-60 md:w-[70%] 
           ${
@@ -334,8 +326,7 @@ export function GlobalAudioPlayer() {
               : "translate-y-[6.5rem] transform md:translate-y-[7rem]"
           }
           ${isPlaying ? "translate-y-0" : null}
-         `}
-        >
+         `}>
           <div className="relative grid items-center float-left w-full p-4 rounded-lg bg-fill/50 h-28 gap-x-2 drop-shadow-md backdrop-blur-md ">
             {renderPodcastPFP()}
             {renderPodcastInfo()}
@@ -346,17 +337,16 @@ export function GlobalAudioPlayer() {
           <button
             aria-label="Hide/Show player"
             onClick={toggleShowing}
-            className="absolute block w-32 p-1 text-xs border-2 border-b-0 outline-none 2xl -top-7 left-5 rounded-t-2xl border-buttonAccentHover text-skin-muted backdrop-blur-md"
-          >
+            className="absolute block w-32 p-1 text-xs border-2 border-b-0 outline-none 2xl -top-7 left-5 rounded-t-2xl border-buttonAccentHover text-skin-muted backdrop-blur-md">
             {isShowing ? "Hide " : "Show "}
             Player
           </button>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
-  return renderAudioPlayerBigScreen();
+  return renderAudioPlayerBigScreen()
 }
 // <Media
 //   queries={{

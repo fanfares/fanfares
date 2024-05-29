@@ -121,8 +121,8 @@ function DiscoverPageContent() {
     if (podcastFetching) return null
     return (
       // <div className="flex items-center justify-center w-full pb-10 mx-auto rounded lg:justify-start">
-      <div className="container flex">
-        <div className="flex flex-wrap gap-3 ">
+      <div className="container flex pb-8">
+        <div className="flex md:flex-wrap md:flex-row flex-col gap-3 w-full">
           {Object.values(podcastEpisodes).map(podcast => {
             const toHide = episodeTestingTitlesFilter.includes(podcast.title)
             if (toHide) return null

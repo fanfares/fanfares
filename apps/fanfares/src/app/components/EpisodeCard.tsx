@@ -17,6 +17,8 @@ interface EpisodeCardProps {
   audioUrl?: string
 }
 
+import Image from "next/image"
+
 function EpisodeCard(props: EpisodeCardProps) {
   const { imgUrl, title, description, onClick, episodeUrl, audioUrl } = props
   const audioPlayer = useRef<HTMLAudioElement>(null)
@@ -32,25 +34,25 @@ function EpisodeCard(props: EpisodeCardProps) {
     }
   }
 
+  //
   return (
-    <section onClick={onClick}>
+    <section onClick={onClick} className="">
       <Link
         href={props.episodeUrl || "/player"}
-        className="e2e-podcast-tile group md:w-48 lg:w-40  w-full cursor-pointer flex md:flex-col  md:items-center justify-start rounded-lg border border-buttonAccent p-2 transition duration-300 ease-linear md:hover:scale-105 md:hover:bg-black/[10%] md:h-60 gap-2">
-        <div className="flex items-center w-20 rounded-lg md:transition md:duration-300 md:w-full group/playButton md:h-36 md:group-hover:brightness-110">
+        className="e2e-podcast-tile group md:w-40 h-28 w-full cursor-pointer flex md:flex-col  md:items-center justify-start rounded-lg border border-buttonAccent p-2 transition duration-300 ease-linear md:hover:scale-105 md:hover:bg-black/[10%] md:h-64 gap-2
+
+        ">
+        <div className="flex items-start md:items-center w-20 rounded-lg md:transition md:duration-300 md:w-full group/playButton md:h-36 md:group-hover:brightness-110 relative">
           {/* //should be IMAGE, this is just mocking */}
 
-          <div className="w-full h-full flex items-center justify-center relative border rounded-md border-buttonAccent drop-shadow-2xl">
-            <img
-              // priority
-              // loader={contentfulLoader}
-              src={props.imgUrl}
-              alt={" thumbnail"}
-              // layout="fill"
-              // objectFit="cover"
-              className="object-cover w-full h-full rounded-md"
-            />
-            {/* {props.audioUrl ? (
+          <Image
+            src={props.imgUrl}
+            alt={" thumbnail"}
+            width={300}
+            height={300}
+            className="border rounded-md border-buttonAccent drop-shadow-2xl"
+          />
+          {/* {props.audioUrl ? (
             <section>
               <div className="absolute inset-0 z-10 hover:bg-black/40 bg-skin-fill/40 flex items-center justify-center rounded-lg">
                 <FontAwesomeIcon
@@ -63,11 +65,10 @@ function EpisodeCard(props: EpisodeCardProps) {
               <audio ref={audioPlayer} src={props.audioUrl} className="hidden"/>
             </section>
           ) : null} */}
-          </div>
         </div>
         {/* <div className="mt-2 h-full flex w-full flex-col items-start border-white/[10%] justify-start truncate line-clamp-2"></div> */}
-        <div className="flex-col flex-1 w-40 mt-2 space-y-2 md:px-2 relative">
-          <p className="e2e-podcast-title text-xs font-bold uppercase md:leading-[18px] md:text-sm md:w-11/12 truncate mr-auto ">
+        <div className="flex-col flex-1 w-40 md:mt-2 space-y-2 md:px-2 relative">
+          <p className="e2e-podcast-title text-base font-semiboldbold md:font-bold uppercase md:leading-[18px] md:text-sm md:w-11/12 truncate mr-auto ">
             {/* {metadataNameSlicer()} */}
             {props.title}
           </p>

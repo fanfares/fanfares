@@ -1,3 +1,4 @@
+"use client"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   IconDefinition,
@@ -9,8 +10,21 @@ import {
   faGlobe,
   faPodcast,
   faBolt,
+  faHome,
+  faPlay,
 } from "@fortawesome/pro-solid-svg-icons"
 import Logo from "../assets/logo.svg"
+
+import {
+  usePlayerPageActions,
+  usePlayerPageCurrentTime,
+  usePlayerPageDuration,
+  usePlayerPageIsPlayerShowing,
+  usePlayerPageIsPlaying,
+  usePlayerPagePodcast,
+  usePlayerPagePodcastCreator,
+  usePlayerPageVolume,
+} from "../controllers/state/player-page-slice"
 
 // import { Keypair } from '@solana/web3.js';
 import Image from "next/image"
@@ -31,6 +45,8 @@ import { Modal } from "./Modal"
 // import { HexagonPFP } from "./HexagonPFP"
 
 export function Navbar() {
+  const isPlaying = usePlayerPageIsPlaying()
+
   // const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   // const { asPath: currentPath } = useRouter()
@@ -292,7 +308,8 @@ export function Navbar() {
   const renderMobileLink = (
     href: string,
     icon: IconDefinition,
-    text: string
+    text: string,
+    className?: string
   ) => {
     // const isCurrent = isCurrentLink(href)
     const isCurrent = false
@@ -302,30 +319,38 @@ export function Navbar() {
         passHref
         href={href}
         arial-label={text}
-        className={`group flex cursor-pointer flex-col items-center active:scale-95 active:text-skin-inverted gap-2${
+        className={`group flex cursor-pointer  flex-col items-center justify-start active:scale-95 active:text-skin-inverted gap-2${
           isCurrent ? "text-buttonAccentHover  " : "text-white"
         } `}>
         <FontAwesomeIcon
           icon={icon}
-          className={`flex w-10 justify-center text-xl group-hover:text-skin-muted  ${
+          className={`flex w-8 h-8 justify-center text-xl group-hover:text-skin-muted  ${
             isCurrent ? "text-buttonAccentHover" : "text-white"
-          }`}
+          } `}
         />
 
         <p className="mt-1 text-xs font-semibold"> {text}</p>
       </Link>
     )
   }
+  const podcast = usePlayerPagePodcast()
 
   const renderMobileNav = () => {
     return (
       <div
         id="#e2e-navbar-mobile-container"
-        className="fixed bottom-0 left-0 z-40 flex flex-row items-center justify-between w-screen h-16 space-x-4 overflow-hidden bg-black border-t-2 border-buttonAccentHover md:hidden">
+        className="fixed bottom-0 left-0 z-40 flex flex-row items-center justify-between w-screen h-24 space-x-4 overflow-hidden bg-black border-t-2 border-buttonAccentHover md:hidden">
         <div className="flex w-full justify-evenly">
-          {renderMobileLink("/discover", faCompass, "Discover")}
+          {renderMobileLink("/discover", faPodcast, "Podcasts")}
+          {renderMobileLink("/feed", faGlobe, "Nostr Feed")}
           {renderMobileLink("/upload", faCloudArrowUp, "Upload")}
-          {renderMobileLink("/wallet", faWallet, "Wallet")}
+          {isPlaying
+            ? renderMobileLink(
+                `/player/${podcast?.gate.note.id}`,
+                faPlay,
+                "Player"
+              )
+            : null}
         </div>
       </div>
     )
