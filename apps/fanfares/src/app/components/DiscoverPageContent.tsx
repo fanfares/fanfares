@@ -192,7 +192,7 @@ function DiscoverPageContent() {
   return (
     <div className="space-y-4">
       <h1 className="font-black text-center text-gray-100 text-xl/4 md:mt-4 md:text-start md:text-4xl">
-        This Week on FanFares
+        Recent Podcasts{" "}
       </h1>
       {/* <Searchbar /> */}
       {renderLoading()}
