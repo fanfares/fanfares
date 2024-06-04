@@ -20,8 +20,6 @@ interface EpisodeCardProps {
   creatorProfilePicture?: string
 }
 
-import Image from "next/image"
-
 function EpisodeCard(props: EpisodeCardProps) {
   const { imgUrl, title, description, onClick, episodeUrl, audioUrl } = props
   const audioPlayer = useRef<HTMLAudioElement>(null)
@@ -67,6 +65,7 @@ function EpisodeCard(props: EpisodeCardProps) {
               <audio ref={audioPlayer} src={props.audioUrl} className="hidden"/>
             </section>
           ) : null} */}
+          </div>
         </div>
         {/* <div className="mt-2 h-full flex w-full flex-col items-start border-white/[10%] justify-start truncate line-clamp-2"></div> */}
         <div className="flex-col flex-1 w-40 md:w-full mt-1 space-y-2 md:px-2 relative">
