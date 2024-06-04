@@ -45,13 +45,6 @@ export function AppController(props: AppControllerProps) {
     // Fixes the Local storage rehydration issue
     useAppState.persist.rehydrate()
 
-    // WEBLN
-    requestProvider()
-      .then(accountSetWebln)
-      .catch(e => {
-        toast.error("Please download Alby or ZBD to use this app.")
-      })
-
     //TODO make this in nostrSlice
     // Nostr Account
     if ((window as any).nostr) {
