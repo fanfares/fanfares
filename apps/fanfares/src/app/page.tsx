@@ -1,4 +1,8 @@
 import { redirect } from "next/navigation"
+import Button from "./components/Button"
+import router from "next/router"
+import Link from "next/link"
+import HomePageAccordion from "./components/HomePageAccordion"
 
 export default function Home() {
   // ------------------- STATES -------------------------
@@ -14,11 +18,25 @@ export default function Home() {
   //TODO make this the Discover page
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold">Welcome to FanFares</h1>
+      <h1 className="text-4xl font-bold">FanFares</h1>
       <p className="text-base/5 mb-6">
-        A premier Nostr client optimized for podcast monetization and curation.
+        Welcome to the Internet-Money Era of Podcasting.
       </p>
-      <div className="p-6">
+      <div className="flex flex-col md:hidden gap-4">
+        <Link
+          href="/upload"
+          className={`px-1 flex items-center border border-white/20 justify-center py-2 rounded-full transition-all duration-300 ease-in-out transform text-sm font-semibold hover:bg-skin-fill gap-2`}>
+          <span className="">ZapWall your podcast</span>
+        </Link>
+        <Link
+          href="/discover"
+          className={`px-1 flex items-center border border-white/20 justify-center py-2 rounded-full transition-all duration-300 ease-in-out transform text-sm font-semibold hover:bg-skin-fill gap-2`}>
+          <span className="">Purchase ZapWalled podcasts</span>
+        </Link>
+      </div>
+
+      <HomePageAccordion />
+      <div className="p-6 hidden md:block">
         <p className="text-lg ">
           Bitcoin Lightning is the breakthrough micropayment technology many
           have eagerly awaited for decades, and now it's finally here. At
