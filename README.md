@@ -1,8 +1,8 @@
-# Nostr Playground
-An Excalibur Guild Production
+# FanFares
+An Excalibur Team Production
 
 Website:
-[nostrplayground](https://nostrplayground.com)
+[FanFares](https://fanfares.io)
 
 Relay:
 [wss://dev.nostrplayground.com](wss://dev.nostrplayground.com)
