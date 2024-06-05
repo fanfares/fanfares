@@ -20,7 +20,7 @@ export default function Home() {
   //TODO make this the Discover page
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-center gap-4 ">
+      <div className="flex items-center justify-center md:justify-start gap-4">
         <Link href="/" className="flex flex-col items-center md:hidden">
           <Image
             className=""
@@ -31,7 +31,7 @@ export default function Home() {
           />
         </Link>
         <div className="flex-col">
-          <h1 className="text-4xl font-bold">FanFares</h1>
+          <h1 className="text-4xl font-bold font-gloock">FanFares</h1>
           <p className="text-base/5">
             Welcome to the Internet-Money Era of Podcasting.
           </p>

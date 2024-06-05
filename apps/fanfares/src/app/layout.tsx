@@ -5,14 +5,15 @@ import { Inter } from "next/font/google"
 import { ContainerGrid } from "@/app/components/ContainerGrid"
 import { Providers } from "./components/Providers"
 import { DebugOverlay } from "./components/DebugOverlay"
+import { Gloock } from "next/font/google"
 
 import { config } from "@fortawesome/fontawesome-svg-core"
 import { GlobalAudioPlayer } from "./components/GlobalAudioPlayer"
 import Toast from "./components/Toast"
 config.autoAddCss = false /* eslint-disable import/first */
 
-const inter = Inter({
-  weight: ["400", "700", "900"],
+const inter = Gloock({
+  weight: ["400"],
   style: ["normal"],
   variable: "--font-inter",
   display: "swap",
@@ -39,6 +40,11 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${inter.variable}`}>
+      <head>
+        <script
+          src="https://www.unpkg.com/nostr-login@latest/dist/unpkg.js"
+          data-bunkers="login.fanfares.io, nsec.app"></script>
+      </head>
       <body className="md:flex">
         <Providers>
           {/* Debug Overlay */}
