@@ -40,11 +40,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable}`}>
       <head>
-        <script src='https://www.unpkg.com/nostr-login@latest/dist/unpkg.js'></script>
+        {/* */}
       </head>
       <body className="md:flex">
         <Providers>
-          {/* Debug Overlay */}
           {/* <DebugOverlay /> */}
           <header className="mr-4">
             <Navbar />

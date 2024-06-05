@@ -17,6 +17,8 @@ import {
   usePodcastsUnlocked,
 } from "../controllers/state/podcast-slice"
 import { toast } from "react-toastify"
+import { init as initNostrLogin } from "nostr-login"
+
 
 export interface AppControllerProps {
   children: React.ReactNode
@@ -45,36 +47,25 @@ export function AppController(props: AppControllerProps) {
     // Fixes the Local storage rehydration issue
     useAppState.persist.rehydrate()
 
-    //TODO make this in nostrSlice
-    // Nostr Account
-    if ((window as any).nostr) {
-      try {
-        const nip07: NIP07 = (window as any).nostr
-        if (!nip07 || !nip07.nip04 || !nip07.getPublicKey)
-          throw new Error("Bad NIP07")
+    // make sure this is called before any
+    // window.nostr calls are made
+    initNostrLogin({
+      bunkers: "https://login.fanfares.io",
+    })
 
-        nip07
-          .getPublicKey()
-          .then((publicKey: string) => {
-            accountSetNostr({
-              accountPublicKey: publicKey,
-              accountNIP07: nip07,
-              accountNIP04: nip07.nip04 as NIP04,
-            })
-
-            accountFetchProfile(publicKey, nostrPool, nostrRelays)
-
-            // gateFetch();
-          })
-          .catch(e => {
-            toast.error("Nostr not found - error getting public key")
-          })
-      } catch (e) {
-        toast.error("Nostr not found - error getting public key")
+    document.addEventListener('nlAuth', (e: any) => {
+      // type is login, signup or logout
+      if (e.detail.type === 'login' || e.detail.type === 'signup') {
+        // TODO make this in nostrSlice
+        // Nostr Account
+        console.log('save profile to store')
+        saveProfileToStore()// get pubkey with window.nostr and show user profile
+      } else {
+        // TODO - clear nostr store
+        // onLogout()  // clear local user data, hide profile info 
       }
-    } else {
-      toast.error("Nostr not found")
-    }
+    })
+
 
     // PRIMAL
     primalConnect()
@@ -86,6 +77,37 @@ export function AppController(props: AppControllerProps) {
       // // Cleans up connections at the end of the app
       nostrDisconnect()
       primalDisconnect()
+    }
+
+    function saveProfileToStore() {
+      if ((window as any).nostr) {
+        try {
+          const nip07: NIP07 = (window as any).nostr
+          if (!nip07 || !nip07.nip04 || !nip07.getPublicKey)
+            throw new Error("Bad NIP07")
+
+          nip07
+            .getPublicKey()
+            .then((publicKey: string) => {
+              accountSetNostr({
+                accountPublicKey: publicKey,
+                accountNIP07: nip07,
+                accountNIP04: nip07.nip04 as NIP04,
+              })
+
+              accountFetchProfile(publicKey, nostrPool, nostrRelays)
+
+              // gateFetch();
+            })
+            .catch(e => {
+              toast.error("Nostr not found - error getting public key")
+            })
+        } catch (e) {
+          toast.error("Nostr not found - error getting public key")
+        }
+      } else {
+        toast.error("Nostr not found")
+      }
     }
   }, [])
 
