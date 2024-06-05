@@ -5,6 +5,7 @@ import {
   faPlayCircle,
 } from "@fortawesome/pro-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import Image from "next/image"
 import Link from "next/link"
 import { useRef, useState } from "react"
 
@@ -15,9 +16,9 @@ interface EpisodeCardProps {
   onClick?: () => void
   episodeUrl?: string
   audioUrl?: string
+  creatorName?: string | null
+  creatorProfilePicture?: string | null
 }
-
-import Image from "next/image"
 
 function EpisodeCard(props: EpisodeCardProps) {
   const { imgUrl, title, description, onClick, episodeUrl, audioUrl } = props
@@ -34,25 +35,23 @@ function EpisodeCard(props: EpisodeCardProps) {
     }
   }
 
-  //
   return (
-    <section onClick={onClick} className="">
+    <section onClick={onClick}>
       <Link
         href={props.episodeUrl || "/player"}
-        className="e2e-podcast-tile group md:w-40 h-28 w-full cursor-pointer flex md:flex-col  md:items-center justify-start rounded-lg border border-buttonAccent p-2 transition duration-300 ease-linear md:hover:scale-105 md:hover:bg-black/[10%] md:h-64 gap-2
-
-        ">
-        <div className="flex items-start md:items-center w-20 rounded-lg md:transition md:duration-300 md:w-full group/playButton md:h-36 md:group-hover:brightness-110 relative">
+        className="e2e-podcast-tile group md:w-64 lg:w-72  w-full cursor-pointer flex md:flex-col  md:items-start justify-start rounded-lg border border-buttonAccent p-2 transition duration-300 ease-linear md:hover:scale-105 md:hover:bg-black/[10%] md:h-64 gap-2">
+        <div className="flex items-center w-20 rounded-lg md:transition md:duration-300 md:w-full group/playButton md:h-36 md:group-hover:brightness-110">
           {/* //should be IMAGE, this is just mocking */}
 
-          <Image
-            src={props.imgUrl}
-            alt={" thumbnail"}
-            width={300}
-            height={300}
-            className="border rounded-md border-buttonAccent drop-shadow-2xl"
-          />
-          {/* {props.audioUrl ? (
+          <div className="w-full h-full md:w-40 flex items-center justify-center relative border rounded-md border-buttonAccent drop-shadow-2xl mx-auto">
+            <Image
+              src={props.imgUrl}
+              alt={" thumbnail"}
+              width={300}
+              height={300}
+              className=" w-full h-full rounded-md"
+            />
+            {/* {props.audioUrl ? (
             <section>
               <div className="absolute inset-0 z-10 hover:bg-black/40 bg-skin-fill/40 flex items-center justify-center rounded-lg">
                 <FontAwesomeIcon
@@ -65,13 +64,30 @@ function EpisodeCard(props: EpisodeCardProps) {
               <audio ref={audioPlayer} src={props.audioUrl} className="hidden"/>
             </section>
           ) : null} */}
+          </div>
         </div>
         {/* <div className="mt-2 h-full flex w-full flex-col items-start border-white/[10%] justify-start truncate line-clamp-2"></div> */}
-        <div className="flex-col flex-1 w-40 md:mt-2 space-y-2 md:px-2 relative">
-          <p className="e2e-podcast-title text-base font-semiboldbold md:font-bold uppercase md:leading-[18px] md:text-sm md:w-11/12 truncate mr-auto ">
-            {/* {metadataNameSlicer()} */}
-            {props.title}
-          </p>
+        <div className="flex-col flex-1 w-40 md:w-full mt-1 space-y-2 md:px-2 relative">
+          <div className="flex items-center gap-2">
+            {" "}
+            <Image
+              src={props.creatorProfilePicture ?? props.imgUrl}
+              width={36}
+              height={36}
+              className="rounded-full"
+              alt="Creator profile image"
+            />
+            <div className="flex flex-col">
+              {" "}
+              <p className="e2e-podcast-title text-xs font-bold uppercase md:leading-[18px] md:text-sm md:w-full truncate mr-auto ">
+                {/* {metadataNameSlicer()} */}
+                {props.title}
+              </p>
+              <p className="text-xs font-thin md:text-xs/4">
+                {props.creatorName}
+              </p>
+            </div>
+          </div>
           <p className="tracking-tight text-xs/4 line-clamp-2 md:text-xs/4">
             {props.description}
           </p>

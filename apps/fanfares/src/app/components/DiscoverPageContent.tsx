@@ -20,6 +20,7 @@ import {
 import { useNostr } from "../controllers/state/nostr-slice"
 import { useRouter } from "next/navigation"
 import { GATE_SERVER } from "../controllers/nostr/nostr-defines"
+import useNostrProfile from "./UserNostrProfile"
 
 config.autoAddCss = false /* eslint-disable import/first */
 export interface DiscoveryMediaInfo extends Metadata {
@@ -117,6 +118,10 @@ function DiscoverPageContent() {
     "new",
   ]
 
+  const creatorProfile = (pubkey: string) => {
+    return useNostrProfile(pubkey)
+  }
+
   const renderContent = () => {
     if (podcastFetching) return null
     return (
@@ -125,6 +130,10 @@ function DiscoverPageContent() {
         <div className="flex md:flex-wrap md:flex-row flex-col gap-3 w-full">
           {Object.values(podcastEpisodes).map(podcast => {
             const toHide = episodeTestingTitlesFilter.includes(podcast.title)
+            const createprofile = useNostrProfile(
+              podcast.gate.note.pubkey.toString()
+            )
+            console.log("Profile: ", creatorProfile(podcast.gate.note.pubkey))
             if (toHide) return null
             return (
               <EpisodeCard
@@ -140,6 +149,8 @@ function DiscoverPageContent() {
                 title={podcast.title}
                 description={podcast.description}
                 audioUrl={podcast.audioFilepath}
+                creatorName={createprofile?.displayName || "Unknown"}
+                creatorProfilePicture={createprofile?.picture}
               />
             )
           })}

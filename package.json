@@ -35,6 +35,7 @@
     "@fortawesome/sharp-regular-svg-icons": "^6.5.0",
     "@fortawesome/sharp-solid-svg-icons": "^6.5.0",
     "@getalby/bitcoin-connect-react": "^3.5.1",
+    "@nostr-dev-kit/ndk": "^2.8.2",
     "@sendgrid/helpers": "",
     "@sendgrid/mail": "^8.1.0",
     "@sentry/nextjs": "^7.98.0",
