@@ -20,10 +20,6 @@ function withOpacity(variableName: string) {
   }
 }
 
-//Headlines, Buttons, Fanfares Logo text (Gloock)
-
-// regular texts we should use different fonts.
-
 // create a native like top bar (allow to return home)
 
 const config: Config = {
