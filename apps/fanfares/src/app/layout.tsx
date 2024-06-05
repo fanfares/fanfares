@@ -39,9 +39,11 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${inter.variable}`}>
+      <head>
+        {/* */}
+      </head>
       <body className="md:flex">
         <Providers>
-          {/* Debug Overlay */}
           {/* <DebugOverlay /> */}
           <header className="mr-4">
             <Navbar />

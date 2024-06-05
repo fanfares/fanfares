@@ -50,6 +50,7 @@
     "firebase": "^10.5.0",
     "lottie-react": "^2.4.0",
     "next": "14.0.4",
+    "nostr-login": "^1.4.4",
     "nostr-tools": "^1.17.0",
     "react": "^18",
     "react-dom": "^18",
