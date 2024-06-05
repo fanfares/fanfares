@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useAppState } from "../controllers/state/old/use-app-state"
 import { requestProvider } from "webln"
 import { NIP04, NIP07 } from "utils"
@@ -17,8 +17,6 @@ import {
   usePodcastsUnlocked,
 } from "../controllers/state/podcast-slice"
 import { toast } from "react-toastify"
-import { init as initNostrLogin } from "nostr-login"
-
 
 export interface AppControllerProps {
   children: React.ReactNode
@@ -38,34 +36,41 @@ export function AppController(props: AppControllerProps) {
     useAccountActions()
   const { nostrDisconnect, nostrPool, nostrRelays } = useNostr()
   const { podcastFetch } = usePodcastActions()
+
   // const podcastEpisodes = usePodcastEpisodes();
   // const podcastFetching = usePodcastFetching();
   // const podcastUnlocked = usePodcastsUnlocked();
   // const accountNostr = useAccountNostr();
 
+  // absolutely bizarre hack needed because nostr-login references 'document' and that breaks server-side rendering
+  useEffect(() => {
+    import('nostr-login')
+      .then(async ({ init }) => {
+        init({
+          bunkers: 'https://login.fanfares.io',
+        })
+      })
+      .catch((error) => console.log('Failed to load nostr-login', error));
+  }, []);
+
   useEffect(() => {
     // Fixes the Local storage rehydration issue
     useAppState.persist.rehydrate()
 
-    // make sure this is called before any
-    // window.nostr calls are made
-    initNostrLogin({
-      bunkers: "https://login.fanfares.io",
-    })
-
-    document.addEventListener('nlAuth', (e: any) => {
-      // type is login, signup or logout
-      if (e.detail.type === 'login' || e.detail.type === 'signup') {
-        // TODO make this in nostrSlice
-        // Nostr Account
-        console.log('save profile to store')
-        saveProfileToStore()// get pubkey with window.nostr and show user profile
-      } else {
-        // TODO - clear nostr store
-        // onLogout()  // clear local user data, hide profile info 
-      }
-    })
-
+    if (typeof window !== 'undefined') {
+      document.addEventListener('nlAuth', (e: any) => {
+        // type is login, signup or logout
+        if (e.detail.type === 'login' || e.detail.type === 'signup') {
+          // TODO make this in nostrSlice
+          // Nostr Account
+          console.log('save profile to store')
+          saveProfileToStore()// get pubkey with window.nostr and show user profile
+        } else {
+          // TODO - clear nostr store
+          // onLogout()  // clear local user data, hide profile info 
+        }
+      })
+    }
 
     // PRIMAL
     primalConnect()
