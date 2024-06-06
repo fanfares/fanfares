@@ -130,51 +130,49 @@ export default function HomePageAccordion() {
       {/* <span aria-disabled className="z-0 faq-svg-bl" />
       <span aria-disabled className="z-0 faq-svg-tr" /> */}
 
-      <SectionTitle title="About Us" />
+      <SectionTitle title="About FanFares" />
 
       <Box
         boxTitleId="e2e-how-it-works-heading"
         boxButtonId="e2e-how-it-works-box"
         boxNumber={0}
         setBoxState={setBoxState}
-        boxState={boxState}>
+        boxState={boxState}
+      >
+        <span>Freeing Creators from Advertisers through Lightning</span>
         <p
           id="e2e-how-it-works-text"
-          className="block transition-all duration-1000">
-          Bitcoin Lightning is the breakthrough micropayment technology many
-          have eagerly awaited for decades, and now it's finally here. At
-          FanFares, we're harnessing this technology to liberate creators and
-          their audiences from the influence of advertisers.
+          className="block transition-all duration-1000"
+        >
+          FanFares is the nostr-based open source platform that empowers creators and
+          audiences through Bitcoin Lightning micropayments. We're
+          revolutionizing the way content is monetized, eliminating the need for
+          intrusive ads and middlemen.
+          <br/>
+          With FanFares, podcast creators can set a small fee to purchase and unlock 
+          their content, giving listeners access to an exclusive, ad-free experience.
+          By harnessing the power of Bitcoin Lightning and Nostr, we're making
+          it easy for you to support your favorite creators directly, while
+          valuing your time and attention.
         </p>
       </Box>
       <Box boxNumber={1} setBoxState={setBoxState} boxState={boxState}>
+        <span>Nostr-based and Open Source; this is podcasting for the Internet Money Era</span>
         <p className="block transition-all duration-1000">
-          The internet has long been a catalyst for disintermediation of systems
-          where middlemen have control and siphon off the majority of the value
-          created. With Bitcoin Lightning and Nostr, we're taking another stride
-          towards empowering peer-to-peer communication and the exchange of
-          value.
+          Nostr is the new social base layer for the internet. It's a decentralized social network that allows users to own their data and control their online presence. FanFares is built on top of Nostr, leveraging its features to create a seamless experience for podcast creators and listeners.
+          <br/>
+          When you purchase a podcast episode on FanFares via Lightning, it is unlocked with your Nostr identity. Simply login with any of the convenient methods and your ready to start listening with our convenient PWA.
         </p>
       </Box>
       <Box boxNumber={2} setBoxState={setBoxState} boxState={boxState}>
         <p className="block transition-all duration-1000">
-          We understand human nature, and it is a true fact that most people are
-          basically lazy. We all tend to take the most convenient route wherever
-          possible. While we all believe in compensating creators for their
-          efforts, in a world accustomed to free access, many simply don't pay
-          unless prompted.
+          Join us in this new era of peer-to-peer communication and value
+          exchange, where creators are fairly compensated and listeners enjoy a
+          seamless, ad-free experience. Discover a world where content thrives
+          without compromise on FanFares!
         </p>
       </Box>
 
-      <Box boxNumber={3} setBoxState={setBoxState} boxState={boxState}>
-        <p className="block transition-all duration-1000">
-          On FanFares, the creators of a podcast can set a fee for accessing a
-          podcast. Listeners get to enjoy every episode without being
-          interrupted with ads. They get back those few minutes of their lives,
-          which is worth the value of the sats to most of us because our time is
-          even more scarce than bitcoin!
-        </p>{" "}
-      </Box>
     </div>
   )
 }

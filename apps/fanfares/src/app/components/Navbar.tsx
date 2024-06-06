@@ -228,10 +228,10 @@ export function Navbar() {
             src={Logo}
             alt="FanFares Logo"
           />
-          <span className="text-2xl/4 font-bold relative font-gloock mt-4">
+          <span className="text-2xl/4 relative font-gloock mt-4">
             FanFares
           </span>
-          <span className="text-lg font-medium relative font-gloock">
+          <span className="text-lg relative font-gloock">
             (Alpha)
           </span>
           {/* <Image

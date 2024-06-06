@@ -31,7 +31,7 @@ export default function Home() {
           />
         </Link>
         <div className="flex-col">
-          <h1 className="text-4xl font-bold font-gloock">FanFares</h1>
+          <h1 className="text-4xl font-gloock">FanFares</h1>
           <p className="text-base/5">
             Welcome to the Internet-Money Era of Podcasting.
           </p>
@@ -40,12 +40,12 @@ export default function Home() {
       <div className="flex flex-col md:hidden gap-4 mt-8">
         <Link
           href="/upload"
-          className={`px-1 flex items-center border border-white/20 justify-center py-2 rounded-md transition-all duration-300 ease-in-out transform text-sm font-semibold hover:bg-skin-fill gap-2`}>
+          className={`px-1 flex items-center justify-center p-2 border-2 border-buttonAccentHover rounded-full bg-buttonAccent hover:bg-buttonAccentHover transition-all duration-300 ease-in-out transform text-sm hover:bg-skin-fill gap-2 font-gloock`}>
           <span className="">ZapWall your podcast</span>
         </Link>
         <Link
           href="/discover"
-          className={`px-1 flex items-center border border-white/20 justify-center py-2 rounded-md transition-all duration-300 ease-in-out transform text-sm font-semibold hover:bg-skin-fill gap-2`}>
+          className={`px-1 flex items-center justify-center p-2 border-2 border-buttonAccentHover rounded-full bg-buttonAccent hover:bg-buttonAccentHover transition-all duration-300 ease-in-out transform text-sm hover:bg-skin-fill gap-2 font-gloock`}>
           <span className="">Purchase ZapWalled podcasts</span>
         </Link>
       </div>
