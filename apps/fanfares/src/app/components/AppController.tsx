@@ -67,7 +67,7 @@ export function AppController(props: AppControllerProps) {
           saveProfileToStore() // get pubkey with window.nostr and show user profile
         } else {
           // TODO - clear nostr store
-          // onLogout()  // clear local user data, hide profile info
+          // onLogout ()  // clear local user data, hide profile info
         }
       })
     }
