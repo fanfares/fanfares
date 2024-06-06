@@ -72,7 +72,7 @@ export function AppController(props: AppControllerProps) {
       })
     }
 
-    // PRIMAL
+    // PRIMAL .
     primalConnect()
 
     // PODCASTS
