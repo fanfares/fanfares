@@ -41,14 +41,9 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${inter.variable}`}>
-      <head>
-        <script
-          src="https://www.unpkg.com/nostr-login@latest/dist/unpkg.js"
-          data-bunkers="login.fanfares.io,nsec.app"></script>
-      </head>
+      <head>{/* */}</head>
       <body className="md:flex">
         <Providers>
-          {/* Debug Overlay */}
           {/* <DebugOverlay /> */}
           <header className="">
             <Navbar />
