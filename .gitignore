@@ -1,5 +1,7 @@
 # Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
 
+# bunfig.toml
+
 # Logs
 
 logs
@@ -97,8 +99,11 @@ web_modules/
 # dotenv environment variable files
 
 .env
+.env.development
 .env.development.local
+.env.test
 .env.test.local
+.env.production
 .env.production.local
 .env.local
 
@@ -167,3 +172,12 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.\*
+
+# Sentry Config File
+.sentryclirc
+
+# Sentry Config File
+.sentryclirc
+apps/guilds/.DS_Store
+.DS_Store
+apps/guilds/.DS_Store

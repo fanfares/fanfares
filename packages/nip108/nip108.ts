@@ -7,13 +7,13 @@ import {
 } from "nostr-tools";
 import { decrypt, encrypt, hashToKey } from "../utils/crypto";
 import { getLud16Url, isValidLud16 } from "../utils/lightning";
+import { NIP07 } from "utils";
 
 export enum NIP_108_KINDS {
   announcement = 54,
   gate = 55,
   key = 56,
 }
-
 export interface CreateNotePostBody {
   gateEvent: NostrEvent<number>;
   lud16: string;
@@ -26,18 +26,23 @@ export interface GatedNote {
     iv: string,
     cost: number,
     endpoint: string
+    debug?: boolean,
 }
 
 export interface KeyNote {
     note: NostrEvent<number>;
     iv: string,
     gate: string,
+    announcement: string,
     unlockedSecret?: string,
+    debug?: boolean,
 }
 
 export interface AnnouncementNote {
   note: NostrEvent<number>;
   gate: string,
+  type?: string,
+  debug?: boolean,
 }
 
 export function eventToGatedNote(event: NostrEvent<number>): GatedNote {
@@ -45,13 +50,15 @@ export function eventToGatedNote(event: NostrEvent<number>): GatedNote {
     const ivTag = event.tags.find(tag => tag[0] === "iv");
     const costTag = event.tags.find(tag => tag[0] === "cost");
     const endpointTag = event.tags.find(tag => tag[0] === "endpoint");
+    const debugTag = event.tags.find(tag => tag[0] === "debug");
 
     // Construct GatedNote
     const gatedNote: GatedNote = {
         note: event,
         iv: ivTag ? ivTag[1] : "",   // Assuming an empty string as default value
         cost: costTag ? parseInt(costTag[1]) : 0,   // Assuming a default value of 0
-        endpoint: endpointTag ? endpointTag[1] : ""   // Assuming an empty string as default value
+        endpoint: endpointTag ? endpointTag[1] : "",   // Assuming an empty string as default value
+        debug: debugTag ? debugTag[1] === "true" : false,
     };
 
     return gatedNote;
@@ -61,12 +68,16 @@ export function eventToKeyNote(event: NostrEvent<number>): KeyNote {
     // Extract tags
     const ivTag = event.tags.find(tag => tag[0] === "iv");
     const gateTag = event.tags.find(tag => tag[0] === "e" || tag[0] === "g");
+    const announcementTag = event.tags.find(tag => tag[0] === "announcement");
+    const debugTag = event.tags.find(tag => tag[0] === "debug");
 
     // Construct GatedNote
     const keyNote: KeyNote = {
         note: event,
         iv: ivTag ? ivTag[1] : "",
-        gate: gateTag ? gateTag[1] : ""
+        gate: gateTag ? gateTag[1] : "",
+        announcement: announcementTag ? announcementTag[1] : "",
+        debug: debugTag ? debugTag[1] === "true" : false,
     };
 
     return keyNote;
@@ -75,11 +86,13 @@ export function eventToKeyNote(event: NostrEvent<number>): KeyNote {
 export function eventToAnnouncementNote(event: NostrEvent<number>): AnnouncementNote {
   // Extract tags
   const gateTag = event.tags.find(tag => tag[0] === "e" || tag[0] === "g");
+  const debugTag = event.tags.find(tag => tag[0] === "debug");
 
   // Construct GatedNote
   const announcementNote: AnnouncementNote = {
       note: event,
-      gate: gateTag ? gateTag[1] : ""
+      gate: gateTag ? gateTag[1] : "",
+      debug: debugTag ? debugTag[1] === "true" : false,
   };
 
   return announcementNote;
@@ -88,9 +101,10 @@ export function eventToAnnouncementNote(event: NostrEvent<number>): Announcement
 export function createGatedNoteUnsigned(
   publicKey: string,
   secret: string,
-  cost: number,
+  costmSats: number,
   endpoint: string,
   payload: NostrEvent<number>,
+  debug?: boolean
 ): EventTemplate<number> {
   const noteToEncrypt = JSON.stringify(payload);
   const noteSecretKey = hashToKey(secret);
@@ -102,10 +116,52 @@ export function createGatedNoteUnsigned(
     created_at: Math.floor(Date.now() / 1000),
     tags: [
       ["iv", encryptedNote.iv],
-      ["cost", cost.toString()],
+      ["cost", costmSats.toString()],
       ["endpoint", endpoint],
+      ...(debug ? [["debug", "true"]] : [])
     ],
     content: encryptedNote.content,
+  };
+
+  return event;
+}
+
+export function createNote(
+  privateKey: string,
+  content: string,
+  kind: number = 1,
+  tags: string[][] = [],
+  debug: boolean = false,
+): NostrEvent<number> {
+
+  const event = createNoteUnsigned(
+    getPublicKey(privateKey),
+    content,
+    kind,
+    tags,
+    debug
+  )
+
+  return finishEvent(event, privateKey);
+}
+
+export function createNoteUnsigned(
+  publicKey: string,
+  content: string,
+  kind: number = 1,
+  tags: string[][] = [],
+  debug: boolean = false,
+): EventTemplate<number> {
+
+  const event = {
+    kind,
+    pubkey: publicKey,
+    created_at: Math.floor(Date.now() / 1000),
+    tags: [
+      ...tags,
+      ...(debug ? [["debug", "true"]] : []),
+    ],
+    content: content,
   };
 
   return event;
@@ -133,7 +189,9 @@ export function createGatedNote(
 export function createKeyNoteUnsigned(
   publicKey: string,
   encryptedSecret: string,
-  gatedNote: NostrEvent<number>
+  gatedNote: NostrEvent<number>,
+  announcementNote: NostrEvent<number>,
+  debug?: boolean
   ): EventTemplate<number> {
 
   const event = {
@@ -142,6 +200,8 @@ export function createKeyNoteUnsigned(
     created_at: Math.floor(Date.now() / 1000),
     tags: [
       ["e", gatedNote.id],
+      ["announcement", announcementNote.id],
+      ...(debug ? [["debug", "true"]] : [])
     ],
     content: encryptedSecret,
   };
@@ -152,11 +212,12 @@ export function createKeyNoteUnsigned(
 export async function createKeyNote(
   privateKey: string,
   secret: string,
-  gatedNote: NostrEvent<number>
+  gatedNote: NostrEvent<number>,
+  announcementNote: NostrEvent<number>,
 ): Promise<NostrEvent<number>> {
   const encryptedSecret = await nip04.encrypt(privateKey, gatedNote.pubkey, secret);
 
-  const event = createKeyNoteUnsigned(getPublicKey(privateKey), encryptedSecret, gatedNote)
+  const event = createKeyNoteUnsigned(getPublicKey(privateKey), encryptedSecret, gatedNote, announcementNote)
 
   return finishEvent(event, privateKey);
 }
@@ -164,15 +225,20 @@ export async function createKeyNote(
 export function createAnnouncementNoteUnsigned(
   publicKey: string,
   content: string,
-  gatedNote: NostrEvent<number>
+  gatedNote: NostrEvent<number>,
+  kind?: number,
+  tags?: string[][],
+  debug?: boolean
 ): EventTemplate<number> {
 
   const event = {
-    kind: NIP_108_KINDS.announcement,
+    kind: kind ?? NIP_108_KINDS.announcement,
     pubkey: publicKey,
     created_at: Math.floor(Date.now() / 1000),
     tags: [
       ["e", gatedNote.id],
+      ...(tags ?? []),
+      ...(debug ? [["debug", "true"]] : [])
     ],
     content: content,
   };
@@ -183,10 +249,20 @@ export function createAnnouncementNoteUnsigned(
 export function createAnnouncementNote(
   privateKey: string,
   content: string,
-  gatedNote: NostrEvent<number>
+  gatedNote: NostrEvent<number>,
+  kind?: number,
+  tags?: string[][],
+  debug?: boolean
 ): NostrEvent<number> {
 
-  const event = createAnnouncementNoteUnsigned(getPublicKey(privateKey), content, gatedNote)
+  const event = createAnnouncementNoteUnsigned(
+    getPublicKey(privateKey), 
+    content, 
+    gatedNote, 
+    kind, 
+    tags, 
+    debug
+  )
 
   return finishEvent(event, privateKey);
 }
@@ -213,6 +289,27 @@ export function unlockGatedNote(
 
   // 4. Parse the decrypted content into a VerifiedEvent<number> object
   return JSON.parse(decryptedContent) as NostrEvent<number>;
+}
+
+export async function unlockGatedNoteFromKeyNoteNIP07(
+  nip07: NIP07,
+  keyNote: NostrEvent<number>,
+  gatedNote: NostrEvent<number>
+): Promise<NostrEvent<number>> {
+
+  if(!nip07.nip04) throw new Error('NIP04 not found in NIP07');
+
+  let decryptedSecret = ''
+  // 1. Decrypt key using nip04
+  try {
+    decryptedSecret = await nip07.nip04.decrypt(gatedNote.pubkey, keyNote.content);
+
+  } catch (error) {
+    throw new Error(`Failed to decrypt the key: ${error}`);
+  }
+  
+  // 2. Use the decrypted secret to decrypt the gatedNote
+  return unlockGatedNote(gatedNote, decryptedSecret);
 }
 
 export async function unlockGatedNoteFromKeyNote(

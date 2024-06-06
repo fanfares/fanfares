@@ -1,24 +1,62 @@
-import "./globals.css";
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Navbar } from "@/app/components/Navbar"
+import "./globals.css"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import { ContainerGrid } from "@/app/components/ContainerGrid"
+import { Providers } from "./components/Providers"
+import { DebugOverlay } from "./components/DebugOverlay"
+import { Gloock } from "next/font/google"
 
-const inter = Inter({ subsets: ["latin"] });
+import { config } from "@fortawesome/fontawesome-svg-core"
+import { GlobalAudioPlayer } from "./components/GlobalAudioPlayer"
+import Toast from "./components/Toast"
+import MobileTopNavbar from "./components/MobileTopNavbar"
+config.autoAddCss = false /* eslint-disable import/first */
+
+const inter = Gloock({
+  weight: ["400"],
+  style: ["normal"],
+  variable: "--font-inter",
+  display: "swap",
+  subsets: ["latin"],
+})
 
 export const metadata: Metadata = {
   title: "Fanfares",
   description: "Podcasting built on Nostr",
-};
+  openGraph: {
+    title: "Fanfares",
+    description: "Podcasting built on Nostr",
+  },
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
+  // Layout should define
+  // - size of section
+  // - padding of contents
+
   return (
-    <html lang="en">
-      <body className={`${inter.className}`}>
-        {children}
+    <html lang="en" className={`${inter.variable}`}>
+      <head>{/* */}</head>
+      <body className="md:flex">
+        <Providers>
+          {/* <DebugOverlay /> */}
+          <header className="">
+            <Navbar />
+            <MobileTopNavbar isLoggedIn={false} pubkey="123" />
+          </header>
+          {/* Content */}
+          <ContainerGrid className="block md:ml-44 md:h-screen pb-32 md:pb-0">
+            <Toast />
+            {children}
+          </ContainerGrid>
+          <GlobalAudioPlayer />
+        </Providers>
       </body>
     </html>
-  );
+  )
 }

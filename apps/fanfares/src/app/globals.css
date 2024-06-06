@@ -1,34 +1,76 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Gloock&display=swap");
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --color-base: 255, 255, 255; /* #ffffff */
+  --color-muted: 194, 202, 255; /* #c2caf5 */
+  --color-inverted: 73, 74, 110; /* #494A6E */
+  --color-fill: 57, 59, 77; /* #393B4D */
+  --button-default: 80, 70, 229; /* #5046E5 */
+  --button-disabled: 65, 67, 93; /* #41435D */
+  --button-hover: 255, 255, 255; /* #ffffff */
+  --button-accent: 73, 77, 104; /* #494D68 */
+  --button-active: 234, 236, 247 /* #EAECF7 */;
+  --button-accent-hover: 95, 112, 255; /* #463EDC */
+  --button-butted: 147, 156, 227; /* #929ce3 */
+  --card-color: hsla(0, 0%, 9%, 0.2);
+  --color-comment: 113, 204, 231; /*#71cce7*/
+  --color-retweet: #71e788;
+  --color-like: 231, 113, 138; /*#e7718a*/
+  --color-zap: #e6e771;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+@font-face {
+  font-family: "Gloock";
+  src: url("./assets/fonts/Gloock-Regular.ttf") format("truetype");
+}
+html {
+  @apply h-screen overflow-hidden text-skin-base font-objective;
+
+  background-color: hsla(0, 0%, 0%, 1);
+  background-image: radial-gradient(
+      at 0% 24%,
+      hsla(240, 32%, 23%, 0.5) 0px,
+      transparent 50%
+    ),
+    radial-gradient(at 0% 100%, hsla(240, 32%, 23%, 0.64) 0px, transparent 50%),
+    radial-gradient(at 51% 0%, hsla(240, 32%, 23%, 1) 0px, transparent 50%),
+    radial-gradient(
+      at 100% 100%,
+      hsla(240, 32%, 23%, 0.67) 0px,
+      transparent 50%
+    );
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.zap-color {
+  @apply text-yellow-400;
+}
+.comment-color {
+  @apply text-blue-400;
+}
+.retweet-color {
+  @apply text-green-400;
+}
+.like-color {
+  @apply text-red-400;
 }
 
-body {
-  background: black;
-  color: white;
+#e2e-navbar-mobile-container {
+  background-color: hsla(0, 0%, 0%, 1);
+  background-image: radial-gradient(
+      at 0% 24%,
+      hsla(240, 32%, 23%, 0.5) 0px,
+      transparent 50%
+    ),
+    radial-gradient(at 0% 100%, hsla(240, 32%, 23%, 0.64) 0px, transparent 50%),
+    radial-gradient(at 51% 0%, hsla(240, 32%, 23%, 1) 0px, transparent 50%),
+    radial-gradient(
+      at 100% 100%,
+      hsla(240, 32%, 23%, 0.67) 0px,
+      transparent 50%
+    );
 }
 
 /* width */
@@ -38,10 +80,8 @@ body {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: black;
-}
-
-/* Handle */
+  background: transparent;
+} /* Handle */
 ::-webkit-scrollbar-thumb {
   background: #2b2b2b;
   border-radius: 10px;
