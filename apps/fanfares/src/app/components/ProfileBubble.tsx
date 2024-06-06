@@ -14,6 +14,10 @@ export function ProfileBuble() {
     router.push(`/p/${accountProfile.pubkey}`)
   }
 
+  {
+    console.log(accountProfile)
+  }
+
   return (
     <div
       onClick={goToProfilePage}
@@ -38,7 +42,7 @@ export function ProfileBuble() {
       <div className="flex flex-col items-start w-[100px] font-thin">
         <p className="text-[0.7rem] truncate">{accountProfile.name}</p>
         <p className="text-[0.6rem] font-thin  text-skin-muted truncate w-4/5 line-clamp-2">
-          {accountProfile.lud16}
+          {accountProfile.nip05}
         </p>
       </div>
     </div>
