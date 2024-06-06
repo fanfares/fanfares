@@ -117,7 +117,7 @@ function Profile() {
           <p className="">{loadedProfile?.display_name ?? ""}</p>
         </div>
         <p className="text-buttonDisabled text-xs/4">
-          {loadedProfile?.lud16 ?? "asdasd"}
+          {loadedProfile?.lud16 ?? ""}
         </p>
         <p className="text-buttonDisabled text-xs/4">
           {loadedProfile?.nip05 ?? ""}
