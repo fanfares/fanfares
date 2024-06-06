@@ -47,7 +47,7 @@ export function AppController(props: AppControllerProps) {
     import("nostr-login")
       .then(async ({ init }) => {
         init({
-          bunkers: "login.fanfares.io",
+          bunkers: "nsec.app,login.fanfares.io",
         })
       })
       .catch(error => console.log("Failed to load nostr-login", error))
