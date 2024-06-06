@@ -5,14 +5,16 @@ import { Inter } from "next/font/google"
 import { ContainerGrid } from "@/app/components/ContainerGrid"
 import { Providers } from "./components/Providers"
 import { DebugOverlay } from "./components/DebugOverlay"
+import { Gloock } from "next/font/google"
 
 import { config } from "@fortawesome/fontawesome-svg-core"
 import { GlobalAudioPlayer } from "./components/GlobalAudioPlayer"
 import Toast from "./components/Toast"
+import MobileTopNavbar from "./components/MobileTopNavbar"
 config.autoAddCss = false /* eslint-disable import/first */
 
-const inter = Inter({
-  weight: ["400", "700", "900"],
+const inter = Gloock({
+  weight: ["400"],
   style: ["normal"],
   variable: "--font-inter",
   display: "swap",
@@ -39,14 +41,13 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${inter.variable}`}>
-      <head>
-        {/* */}
-      </head>
+      <head>{/* */}</head>
       <body className="md:flex">
         <Providers>
           {/* <DebugOverlay /> */}
-          <header className="mr-4">
+          <header className="">
             <Navbar />
+            <MobileTopNavbar isLoggedIn={false} pubkey="123" />
           </header>
           {/* Content */}
           <ContainerGrid className="block md:ml-44 md:h-screen pb-32 md:pb-0">

@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Gloock&display=swap");
 
 :root {
   --color-base: 255, 255, 255; /* #ffffff */
@@ -15,12 +16,16 @@
   --button-accent-hover: 95, 112, 255; /* #463EDC */
   --button-butted: 147, 156, 227; /* #929ce3 */
   --card-color: hsla(0, 0%, 9%, 0.2);
-  --color-comment: 113,204,231; /*#71cce7*/
+  --color-comment: 113, 204, 231; /*#71cce7*/
   --color-retweet: #71e788;
-  --color-like : 231,113,138; /*#e7718a*/
-  --color-zap: #e6e771; 
+  --color-like: 231, 113, 138; /*#e7718a*/
+  --color-zap: #e6e771;
 }
 
+@font-face {
+  font-family: "Gloock";
+  src: url("./assets/fonts/Gloock-Regular.ttf") format("truetype");
+}
 html {
   @apply h-screen overflow-hidden text-skin-base font-objective;
 
@@ -51,7 +56,6 @@ html {
 .like-color {
   @apply text-red-400;
 }
-
 
 #e2e-navbar-mobile-container {
   background-color: hsla(0, 0%, 0%, 1);

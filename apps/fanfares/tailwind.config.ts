@@ -20,6 +20,8 @@ function withOpacity(variableName: string) {
   }
 }
 
+// create a native like top bar (allow to return home)
+
 const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -30,8 +32,9 @@ const config: Config = {
     extend: {
       fontFamily: {
         objective: ["Objective", "sans-serif"],
-        heading: ["Catamaran", "sans-serif"],
-        standard: ["Yrsa", "sans-serif"],
+        // heading: ["Catamaran", "sans-serif"],
+        // standard: ["Yrsa", "sans-serif"],
+        gloock: ["Gloock", "sans-serif"], // Adding Gloock
       },
       textColor: {
         skin: {
@@ -40,7 +43,6 @@ const config: Config = {
           inverted: withOpacity("--color-inverted")({
             opacityValue: 100,
           }),
-          
         },
       },
       backgroundColor: {

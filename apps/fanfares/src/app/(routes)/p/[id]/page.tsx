@@ -26,7 +26,7 @@ function Profile() {
   const primalActions = usePrimalActions()
   const primalProfiles = usePrimalProfiles()
   const primalNoteStats = usePrimalNoteStats()
-  const primalSocket = usePrimalSocket();
+  const primalSocket = usePrimalSocket()
   const primalIsFetching = usePrimalIsFetching()
   const accountProfile = useAccountProfile()
   const [editProfileModalOn, setEditProfileModalOn] = useState(false)
@@ -92,13 +92,11 @@ function Profile() {
   // ------------ USE EFFCTS ------------
 
   useEffect(() => {
-      if (primalSocket && !fetched && !primalIsFetching){
+    if (primalSocket && !fetched && !primalIsFetching) {
       primalActions.primalGetUserFeed(pubkeyFromURL)
       setFetched(true)
     }
   }, [primalSocket, primalIsFetching, fetched, pubkeyFromURL])
-
-
 
   return (
     <section className="container flex flex-col">
@@ -111,8 +109,10 @@ function Profile() {
           />
         </div>
         {renderEditor()}
+        {/* TODO Add followers and following */}
+        {/* <div className="absolute left-32 top-10">Followers / Following</div> */}
       </div>
-      <div className="mt-36 w-full">
+      <div className="mt-28 w-full">
         <div className="text-buttonDefault">
           <p className="">{loadedProfile?.display_name ?? ""}</p>
         </div>

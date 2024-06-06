@@ -1,4 +1,10 @@
 import { redirect } from "next/navigation"
+import Button from "./components/Button"
+import router from "next/router"
+import Link from "next/link"
+import HomePageAccordion from "./components/HomePageAccordion"
+import Image from "next/image"
+import Logo from "./assets/logo.svg"
 
 export default function Home() {
   // ------------------- STATES -------------------------
@@ -14,11 +20,38 @@ export default function Home() {
   //TODO make this the Discover page
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold">Welcome to FanFares</h1>
-      <p className="text-base/5 mb-6">
-        A premier Nostr client optimized for podcast monetization and curation.
-      </p>
-      <div className="p-6">
+      <div className="flex items-center justify-center md:justify-start gap-4">
+        <Link href="/" className="flex flex-col items-center md:hidden">
+          <Image
+            className=""
+            width={70}
+            height={70}
+            src={Logo}
+            alt="FanFares Logo"
+          />
+        </Link>
+        <div className="flex-col">
+          <h1 className="text-4xl font-gloock">FanFares</h1>
+          <p className="text-base/5">
+            Welcome to the Internet-Money Era of Podcasting.
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-col md:hidden gap-4 mt-8">
+        <Link
+          href="/upload"
+          className={`px-1 flex items-center justify-center p-2 border-2 border-buttonAccentHover rounded-full bg-buttonAccent hover:bg-buttonAccentHover transition-all duration-300 ease-in-out transform text-sm hover:bg-skin-fill gap-2 font-gloock`}>
+          <span className="">ZapWall your podcast</span>
+        </Link>
+        <Link
+          href="/discover"
+          className={`px-1 flex items-center justify-center p-2 border-2 border-buttonAccentHover rounded-full bg-buttonAccent hover:bg-buttonAccentHover transition-all duration-300 ease-in-out transform text-sm hover:bg-skin-fill gap-2 font-gloock`}>
+          <span className="">Purchase ZapWalled podcasts</span>
+        </Link>
+      </div>
+
+      <HomePageAccordion />
+      {/* <div className="p-6 hidden md:block">
         <p className="text-lg ">
           Bitcoin Lightning is the breakthrough micropayment technology many
           have eagerly awaited for decades, and now it's finally here. At
@@ -47,7 +80,7 @@ export default function Home() {
           which is worth the value of the sats to most of us because our time is
           even more scarce than bitcoin!
         </p>
-      </div>
+      </div> */}
     </div>
   )
 }
