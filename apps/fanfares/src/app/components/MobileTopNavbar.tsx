@@ -2,18 +2,11 @@
 import { faHomeAlt, faKey } from "@fortawesome/pro-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import Image from "next/image"
 import Logo from "../assets/logo.svg"
-import router from "next/router"
-import { FaKey } from "react-icons/fa"
-import {
-  useAccountActions,
-  useAccountProfile,
-} from "../controllers/state/account-slice"
-import { NIP04, NIP07 } from "utils"
-import { nostrPool, nostrRelays } from "../controllers/nostr/nostr-defines"
-import { toast } from "react-toastify"
+
+import { useAccountProfile } from "../controllers/state/account-slice"
 
 export interface MobileTopNavbarProps {
   isLoggedIn?: boolean

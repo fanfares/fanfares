@@ -44,30 +44,30 @@ export function AppController(props: AppControllerProps) {
 
   // absolutely bizarre hack needed because nostr-login references 'document' and that breaks server-side rendering
   useEffect(() => {
-    import('nostr-login')
+    import("nostr-login")
       .then(async ({ init }) => {
         init({
-          bunkers: 'https://login.fanfares.io',
+          bunkers: "login.fanfares.io",
         })
       })
-      .catch((error) => console.log('Failed to load nostr-login', error));
-  }, []);
+      .catch(error => console.log("Failed to load nostr-login", error))
+  }, [])
 
   useEffect(() => {
     // Fixes the Local storage rehydration issue
     useAppState.persist.rehydrate()
 
-    if (typeof window !== 'undefined') {
-      document.addEventListener('nlAuth', (e: any) => {
+    if (typeof window !== "undefined") {
+      document.addEventListener("nlAuth", (e: any) => {
         // type is login, signup or logout
-        if (e.detail.type === 'login' || e.detail.type === 'signup') {
+        if (e.detail.type === "login" || e.detail.type === "signup") {
           // TODO make this in nostrSlice
           // Nostr Account
-          console.log('save profile to store')
-          saveProfileToStore()// get pubkey with window.nostr and show user profile
+          console.log("save profile to store")
+          saveProfileToStore() // get pubkey with window.nostr and show user profile
         } else {
           // TODO - clear nostr store
-          // onLogout()  // clear local user data, hide profile info 
+          // onLogout()  // clear local user data, hide profile info
         }
       })
     }
