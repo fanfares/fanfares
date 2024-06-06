@@ -1,11 +1,19 @@
+"use client"
 import { faHomeAlt, faKey } from "@fortawesome/pro-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import Image from "next/image"
 import Logo from "../assets/logo.svg"
 import router from "next/router"
 import { FaKey } from "react-icons/fa"
+import {
+  useAccountActions,
+  useAccountProfile,
+} from "../controllers/state/account-slice"
+import { NIP04, NIP07 } from "utils"
+import { nostrPool, nostrRelays } from "../controllers/nostr/nostr-defines"
+import { toast } from "react-toastify"
 
 export interface MobileTopNavbarProps {
   isLoggedIn?: boolean
@@ -14,6 +22,23 @@ export interface MobileTopNavbarProps {
 }
 
 function MobileTopNavbar(props: MobileTopNavbarProps) {
+  const accountProfile = useAccountProfile()
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  const handleLogin = () => {
+    document.dispatchEvent(new CustomEvent("nlLaunch", { detail: "welcome" }))
+  }
+
+  if (typeof window !== "undefined") {
+    document.addEventListener("nlAuth", (e: any) => {
+      if (e.detail.type === "logout") {
+        setIsLoggedIn(false)
+      }
+      if (e.detail.type === "login") {
+        setIsLoggedIn(true)
+      }
+    })
+  }
   return (
     <div className="grid-cols-3 grid  items-center justify-between md:hidden py-3 px-4 w-full drop-shadow-md border-b-2 border-buttonAccentHover backdrop-blur-md">
       <Link href="/">
@@ -32,18 +57,18 @@ function MobileTopNavbar(props: MobileTopNavbarProps) {
         />
         <p className="text-3xl font-gloock ">FanFares</p>
       </div>
-      {props.isLoggedIn ? (
-        <Link className="ml-auto" href={`/p/${props.pubkey}`}>
+      {accountProfile && isLoggedIn ? (
+        <Link className="ml-auto" href={`/p/${accountProfile.pubkey}`}>
           <Image
-            className=""
+            className="rounded-full"
             width={40}
             height={40}
-            src={Logo}
+            src={accountProfile?.picture}
             alt="FanFares Logo"
           />{" "}
         </Link>
       ) : (
-        <button onClick={props.onClick}>
+        <button onClick={handleLogin}>
           <FontAwesomeIcon
             icon={faKey}
             className="text-white w-6 h-6 ml-auto"
