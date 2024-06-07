@@ -191,10 +191,10 @@ function DiscoverPageContent() {
           {Object.values(podcastEpisodes).map((podcast) => {
             const toHide = episodeTestingTitlesFilter.includes(podcast.title);
             if (toHide) return null;
-
+            const defaultProfilePicture = "https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/default_profile_dark.png"
             const profile = profiles[podcast.announcement.note.pubkey];
             const username = profile && profile.name  
-            const creatorPicture = profile ? profile.picture : 'https://placehold.co/500x500';
+            const creatorPicture = profile.picture || defaultProfilePicture;
             const display_name = profile && profile.display_name;
 
             return (
