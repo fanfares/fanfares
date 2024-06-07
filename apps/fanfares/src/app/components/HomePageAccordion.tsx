@@ -116,7 +116,7 @@ function Box(props: HomePageAccordionProps) {
 
 const SectionTitle = (props: { title: string }) => {
   return (
-    <h2 className="font-font1 font-gloock mx-auto w-40 text-center text-2xl font-black drop-shadow-2xl md:w-full md:text-center md:text-5xl mb-4">
+    <h2 className="font-font1 font-gloock mx-auto w-40 text-center text-2xl font-gloock drop-shadow-2xl md:w-full md:text-center md:text-5xl mb-4">
       {props.title}
     </h2>
   )
