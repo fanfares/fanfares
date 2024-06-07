@@ -194,7 +194,7 @@ function DiscoverPageContent() {
             const defaultProfilePicture = "https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/default_profile_dark.png"
             const profile = profiles[podcast.announcement.note.pubkey];
             const username = profile && profile.name  
-            const creatorPicture = profile.picture || defaultProfilePicture;
+            const creatorPicture = profile?.picture || defaultProfilePicture;
             const display_name = profile && profile.display_name;
 
             return (
@@ -217,44 +217,6 @@ function DiscoverPageContent() {
     );
   };
 
-  //T-32 Make into a grid
-  // const renderPodcastTileGrid = () => {
-  //   return (
-  //     // <div className="grid justify-center grid-cols-2 gap-3 mx-auto mt-4 sm:flex-wrap sm:flex md:justify-start md:gap-4 lg:mx-0">
-  //     <div className="container flex flex-wrap justify-center gap-3 mt-4 ">
-  //       {filteredPodcasts.map(MediaMetadata => {
-  //         return renderPodcastTile({
-  //           tileKey: MediaMetadata.media_key,
-  //           metadata: MediaMetadata,
-  //           playerUrl: getPlayerUrl(MediaMetadata.media_key),
-  //         })
-  //       })}
-  //       {renderEpisodeCard()}
-  //       {renderEpisodeCard()}
-
-  //       {renderEpisodeCard()}
-  //       {renderEpisodeCard()}
-  //       {renderEpisodeCard()}
-  //       {renderEpisodeCard()}
-  //       {renderEpisodeCard()}
-  //     </div>
-  //   )
-  // }
-
-  // const renderPodcastTile = (props: DiscoveryMediaTileProps) => {
-  //   const id = `e2e-${props.tileKey}`
-  //   return (
-  //     <div key={props.tileKey} id={id} className="">
-  //       {/* <LazyLoad placeholder={<DiscoveryMediaTileLoading />}> */}
-  //       <DiscoveryMediaTile
-  //         tileKey={props.tileKey}
-  //         metadata={props.metadata}
-  //         playerUrl={props.playerUrl}
-  //       />
-  //       {/* </LazyLoad> */}
-  //     </div>
-  //   )
-  // }
 
   return (
     <div className="space-y-4">
