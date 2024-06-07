@@ -14,9 +14,6 @@ export function ProfileBuble() {
     router.push(`/p/${accountProfile.pubkey}`)
   }
 
-  {
-    console.log(accountProfile)
-  }
 
   return (
     <div

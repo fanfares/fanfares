@@ -21,6 +21,13 @@ import { useNostr } from "../controllers/state/nostr-slice"
 import { useRouter } from "next/navigation"
 import { GATE_SERVER } from "../controllers/nostr/nostr-defines"
 
+import { NIP04, NIP07, eventToNostrProfile } from "utils"
+import { useAccountActions } from "../controllers/state/account-slice"
+import { SimplePool } from "nostr-tools"
+
+
+
+
 config.autoAddCss = false /* eslint-disable import/first */
 export interface DiscoveryMediaInfo extends Metadata {
   media_key: string
@@ -42,8 +49,14 @@ function DiscoverPageContent() {
   const { podcastFetch } = usePodcastActions()
   const podcastEpisodes = usePodcastEpisodes()
   const podcastFetching = usePodcastFetching()
+  const [profiles, setProfiles] = useState<{ [key: string]: Profile }>({});
 
-  console.log("Render Podcasts -- " + Object.values(podcastEpisodes).length)
+  interface Profile {
+    name: string;
+    picture: string;
+    display_name:string;
+  }
+  
 
   useEffect(() => {
     if (nostrPool && nostrRelays) {
@@ -117,39 +130,92 @@ function DiscoverPageContent() {
     "new",
   ]
 
+
+  const accountFetchProfile = async (
+    publicKey: string,
+    pool: SimplePool,
+    relays: string[]
+  ): Promise<Profile> => {
+    try {
+      const profileEvent = await pool.get(relays, {
+        kinds: [0],
+        limit: 1,
+        authors: [publicKey],
+      });
+  
+      if (!profileEvent) throw new Error('No profile event found');
+  
+      console.log(JSON.stringify(profileEvent));
+      return eventToNostrProfile(publicKey, profileEvent);
+    } catch (e) {
+      throw new Error(`Failed to fetch profile - ${e}`);
+    }
+  };
+
+
+
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      const profilesData: { [key: string]: Profile } = {};
+      for (const podcast of Object.values(podcastEpisodes)) {
+        const toHide = episodeTestingTitlesFilter.includes(podcast.title);
+        if (!toHide) {
+          try {
+            const profileEvent = await accountFetchProfile(
+              podcast.announcement.note.pubkey,
+              nostrPool,
+              nostrRelays
+            );
+            profilesData[podcast.announcement.note.pubkey] = profileEvent;
+          } catch (e) {
+            if (e instanceof Error)
+            console.error(
+              `Failed to fetch profile for ${podcast.announcement.note.pubkey} - ${e.message}`
+            );
+          }
+        }
+      }
+      setProfiles(profilesData);
+    };
+
+    if (!podcastFetching) {
+      fetchProfiles();
+    }
+  }, [podcastEpisodes, podcastFetching, nostrPool, nostrRelays]);
+
   const renderContent = () => {
-    if (podcastFetching) return null
+    if (podcastFetching) return null;
     return (
-      // <div className="flex items-center justify-center w-full pb-10 mx-auto rounded lg:justify-start">
       <div className="container flex pb-8">
         <div className="flex md:flex-wrap md:flex-row flex-col gap-3 w-full">
-          {Object.values(podcastEpisodes).map(podcast => {
-            const toHide = episodeTestingTitlesFilter.includes(podcast.title)
-            if (toHide) return null
+          {Object.values(podcastEpisodes).map((podcast) => {
+            const toHide = episodeTestingTitlesFilter.includes(podcast.title);
+            if (toHide) return null;
+
+            const profile = profiles[podcast.announcement.note.pubkey];
+            const username = profile && profile.name  
+            const creatorPicture = profile ? profile.picture : 'https://placehold.co/500x500';
+            const display_name = profile && profile.display_name;
+
             return (
               <EpisodeCard
                 key={podcast.gate.note.id}
                 onClick={() => {
-                  router.push(`/player/${podcast.gate.note.id}`)
-                  // if (!podcast.audioFilepath) {
-                  //   podcastUnlock(
-                  //     podcast.gate.note.id
-                  //   )
-                  // }
+                  router.push(`/player/${podcast.gate.note.id}`);
                 }}
                 imgUrl={podcast.imageFilepath}
                 title={podcast.title}
                 description={podcast.description}
                 audioUrl={podcast.audioFilepath}
+                creatorName={display_name}
+                creatorProfilePicture={creatorPicture}
               />
-            )
+            );
           })}
         </div>
       </div>
-
-      // </div>
-    )
-  }
+    );
+  };
 
   //T-32 Make into a grid
   // const renderPodcastTileGrid = () => {
