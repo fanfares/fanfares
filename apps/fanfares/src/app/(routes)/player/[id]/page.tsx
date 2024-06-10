@@ -95,7 +95,9 @@ export default function PlayerPage() {
       !accountNostr.accountNIP07 ||
       !accountNostr.accountPublicKey
     ) {
-      toast.error("You need to login first")
+      // toast.error("You need to login first")
+      document.dispatchEvent(new CustomEvent("nlLaunch", { detail: "welcome" }))
+
       return
     }
 
