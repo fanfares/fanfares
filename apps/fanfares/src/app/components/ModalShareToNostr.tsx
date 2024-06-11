@@ -19,23 +19,15 @@ function ModalShareToNostr({
   creatorProfile,
 }: ModalShareToNostrProps) {
   return (
-    <div className="w-screen md:w-full px-2 py-1 text-center flex justify-center flex-col">
-      <h1 className="font-gloock text-lg">Share this episode</h1>
-      <div className="flex justify-center items-center ">
-        <a
-          href={`https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`}
-          target="_blank"
-          rel="noreferrer"
-          className="m-2">
-          Facebook
-        </a>
-      </div>
+    <div className="w-screen md:w-full md:max-w-2xl px-2 py-1 text-center flex justify-center flex-col">
+      <h1 className="font-gloock text-lg mb-4">Share this episode</h1>
+
       <div className="flex flex-col gap-4">
         <div
           id="shareModal"
           className="bg-transparent text-start border-2 border-buttonAccentHover p-2 rounded-md focus:outline-none transition duration-300 ease-in-out overflow-hidden h-40"
           contentEditable>
-          This is a great episode podcast from{" "}
+          This is a great podcast episode from{" "}
           <Link
             className="text-blue-500 cursor-pointer"
             href={`https://fanfares.io/p/${creatorProfile}`}>
@@ -54,16 +46,15 @@ function ModalShareToNostr({
             label="Share"
             type="button"
             className="w-full h-10 text-white rounded-md cursor-pointer
-      hover:bg-skin-button-accent transition duration-300 ease-in-out"
+       transition duration-300 ease-in-out hover:bg-skin-button-default bg-skin-button-accent"
             id="share"></Button>
-          <button
+          <Button
             onClick={onCancel}
             type="button"
-            className="w-full h-10 bg-red-500 text-white rounded-md cursor-pointer
-      hover:bg-red-700 transition duration-300 ease-in-out"
-            id="share">
-            Cancel
-          </button>
+            label="Cancel"
+            className="w-full h-10  text-white rounded-md cursor-pointer
+      hover:bg-red-700 bg-skin-button-accent transition duration-300 ease-in-out"
+            id="share"></Button>
         </div>
       </div>
     </div>

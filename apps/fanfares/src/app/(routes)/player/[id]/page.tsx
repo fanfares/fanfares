@@ -258,6 +258,7 @@ export default function PlayerPage() {
             creator={creator ? creator.name : ""}
             onCancel={() => setShareModalOn(false)}
             onShare={handleShareEpisode}
+            creatorProfile={creator ? creator.pubkey : ""}
           />
         </Modal>
         <div className="flex md:flex-row flex-col md:items-start md:w-full md:max-w-5xl md:gap-8">
