@@ -164,6 +164,22 @@ export default function PlayerPage() {
     )
   }
 
+  //   {
+  //   "id": <32-bytes lowercase hex-encoded sha256 of the serialized event data>,
+  //   "pubkey": <32-bytes lowercase hex-encoded public key of the event creator>,
+  //   "created_at": <unix timestamp in seconds>,
+  //   "kind": <integer between 0 and 65535>,
+  //  "tags": [
+  //    ["e", "5c83da77af1dec6d7289834998ad7aafbd9e2191396d75ec3cc27f5a77226f36", "wss://nostr.example.com"],
+  //    ["p", "f7234bd4c1394dda46d09f35bd384dd30cc552ad5541990f98844fb06676e9ca"],
+  //   ["a", "30023:f7234bd4c1394dda46d09f35bd384dd30cc552ad5541990f98844fb06676e9ca:abcd", "wss://nostr.example.com"],
+  //
+
+  //  ],
+  //   "content": <arbitrary string>,
+  //   "sig": <64-bytes lowercase hex of the signature of the sha256 hash of the serialized event data, which is the same as the "id" field>
+  // }
+
   const handleShareEpisode = () => {
     console.log("Shared")
   }

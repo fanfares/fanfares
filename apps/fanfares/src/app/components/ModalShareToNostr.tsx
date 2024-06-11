@@ -64,7 +64,7 @@ function ModalShareToNostr({
 export default ModalShareToNostr
 
 //TODOS:
-//[] Link to the podcast
+//[x] Link to the podcast
 //[] Create the image preview of the episode
 //[] #FanFares as T tag
 //[] Hex pub to the P tag to reference the creator
