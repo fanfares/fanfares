@@ -272,7 +272,7 @@ export default function PlayerPage() {
                 {podcast.title}
               </p>
               <p className="lg:text-base lg:font-bold truncate w-80">
-                {creator ? creator.name : podcast.announcement.note.pubkey}
+                {creator ? creator.display_name : podcast.announcement.note.pubkey}
               </p>
 
               <div

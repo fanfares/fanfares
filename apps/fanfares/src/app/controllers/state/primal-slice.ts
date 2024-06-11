@@ -59,7 +59,7 @@ export const createPrimalSlice: StateCreator<
   // -------------- PRIMAL SEND ----------------
   const primalSend = (message: string) => {
     const ws = get().primalSocket;
-    console.log('ws message',message,ws)
+    // console.log('ws message',message,ws)
 
     if (!ws) return;
 
@@ -218,7 +218,7 @@ export const createPrimalSlice: StateCreator<
     const socket = new WebSocket(PRIMAL_CACHE);
     socket.readyState;
     socket.onopen = () => {
-      console.log("Primal connected", socket);
+      // console.log("Primal connected", socket);
       set({ primalSocket: socket });
 
       // First round of Data
