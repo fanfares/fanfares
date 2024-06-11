@@ -13,11 +13,11 @@ export function AlbyBanner(props: AlbyBannerProps) {
   return (
     <div
       {...rest}
-      className={`px-1 flex items-center border border-white/0 justify-center py-2 transition-all duration-300 ease-in-out transform text-sm hover:bg-skin-fill font-gloock gap-2 ${className}`}
-      style={{ backgroundColor: "black" }}
+      className={`px-1 flex items-center border border-white/0 justify-center py-2 transition-all duration-300 ease-in-out transform text-sm hover:bg-skin-fill gap-2 ${className}`}
+      style={{ backgroundColor: "#ffdd00", color: "black" }}
       >
-        Please only use Alby for payments!
-      <img src="https://getalby.com/assets/alby-logo-head-white-bd4a7729498faefdb4d9302fbebfeaef3f309dace4ca5107ba3a0bad56b87911.svg" className={"h-8"}/>
+        Alby is currently the only supported wallet. More coming soon!
+      <img src="https://getalby.com/assets/alby-logo-head-da6c4355b69a3baac3fc306d47741c9394a825e54905ef67c5dd029146b89edf.svg" className={"h-8"}/>
       <span className="">{label}</span>
     </div>
   )
