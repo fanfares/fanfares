@@ -34,8 +34,8 @@ function MobileTopNavbar(props: MobileTopNavbarProps) {
   }
   return (
     <div className="flex items-center justify-between md:hidden py-3 px-4 w-full drop-shadow-md border-b-2 border-buttonAccentHover backdrop-blur-md">
-      <Link href="/" className="w-7 mr-auto">
-        <FontAwesomeIcon icon={faHomeAlt} className="text-white" />
+      <Link href="/" className="w-7 h-7">
+        <FontAwesomeIcon icon={faHomeAlt} className="text-white w-7" />
       </Link>
       <div className="mx-auto flex gap-2 items-center">
         <Image
