@@ -1,14 +1,11 @@
-import { ButtonHTMLAttributes, ReactNode } from "react"
+import { HTMLAttributes, ReactNode } from "react"
 
-export interface AlbyBannerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  label: string | ReactNode
+export interface AlbyBannerProps extends HTMLAttributes<HTMLDivElement> {
   className?: string
-  style?: string
-  icon?: ReactNode
 }
 
 export function AlbyBanner(props: AlbyBannerProps) {
-  const { label, className, icon, ...rest } = props
+  const { className, ...rest } = props
 
   return (
     <div
@@ -18,7 +15,6 @@ export function AlbyBanner(props: AlbyBannerProps) {
       >
         Alby is currently the only supported wallet. More coming soon!
       <img src="https://getalby.com/assets/alby-logo-head-da6c4355b69a3baac3fc306d47741c9394a825e54905ef67c5dd029146b89edf.svg" className={"h-8"}/>
-      <span className="">{label}</span>
     </div>
   )
 }
