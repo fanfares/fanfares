@@ -28,6 +28,8 @@ import Image from "next/image"
 import { formatDate, getIdFromUrl } from "@/app/controllers/utils/formatting"
 import { toast } from "react-toastify"
 import { launchPaymentModal } from "@getalby/bitcoin-connect"
+import { Modal } from "@/app/components/Modal"
+import ModalShareToNostr from "@/app/components/ModalShareToNostr"
 
 config.autoAddCss = false /* eslint-disable import/first */
 
@@ -51,6 +53,7 @@ export default function PlayerPage() {
   // ------------ USE STATE ------------
 
   const [copied, setCopied] = useState(false)
+  const [shareModalOn, setShareModalOn] = useState(false)
 
   // ------------ CONSTS ------------
 
@@ -161,6 +164,10 @@ export default function PlayerPage() {
     )
   }
 
+  const handleShareEpisode = () => {
+    console.log("Shared")
+  }
+
   const renderActionMenu = () => {
     if (!podcast) return null
 
@@ -193,6 +200,13 @@ export default function PlayerPage() {
           className="px-2 text-xs md:px-4 md:text-base"
           onClick={() => copyToClipboard(window.location.href)}
           label={copied ? "Copied" : "Copy Link"}
+        />
+        <Button
+          aria-label="Share episode on Socials"
+          id={"E2EID.playerShareButton"}
+          className="px-2 text-xs md:px-4 md:text-base"
+          onClick={() => setShareModalOn(!shareModalOn)}
+          label={"Share"}
         />
       </div>
     )
@@ -238,6 +252,14 @@ export default function PlayerPage() {
 
     return (
       <>
+        <Modal isOpen={true}>
+          <ModalShareToNostr
+            episodeValue={Math.round(podcast.gate.cost / 1000).toLocaleString()}
+            creator={creator ? creator.name : ""}
+            onCancel={() => setShareModalOn(false)}
+            onShare={handleShareEpisode}
+          />
+        </Modal>
         <div className="flex md:flex-row flex-col md:items-start md:w-full md:max-w-5xl md:gap-8">
           <div className="flex flex-col gap-2 mx-auto">
             <div className="relative w-full h-full mx-auto md:mx-0">
@@ -272,7 +294,9 @@ export default function PlayerPage() {
                 {podcast.title}
               </p>
               <p className="lg:text-base lg:font-bold truncate w-80">
-                {creator ? creator.display_name : podcast.announcement.note.pubkey}
+                {creator
+                  ? creator.display_name
+                  : podcast.announcement.note.pubkey}
               </p>
 
               <div
