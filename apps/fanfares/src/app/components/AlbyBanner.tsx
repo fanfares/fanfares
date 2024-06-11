@@ -13,7 +13,7 @@ export function AlbyBanner(props: AlbyBannerProps) {
   return (
     <div
       {...rest}
-      className={`px-1 flex items-center border border-white/0 justify-center py-2 rounded-full transition-all duration-300 ease-in-out transform text-sm hover:bg-skin-fill font-gloock gap-2 ${className}`}
+      className={`px-1 flex items-center border border-white/0 justify-center py-2 transition-all duration-300 ease-in-out transform text-sm hover:bg-skin-fill font-gloock gap-2 ${className}`}
       style={{ backgroundColor: "black" }}
       >
         Please only use Alby for payments!
