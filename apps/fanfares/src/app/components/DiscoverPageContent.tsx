@@ -25,9 +25,6 @@ import { NIP04, NIP07, eventToNostrProfile } from "utils"
 import { useAccountActions } from "../controllers/state/account-slice"
 import { SimplePool } from "nostr-tools"
 
-
-
-
 config.autoAddCss = false /* eslint-disable import/first */
 export interface DiscoveryMediaInfo extends Metadata {
   media_key: string
@@ -49,14 +46,13 @@ function DiscoverPageContent() {
   const { podcastFetch } = usePodcastActions()
   const podcastEpisodes = usePodcastEpisodes()
   const podcastFetching = usePodcastFetching()
-  const [profiles, setProfiles] = useState<{ [key: string]: Profile }>({});
+  const [profiles, setProfiles] = useState<{ [key: string]: Profile }>({})
 
   interface Profile {
-    name: string;
-    picture: string;
-    display_name:string;
+    name: string
+    picture: string
+    display_name: string
   }
-  
 
   useEffect(() => {
     if (nostrPool && nostrRelays) {
@@ -130,7 +126,6 @@ function DiscoverPageContent() {
     "new",
   ]
 
-
   const accountFetchProfile = async (
     publicKey: string,
     pool: SimplePool,
@@ -141,67 +136,66 @@ function DiscoverPageContent() {
         kinds: [0],
         limit: 1,
         authors: [publicKey],
-      });
-  
-      if (!profileEvent) throw new Error('No profile event found');
-  
-      console.log(JSON.stringify(profileEvent));
-      return eventToNostrProfile(publicKey, profileEvent);
+      })
+
+      if (!profileEvent) throw new Error("No profile event found")
+
+      console.log(JSON.stringify(profileEvent))
+      return eventToNostrProfile(publicKey, profileEvent)
     } catch (e) {
-      throw new Error(`Failed to fetch profile - ${e}`);
+      throw new Error(`Failed to fetch profile - ${e}`)
     }
-  };
-
-
+  }
 
   useEffect(() => {
     const fetchProfiles = async () => {
-      const profilesData: { [key: string]: Profile } = {};
+      const profilesData: { [key: string]: Profile } = {}
       for (const podcast of Object.values(podcastEpisodes)) {
-        const toHide = episodeTestingTitlesFilter.includes(podcast.title);
+        const toHide = episodeTestingTitlesFilter.includes(podcast.title)
         if (!toHide) {
           try {
             const profileEvent = await accountFetchProfile(
               podcast.announcement.note.pubkey,
               nostrPool,
               nostrRelays
-            );
-            profilesData[podcast.announcement.note.pubkey] = profileEvent;
+            )
+            profilesData[podcast.announcement.note.pubkey] = profileEvent
           } catch (e) {
             if (e instanceof Error)
-            console.error(
-              `Failed to fetch profile for ${podcast.announcement.note.pubkey} - ${e.message}`
-            );
+              console.error(
+                `Failed to fetch profile for ${podcast.announcement.note.pubkey} - ${e.message}`
+              )
           }
         }
       }
-      setProfiles(profilesData);
-    };
+      setProfiles(profilesData)
+    }
 
     if (!podcastFetching) {
-      fetchProfiles();
+      fetchProfiles()
     }
-  }, [podcastEpisodes, podcastFetching, nostrPool, nostrRelays]);
+  }, [podcastEpisodes, podcastFetching, nostrPool, nostrRelays])
 
   const renderContent = () => {
-    if (podcastFetching) return null;
+    if (podcastFetching) return null
     return (
       <div className="container flex pb-8">
         <div className="flex md:flex-wrap md:flex-row flex-col gap-3 w-full">
-          {Object.values(podcastEpisodes).map((podcast) => {
-            const toHide = episodeTestingTitlesFilter.includes(podcast.title);
-            if (toHide) return null;
-            const defaultProfilePicture = "https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/default_profile_dark.png"
-            const profile = profiles[podcast.announcement.note.pubkey];
-            const username = profile && profile.name  
-            const creatorPicture = profile?.picture || defaultProfilePicture;
-            const display_name = profile && profile.display_name;
+          {Object.values(podcastEpisodes).map(podcast => {
+            const toHide = episodeTestingTitlesFilter.includes(podcast.title)
+            if (toHide) return null
+            const defaultProfilePicture =
+              "https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/default_profile_dark.png"
+            const profile = profiles[podcast.announcement.note.pubkey]
+            const username = profile && profile.name
+            const creatorPicture = profile?.picture || defaultProfilePicture
+            const display_name = profile && profile.display_name
 
             return (
               <EpisodeCard
                 key={podcast.gate.note.id}
                 onClick={() => {
-                  router.push(`/player/${podcast.gate.note.id}`);
+                  router.push(`/player/${podcast.gate.note.id}`)
                 }}
                 imgUrl={podcast.imageFilepath}
                 title={podcast.title}
@@ -210,16 +204,15 @@ function DiscoverPageContent() {
                 creatorName={display_name}
                 creatorProfilePicture={creatorPicture}
               />
-            );
+            )
           })}
         </div>
       </div>
-    );
-  };
-
+    )
+  }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-40 md:pb-0">
       <h1 className="font-gloock text-center text-gray-100 text-xl/4 md:mt-4 md:text-start md:text-4xl">
         Recent Podcasts{" "}
       </h1>
