@@ -19,7 +19,7 @@ function MobileTopNavbar(props: MobileTopNavbarProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const handleLogin = () => {
-    document.dispatchEvent(new CustomEvent("nlLaunch", { detail: "welcome" }))
+    document.dispatchEvent(new CustomEvent("nlLaunch"))
   }
 
   if (typeof window !== "undefined") {
