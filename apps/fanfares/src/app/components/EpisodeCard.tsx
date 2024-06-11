@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Image from "next/image"
 import Link from "next/link"
 import { useRef, useState } from "react"
+import { useNostr } from "../controllers/state/nostr-slice"
 
 interface EpisodeCardProps {
   imgUrl: string
@@ -34,6 +35,9 @@ function EpisodeCard(props: EpisodeCardProps) {
       setIsPlaying(!isPlaying)
     }
   }
+
+
+ 
 
   //
   return (
@@ -70,12 +74,10 @@ function EpisodeCard(props: EpisodeCardProps) {
         {/* <div className="mt-2 h-full flex w-full flex-col items-start border-white/[10%] justify-start truncate line-clamp-2"></div> */}
         <div className="flex-col flex-1 w-40 md:w-full mt-1 space-y-2 md:px-2 relative">
           <div className="flex items-center gap-2">
-            {" "}
-            <Image
+
+            <img
               src={props.creatorProfilePicture ?? props.imgUrl}
-              width={36}
-              height={36}
-              className="rounded-full"
+              className="rounded-full w-9 h-9 border-2 border-buttonAccentHover"
               alt="Creator profile image"
             />
             <div className="flex flex-col">
@@ -84,7 +86,7 @@ function EpisodeCard(props: EpisodeCardProps) {
                 {/* {metadataNameSlicer()} */}
                 {props.title}
               </p>
-              <p className="text-xs font-thin md:text-xs/4">
+              <p className="text-xs font-thin md:text-xs/4 text-skin-inverted">
                 {props.creatorName}
               </p>
             </div>

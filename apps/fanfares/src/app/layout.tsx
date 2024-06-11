@@ -11,6 +11,8 @@ import { config } from "@fortawesome/fontawesome-svg-core"
 import { GlobalAudioPlayer } from "./components/GlobalAudioPlayer"
 import Toast from "./components/Toast"
 import MobileTopNavbar from "./components/MobileTopNavbar"
+import AlbyBanner from "./components/AlbyBanner"
+
 config.autoAddCss = false /* eslint-disable import/first */
 
 const inter = Gloock({
@@ -42,20 +44,23 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable}`}>
       <head>{/* */}</head>
-      <body className="md:flex">
-        <Providers>
-          {/* <DebugOverlay /> */}
-          <header className="">
-            <Navbar />
-            <MobileTopNavbar isLoggedIn={false} pubkey="123" />
-          </header>
-          {/* Content */}
-          <ContainerGrid className="block md:ml-44 md:h-screen pb-32 md:pb-0">
-            <Toast />
-            {children}
-          </ContainerGrid>
-          <GlobalAudioPlayer />
-        </Providers>
+      <body className="">
+        <AlbyBanner/>
+        <div className="md:flex">
+          <Providers>
+            {/* <DebugOverlay /> */}
+            <header className="">
+              <Navbar />
+              <MobileTopNavbar isLoggedIn={false} pubkey="123" />
+            </header>
+            {/* Content */}
+            <ContainerGrid className="block md:ml-44 md:h-screen pb-32 md:pb-0">
+              <Toast />
+              {children}
+            </ContainerGrid>
+            <GlobalAudioPlayer />
+          </Providers>
+        </div>
       </body>
     </html>
   )
