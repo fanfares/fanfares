@@ -79,7 +79,7 @@ export default function Upload() {
   }
 
   return (
-    <section className="w-full relative">
+    <section className="w-full relative pb-16 md:pb-0">
       {/* MODAL */}
       {/* <Modal isOpen={true}>
         State {postPodcastState}
