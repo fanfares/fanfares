@@ -304,7 +304,7 @@ export default function PlayerPage() {
   }
 
   return (
-    <section className="flex w-full flex-col space-y-12">
+    <section className="flex w-full flex-col space-y-12 pb-16">
       {renderContent()}
     </section>
   )
