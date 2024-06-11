@@ -79,7 +79,7 @@ export default function Upload() {
   }
 
   return (
-    <section className="w-full relative">
+    <section className="w-full relative pb-16 md:pb-0">
       {/* MODAL */}
       {/* <Modal isOpen={true}>
         State {postPodcastState}
@@ -216,6 +216,7 @@ export default function Upload() {
                       <span className="text-skin-muted hidden">() </span>
                     </p>{" "}
                     <input
+                      type="text"
                       id={"`${E2EID.uploadCreatorWalletInputX}${index}`"}
                       autoComplete="off"
                       className="border-b-2 border-buttonAccent bg-transparent text-sm font-thin outline-none placeholder:text-sm placeholder:font-semibold mt-2 placeholder:text-skin-muted/40 text-start"

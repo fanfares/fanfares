@@ -19,7 +19,7 @@ export default function Home() {
 
   //TODO make this the Discover page
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 pb-64 md:pb-0">
       <div className="flex items-center justify-center md:justify-start gap-4">
         <Link href="/" className="flex flex-col items-center md:hidden">
           <Image

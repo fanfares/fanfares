@@ -96,7 +96,7 @@ export default function PlayerPage() {
       !accountNostr.accountPublicKey
     ) {
       // toast.error("You need to login first")
-      document.dispatchEvent(new CustomEvent("nlLaunch", { detail: "welcome" }))
+      document.dispatchEvent(new CustomEvent("nlLaunch"))
 
       return
     }
@@ -272,7 +272,9 @@ export default function PlayerPage() {
                 {podcast.title}
               </p>
               <p className="lg:text-base lg:font-bold truncate w-80">
-                {creator ? creator.name : podcast.announcement.note.pubkey}
+                {creator
+                  ? creator.display_name
+                  : podcast.announcement.note.pubkey}
               </p>
 
               <div
@@ -304,7 +306,7 @@ export default function PlayerPage() {
   }
 
   return (
-    <section className="flex w-full flex-col space-y-12">
+    <section className="flex w-full flex-col space-y-12 pb-40">
       {renderContent()}
     </section>
   )
