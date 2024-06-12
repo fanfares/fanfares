@@ -36,7 +36,7 @@ import { ProfileBuble } from "./ProfileBubble"
 import Button from "./Button"
 import { ActionButtonsPost } from "./ActionButtonsPost"
 import { Modal } from "./Modal"
-import { useLayoutEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 // import { useAppState } from 'src/controllers/state/use-app-state';
 // import { E2EID } from 'src/controllers/utils/e2e-ids';
@@ -49,7 +49,7 @@ export function Navbar() {
   const isPlaying = usePlayerPageIsPlaying()
 
   const nav = useRef<HTMLDivElement>(null)
-  useLayoutEffect(() => {
+  useEffect(() => {
     const el = document.getElementById('main-content-container-element') // can we do this in a more reacty way?
     if (el) {
       if (nav && nav.current) {
@@ -58,7 +58,7 @@ export function Navbar() {
         console.log(el.offsetTop)
       }
     }
-  })
+  }, [])
 
   // const [showMobileMenu, setShowMobileMenu] = useState(false);
 
