@@ -53,8 +53,8 @@ export function Navbar() {
     const el = document.getElementById('main-content-container-element') // can we do this in a more reacty way?
     if (el) {
       if (nav && nav.current) {
-        el.classList.remove('h-screen')
-        el.style.height = `calc(${nav.current.offsetTop - el.offsetTop}px)`
+        //el.classList.remove('h-screen')
+        //el.style.height = `calc(${nav.current.offsetTop - el.offsetTop}px)`
       }
     }
   })
