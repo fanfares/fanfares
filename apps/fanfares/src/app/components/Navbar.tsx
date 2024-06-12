@@ -36,7 +36,7 @@ import { ProfileBuble } from "./ProfileBubble"
 import Button from "./Button"
 import { ActionButtonsPost } from "./ActionButtonsPost"
 import { Modal } from "./Modal"
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 
 // import { useAppState } from 'src/controllers/state/use-app-state';
 // import { E2EID } from 'src/controllers/utils/e2e-ids';
@@ -49,12 +49,11 @@ export function Navbar() {
   const isPlaying = usePlayerPageIsPlaying()
 
   const nav = useRef<HTMLDivElement>(null)
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = document.getElementById('main-content-container-element') // can we do this in a more reacty way?
     if (el) {
       if (nav && nav.current) {
         el.classList.remove('h-screen')
-        console.log(el.offsetTop, nav.current.offsetTop)
         el.style.height = `calc(${nav.current.offsetTop - el.offsetTop}px)`
       }
     }
