@@ -5,7 +5,7 @@ import Button from "./Button"
 interface ModalShareToNostrProps {
   setShareModalOn?: (value: boolean) => void
   onCancel?: () => void
-  episodeValue?: string
+  episodeValue?: number
   creator?: string
   creatorProfile?: string
   onShare?: () => void
@@ -31,13 +31,14 @@ function ModalShareToNostr({
           className="bg-transparent text-start border-2 border-buttonAccentHover p-2 rounded-md focus:outline-none transition duration-300 ease-in-out overflow-hidden h-40"
           contentEditable>
           This is a great podcast episode from{" "}
-          <Link
-            className="text-blue-500 cursor-pointer"
-            href={`https://fanfares.io/p/${creatorProfile}`}>
-            {creator} nostr:{creatorNpub}
-          </Link>{" "}
-          and only costs{" "}
-          <span className="text-yellow-400">{episodeValue} sats </span>
+          <span>
+            @{creator} ( nostr:{creatorNpub} ) and only costs{" "}
+            <span className="text-yellow-400">
+              {episodeValue && episodeValue > 1
+                ? episodeValue + " sats"
+                : episodeValue + " sat"}
+            </span>
+          </span>{" "}
           <Link
             href={window.location.href}
             className="text-blue-500 cursor-pointer">

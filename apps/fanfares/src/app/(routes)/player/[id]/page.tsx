@@ -317,7 +317,7 @@ export default function PlayerPage() {
       <>
         <Modal isOpen={shareModalOn}>
           <ModalShareToNostr
-            episodeValue={Math.round(podcast.gate.cost / 1000).toLocaleString()}
+            episodeValue={Math.round(podcast.gate.cost / 1000)}
             creator={creator ? creator.name : ""}
             creatorNpub={nip19.npubEncode(creator?.pubkey!) || ""}
             onCancel={() => setShareModalOn(false)}
