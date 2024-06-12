@@ -36,6 +36,7 @@ import { ProfileBuble } from "./ProfileBubble"
 import Button from "./Button"
 import { ActionButtonsPost } from "./ActionButtonsPost"
 import { Modal } from "./Modal"
+import { useLayoutEffect, useRef } from 'react'
 
 // import { useAppState } from 'src/controllers/state/use-app-state';
 // import { E2EID } from 'src/controllers/utils/e2e-ids';
@@ -46,6 +47,18 @@ import { Modal } from "./Modal"
 
 export function Navbar() {
   const isPlaying = usePlayerPageIsPlaying()
+
+  const nav = useRef<HTMLDivElement>(null)
+  useLayoutEffect(() => {
+    const el = document.getElementById('main-content-container-element') // can we do this in a more reacty way?
+    if (el) {
+      if (nav && nav.current) {
+        el.classList.remove('h-screen')
+        el.style.height = `calc(100vh - ${el.offsetTop + nav.current.clientHeight}px)`
+        console.log(el.offsetTop)
+      }
+    }
+  })
 
   // const [showMobileMenu, setShowMobileMenu] = useState(false);
 
@@ -342,6 +355,7 @@ export function Navbar() {
   const renderMobileNav = () => {
     return (
       <div
+        ref={nav}
         id="#e2e-navbar-mobile-container"
         className="fixed bottom-0 left-0 z-40 flex flex-row items-center justify-between w-screen h-24 space-x-4 overflow-hidden bg-black border-t-2 border-buttonAccentHover md:hidden">
         <div className="flex w-full justify-evenly">
