@@ -319,7 +319,7 @@ export default function PlayerPage() {
           <ModalShareToNostr
             episodeValue={Math.round(podcast.gate.cost / 1000).toLocaleString()}
             creator={creator ? creator.name : ""}
-            creatorNpub={nip19.npubEncode(creator!.pubkey) || ""}
+            creatorNpub={nip19.npubEncode(creator?.pubkey!) || ""}
             onCancel={() => setShareModalOn(false)}
             onShare={handleShareEpisode}
             creatorProfile={creator ? creator.pubkey : ""}
