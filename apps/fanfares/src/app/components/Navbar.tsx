@@ -55,7 +55,7 @@ export function Navbar() {
       if (nav && nav.current) {
         el.classList.remove('h-screen')
         console.log(el.offsetTop, nav.current.offsetTop)
-        el.style.height = `calc(${nav.current.offsetTop + el.offsetTop}px)`
+        el.style.height = `calc(${nav.current.offsetTop - el.offsetTop}px)`
       }
     }
   })
