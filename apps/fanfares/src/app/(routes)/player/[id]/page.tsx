@@ -30,6 +30,17 @@ import { toast } from "react-toastify"
 import { launchPaymentModal } from "@getalby/bitcoin-connect"
 import { Modal } from "@/app/components/Modal"
 import ModalShareToNostr from "@/app/components/ModalShareToNostr"
+import {
+  Event as NostrEvent,
+  SimplePool,
+  UnsignedEvent,
+  getEventHash,
+  getSignature,
+  nip19,
+  serializeEvent,
+  signEvent,
+} from "nostr-tools"
+import { NIP07 } from "utils"
 
 config.autoAddCss = false /* eslint-disable import/first */
 
@@ -180,10 +191,6 @@ export default function PlayerPage() {
   //   "sig": <64-bytes lowercase hex of the signature of the sha256 hash of the serialized event data, which is the same as the "id" field>
   // }
 
-  const handleShareEpisode = () => {
-    console.log("Shared")
-  }
-
   const renderActionMenu = () => {
     if (!podcast) return null
 
@@ -261,6 +268,46 @@ export default function PlayerPage() {
     )
   }
 
+  const handleShareEpisode = async () => {
+    if (!accountNostr?.accountNIP07) {
+      toast.warn("Please connect your Nostr account")
+      return
+    }
+
+    if (!window.nostr) {
+      toast.error("Nostr not found")
+      return
+    }
+    const eventContent =
+      document.getElementById("fanfares-nostr-share")?.textContent || ""
+
+    const event: NostrEvent = {
+      id: "",
+      kind: 1,
+      pubkey: accountNostr?.accountPublicKey!.toString() || "",
+      created_at: Math.floor(Date.now() / 1000),
+      tags: [
+        ["p", creator?.pubkey!.toString() || ""],
+
+        ["t", "FanFares"],
+      ],
+      content: eventContent,
+      sig: "",
+    }
+
+    try {
+      const signedEvent = await window.nostr.signEvent(event)
+      event.sig = signedEvent.sig
+      event.id = getEventHash(event)
+      nostrPool.publish(nostrRelays, event)
+      toast.success("Episode shared successfully!")
+      setShareModalOn(false)
+    } catch (error) {
+      console.error("Error sharing episode:", error)
+      toast.error("An error occurred while sharing the episode.")
+    }
+  }
+
   const renderContent = () => {
     if (playerPageError) return renderError()
     if (playerPageIsLoading) return renderLoading()
@@ -268,10 +315,11 @@ export default function PlayerPage() {
 
     return (
       <>
-        <Modal isOpen={true}>
+        <Modal isOpen={shareModalOn}>
           <ModalShareToNostr
             episodeValue={Math.round(podcast.gate.cost / 1000).toLocaleString()}
             creator={creator ? creator.name : ""}
+            creatorNpub={nip19.npubEncode(creator!.pubkey) || ""}
             onCancel={() => setShareModalOn(false)}
             onShare={handleShareEpisode}
             creatorProfile={creator ? creator.pubkey : ""}
@@ -287,9 +335,6 @@ export default function PlayerPage() {
                 height={200}
                 className="rounded border border-buttonDisabled "
                 priority
-                layout="cover"
-                objectFit="cover"
-                objectPosition="center"
               />
             </div>
             <div className="flex justify-between ">
