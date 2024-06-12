@@ -54,7 +54,7 @@ export function Navbar() {
     if (el) {
       if (nav && nav.current) {
         el.classList.remove('h-screen')
-        el.style.height = `calc(100vh - ${el.offsetTop + nav.current.clientHeight}dp)`
+        el.style.height = `calc(100vh - ${(el.offsetTop + nav.current.clientHeight) * window.devicePixelRatio}px)`
       }
     }
   })
