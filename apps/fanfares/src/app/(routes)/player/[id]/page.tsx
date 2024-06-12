@@ -287,9 +287,9 @@ export default function PlayerPage() {
       pubkey: accountNostr?.accountPublicKey!.toString() || "",
       created_at: Math.floor(Date.now() / 1000),
       tags: [
-        ["p", nip19.npubEncode(creator!.pubkey) || ""],
-
+        ["p", creator!.pubkey, "", "mention"],
         ["t", "FanFares"],
+        ["r", "Fanfares.io"],
       ],
       content: eventContent,
       sig: "",
