@@ -58,7 +58,7 @@ export function Navbar() {
         console.log(el.offsetTop)
       }
     }
-  }, [])
+  })
 
   // const [showMobileMenu, setShowMobileMenu] = useState(false);
 
