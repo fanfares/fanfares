@@ -48,7 +48,7 @@ function MobileTopNavbar(props: MobileTopNavbarProps) {
         <p className="text-3xl font-gloock ">FanFares</p>
       </div>
       {accountProfile && isLoggedIn ? (
-        <Link className="ml-auto" href={`/p/${accountProfile.pubkey}`}>
+        <Link className="w-7 h-7" href={`/p/${accountProfile.pubkey}`}>
           <Image
             className="rounded-full"
             width={40}
@@ -61,7 +61,7 @@ function MobileTopNavbar(props: MobileTopNavbarProps) {
         <button onClick={handleLogin}>
           <FontAwesomeIcon
             icon={faKey}
-            className="text-white w-6 h-6 ml-auto"
+            className="text-white w-7 h-7 ml-auto"
           />
         </button>
       )}
