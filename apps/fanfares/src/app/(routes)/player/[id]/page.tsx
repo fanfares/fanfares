@@ -136,6 +136,8 @@ export default function PlayerPage() {
   const renderBuy = () => {
     if (!podcast) return null
 
+    const podcastCost = Math.round(podcast.gate.cost / 1000)
+
     return (
       <div className="flex flex-col items-center justify-center  h-full">
         <Button
@@ -146,10 +148,7 @@ export default function PlayerPage() {
               <p className="relative">Buy this Episode</p>
               <span className="text-xs font-thin text-center text-white absolute -bottom-5 inset-x-0">
                 {" "}
-                It costs {Math.round(
-                  podcast.gate.cost / 1000
-                ).toLocaleString()}{" "}
-                sats
+                It costs {podcastCost} {podcastCost > 1 ? "sats" : "sat"}
               </span>
             </div>
           }
