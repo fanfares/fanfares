@@ -28,6 +28,19 @@ import Image from "next/image"
 import { formatDate, getIdFromUrl } from "@/app/controllers/utils/formatting"
 import { toast } from "react-toastify"
 import { launchPaymentModal } from "@getalby/bitcoin-connect"
+import { Modal } from "@/app/components/Modal"
+import ModalShareToNostr from "@/app/components/ModalShareToNostr"
+import {
+  Event as NostrEvent,
+  SimplePool,
+  UnsignedEvent,
+  getEventHash,
+  getSignature,
+  nip19,
+  serializeEvent,
+  signEvent,
+} from "nostr-tools"
+import { NIP07 } from "utils"
 
 config.autoAddCss = false /* eslint-disable import/first */
 
@@ -51,6 +64,7 @@ export default function PlayerPage() {
   // ------------ USE STATE ------------
 
   const [copied, setCopied] = useState(false)
+  const [shareModalOn, setShareModalOn] = useState(false)
 
   // ------------ CONSTS ------------
 
@@ -161,6 +175,22 @@ export default function PlayerPage() {
     )
   }
 
+  //   {
+  //   "id": <32-bytes lowercase hex-encoded sha256 of the serialized event data>,
+  //   "pubkey": <32-bytes lowercase hex-encoded public key of the event creator>,
+  //   "created_at": <unix timestamp in seconds>,
+  //   "kind": <integer between 0 and 65535>,
+  //  "tags": [
+  //    ["e", "5c83da77af1dec6d7289834998ad7aafbd9e2191396d75ec3cc27f5a77226f36", "wss://nostr.example.com"],
+  //    ["p", "f7234bd4c1394dda46d09f35bd384dd30cc552ad5541990f98844fb06676e9ca"],
+  //   ["a", "30023:f7234bd4c1394dda46d09f35bd384dd30cc552ad5541990f98844fb06676e9ca:abcd", "wss://nostr.example.com"],
+  //
+
+  //  ],
+  //   "content": <arbitrary string>,
+  //   "sig": <64-bytes lowercase hex of the signature of the sha256 hash of the serialized event data, which is the same as the "id" field>
+  // }
+
   const renderActionMenu = () => {
     if (!podcast) return null
 
@@ -193,6 +223,13 @@ export default function PlayerPage() {
           className="px-2 text-xs md:px-4 md:text-base"
           onClick={() => copyToClipboard(window.location.href)}
           label={copied ? "Copied" : "Copy Link"}
+        />
+        <Button
+          aria-label="Share episode on Socials"
+          id={"E2EID.playerShareButton"}
+          className="px-2 text-xs md:px-4 md:text-base"
+          onClick={() => setShareModalOn(!shareModalOn)}
+          label={"Share"}
         />
       </div>
     )
@@ -231,6 +268,46 @@ export default function PlayerPage() {
     )
   }
 
+  const handleShareEpisode = async () => {
+    if (!accountNostr?.accountNIP07) {
+      toast.warn("Please connect your Nostr account")
+      return
+    }
+
+    if (!window.nostr) {
+      toast.error("Nostr not found")
+      return
+    }
+    const eventContent =
+      document.getElementById("fanfares-nostr-share")?.textContent || ""
+
+    const event: NostrEvent = {
+      id: "",
+      kind: 1,
+      pubkey: accountNostr?.accountPublicKey!.toString() || "",
+      created_at: Math.floor(Date.now() / 1000),
+      tags: [
+        ["p", creator!.pubkey, "", "mention"],
+        ["t", "FanFares"],
+        ["r", "Fanfares.io"],
+      ],
+      content: eventContent,
+      sig: "",
+    }
+
+    try {
+      const signedEvent = await window.nostr.signEvent(event)
+      event.sig = signedEvent.sig
+      event.id = getEventHash(event)
+      nostrPool.publish(nostrRelays, event)
+      toast.success("Episode shared successfully!")
+      setShareModalOn(false)
+    } catch (error) {
+      console.error("Error sharing episode:", error)
+      toast.error("An error occurred while sharing the episode.")
+    }
+  }
+
   const renderContent = () => {
     if (playerPageError) return renderError()
     if (playerPageIsLoading) return renderLoading()
@@ -238,6 +315,16 @@ export default function PlayerPage() {
 
     return (
       <>
+        <Modal isOpen={shareModalOn}>
+          <ModalShareToNostr
+            episodeValue={Math.round(podcast.gate.cost / 1000)}
+            creator={creator ? creator.name : ""}
+            creatorNpub={nip19.npubEncode(creator?.pubkey!) || ""}
+            onCancel={() => setShareModalOn(false)}
+            onShare={handleShareEpisode}
+            creatorProfile={creator ? creator.pubkey : ""}
+          />
+        </Modal>
         <div className="flex md:flex-row flex-col md:items-start md:w-full md:max-w-5xl md:gap-8">
           <div className="flex flex-col gap-2 mx-auto">
             <div className="relative w-full h-full mx-auto md:mx-0">
@@ -248,9 +335,6 @@ export default function PlayerPage() {
                 height={200}
                 className="rounded border border-buttonDisabled "
                 priority
-                layout="cover"
-                objectFit="cover"
-                objectPosition="center"
               />
             </div>
             <div className="flex justify-between ">
