@@ -124,6 +124,26 @@ function DiscoverPageContent() {
     "Another",
     "TEst",
     "new",
+    "6213a2ffe6932e5399995d66264505f8694803d8f2bfa5582cfa6b6e56a948ac",
+    "c5f7256a860c42d2c237d7a619e6157fe64282d2513ac3bfbcc37b85adc6d978",
+    "87026fcd69b1e78813124a5ce40e786adbdae0e67242242422f72b415692e679",
+    "5afc4300c7dd459597fceb40cb39959ffc4c67038117644de5198ffbf6f995ad",
+    "1e7a7777fe3f31d8876f19023db96e0fa8c59ef5d8a602af5bb2716545fbcf71",
+    "1439fa54359d6432e3e6e3dcb6a294ad3a4b764b428c91724a9f82a67e847b47",
+    "c939f1e391515d321a7849af985dd18f321ad5b5a239403693deedc46f48e15e",
+    "c939f1e391515d321a7849af985dd18f321ad5b5a239403693deedc46f48e15e",
+    "69b1a9df6ebe01f2f6c87f2283eb1cc40e50a5e422b5c2dd4fc09141bc0d02c6",
+    "314bda3c53fd92077f374353126d7b083ba3f2448a048fac5b70650b2ba6fcf5",
+    "e9346341508e25af7bf31c2e236fa86bc9fc0986d7530ed767a624ed9bcbd86c",
+    "3c80b612b21a8c4aa7eca766ea952bbb5701391c47716aa8036df9fdfe246697",
+    "b3979c04c785cdb95dc4001eef294ed6546844698680c344c43fc20d5e4e1334",
+    "f2c6d493de0ef84df44434767a6b3ee8e7520db984990bdcf6a42e37a4aab974",
+    "33aeca36b7e0f908c569c7926d717f2973b27b3f01745a8edbb5a0c03ea16203",
+    "271b71d85d5c22062681ac469b19fae10eede958cd33eb4c12f42b3b786f1553",
+    "e9346341508e25af7bf31c2e236fa86bc9fc0986d7530ed767a624ed9bcbd86c",
+    "f2c6d493de0ef84df44434767a6b3ee8e7520db984990bdcf6a42e37a4aab974",
+    "6213a2ffe6932e5399995d66264505f8694803d8f2bfa5582cfa6b6e56a948ac",
+    "3c80b612b21a8c4aa7eca766ea952bbb5701391c47716aa8036df9fdfe246697",
   ]
 
   const accountFetchProfile = async (
@@ -140,7 +160,7 @@ function DiscoverPageContent() {
 
       if (!profileEvent) throw new Error("No profile event found")
 
-      console.log(JSON.stringify(profileEvent))
+      // console.log(JSON.stringify(profileEvent))
       return eventToNostrProfile(publicKey, profileEvent)
     } catch (e) {
       throw new Error(`Failed to fetch profile - ${e}`)
@@ -183,6 +203,7 @@ function DiscoverPageContent() {
         <div className="flex md:flex-wrap md:flex-row flex-col gap-3 w-full">
           {Object.values(podcastEpisodes).map(podcast => {
             const toHide = episodeTestingTitlesFilter.includes(podcast.title)
+            console.log(podcast)
             if (toHide) return null
             const defaultProfilePicture =
               "https://shdw-drive.genesysgo.net/DYTesEgJE5YAHBZxRFMe9xENR1xEVuczhD4HqvWf2yfo/default_profile_dark.png"
