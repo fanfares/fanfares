@@ -12,6 +12,7 @@ import { GlobalAudioPlayer } from "./components/GlobalAudioPlayer"
 import Toast from "./components/Toast"
 import MobileTopNavbar from "./components/MobileTopNavbar"
 import AlbyBanner from "./components/AlbyBanner"
+import MobileBottomNavbar from "./components/MobileBottomNavbar"
 
 config.autoAddCss = false /* eslint-disable import/first */
 
@@ -44,23 +45,22 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable}`}>
       <head>{/* */}</head>
-      <body className="">
+      <body className="h-screen">
         <AlbyBanner />
-        <div className="md:flex">
-          <Providers>
-            {/* <DebugOverlay /> */}
-            <header className="">
-              <Navbar />
-              <MobileTopNavbar isLoggedIn={false} pubkey="123" />
-            </header>
-            {/* Content */}
-            <ContainerGrid className="block md:ml-48 md:h-screen pb-32">
-              <Toast />
-              {children}
-            </ContainerGrid>
-            <GlobalAudioPlayer />
-          </Providers>
-        </div>
+        <Providers>
+          {/* <DebugOverlay /> */}
+          <header className="">
+            <Navbar />
+            <MobileTopNavbar isLoggedIn={false} pubkey="123" />
+          </header>
+          {/* Content */}
+          <ContainerGrid className="block md:ml-48 md:h-screen pb-32">
+            <Toast />
+            {children}
+            <MobileBottomNavbar />
+          </ContainerGrid>
+          <GlobalAudioPlayer />
+        </Providers>
       </body>
     </html>
   )
