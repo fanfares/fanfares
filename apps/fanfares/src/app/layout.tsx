@@ -45,7 +45,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable}`}>
       <head>{/* */}</head>
       <body className="">
-        <AlbyBanner/>
+        <AlbyBanner />
         <div className="md:flex">
           <Providers>
             {/* <DebugOverlay /> */}
@@ -54,7 +54,7 @@ export default function RootLayout({
               <MobileTopNavbar isLoggedIn={false} pubkey="123" />
             </header>
             {/* Content */}
-            <ContainerGrid className="block md:ml-44 md:h-screen pb-32 md:pb-0">
+            <ContainerGrid className="block md:ml-48 md:h-screen pb-32">
               <Toast />
               {children}
             </ContainerGrid>
