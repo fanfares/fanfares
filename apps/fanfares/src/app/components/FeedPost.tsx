@@ -210,27 +210,6 @@ export function FeedPost(props: FeedPostProps) {
           </span>
         </div>
       ) : null}
-
-      {/* <div className="mt-5 mx-auto flex gap-4">
-        <Button
-          className="px-2 w-28"
-          id="e2e-feed-post-fanfare-button"
-          label={"Fanfare 🎪"}
-          onClick={() => setFutureFeatureModalOn(!futureFeatureModalOn)}
-        />
-        { profile.lud16 ? 
-          <Button
-            className="px-2 w-28"
-            id="e2e-feed-post-zap-button"
-            label={"Zap ⚡️"}
-            onClick={() => zap()}
-          />
-          : <Button disabled={true} label={"Can't zap!"}></Button> }
-      </div>
-      <ModalFutureFeature
-        isOpen={futureFeatureModalOn}
-        onClick={() => setFutureFeatureModalOn(!futureFeatureModalOn)}
-      /> */}
     </div>
   )
 }

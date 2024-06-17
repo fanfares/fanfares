@@ -79,16 +79,7 @@ export default function Upload() {
   }
 
   return (
-    <section className="w-full relative pb-16 md:pb-0">
-      {/* MODAL */}
-      {/* <Modal isOpen={true}>
-        State {postPodcastState}
-        <button onClick={() => setPublishModal(!publishModal)}>
-          ❌ BUTTON CLOSE TEST
-        </button>
-      </Modal> */}
-
-      {/* FORM SECTION */}
+    <section className="w-full relative md:pb-0">
       <form onSubmit={handlePostSubmit} ref={formRef} className="">
         <div className="relative flex flex-col items-center justify-center w-full h-full">
           <div className="upperSectionForm flex flex-col w-full gap-4 md:flex-row">

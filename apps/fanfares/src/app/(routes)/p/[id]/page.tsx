@@ -112,7 +112,7 @@ function Profile() {
         {/* TODO Add followers and following */}
         {/* <div className="absolute left-32 top-10">Followers / Following</div> */}
       </div>
-      <div className="mt-28 w-full">
+      <div className="mt-32 w-full">
         <div className="text-buttonDefault">
           <p className="">{loadedProfile?.display_name ?? ""}</p>
         </div>
