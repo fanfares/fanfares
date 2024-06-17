@@ -22,9 +22,11 @@ export function Feed() {
 
   const renderLoading = () => {
     return (
-      <div className="w-full h-full flex items-center">
-        <Lottie className="w-20" animationData={LottieLoading} loop={true} />
-        <p className="">Loading...</p>
+      <div className="w-full h-screen flex items-start justify-center">
+        <div className="flex items-center">
+          <Lottie className="w-20" animationData={LottieLoading} loop={true} />
+          <span className="animate-pulse">Loading...</span>
+        </div>
       </div>
     )
   }
@@ -46,8 +48,8 @@ export function Feed() {
 
   return (
     <>
-      <h1 className="font-gloock text-center text-gray-100 text-xl/4 md:mt-4 md:text-start md:text-4xl">
-        Nostr Universe{" "}
+      <h1 className="font-gloock text-center text-gray-100 text-xl/4 my-4 md:text-start md:text-4xl">
+        Nostr Universe
       </h1>
       {primalIsFetching ? renderLoading() : renderNotes()}
     </>

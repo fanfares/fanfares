@@ -27,7 +27,7 @@
   src: url("./assets/fonts/Gloock-Regular.ttf") format("truetype");
 }
 html {
-  @apply h-screen overflow-hidden text-skin-base font-objective;
+  @apply text-skin-base font-objective;
 
   background-color: hsla(0, 0%, 0%, 1);
   background-image: radial-gradient(
@@ -106,13 +106,9 @@ html {
   background-position: center;
 }
 
-input {
-  @apply text-lg;
-}
-
-/* input[type="text"],
+input[type="text"],
 input[type="number"],
 label,
 textarea {
   font-size: 16px;
-} */
+}

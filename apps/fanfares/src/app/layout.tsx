@@ -44,21 +44,21 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${inter.variable}`}>
-      <head>{/* */}</head>
-      <body className="h-screen">
+      <head></head>
+      <body>
         <AlbyBanner />
         <Providers>
           {/* <DebugOverlay /> */}
-          <header className="">
+          <header>
             <Navbar />
             <MobileTopNavbar isLoggedIn={false} pubkey="123" />
           </header>
           {/* Content */}
-          <ContainerGrid className="block md:ml-48 md:h-screen pb-32">
+          <ContainerGrid className="block md:ml-48 md:h-screen">
             <Toast />
             {children}
-            <MobileBottomNavbar />
           </ContainerGrid>
+          <MobileBottomNavbar />
           <GlobalAudioPlayer />
         </Providers>
       </body>
