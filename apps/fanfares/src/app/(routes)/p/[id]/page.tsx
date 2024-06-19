@@ -40,7 +40,6 @@ function Profile() {
   const isOwner = pubkeyFromURL === nostrAccount?.accountPublicKey
   const loadedProfile = isOwner ? accountProfile : primalProfiles[pubkeyFromURL]
   const [followsYou, setFollowsYou] = useState(true)
-  const [isVerified, setIsVerified] = useState(true)
 
   const episodes: { imgUrl: string; description: string; title: string }[] = []
 
