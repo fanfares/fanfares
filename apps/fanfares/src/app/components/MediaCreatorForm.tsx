@@ -23,14 +23,14 @@ export function MediaCreatorForm(props: MediaCreatorFormProps) {
         <FormLabelCreators>
           {" "}
           <p>
-            LUD16 Address {/* THIS SHOULD BE A POPOVER */}
+            Alby Address {/* THIS SHOULD BE A POPOVER */}
             <span className="text-skin-muted hidden">() </span>
           </p>{" "}
           <input
             id={"`${E2EID.uploadCreatorWalletInputX}${index}`"}
             autoComplete="off"
             className="border-b-2 border-buttonAccent bg-transparent text-sm font-thin outline-none placeholder:text-sm placeholder:font-semibold mt-2 placeholder:text-skin-muted/40 text-start"
-            placeholder="Enter Creator LUD16 Address"
+            placeholder="Enter Creator Alby Address"
             name={"`creators.${index}.wallet`"}
             maxLength={48} // 44 seems to be the max
             value={lud16}
@@ -91,7 +91,7 @@ export function MediaCreatorForm(props: MediaCreatorFormProps) {
           <FormLabelCreators>
             {" "}
             <p>
-              LUD16 Address {/* THIS SHOULD BE A POPOVER */}
+              Alby Address {/* THIS SHOULD BE A POPOVER */}
               <span className="text-skin-muted hidden">() </span>
             </p>{" "}
             <input
@@ -99,7 +99,7 @@ export function MediaCreatorForm(props: MediaCreatorFormProps) {
               id={"`${E2EID.uploadCreatorWalletInputX}${index}`"}
               autoComplete="off"
               className="border-b-2 border-buttonAccent bg-transparent text-sm font-thin outline-none placeholder:text-sm placeholder:font-semibold mt-2 placeholder:text-skin-muted/40 text-start"
-              placeholder="Enter Creator LUD16 Address"
+              placeholder="Enter Creator Alby Address"
               name={"`creators.${index}.wallet`"}
               maxLength={48} // 44 seems to be the max
               value={lud16}
