@@ -131,7 +131,7 @@ export default function DropdownMenuMobile() {
           <DropdownMenu.Item className="group text-[13px] leading-none text-grey-100 rounded-[3px] flex gap-2 items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1">
             {/* nprofile1qqsd0kqsnmjrv47wvpt2mfr9xqrthdjp7v09p6zjgd5pcfey2puprmqh6zq5c */}
             <Link
-              href="/p/npub16lvpp8hyxetuuczk4kjx2vqxhwmyruc72r59ysmgrsnjg5rcz8kqk07j3k"
+              href="/p/d7d8109ee43657ce6056ada4653006bbb641f31e50e85243681c2724507811ec"
               className="flex items-center gap-2">
               <Image
                 className=""
