@@ -50,7 +50,6 @@ const AboutExcaliburSection = () => {
             src={"/assets/podcast.webp"}
             alt=""
             layout="fill"
-            objectFit="contain"
           />
         </div>
         <div className="">
@@ -89,7 +88,6 @@ const AboutExcaliburSection = () => {
             src={"/assets/audiobook.webp"}
             alt=""
             layout="fill"
-            objectFit="contain"
           />
         </div>
       </div>{" "}
@@ -104,7 +102,6 @@ const AboutExcaliburSection = () => {
             src={"/assets/dao.webp"}
             alt=""
             layout="fill"
-            objectFit="contain"
           />
         </div>
         <div>

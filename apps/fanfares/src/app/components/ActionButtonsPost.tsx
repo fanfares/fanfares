@@ -32,6 +32,7 @@ export function ActionButtonsPost() {
           <div className="w-full p-5 text-white rounded shadow-lg">
             <div className="hidden mt-1 mb-2">
               <label className="block mb-2">Unlock Cost ( sats )</label>
+
               <input
                 type="number"
                 min={`1`}

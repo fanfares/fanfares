@@ -244,7 +244,6 @@ export function GlobalAudioPlayer() {
             width={50}
             height={50}
             className="rounded-full"
-            layout={"intrinsic"}
           />
         </div>
       </>
