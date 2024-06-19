@@ -7,6 +7,8 @@ import Image from "next/image"
 import Logo from "../assets/logo.svg"
 
 import { useAccountProfile } from "../controllers/state/account-slice"
+import { DropdownMenu } from "@radix-ui/react-dropdown-menu"
+import DropdownMenuMobile from "./DropdownMenuMobile"
 
 export interface MobileTopNavbarProps {
   isLoggedIn?: boolean
@@ -33,10 +35,11 @@ function MobileTopNavbar(props: MobileTopNavbarProps) {
     })
   }
   return (
-    <div className="flex items-center justify-between md:hidden py-3 px-4 w-full drop-shadow-md border-b-2 border-buttonAccentHover backdrop-blur-md">
-      <Link href="/" className="w-7 h-7">
-        <FontAwesomeIcon icon={faHomeAlt} className="text-white w-7" />
-      </Link>
+    <div className="grid-cols-3 grid  items-center justify-between md:hidden py-3 px-4 w-full drop-shadow-md border-b-2 border-buttonAccentHover backdrop-blur-md">
+      {/* <Link href="/" className="w-7">
+        <FontAwesomeIcon icon={faHomeAlt} className="text-white" />
+      </Link> */}
+      <DropdownMenuMobile />
       <div className="mx-auto flex gap-2 items-center">
         <Image
           className=""
@@ -47,8 +50,8 @@ function MobileTopNavbar(props: MobileTopNavbarProps) {
         />
         <p className="text-3xl font-gloock ">FanFares</p>
       </div>
-      {accountProfile && isLoggedIn ? (
-        <Link className="w-7 h-7" href={`/p/${accountProfile.pubkey}`}>
+      {/* {accountProfile && isLoggedIn ? (
+        <Link className="ml-auto" href={`/p/${accountProfile.pubkey}`}>
           <Image
             className="rounded-full"
             width={40}
@@ -64,7 +67,7 @@ function MobileTopNavbar(props: MobileTopNavbarProps) {
             className="text-white w-7 h-7 ml-auto"
           />
         </button>
-      )}
+      )} */}
     </div>
   )
 }
