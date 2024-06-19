@@ -67,7 +67,7 @@ export const createFeedbackFormSlice: StateCreator<
     if (feedbackFormLoading) return
 
     try {
-      if (!feedbackLud16) throw new Error("LUD16 is required")
+      if (!feedbackLud16) throw new Error("Alby address is required")
       if (!feedbackEmail) throw new Error("Email is required")
       if (!feedbackMessage) throw new Error("Message is required")
       if (!feedbackPublicKey) throw new Error("Public Key is required")
