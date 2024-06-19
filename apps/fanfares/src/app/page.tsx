@@ -41,12 +41,12 @@ export default function Home() {
         <Link
           href="/upload"
           className={`px-1 flex items-center justify-center p-2 border-2 border-buttonAccentHover rounded-full bg-buttonAccent hover:bg-buttonAccentHover transition-all duration-300 ease-in-out transform text-sm hover:bg-skin-fill gap-2 font-gloock`}>
-          <span className="">ZapWall your podcast</span>
+          <span className="">Upload your podcast</span>
         </Link>
         <Link
           href="/discover"
           className={`px-1 flex items-center justify-center p-2 border-2 border-buttonAccentHover rounded-full bg-buttonAccent hover:bg-buttonAccentHover transition-all duration-300 ease-in-out transform text-sm hover:bg-skin-fill gap-2 font-gloock`}>
-          <span className="">Purchase ZapWalled podcasts</span>
+          <span className="">Purchase podcasts</span>
         </Link>
       </div>
 
