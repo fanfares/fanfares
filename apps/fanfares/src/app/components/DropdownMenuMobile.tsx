@@ -128,20 +128,22 @@ export default function DropdownMenuMobile() {
               <DropdownMenu.Separator className="h-[1px] bg-white m-[5px]" />
             </>
           )}
-          <DropdownMenu.Item className="group text-[13px] leading-none text-grey-100 rounded-[3px] flex gap-2 items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1">
+          <DropdownMenu.Item
+            onClick={() =>
+              router.push(
+                "/p/d7d8109ee43657ce6056ada4653006bbb641f31e50e85243681c2724507811ec"
+              )
+            }
+            className="group text-[13px] leading-none text-grey-100 rounded-[3px] flex gap-2 items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1">
             {/* nprofile1qqsd0kqsnmjrv47wvpt2mfr9xqrthdjp7v09p6zjgd5pcfey2puprmqh6zq5c */}
-            <Link
-              href="/p/d7d8109ee43657ce6056ada4653006bbb641f31e50e85243681c2724507811ec"
-              className="flex items-center gap-2">
-              <Image
-                className=""
-                width={16}
-                height={16}
-                src={Logo}
-                alt="FanFares Logo"
-              />
-              Follow us
-            </Link>
+            <Image
+              className=""
+              width={16}
+              height={16}
+              src={Logo}
+              alt="FanFares Logo"
+            />
+            Follow us
           </DropdownMenu.Item>
 
           <DropdownMenu.Arrow className="fill-white" />
