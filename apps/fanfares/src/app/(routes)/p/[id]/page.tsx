@@ -19,6 +19,8 @@ import { Modal } from "../../../components/Modal"
 import ProfileEditorForm from "../../../components/ProfileEditorForm"
 import { getIdFromUrl } from "@/app/controllers/utils/formatting"
 import { usePathname } from "next/navigation"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faCheckCircle } from "@fortawesome/pro-solid-svg-icons"
 
 function Profile() {
   const primalNotes = usePrimalNotes()
@@ -37,6 +39,8 @@ function Profile() {
   primalActions.primalGetUserFeed(pubkeyFromURL)
   const isOwner = pubkeyFromURL === nostrAccount?.accountPublicKey
   const loadedProfile = isOwner ? accountProfile : primalProfiles[pubkeyFromURL]
+  const [followsYou, setFollowsYou] = useState(true)
+  const [isVerified, setIsVerified] = useState(true)
 
   const episodes: { imgUrl: string; description: string; title: string }[] = []
 
@@ -83,7 +87,7 @@ function Profile() {
           <ProfileEditorForm onClose={closeEditor} />
         </Modal>
         <div className="flex gap-2 ml-auto">
-          <Button onClick={openEditor} className="w-32" label="edit profile" />
+          <Button onClick={openEditor} className="w-24" label="edit profile" />
         </div>
       </>
     )
@@ -100,29 +104,74 @@ function Profile() {
 
   return (
     <section className="container flex flex-col">
-      <div className="relative w-full flex">
-        <div className="absolute w-32 h-32">
-          <img
-            src={loadedProfile?.picture ?? "https://placehold.co/400"}
-            className="drop-shadow-md rounded-full w-32 h-32 object-cover object-center absolute"
-            alt="profile picture"
-          />
-        </div>
-        {renderEditor()}
+      <div className="relative w-full flex md:h-80 h-40">
+        <img
+          src={loadedProfile?.picture ?? "https://placehold.co/400"}
+          className="drop-shadow-md border rounded-full object-cover object-center absolute w-20 h-20 md:w-40 md:h-40 md:-bottom-16 -bottom-8 left-2 z-10"
+          alt="profile picture"
+        />
+        <img
+          src={loadedProfile?.banner ?? ""}
+          alt=""
+          className="drop-shadow-lg"
+        />
         {/* TODO Add followers and following */}
         {/* <div className="absolute left-32 top-10">Followers / Following</div> */}
       </div>
-      <div className="mt-32 w-full">
-        <div className="text-buttonDefault">
-          <p className="">{loadedProfile?.display_name ?? ""}</p>
+      <div className="mt-2 ml-auto flex gap-2">
+        <Button className="w-24" label="follow" />
+        {renderEditor()}
+      </div>{" "}
+      <div className="mt-12 w-full flex flex-col space-y-1">
+        <div className="text-buttonDefault flex items-center gap-1">
+          <p className="text-lg font-semibold">
+            {loadedProfile?.display_name || loadedProfile?.name}
+          </p>
+          {loadedProfile?.nip05 && (
+            <FontAwesomeIcon icon={faCheckCircle} className="w-4" />
+          )}
+          <p className="text-buttonDisabled text-xs/4 ml-2 bg-buttonAccentHover px-2 py-[2px] rounded-md">
+            {followsYou ? "follows you" : ""}
+          </p>
         </div>
-        <p className="text-buttonDisabled text-xs/4">
-          {loadedProfile?.lud16 ?? ""}
-        </p>
         <p className="text-buttonDisabled text-xs/4">
           {loadedProfile?.nip05 ?? ""}
         </p>
+        <p className="font-light text-sm">{loadedProfile?.about}</p>
       </div>
+      <div className="flex flex-row items-center gap-x-2 mt-4 justify-evenly">
+        <div
+          className={`flex flex-col items-center mt-4          
+          ${true && "border-b-2 border-buttonAccentHover"}`}>
+          <p className="text-buttonMuted font-semibold text-lg">1234</p>
+          <p className="text-buttonDisabled text-xs">notes</p>
+        </div>
+        <div
+          className={`flex flex-col items-center mt-4          
+          ${false && "border-b-2 border-buttonAccentHover"}`}>
+          <p className="text-buttonMuted font-semibold text-lg">1234</p>
+          <p className="text-buttonDisabled text-xs">Replies</p>
+        </div>
+        <div
+          className={`flex flex-col items-center mt-4          
+          ${false && "border-b-2 border-buttonAccentHover"}`}>
+          <p className="text-buttonMuted font-semibold text-lg">1234</p>
+          <p className="text-buttonDisabled text-xs">zaps</p>
+        </div>
+        <div
+          className={`flex flex-col items-center mt-4          
+          ${false && "border-b-2 border-buttonAccentHover"}`}>
+          <p className="text-buttonMuted font-semibold text-lg">1234</p>
+          <p className="text-buttonDisabled text-xs">following</p>
+        </div>
+        <div
+          className={`flex flex-col items-center mt-4          
+          ${false && "border-b-2 border-buttonAccentHover"}`}>
+          <p className="text-buttonMuted font-semibold text-lg">1234</p>
+          <p className="text-buttonDisabled text-xs">followers</p>
+        </div>
+      </div>
+      <hr className="mt-4 bg-red-500" />
       <div className="flex-col gap-2 mt-2 overflow-x-clip relative space-y-2">
         {episodes.length == 0 ? null : (
           <>
@@ -134,7 +183,7 @@ function Profile() {
           </>
         )}
       </div>
-      <div className="space-y-2 mt-8">
+      <div className="space-y-2 mt-4">
         {/* <p>My posts...</p> */}
 
         {/* {filteredEvents.map(note => {
