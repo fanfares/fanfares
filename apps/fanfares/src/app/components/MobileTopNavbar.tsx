@@ -8,6 +8,7 @@ import Logo from "../assets/logo.svg"
 
 import { useAccountProfile } from "../controllers/state/account-slice"
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu"
+import DropdownMenuMobile from "./DropdownMenuMobile"
 
 export interface MobileTopNavbarProps {
   isLoggedIn?: boolean
@@ -38,7 +39,7 @@ function MobileTopNavbar(props: MobileTopNavbarProps) {
       {/* <Link href="/" className="w-7">
         <FontAwesomeIcon icon={faHomeAlt} className="text-white" />
       </Link> */}
-      <DropdownMenu />
+      <DropdownMenuMobile />
       <div className="mx-auto flex gap-2 items-center">
         <Image
           className=""
@@ -49,7 +50,7 @@ function MobileTopNavbar(props: MobileTopNavbarProps) {
         />
         <p className="text-3xl font-gloock ">FanFares</p>
       </div>
-      {accountProfile && isLoggedIn ? (
+      {/* {accountProfile && isLoggedIn ? (
         <Link className="ml-auto" href={`/p/${accountProfile.pubkey}`}>
           <Image
             className="rounded-full"
@@ -66,7 +67,7 @@ function MobileTopNavbar(props: MobileTopNavbarProps) {
             className="text-white w-6 h-6 ml-auto"
           />
         </button>
-      )}
+      )} */}
     </div>
   )
 }
