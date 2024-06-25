@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "fanfares-bitcoin-connect": "https://github.com/fanfares/fanfares-bitcoin-connect.git",
     "nip108": "workspace:*",
     "utils": "workspace:*",
     "@types/node": "20.6.2",
