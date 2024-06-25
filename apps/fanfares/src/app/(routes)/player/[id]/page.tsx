@@ -27,7 +27,7 @@ import {
 import Image from "next/image"
 import { formatDate, getIdFromUrl } from "@/app/controllers/utils/formatting"
 import { toast } from "react-toastify"
-import { launchPaymentModal } from "@getalby/bitcoin-connect"
+import { init, launchPaymentModal } from "fanfares-bitcoin-connect"
 import { Modal } from "@/app/components/Modal"
 import ModalShareToNostr from "@/app/components/ModalShareToNostr"
 import {
@@ -122,7 +122,13 @@ export default function PlayerPage() {
       accountNostr.accountNIP04,
       accountNostr.accountNIP07,
       accountNostr.accountPublicKey,
-      (finishPaymentAttempt: () => Promise<void>, invoice: string) =>
+      (finishPaymentAttempt: () => Promise<void>, invoice: string) => {
+        init(
+          {
+            appName: 'FanFares', // your app name
+            filters: ['alby'],
+          }
+        )
         launchPaymentModal({
           invoice,
           onPaid: response => {
@@ -134,6 +140,7 @@ export default function PlayerPage() {
             finishPaymentAttempt()
           },
         })
+      }
     )
   }
 
