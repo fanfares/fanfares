@@ -9,6 +9,7 @@ import {
   usePrimalProfiles,
   usePrimalSocket,
 } from "../../../controllers/state/primal-slice"
+
 import {
   useAccountNostr,
   useAccountProfile,
@@ -21,7 +22,15 @@ import { getIdFromUrl } from "@/app/controllers/utils/formatting"
 import { usePathname } from "next/navigation"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCheckCircle } from "@fortawesome/pro-solid-svg-icons"
-
+import { usePodcastEpisodes } from "@/app/controllers/state/podcast-slice"
+import {
+  Event,
+  Filter,
+  Event as NostrEvent,
+  SimplePool,
+  getEventHash,
+} from "nostr-tools"
+import { useNostr } from "@/app/controllers/state/nostr-slice"
 function Profile() {
   const primalNotes = usePrimalNotes()
   const nostrAccount = useAccountNostr()
@@ -29,20 +38,38 @@ function Profile() {
   const primalProfiles = usePrimalProfiles()
   const primalNoteStats = usePrimalNoteStats()
   const primalSocket = usePrimalSocket()
+  const podcastEpisodes = usePodcastEpisodes()
+
   const primalIsFetching = usePrimalIsFetching()
   const accountProfile = useAccountProfile()
   const [editProfileModalOn, setEditProfileModalOn] = useState(false)
   const [fetched, setFetched] = useState(false)
+  const { nostrPool, nostrRelays } = useNostr()
 
   // ------------ VARIABLES ------------
   const pubkeyFromURL = getIdFromUrl(usePathname())
   primalActions.primalGetUserFeed(pubkeyFromURL)
   const isOwner = pubkeyFromURL === nostrAccount?.accountPublicKey
   const loadedProfile = isOwner ? accountProfile : primalProfiles[pubkeyFromURL]
-  const [followsYou, setFollowsYou] = useState(true)
+  const [followsYou, setFollowsYou] = useState(false)
+  const [youFollow, setYouFollow] = useState(false)
 
-  const episodes: { imgUrl: string; description: string; title: string }[] = []
+  const [profiles, setProfiles] = useState<{ [key: string]: Profile }>({})
+  const accountNostr = useAccountNostr()
 
+  const episodes: {
+    imgUrl: string
+    description: string
+    title: string
+    episodeUrl: string
+  }[] = []
+
+  interface Profile {
+    name: string
+    picture: string
+    display_name: string
+    episodeUrl: string
+  }
   // ------------ FUNCTIONS ------------
 
   //TODO Load Profile from ID
@@ -58,9 +85,7 @@ function Profile() {
   }, [setEditProfileModalOn])
 
   const renderNotes = () => {
-    // console.log('primalNotes from zustand', primalNotes)
     return Object.values(primalNotes).map(note => {
-      // console.log(note.pubkey == id, note, note.pubkey, id)
       if (note.pubkey !== pubkeyFromURL) {
         return null
       }
@@ -75,6 +100,36 @@ function Profile() {
         <FeedPost key={note.id} note={note} profile={profile} stats={stats} />
       )
     })
+  }
+
+  const renderPodcasts = () => {
+    Object.values(podcastEpisodes).map(podcast => {
+      if (podcast.announcement.note.pubkey == pubkeyFromURL) {
+        console.log(podcast)
+        episodes.push({
+          imgUrl: podcast.imageFilepath,
+          description: podcast.description,
+          title: podcast.title,
+          episodeUrl: podcast.announcement.gate,
+        })
+      }
+    })
+
+    return (
+      <div className="space-y-2 mt-4">
+        {episodes.length > 0 && episodes.length < 5 && (
+          <>
+            <div className="w-full flex items-center justify-between">
+              <p>Latest episodes</p>
+              {/* TO IMPLEMENT */}
+              {/* CREATE A PAGE FOR ALL EPISODES */}
+              <Button className="text-sm/4 px-4 hidden" label="Show all..." />
+            </div>
+            <PodcastsCarrousel episodes={episodes} />
+          </>
+        )}
+      </div>
+    )
   }
 
   const renderEditor = () => {
@@ -92,6 +147,75 @@ function Profile() {
     )
   }
 
+  async function followAccount() {
+    try {
+      const targetPubkey = pubkeyFromURL
+      const myPubkey = nostrAccount?.accountPublicKey || ""
+      const userFollows = await fetchFollowList(myPubkey)
+      const isFollowing = userFollows.some(follow => follow === targetPubkey)
+      if (isFollowing) {
+        setYouFollow(true)
+
+        return
+      }
+
+      const followEvent: Event = {
+        kind: 3,
+        tags: [["p", targetPubkey!]],
+        content: "",
+        sig: "",
+        id: "",
+        created_at: Math.floor(Date.now() / 1000),
+        pubkey: accountNostr?.accountPublicKey!.toString() || "",
+      }
+
+      const signedEvent = await window.nostr.signEvent(followEvent)
+      followEvent.sig = signedEvent.sig
+      followEvent.id = getEventHash(followEvent)
+      nostrPool.publish(nostrRelays, followEvent)
+    } catch (error) {
+      console.error("Error following account:", error)
+    }
+  }
+
+  async function fetchFollowList(userPubkey: string): Promise<string[]> {
+    const filter: Filter<number>[] = [
+      {
+        kinds: [3], // Filter for "follow" events
+        authors: [userPubkey], // Your own events
+        limit: 1000, // Adjust limit as needed (consider pagination if following many)
+      },
+    ]
+
+    const events = await nostrPool.list(nostrRelays, filter)
+
+    // Extract followed pubkeys
+    const followedPubkeys = events.map(
+      event => event.tags.find(tag => tag[0] === "p")?.[1]
+    )
+    const targetPubkey = pubkeyFromURL
+
+    const isFollowing = followedPubkeys.some(follow => follow === targetPubkey)
+    if (isFollowing) {
+      console.log(`Already following ${targetPubkey}`)
+      setYouFollow(true)
+    }
+
+    return followedPubkeys.filter(Boolean) as string[] // Filter out undefined values (in case of malformed events)
+  }
+
+  useEffect(() => {
+    if (!accountNostr) return
+    fetchFollowList(accountNostr.accountPublicKey!)
+  }, [pubkeyFromURL, accountNostr])
+
+  const renderFollowYouTag = () => {
+    //Read events
+    //Search events kind 3
+    //Tags will be ["p", "logged in pubkey"]
+    //If pubkey is in tags, then follows you , render tag
+  }
+
   // ------------ USE EFFCTS ------------
 
   useEffect(() => {
@@ -102,7 +226,7 @@ function Profile() {
   }, [primalSocket, primalIsFetching, fetched, pubkeyFromURL])
 
   return (
-    <section className="container flex flex-col">
+    <section className="flex flex-col">
       <div className="relative w-full flex md:h-80 h-40">
         <img
           src={loadedProfile?.picture ?? "https://placehold.co/400"}
@@ -118,7 +242,11 @@ function Profile() {
         {/* <div className="absolute left-32 top-10">Followers / Following</div> */}
       </div>
       <div className="mt-2 ml-auto flex gap-2">
-        <Button className="w-24" label="follow" />
+        <Button
+          className="w-24"
+          label={youFollow ? "Unfollow" : "Follow"}
+          onClick={followAccount}
+        />
         {renderEditor()}
       </div>{" "}
       <div className="mt-12 w-full flex flex-col space-y-1">
@@ -130,7 +258,7 @@ function Profile() {
             <FontAwesomeIcon icon={faCheckCircle} className="w-4" />
           )}
           <p className="text-buttonDisabled text-xs/4 ml-2 bg-buttonAccentHover px-2 py-[2px] rounded-md">
-            {followsYou ? "follows you" : ""}
+            {followsYou ?? false ? "follows you" : ""}
           </p>
         </div>
         <p className="text-buttonDisabled text-xs/4">
@@ -172,15 +300,7 @@ function Profile() {
       </div>
       <hr className="mt-4 bg-red-500" />
       <div className="flex-col gap-2 mt-2 overflow-x-clip relative space-y-2">
-        {episodes.length == 0 ? null : (
-          <>
-            <div className="w-full flex items-center justify-between">
-              <p>My Podcasts...</p>
-              <Button className="text-sm/4 px-4" label="Show all..." />
-            </div>
-            <PodcastsCarrousel episodes={episodes} />
-          </>
-        )}
+        {renderPodcasts()}
       </div>
       <div className="space-y-2 mt-4">
         {/* <p>My posts...</p> */}
@@ -213,37 +333,3 @@ function Profile() {
 }
 
 export default Profile
-
-// "use client"
-
-// import {
-//   usePrimalNoteStats,
-//   usePrimalNotes,
-//   usePrimalProfiles,
-// } from "@/app/controllers/state/primal-slice"
-// import { getIdFromUrl } from "@/app/controllers/utils/formatting"
-// import { usePathname } from "next/navigation"
-// import { useEffect } from "react"
-// import Lottie from "lottie-react"
-
-// export default function Page() {
-//   const primalNotes = usePrimalNotes()
-//   const primalProfiles = usePrimalProfiles()
-//   const primalNoteStats = usePrimalNoteStats()
-//   const id = getIdFromUrl(usePathname())
-
-//   // ------------ USE EFFECTS ------------
-
-//   const profile = primalProfiles[id]
-
-//   if (!profile) {
-//     return <div>Profile not found</div>
-//   }
-
-//   return (
-//     <div>
-//       {/* <Lottie className="w-10" animationData={lottie} loop={true} /> */}
-//       Page of {profile.name}
-//     </div>
-//   )
-// }

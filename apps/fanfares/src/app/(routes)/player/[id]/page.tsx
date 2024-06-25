@@ -41,6 +41,7 @@ import {
   signEvent,
 } from "nostr-tools"
 import { NIP07 } from "utils"
+import Link from "next/link"
 
 config.autoAddCss = false /* eslint-disable import/first */
 
@@ -354,11 +355,11 @@ export default function PlayerPage() {
               <p className="lg:text-2xl lg:font-bold text-base font-semibold">
                 {podcast.title}
               </p>
-              <p className="lg:text-base lg:font-bold truncate w-80">
-                {creator
-                  ? creator.display_name
-                  : podcast.announcement.note.pubkey}
-              </p>
+              <Link
+                href={`/p/${creator?.pubkey}`}
+                className="lg:text-base lg:font-bold truncate w-80">
+                {creator && creator.display_name}
+              </Link>
 
               <div
                 className={`w-full max-w-lg items-start rounded-lg bg-skin-fill/80 p-2 space-y-2`}>

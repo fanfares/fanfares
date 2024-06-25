@@ -1,14 +1,6 @@
-import {
-  faArrowRotateLeft,
-  faArrowRotateRight,
-  faPauseCircle,
-  faPlayCircle,
-} from "@fortawesome/pro-solid-svg-icons"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Image from "next/image"
 import Link from "next/link"
 import { useRef, useState } from "react"
-import { useNostr } from "../controllers/state/nostr-slice"
 
 interface EpisodeCardProps {
   imgUrl: string
@@ -35,9 +27,6 @@ function EpisodeCard(props: EpisodeCardProps) {
       setIsPlaying(!isPlaying)
     }
   }
-
-
- 
 
   //
   return (
@@ -74,7 +63,6 @@ function EpisodeCard(props: EpisodeCardProps) {
         {/* <div className="mt-2 h-full flex w-full flex-col items-start border-white/[10%] justify-start truncate line-clamp-2"></div> */}
         <div className="flex-col flex-1 w-40 md:w-full mt-1 space-y-2 md:px-2 relative">
           <div className="flex items-center gap-2">
-
             <img
               src={props.creatorProfilePicture ?? props.imgUrl}
               className="rounded-full w-9 h-9 border-2 border-buttonAccentHover"

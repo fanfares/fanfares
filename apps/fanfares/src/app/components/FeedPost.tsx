@@ -35,9 +35,6 @@ interface FeedPostProps {
 export function FeedPost(props: FeedPostProps) {
   const { note, profile, stats } = props
   const router = useRouter()
-  // const [fanfaresButtonMessage, setFanfaresButtonMessage] = useState(false)
-  // const [zapButtonMessage, setZapButtonMessage] = useState(false)
-  const [futureFeatureModalOn, setFutureFeatureModalOn] = useState(false)
   const nostrAccount = useAccountNostr()
   const webln = useAccountWebln()
 
