@@ -55,6 +55,8 @@ function Profile() {
   const [youFollow, setYouFollow] = useState(false)
 
   const [profiles, setProfiles] = useState<{ [key: string]: Profile }>({})
+  const [fetchedFollows, setFetchedFollows] = useState<string[]>([])
+
   const accountNostr = useAccountNostr()
 
   const episodes: {
@@ -161,7 +163,10 @@ function Profile() {
 
       const followEvent: Event = {
         kind: 3,
-        tags: [["p", targetPubkey!]],
+        tags: [
+          ["p", targetPubkey!],
+          ...fetchedFollows.map(pubkey => ["p", pubkey]),
+        ],
         content: "",
         sig: "",
         id: "",
@@ -206,7 +211,15 @@ function Profile() {
 
   useEffect(() => {
     if (!accountNostr) return
-    fetchFollowList(accountNostr.accountPublicKey!)
+
+    async function fetchInitialFollows() {
+      const initialFollows = await fetchFollowList(
+        accountNostr!.accountPublicKey!
+      )
+      setFetchedFollows(initialFollows)
+    }
+    fetchInitialFollows()
+    //  fetchFollowList(accountNostr.accountPublicKey!)
   }, [pubkeyFromURL, accountNostr])
 
   const renderFollowYouTag = () => {
