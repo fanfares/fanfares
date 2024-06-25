@@ -10,17 +10,17 @@
   },
   "dependencies": {
     "fanfares-bitcoin-connect": "https://github.com/fanfares/fanfares-bitcoin-connect.git",
-    "nip108": "workspace:*",
-    "utils": "workspace:*",
     "@types/node": "20.6.2",
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.15",
-    "postcss": "8.4.30",
     "next": "14.0.4",
+    "nip108": "workspace:*",
+    "postcss": "8.4.30",
     "react": "^18",
     "react-dom": "^18",
     "tailwindcss": "3.3.3",
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "utils": "workspace:*"
   }
 }
