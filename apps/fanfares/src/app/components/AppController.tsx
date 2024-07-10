@@ -45,17 +45,22 @@ export function AppController(props: AppControllerProps) {
 
   // absolutely bizarre hack needed because nostr-login references 'document' and that breaks server-side rendering
   useEffect(() => {
+    const nsecbunker = localStorage.getItem("nsecbunker")
     // detect iOS and disable nsec.app login method if < iOS 17
     const ios = detectIOSFirmware()
-    const nsecAppMethod: string[] = ios && ios < 17 ? [] : ["connect"]
+    const nsecAppMethod: string[] = nsecbunker === "true" || !ios ? ["connect"] : []
 
-    console.log(nsecAppMethod)
+    // if( process.env.NEXT_PUBLIC_ENV === "development" ) {
+    //   window.alert("nsecAppMethod: " + nsecAppMethod.map(e => e).join(", ") + "(" + nsecAppMethod.length + ")")
+    // }
 
+    // console.log(nsecAppMethod)
     import("nostr-login")
       .then(async ({ init }) => {
         init({
           bunkers: "nsec.app,login.fanfares.io",
           methods: ["readOnly", "extension", "local", ...nsecAppMethod],
+          noBanner: true,
         })
       })
       .catch(error => console.log("Failed to load nostr-login", error))
