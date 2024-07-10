@@ -47,14 +47,14 @@ function IosDetectionModal(props: IosDetectionModalProps) {
   const renderPWASteps = () => {
     return (
       <>
-        <p>We use https://nsec.app to make the signing process easier on iOS</p>
+        <p>We use <a className="text-blue-500" href="https://nsec.app/ios.html">nsec.app</a> to make the signing process easier on iOS</p>
         <p>Follow the steps below to start using FanFares</p>
         <ul>
           <li>
             1. Click here and navigate to{" "}
-            <Link className="text-blue-500" href="https://nsec.app/ios.html">
+            <a className="text-blue-500" href="https://use.nsec.app">
               https://nsec.app/
-            </Link>
+            </a>
             .
           </li>
           <li>
