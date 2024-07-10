@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react"
 import { Modal } from "./Modal"
 import Button from "./Button"
 import Link from "next/link"
+import { detectIOSFirmware } from "./MobileDetection"
 
 interface IosDetectionModalProps {}
 
@@ -11,37 +12,18 @@ function IosDetectionModal(props: IosDetectionModalProps) {
   const [showUpdateFirmware, setShowUpdateFirmware] = useState(false)
   const [showPWASteps, setShowPWASteps] = useState(false)
 
-  function detectMobileFirmware() {
-    function isMobileBrowser() {
-      return /Mobi|Android/i.test(navigator.userAgent)
-    }
-
-    function isiOS() {
-      return /iPhone|iPad|iPod/i.test(navigator.userAgent)
-    }
-
-    function getiOSVersion() {
-      var match = navigator.userAgent.match(/OS (\d+)_\d+/)
-      if (match) {
-        return parseInt(match[1], 10)
-      }
-      return null
-    }
-
-    if (isiOS()) {
-      var iosVersion = getiOSVersion()
-      if (iosVersion == null) return
+  // show remedial instructions for iOS regarding nsec.app installation as PWA
+  useEffect(() => {
+    const ios = detectIOSFirmware()
+    if (ios) {
       setShowModal(true)
-      if (iosVersion < 17) {
+      if (ios < 17) {
         setShowUpdateFirmware(true)
       }
-      if (iosVersion >= 17) {
+      if (ios >= 17) {
         setShowPWASteps(true)
       }
     }
-  }
-  useEffect(() => {
-    detectMobileFirmware()
   }, [])
 
   const renderPWASteps = () => {
