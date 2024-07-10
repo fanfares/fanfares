@@ -69,7 +69,7 @@ export function FeedbackForm() {
           />
           <AnimatedLabelTextInput
             required={true}
-            label="Lightning Address* (LUD16)"
+            label="Lightning Address*"
             htmlFor="lud16"
             value={lud16}
             onChange={setLud16}

@@ -10,7 +10,7 @@ export async function POST(
   const { publicKey, lud16, email, message } = (await request.json() as FeedbackInputs)
 
   if(!publicKey) throw new Error("Public Key is required")
-  if(!lud16) throw new Error("LUD16 is required")
+  if(!lud16) throw new Error("Alby address is required")
   if(!email) throw new Error("Email is required")
   if(!message) throw new Error("Message is required")
 
@@ -20,7 +20,7 @@ export async function POST(
     subject: `FEEDBACK: ${publicKey}`,
     text: `
       Email: ${email}
-      LUD16: ${lud16}
+      LightningAddress: ${lud16}
       PublicKey: ${publicKey}
       Message: ${message}
     `,
