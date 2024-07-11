@@ -62,13 +62,7 @@ function MobileTopNavbar(props: MobileTopNavbarProps) {
           />{" "}
         </Link>
       ) : (
-        <button onClick={handleLogin}>
-          <FontAwesomeIcon
-            icon={faKey}
-            className="text-white w-7 h-7 ml-auto"
-          />
-          Sign In
-        </button>
+        <button onClick={handleLogin}>Sign In</button>
       )}
     </div>
   )
