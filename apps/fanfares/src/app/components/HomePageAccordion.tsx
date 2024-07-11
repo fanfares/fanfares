@@ -98,7 +98,7 @@ function Box(props: HomePageAccordionProps) {
       id={boxButtonId}
       onClick={setBox}
       className={clsx(
-        "mt-2 w-full cursor-pointer rounded flex border border-gray-50/10 p-4 shadow drop-shadow-2xl filter backdrop-blur-md transition-all duration-500 items-start min-h-[2rem]",
+        "mt-2 cursor-pointer rounded flex border border-gray-50/10 p-4 shadow drop-shadow-2xl filter backdrop-blur-md transition-all duration-500 items-start min-h-[2rem]",
         {
           "bg-white/[5%] h-full": isOpen,
           "bg-white/[2%] h-fit": !isOpen,
