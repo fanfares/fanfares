@@ -7,13 +7,14 @@ import { detectIOSFirmware } from "./MobileDetection"
 import { IosInstructions } from "./IosInstructions"
 import { FaExternalLinkAlt } from "react-icons/fa";
 
-
 interface IosLoginModalProps {}
 
 function IosLoginModal(props: IosLoginModalProps) {
   const [showModal, setShowModal] = useState(false)
   const [showUpdateFirmware, setShowUpdateFirmware] = useState(false)
   const [showPWASteps, setShowPWASteps] = useState(false)
+  const [nsecbunker, setNsecbunker] = useState<string | null>(null)
+  const [nsecbunkerDontShow, setNsecbunkerDontShow] = useState<string | null>(null)
 
   const ios = detectIOSFirmware()
 
@@ -22,51 +23,49 @@ function IosLoginModal(props: IosLoginModalProps) {
   }
 
   function enableNsecbunker() {
-    localStorage.setItem("nsecbunker", "true")
-    window.location.reload()
+    setNsecbunker("true")
+    if (typeof window !== "undefined") {
+      localStorage.setItem("nsecbunker", "true")
+      window.location.reload()
+    }
   }
-
-  // mount listener for nostr-login interceptor event
+  
   useEffect(() => {
     function iosInterrupt() {
-      const nsecbunkerDontShow = localStorage.getItem("nsecbunker-dontshow")
       if (ios && nsecbunkerDontShow !== "true") {
         setShowModal(true)
       } else {
         triggerNostrLogin()
       }
     }
+
     document.addEventListener("promptLogin", iosInterrupt)
     return () => {
       document.removeEventListener("promptLogin", iosInterrupt) 
     }
-  }, [])
+  }, [ios, nsecbunkerDontShow])
 
-  // show remedial instructions for iOS regarding nsec.app installation as PWA
   useEffect(() => {
-    if (ios) {
-      // if (ios < 17) {
-      //   setShowUpdateFirmware(true)
-      // }
-      // if (ios >= 17) {
-        setShowPWASteps(true)
-      // }
+    if (typeof window !== "undefined") {
+      setNsecbunker(localStorage.getItem("nsecbunker"))
+      setNsecbunkerDontShow(localStorage.getItem("nsecbunker-dontshow"))
     }
   }, [])
 
-  const renderPWASteps = () => {
-    const nsecbunker = localStorage.getItem("nsecbunker")
+  useEffect(() => {
+    if (ios) {
+      setShowPWASteps(true)
+    }
+  }, [ios])
 
+  const renderPWASteps = () => {
     if (nsecbunker === "true") {
-      // nsecbunker is enabled
       return (
         <IosInstructions/>
       )
     } else {
-      // first time modal
       return (
         <>
-          {/* PWA steps content */}
           <p>iOS has quirks that make <a className="text-blue-500" href="https://nsec.app" target="_blank" rel="noopener noreferrer">nsec.app <FaExternalLinkAlt className="inline"/></a> tricky to use, but it is a convenient option for mobile Safari users.</p>
           <IosInstructions/>
           <p>If you'd like to enable nsecbunker login options, click here.</p>
@@ -79,20 +78,19 @@ function IosLoginModal(props: IosLoginModalProps) {
   const renderFirmwareUpdateInfo = () => {
     return (
       <>
-        {/* Firmware update info content */}
         <p>Please update to the latest version of iOS to access nsecbunker login options.</p>
       </>
     )
   }
 
   const dontShowAgain = () => {
-    localStorage.setItem("nsecbunker-dontshow", "true")
+    setNsecbunkerDontShow("true")
+    if (typeof window !== "undefined") {
+      localStorage.setItem("nsecbunker-dontshow", "true")
+    }
     setShowModal(false)
     triggerNostrLogin()
   }
-
-  const nsecbunker = localStorage.getItem("nsecbunker")
-  const nsecbunkerDontShow = localStorage.getItem("nsecbunker-dontshow")
 
   return (
     <Modal isOpen={showModal}>
