@@ -21,7 +21,8 @@ function MobileTopNavbar(props: MobileTopNavbarProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const handleLogin = () => {
-    document.dispatchEvent(new CustomEvent("nlLaunch"))
+    // document.dispatchEvent(new CustomEvent("nlLaunch"))
+    document.dispatchEvent(new CustomEvent("promptLogin"))
   }
 
   if (typeof window !== "undefined") {
@@ -62,10 +63,11 @@ function MobileTopNavbar(props: MobileTopNavbarProps) {
         </Link>
       ) : (
         <button onClick={handleLogin}>
-          <FontAwesomeIcon
+          {/* <FontAwesomeIcon
             icon={faKey}
             className="text-white w-7 h-7 ml-auto"
-          />
+          /> */}
+          Sign In
         </button>
       )} */}
     </div>

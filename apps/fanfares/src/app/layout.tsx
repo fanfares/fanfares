@@ -13,6 +13,7 @@ import Toast from "./components/Toast"
 import MobileTopNavbar from "./components/MobileTopNavbar"
 import AlbyBanner from "./components/AlbyBanner"
 import MobileBottomNavbar from "./components/MobileBottomNavbar"
+import IosLoginModal from "./components/IosLoginModal"
 
 config.autoAddCss = false /* eslint-disable import/first */
 
@@ -56,6 +57,7 @@ export default function RootLayout({
           {/* Content */}
           <ContainerGrid className="block md:ml-48 md:h-screen">
             <Toast />
+            <IosLoginModal/>
             {children}
           </ContainerGrid>
           <MobileBottomNavbar />

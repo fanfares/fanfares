@@ -5,6 +5,7 @@ import Link from "next/link"
 import HomePageAccordion from "./components/HomePageAccordion"
 import Image from "next/image"
 import Logo from "./assets/logo.svg"
+import { useEffect } from "react"
 
 export default function Home() {
   // ------------------- STATES -------------------------
