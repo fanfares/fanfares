@@ -51,19 +51,23 @@ function MobileTopNavbar(props: MobileTopNavbarProps) {
         />
         <p className="text-3xl font-gloock ">FanFares</p>
       </div>
-      {accountProfile && isLoggedIn ? (
-        <Link className="ml-auto" href={`/p/${accountProfile.pubkey}`}>
-          <Image
-            className="rounded-full"
-            width={40}
-            height={40}
-            src={accountProfile?.picture}
-            alt="FanFares Logo"
-          />{" "}
-        </Link>
-      ) : (
-        <button onClick={handleLogin}>Sign In</button>
-      )}
+      <div className="ml-auto">
+        {accountProfile && isLoggedIn ? (
+          <Link className="" href={`/p/${accountProfile.pubkey}`}>
+            <Image
+              className="rounded-full"
+              width={40}
+              height={40}
+              src={accountProfile?.picture}
+              alt="FanFares Logo"
+            />{" "}
+          </Link>
+        ) : (
+          <button className="" onClick={handleLogin}>
+            Sign In
+          </button>
+        )}
+      </div>
     </div>
   )
 }
