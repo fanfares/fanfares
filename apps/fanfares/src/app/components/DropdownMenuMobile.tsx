@@ -146,7 +146,7 @@ export default function DropdownMenuMobile() {
             Follow us
           </DropdownMenu.Item>
 
-          <DropdownMenu.Arrow className="fill-white" />
+          <DropdownMenu.Arrow />
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
